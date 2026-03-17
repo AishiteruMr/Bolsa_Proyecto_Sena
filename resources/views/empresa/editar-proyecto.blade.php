@@ -44,7 +44,12 @@
 
             <div class="form-group">
                 <label>Ubicación del Proyecto *</label>
-                <input type="text" name="ubicacion" class="form-control" value="{{ old('ubicacion', $proyecto->pro_ubicacion ?? '') }}" required>
+                <div style="display:flex; gap:8px; align-items:flex-end;">
+                    <input type="text" id="ubicacion" name="ubicacion" class="form-control" value="{{ old('ubicacion', $proyecto->pro_ubicacion ?? '') }}" required>
+                    <button type="button" id="btn-cargar-ubicacion" class="btn btn-outline" title="Cargar ubicación de la empresa">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="form-group">
@@ -103,22 +108,81 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const ubicacionInput = document.getElementById('ubicacion');
+        const btnCargarUbicacion = document.getElementById('btn-cargar-ubicacion');
         const fechaPubliInput = document.getElementById('fecha_publi');
         const duracionInput = document.getElementById('duracion');
         const fechaFinalizacionInput = document.getElementById('fecha_finalizacion');
 
+        // ── CARGAR UBICACIÓN DE LA EMPRESA ────────────────────────────────────
+        function cargarUbicacionEmpresa() {
+            btnCargarUbicacion.disabled = true;
+            btnCargarUbicacion.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch('/api/empresa/ubicacion/sesion', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    const ubicacion = data.data.ubicacion || data.data.ubicacion_completa || 'Por definir';
+                    ubicacionInput.value = ubicacion;
+                    
+                    // Mostrar notificación
+                    mostrarNotificacion('✓ Ubicación cargada: ' + ubicacion, 'success');
+                } else {
+                    mostrarNotificacion('No se pudo cargar la ubicación de la empresa', 'warning');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarNotificacion('Error al cargar la ubicación', 'error');
+            })
+            .finally(() => {
+                btnCargarUbicacion.disabled = false;
+                btnCargarUbicacion.innerHTML = '<i class="fas fa-sync-alt"></i>';
+            });
+        }
+
+        // ── NOTIFICACIONES ────────────────────────────────────────────────────────
+        function mostrarNotificacion(mensaje, tipo) {
+            const notif = document.createElement('div');
+            notif.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                background-color: ${tipo === 'success' ? '#28a745' : tipo === 'error' ? '#dc3545' : '#ffc107'};
+                color: ${tipo === 'warning' ? '#000' : '#fff'};
+                border-radius: 4px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                font-size: 14px;
+                z-index: 9999;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notif.textContent = mensaje;
+            document.body.appendChild(notif);
+
+            setTimeout(() => {
+                notif.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notif.remove(), 300);
+            }, 3000);
+        }
+
+        // ── CALCULAR FECHAS ──────────────────────────────────────────────────────
         function calcularFechas() {
             const fechaPubli = new Date(fechaPubliInput.value);
             
             if (!isNaN(fechaPubli.getTime())) {
-                // Calcular fecha de finalización (6 meses después)
                 const fechaFinalizacion = new Date(fechaPubli);
                 fechaFinalizacion.setMonth(fechaFinalizacion.getMonth() + 6);
                 
-                // Calcular duración en días
                 const duracionDias = Math.ceil((fechaFinalizacion - fechaPubli) / (1000 * 60 * 60 * 24));
                 
-                // Formatear fechas para mostrar
                 const opcionesFormato = { year: 'numeric', month: 'long', day: 'numeric' };
                 const fechaFinFormatted = fechaFinalizacion.toLocaleDateString('es-ES', opcionesFormato);
                 
@@ -127,12 +191,51 @@
             }
         }
 
-        // Calcular al cargar la página
-        calcularFechas();
-
-        // Recalcular cuando cambia la fecha de publicación
+        // ── EVENT LISTENERS ───────────────────────────────────────────────────────
+        btnCargarUbicacion.addEventListener('click', cargarUbicacionEmpresa);
         fechaPubliInput.addEventListener('change', calcularFechas);
+
+        // ── INICIALIZAR ───────────────────────────────────────────────────────────
+        calcularFechas();
     });
+
+    // ── ESTILOS DE ANIMACIÓN ──────────────────────────────────────────────────────
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        #btn-cargar-ubicacion {
+            padding: 10px 16px;
+            min-width: 44px;
+            white-space: nowrap;
+        }
+
+        #btn-cargar-ubicacion:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    `;
+    document.head.appendChild(style);
 </script>
 
 <style>

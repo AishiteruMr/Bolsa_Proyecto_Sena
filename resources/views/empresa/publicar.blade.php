@@ -15,11 +15,11 @@
             <h3>Detalles Básicos del Proyecto</h3>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="titulo">Título del Proyecto *</label>
+                    <label for="titulo">Título del Proyecto </label>
                     <input type="text" id="titulo" name="titulo" required>
                 </div>
                 <div class="form-group">
-                    <label for="categoria">Categoría *</label>
+                    <label for="categoria">Categoría </label>
                     <select id="categoria" name="categoria" required>
                         <option value="">Seleccionar...</option>
                         <option value="Agrícola">Agrícola</option>
