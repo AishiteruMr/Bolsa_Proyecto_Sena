@@ -166,6 +166,7 @@
         </form>
 
         <div class="links">
+            <a href="{{ route('auth.olvide-contraseña') }}"><i class="fas fa-key"></i> ¿Olvidaste tu contraseña?</a>
             <a href="{{ route('home') }}"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
         </div>
 

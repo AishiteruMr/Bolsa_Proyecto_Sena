@@ -32,6 +32,12 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Recuperación de contraseña
+Route::get('/olvide-contraseña', [AuthController::class, 'showOlvideContraseña'])->name('auth.olvide-contraseña');
+Route::post('/enviar-recuperacion', [AuthController::class, 'enviarEnlaceRecuperacion'])->name('auth.enviar-recuperacion');
+Route::get('/recuperar-contraseña/{token}', [AuthController::class, 'mostrarFormularioRestablecerContraseña'])->name('auth.mostrar-restablecer');
+Route::post('/restablecer-contraseña', [AuthController::class, 'restablecerContraseña'])->name('auth.restablecer-contraseña');
+
 // Registros
 Route::get('/registro/aprendiz', [AuthController::class, 'showRegistroAprendiz'])->name('registro.aprendiz');
 Route::get('/registro/empresa', [AuthController::class, 'showRegistroEmpresa'])->name('registro.empresa');

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Mail\RegistroExitoso;
+use App\Mail\RecuperarContraseña;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -305,5 +307,159 @@ class AuthController extends Controller
             'regex'            => 'El campo :attribute solo puede contener letras.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ];
+    }
+
+    // ─── RECUPERACIÓN DE CONTRASEÑA ──────────────────────────────────────────
+
+    public function showOlvideContraseña()
+    {
+        return view('auth.olvide-contraseña');
+    }
+
+    public function enviarEnlaceRecuperacion(Request $request)
+    {
+        $request->validate([
+            'correo' => 'required|email|max:255',
+        ], [
+            'correo.required' => 'El correo es obligatorio.',
+            'correo.email'    => 'Ingresa un correo válido.',
+        ]);
+
+        $correo = strip_tags(trim($request->correo));
+
+        // Buscar usuario
+        $usuario = DB::table('usuario')->where('usr_correo', $correo)->first();
+        $nombre = null;
+        $tipo = 'usuario';
+
+        if ($usuario) {
+            $perfil = $this->getPerfilUsuario($usuario->usr_id, $usuario->rol_id);
+            if ($perfil) {
+                $nombre = $perfil->nombre ?? 'Usuario';
+            }
+        } else {
+            // Buscar empresa
+            $empresa = DB::table('empresa')->where('emp_correo', $correo)->first();
+            if ($empresa) {
+                $nombre = $empresa->emp_nombre;
+                $tipo = 'empresa';
+            }
+        }
+
+        if (!$nombre) {
+            return back()->with('warning', 'Si existe una cuenta con este correo, recibirás un enlace de recuperación.');
+        }
+
+        // Generar token único
+        $token = Str::random(64);
+
+        // Eliminar tokens antiguos
+        DB::table('password_reset_tokens')->where('email', $correo)->delete();
+
+        // Guardar nuevo token
+        DB::table('password_reset_tokens')->insert([
+            'email'      => $correo,
+            'token'      => hash('sha256', $token),
+            'created_at' => now(),
+        ]);
+
+        // Enviar correo
+        try {
+            Mail::to($correo)->send(new RecuperarContraseña($nombre, $token, $correo));
+            return back()->with('success', '✅ Se envió un enlace de recuperación a tu correo. Revisa tu bandeja de entrada.');
+        } catch (\Exception $e) {
+            Log::error('Error al enviar correo de recuperación: ' . $e->getMessage());
+            return back()->with('error', 'Error al enviar el correo. Intenta más tarde.');
+        }
+    }
+
+    public function mostrarFormularioRestablecerContraseña($token)
+    {
+        $correo = request('email');
+
+        if (!$correo) {
+            return redirect()->route('login')->with('error', 'Enlace inválido o expirado.');
+        }
+
+        // Verificar token
+        $registro = DB::table('password_reset_tokens')
+            ->where('email', $correo)
+            ->where('token', hash('sha256', $token))
+            ->first();
+
+        if (!$registro) {
+            return redirect()->route('login')->with('error', 'El enlace de recuperación es inválido o ha expirado.');
+        }
+
+        // Verificar que no haya expirado (30 minutos)
+        if ($registro->created_at->addMinutes(30)->isPast()) {
+            DB::table('password_reset_tokens')->where('email', $correo)->delete();
+            return redirect()->route('login')->with('error', 'El enlace de recuperación ha expirado. Solicita uno nuevo.');
+        }
+
+        return view('auth.restablecer-contraseña', compact('token', 'correo'));
+    }
+
+    public function restablecerContraseña(Request $request)
+    {
+        $request->validate([
+            'token'    => 'required|string',
+            'correo'   => 'required|email|max:255',
+            'password' => 'required|string|min:6|max:100|confirmed',
+        ], [
+            'password.required'   => 'La contraseña es obligatoria.',
+            'password.min'        => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.confirmed'  => 'Las contraseñas no coinciden.',
+        ]);
+
+        $correo = strip_tags(trim($request->correo));
+        $token = $request->token;
+
+        // Verificar token
+        $registro = DB::table('password_reset_tokens')
+            ->where('email', $correo)
+            ->where('token', hash('sha256', $token))
+            ->first();
+
+        if (!$registro) {
+            return back()->with('error', 'El enlace de recuperación es inválido o ha expirado.');
+        }
+
+        // Verificar que no haya expirado (30 minutos)
+        if ($registro->created_at->addMinutes(30)->isPast()) {
+            DB::table('password_reset_tokens')->where('email', $correo)->delete();
+            return back()->with('error', 'El enlace de recuperación ha expirado.');
+        }
+
+        // Buscar usuario
+        $usuario = DB::table('usuario')->where('usr_correo', $correo)->first();
+
+        if ($usuario) {
+            // Actualizar contraseña de usuario
+            DB::table('usuario')
+                ->where('usr_id', $usuario->usr_id)
+                ->update(['usr_contrasena' => Hash::make($request->password)]);
+
+            $mensaje = 'Usuario';
+        } else {
+            // Buscar empresa
+            $empresa = DB::table('empresa')->where('emp_correo', $correo)->first();
+
+            if (!$empresa) {
+                return back()->with('error', 'Cuenta no encontrada.');
+            }
+
+            // Actualizar contraseña de empresa
+            DB::table('empresa')
+                ->where('emp_id', $empresa->emp_id)
+                ->update(['emp_contrasena' => Hash::make($request->password)]);
+
+            $mensaje = 'Empresa';
+        }
+
+        // Eliminar token usado
+        DB::table('password_reset_tokens')->where('email', $correo)->delete();
+
+        return redirect()->route('login')->with('success', '✅ Contraseña actualizada correctamente. Ya puedes iniciar sesión.');
     }
 }
