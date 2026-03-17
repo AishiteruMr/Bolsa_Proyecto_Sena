@@ -51,6 +51,8 @@ Route::middleware(['auth.custom', 'rol:1'])->prefix('aprendiz')->name('aprendiz.
     Route::get('/proyectos', [AprendizController::class, 'proyectos'])->name('proyectos');
     Route::post('/proyectos/{id}/postular', [AprendizController::class, 'postular'])->name('postular');
     Route::get('/mis-postulaciones', [AprendizController::class, 'misPostulaciones'])->name('postulaciones');
+    Route::get('/historial', [AprendizController::class, 'historial'])->name('historial');
+    Route::get('/mis-entregas', [AprendizController::class, 'misEntregas'])->name('entregas');
     Route::get('/perfil', [AprendizController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [AprendizController::class, 'actualizarPerfil'])->name('perfil.update');
 });
@@ -84,6 +86,8 @@ Route::middleware(['auth.custom', 'rol:3'])->prefix('empresa')->name('empresa.')
 Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instructor.')->group(function () {
     Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
     Route::get('/proyectos', [InstructorController::class, 'proyectos'])->name('proyectos');
+    Route::get('/historial', [InstructorController::class, 'historial'])->name('historial');
+    Route::get('/proyectos/{id}/reporte', [InstructorController::class, 'reporteSeguimiento'])->name('reporte');
     Route::get('/aprendices', [InstructorController::class, 'aprendices'])->name('aprendices');
     Route::get('/perfil', [InstructorController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [InstructorController::class, 'actualizarPerfil'])->name('perfil.update');

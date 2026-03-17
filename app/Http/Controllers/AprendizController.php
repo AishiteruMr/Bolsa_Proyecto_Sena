@@ -149,4 +149,95 @@ class AprendizController extends Controller
 
         return back()->with('success', 'Perfil actualizado correctamente.');
     }
+
+    // ── HISTORIAL DE PROYECTOS ──
+    public function historial()
+    {
+        $usrId = session('usr_id');
+        $aprendiz = DB::table('aprendiz')->where('usr_id', $usrId)->first();
+
+        if (!$aprendiz) {
+            return back()->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
+
+        $proyectos = DB::table('postulacion')
+            ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
+            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
+            ->leftJoin('instructor', 'proyecto.ins_usr_documento', '=', 'instructor.usr_documento')
+            ->where('postulacion.apr_id', $aprendiz->apr_id)
+            ->select(
+                'postulacion.pos_id',
+                'postulacion.pos_estado',
+                'postulacion.pos_fecha',
+                'proyecto.pro_id',
+                'proyecto.pro_titulo_proyecto',
+                'proyecto.pro_categoria',
+                'proyecto.pro_estado',
+                'proyecto.pro_fecha_publi',
+                'proyecto.pro_fecha_finalizacion',
+                'proyecto.pro_imagen_url',
+                'empresa.emp_nombre',
+                DB::raw('COALESCE(CONCAT(instructor.ins_nombre, " ", instructor.ins_apellido), "No asignado") as instructor_nombre')
+            )
+            ->orderByDesc('postulacion.pos_fecha')
+            ->get();
+
+        return view('aprendiz.historial', compact('proyectos'));
+    }
+
+    // ── MIS ENTREGAS (Reporte de seguimiento) ──
+    public function misEntregas()
+    {
+        $usrId = session('usr_id');
+        $aprendiz = DB::table('aprendiz')->where('usr_id', $usrId)->first();
+
+        if (!$aprendiz) {
+            return back()->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
+
+        // Proyectos aprobados
+        $proyectos = DB::table('postulacion')
+            ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
+            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
+            ->where('postulacion.apr_id', $aprendiz->apr_id)
+            ->where('postulacion.pos_estado', 'Aprobada')
+            ->select('proyecto.*', 'empresa.emp_nombre')
+            ->get();
+
+        // Entregas por proyecto
+        $entregas = DB::table('entrega_etapa')
+            ->join('etapa', 'entrega_etapa.ene_eta_id', '=', 'etapa.eta_id')
+            ->join('proyecto', 'entrega_etapa.ene_pro_id', '=', 'proyecto.pro_id')
+            ->where('entrega_etapa.ene_apr_id', $aprendiz->apr_id)
+            ->select(
+                'entrega_etapa.*',
+                'etapa.eta_nombre',
+                'etapa.eta_orden',
+                'proyecto.pro_titulo_proyecto',
+                'proyecto.pro_id'
+            )
+            ->orderBy('entrega_etapa.ene_pro_id')
+            ->orderBy('etapa.eta_orden')
+            ->orderBy('entrega_etapa.ene_fecha', 'desc')
+            ->get();
+
+        // Evidencias
+        $evidencias = DB::table('evidencia')
+            ->join('etapa', 'evidencia.evid_eta_id', '=', 'etapa.eta_id')
+            ->join('proyecto', 'evidencia.evid_pro_id', '=', 'proyecto.pro_id')
+            ->where('evidencia.evid_apr_id', $aprendiz->apr_id)
+            ->select(
+                'evidencia.*',
+                'etapa.eta_nombre',
+                'etapa.eta_orden',
+                'proyecto.pro_titulo_proyecto',
+                'proyecto.pro_id'
+            )
+            ->orderBy('evidencia.evid_pro_id')
+            ->orderBy('etapa.eta_orden')
+            ->orderBy('evidencia.evid_fecha', 'desc')
+            ->get();
+
+        return view('aprendiz.mis-entregas', compact('proyectos', 'entregas', 'evidencias'));
+    }
 }

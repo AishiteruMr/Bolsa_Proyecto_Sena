@@ -14,6 +14,12 @@
     <a href="{{ route('aprendiz.postulaciones') }}" class="nav-item {{ request()->routeIs('aprendiz.postulaciones') ? 'active' : '' }}">
         <i class="fas fa-paper-plane"></i> Mis Postulaciones
     </a>
+    <a href="{{ route('aprendiz.historial') }}" class="nav-item {{ request()->routeIs('aprendiz.historial') ? 'active' : '' }}">
+        <i class="fas fa-history"></i> Historial
+    </a>
+    <a href="{{ route('aprendiz.entregas') }}" class="nav-item {{ request()->routeIs('aprendiz.entregas') ? 'active' : '' }}">
+        <i class="fas fa-tasks"></i> Mis Entregas
+    </a>
     <span class="nav-label">Cuenta</span>
     <a href="{{ route('aprendiz.perfil') }}" class="nav-item {{ request()->routeIs('aprendiz.perfil') ? 'active' : '' }}">
         <i class="fas fa-user"></i> Mi Perfil
