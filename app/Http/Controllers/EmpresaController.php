@@ -58,11 +58,11 @@ class EmpresaController extends Controller
         $request->validate([
             'titulo'       => 'required|string|max:200',
             'categoria'    => 'required|string|max:100',
+            'ubicacion'    => 'required|string|max:255',
             'descripcion'  => 'required|string|max:500',
             'requisitos'   => 'required|string|max:200',
             'habilidades'  => 'required|string|max:200',
             'fecha_publi'  => 'required|date',
-            'duracion'     => 'required|integer|min:1',
             'imagen'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -74,15 +74,21 @@ class EmpresaController extends Controller
             $imagenUrl = '/storage/' . $path;
         }
 
+        // Calcular fecha de finalización (6 meses desde la fecha de publicación)
+        $fechaPubli = \Carbon\Carbon::parse($request->fecha_publi);
+        $fechaFinalizacion = $fechaPubli->addMonths(6);
+
         DB::table('proyecto')->insert([
             'emp_nit'                    => $nit,
             'pro_titulo_proyecto'        => $request->titulo,
             'pro_categoria'              => $request->categoria,
+            'pro_ubicacion'              => $request->ubicacion,
             'pro_descripcion'            => $request->descripcion,
             'pro_requisitos_especificos' => $request->requisitos,
             'pro_habilidades_requerida'  => $request->habilidades,
             'pro_fecha_publi'            => $request->fecha_publi,
-            'pro_duracion_estimada'      => $request->duracion,
+            'pro_fecha_finalizacion'     => $fechaFinalizacion,
+            'pro_duracion_estimada'      => $fechaPubli->diffInDays($fechaFinalizacion),
             'pro_estado'                 => 'Activo',
             'pro_imagen_url'             => $imagenUrl,
         ]);
@@ -106,23 +112,30 @@ class EmpresaController extends Controller
         $request->validate([
             'titulo'      => 'required|string|max:200',
             'categoria'   => 'required|string|max:100',
+            'ubicacion'   => 'required|string|max:255',
             'descripcion' => 'required|string|max:500',
             'requisitos'  => 'required|string|max:200',
             'habilidades' => 'required|string|max:200',
             'fecha_publi' => 'required|date',
-            'duracion'    => 'required|integer|min:1',
             'imagen'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $nit = session('nit');
+        
+        // Calcular fecha de finalización (6 meses desde la fecha de publicación)
+        $fechaPubli = \Carbon\Carbon::parse($request->fecha_publi);
+        $fechaFinalizacion = $fechaPubli->addMonths(6);
+        
         $datos = [
             'pro_titulo_proyecto'        => $request->titulo,
             'pro_categoria'              => $request->categoria,
+            'pro_ubicacion'              => $request->ubicacion,
             'pro_descripcion'            => $request->descripcion,
             'pro_requisitos_especificos' => $request->requisitos,
             'pro_habilidades_requerida'  => $request->habilidades,
             'pro_fecha_publi'            => $request->fecha_publi,
-            'pro_duracion_estimada'      => $request->duracion,
+            'pro_fecha_finalizacion'     => $fechaFinalizacion,
+            'pro_duracion_estimada'      => $fechaPubli->diffInDays($fechaFinalizacion),
         ];
 
         if ($request->hasFile('imagen')) {

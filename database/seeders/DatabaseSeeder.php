@@ -19,13 +19,19 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Admin inicial
-        $adminId = DB::table('usuario')->insertGetId([
-            'usr_documento'    => 10431,
-            'usr_correo'       => 'admin@gmail.com',
-            'usr_contrasena'   => Hash::make('admin123'),
-            'rol_id'           => 4,
-            'usr_fecha_creacion' => now(),
-        ]);
+        $usuarioAdmin = DB::table('usuario')->where('usr_correo', 'admin@gmail.com')->first();
+        
+        if (!$usuarioAdmin) {
+            $adminId = DB::table('usuario')->insertGetId([
+                'usr_documento'    => 10431,
+                'usr_correo'       => 'admin@gmail.com',
+                'usr_contrasena'   => Hash::make('admin123'),
+                'rol_id'           => 4,
+                'usr_fecha_creacion' => now(),
+            ]);
+        } else {
+            $adminId = $usuarioAdmin->usr_id;
+        }
 
         DB::table('administrador')->insertOrIgnore([
             'usr_id'      => $adminId,
