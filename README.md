@@ -36,12 +36,21 @@ php artisan key:generate
 
 Editar `.env` con tus datos de base de datos y correo:
 ```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
 DB_DATABASE=bolsa_de_proyectos
 DB_USERNAME=root
-DB_PASSWORD=tu_contraseña
+DB_PASSWORD=
 
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
 MAIL_USERNAME=bolsadeproyectossena@gmail.com
-MAIL_PASSWORD=tu_app_password_gmail
+MAIL_PASSWORD=qanh_ojlq_cwxi_oodu
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=bolsadeproyectossena@gmail.com
+MAIL_FROM_NAME="Bolsa de Proyecto SENA"
 ```
 
 ### 4. Crear la base de datos y ejecutar migraciones
