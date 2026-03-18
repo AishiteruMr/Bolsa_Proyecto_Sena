@@ -3,11 +3,18 @@
 @section('page-title', 'Panel Empresa')
 
 @section('sidebar-nav')
-    <a href="{{ route('empresa.dashboard') }}" class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}"><i class="fas fa-home"></i> Dashboard</a>
-    <a href="{{ route('empresa.proyectos') }}" class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}"><i class="fas fa-project-diagram"></i> Mis Proyectos</a>
-    <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}"><i class="fas fa-plus-circle"></i> Publicar Proyecto</a>
+    <a href="{{ route('empresa.dashboard') }}"
+        class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}"><i class="fas fa-home"></i>
+        Dashboard</a>
+    <a href="{{ route('empresa.proyectos') }}"
+        class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}"><i
+            class="fas fa-project-diagram"></i> Mis Proyectos</a>
+    <a href="{{ route('empresa.proyectos.crear') }}"
+        class="nav-item {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}"><i
+            class="fas fa-plus-circle"></i> Publicar Proyecto</a>
     <span class="nav-label">Cuenta</span>
-    <a href="{{ route('empresa.perfil') }}" class="nav-item {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}"><i class="fas fa-building"></i> Perfil Empresa</a>
+    <a href="{{ route('empresa.perfil') }}" class="nav-item {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}"><i
+            class="fas fa-building"></i> Perfil Empresa</a>
 @endsection
 
 @section('content')
@@ -17,21 +24,30 @@
     </div>
 
     <div class="stat-grid">
-        <div class="stat-card"><h3>{{ $totalProyectos }}</h3><p>Total proyectos</p></div>
-        <div class="stat-card" style="border-color:#28a745;"><h3 style="color:#28a745;">{{ $proyectosActivos }}</h3><p>Proyectos activos</p></div>
-        <div class="stat-card" style="border-color:#2980b9;"><h3 style="color:#2980b9;">{{ $totalPostulaciones }}</h3><p>Total postulaciones</p></div>
-        <div class="stat-card" style="border-color:#f39c12;"><h3 style="color:#f39c12;">{{ $postulacionesPendientes }}</h3><p>Postulaciones pendientes</p></div>
+        <div class="stat-card">
+            <h3>{{ $totalProyectos }}</h3>
+            <p>Total proyectos</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ $proyectosActivos }}</h3>
+            <p>Proyectos activos</p>
+        </div>
     </div>
 
     <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
             <h3 style="font-size:16px; font-weight:600;">Proyectos Recientes</h3>
-            <a href="{{ route('empresa.proyectos.crear') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Nuevo Proyecto</a>
+            <a href="{{ route('empresa.proyectos.crear') }}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i>
+                Nuevo Proyecto</a>
         </div>
         <table>
             <thead>
                 <tr>
-                    <th>Título</th><th>Categoría</th><th>Estado</th><th>Fecha</th><th>Acciones</th>
+                    <th>Título</th>
+                    <th>Categoría</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Postulaciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,20 +56,20 @@
                         <td style="font-weight:500;">{{ Str::limit($p->pro_titulo_proyecto, 40) }}</td>
                         <td>{{ $p->pro_categoria }}</td>
                         <td>
-                            <span class="badge {{ $p->pro_estado === 'Activo' || $p->pro_estado === 'Aprobado' ? 'badge-success' : 'badge-warning' }}">
+                            <span
+                                class="badge {{ $p->pro_estado === 'Activo' || $p->pro_estado === 'Aprobado' ? 'badge-success' : 'badge-warning' }}">
                                 {{ $p->pro_estado }}
                             </span>
                         </td>
                         <td style="font-size:12px; color:#666;">{{ $p->pro_fecha_publi }}</td>
-                        <td>
-                            <a href="{{ route('empresa.proyectos.postulantes', $p->pro_id) }}" class="btn btn-outline btn-sm">
-                                <i class="fas fa-users"></i> Postulantes
-                            </a>
+                        <td style="font-size:12px; color:#666;">
+                            (Aqui iran el numero de postulaciones,agregar luego)
                         </td>
-                    </tr>
                 @empty
-                    <tr><td colspan="5" style="text-align:center; color:#666; padding:24px;">No hay proyectos aún.</td></tr>
-                @endforelse
+                        <tr>
+                            <td colspan="5" style="text-align:center; color:#666; padding:24px;">No hay proyectos aún.</td>
+                        </tr>
+                    @endforelse
             </tbody>
         </table>
     </div>

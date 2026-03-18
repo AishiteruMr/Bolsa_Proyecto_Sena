@@ -13,8 +13,8 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --verde: #39a900;
-            --verde-dark: #2d8500;
+            --verde: #298564;
+            --verde-dark: #3eb489;
             --verde-light: #e8f5e0;
             --sidebar-w: 260px;
             --gris: #f4f6f9;
@@ -29,7 +29,7 @@
         /* ── SIDEBAR ── */
         .sidebar {
             width: var(--sidebar-w);
-            background: linear-gradient(180deg, #1a5c00 0%, #2d8500 50%, #39a900 100%);
+            background: linear-gradient(180deg, #298564 0%, #298564 50%, #298564 100%);
             position: fixed; top: 0; left: 0; height: 100vh;
             display: flex; flex-direction: column;
             z-index: 100; transition: transform .3s;
@@ -86,7 +86,7 @@
         /* ── BUTTONS ── */
         .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 30px; border: none; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; transition: all .2s; }
         .btn-sm { padding: 5px 12px; font-size: 12px; }
-        .btn-primary { background: var(--verde); color: #fff; }
+        .btn-primary { background: var(--verde-dark); color: #fff; }
         .btn-primary:hover { background: var(--verde-dark); transform: translateY(-1px); }
         .btn-outline { background: transparent; border: 2px solid var(--verde); color: var(--verde); }
         .btn-outline:hover { background: var(--verde); color: #fff; }
