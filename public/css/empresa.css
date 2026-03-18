@@ -1,0 +1,193 @@
+/* ========================================
+   ESTILOS DEL MÓDULO EMPRESA
+   ======================================== */
+
+/* POSTULANTES VIEW */
+.postulantes-header {
+    margin-bottom: 24px;
+}
+
+.postulantes-back-link {
+    color: #666;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.postulantes-back-link:hover {
+    color: #333;
+}
+
+.postulantes-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.postulantes-subtitle {
+    color: #666;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* POSTULANTE ITEM */
+.postulante-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.postulante-card:hover {
+    background: #fafafa;
+}
+
+.postulante-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #39a900, #2d8500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.postulante-avatar span {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.postulante-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.postulante-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.postulante-program {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.postulante-program i {
+    color: #39a900;
+    margin-right: 6px;
+}
+
+.postulante-email {
+    font-size: 12px;
+    color: #888;
+}
+
+.postulante-email i {
+    margin-right: 6px;
+}
+
+.postulante-status {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.postulante-date {
+    font-size: 11px;
+    color: #888;
+}
+
+.postulante-date i {
+    margin-right: 4px;
+}
+
+/* EMPTY STATE */
+.postulantes-empty {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.postulantes-empty-icon {
+    font-size: 48px;
+    color: #ddd;
+    margin-bottom: 16px;
+}
+
+.postulantes-empty-title {
+    color: #666;
+    margin-bottom: 8px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.postulantes-empty-message {
+    color: #999;
+    font-size: 14px;
+}
+
+/* BADGE STYLES */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge-info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* CARD */
+.card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .postulante-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .postulante-status {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .postulantes-title {
+        font-size: 18px;
+    }
+}
