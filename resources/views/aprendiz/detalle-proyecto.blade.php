@@ -104,11 +104,11 @@
             <i class="fas fa-tasks"></i>Etapas del Proyecto
         </h2>
 
-        <div style="display: grid; gap: 20px;">
+        <div class="stages-grid">
             @forelse($etapas as $etapa)
                 <div class="stage-card">
                     <div class="stage-header">
-                        <div style="flex: 1;">
+                        <div class="stage-header-content">
                             <div class="stage-title">
                                 <span class="stage-number">{{ $etapa->eta_orden }}</span>
                                 {{ $etapa->eta_nombre }}

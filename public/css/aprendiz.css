@@ -2,58 +2,74 @@
    APRENDIZ MODULE - STYLES
    ============================================ */
 
-/* Success Messages */
-.success-message {
-    background: #d4edda;
-    border: 1px solid #c3e6cb;
-    padding: 12px 16px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    color: #155724;
+:root {
+    --primary: #0056b3;
+    --primary-dark: #004085;
+    --success: #28a745;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #f8f9fa;
+    --border: #e0e0e0;
+    --text: #333;
+    --text-light: #666;
+    --text-muted: #999;
 }
 
-/* Project Detail Section */
+/* ──────────────────────────────────────
+   GLOBAL STYLES
+   ────────────────────────────────────── */
+
 .project-detail {
-    margin: 0;
+    width: 100%;
 }
+
+/* ──────────────────────────────────────
+   HEADER & NAVIGATION
+   ────────────────────────────────────── */
 
 .project-header {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
 }
 
 .project-back-link {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: #0056b3;
+    color: var(--primary);
     text-decoration: none;
     font-size: 14px;
     font-weight: 500;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     transition: color 0.2s;
 }
 
 .project-back-link:hover {
-    color: #004085;
+    color: var(--primary-dark);
 }
 
 .project-title {
     font-size: 32px;
     font-weight: 700;
-    color: #333;
+    color: var(--text);
     margin-bottom: 8px;
+    line-height: 1.2;
 }
 
 .project-subtitle {
     font-size: 14px;
-    color: #666;
-    margin-bottom: 0;
+    color: var(--text-light);
+    margin: 0;
 }
 
-/* Project Card */
+/* ──────────────────────────────────────
+   CARD STYLES
+   ────────────────────────────────────── */
+
 .card {
     background: white;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 24px;
@@ -68,27 +84,29 @@
 }
 
 .project-image-placeholder {
+    width: 100%;
+    height: 300px;
     background: #f5f5f5;
-    padding: 60px;
-    text-align: center;
-    color: #ccc;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 300px;
+    color: #ccc;
 }
 
 .project-image-placeholder i {
     font-size: 48px;
 }
 
-/* Project Info Section */
+/* ──────────────────────────────────────
+   PROJECT INFO SECTION
+   ────────────────────────────────────── */
+
 .project-info-section {
-    padding: 20px;
+    padding: 24px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
-    border-bottom: 1px solid #e0e0e0;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
 }
 
 .project-info-item {
@@ -97,37 +115,44 @@
 }
 
 .project-info-label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    color: #666;
+    color: var(--text-light);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .project-info-value {
-    font-size: 14px;
-    color: #333;
+    font-size: 15px;
+    color: var(--text);
     font-weight: 500;
 }
 
-/* Project Description Section */
+/* ──────────────────────────────────────
+   DESCRIPTION SECTION
+   ────────────────────────────────────── */
+
 .project-description-section {
-    padding: 20px;
-    border-top: 1px solid #e0e0e0;
+    padding: 24px;
 }
 
 .project-description-section h3 {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 12px;
-    color: #333;
+    color: var(--text);
+    margin-top: 20px;
+}
+
+.project-description-section h3:first-child {
+    margin-top: 0;
 }
 
 .project-description-section p {
-    color: #666;
+    color: var(--text-light);
     line-height: 1.6;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     font-size: 14px;
 }
 
@@ -135,28 +160,42 @@
     margin-bottom: 0;
 }
 
-/* Section Title */
+/* ──────────────────────────────────────
+   SECTION TITLE
+   ────────────────────────────────────── */
+
 .section-title {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 600;
-    color: #333;
-    margin-bottom: 16px;
+    color: var(--text);
+    margin-bottom: 24px;
+    margin-top: 32px;
     display: flex;
     align-items: center;
-    margin-top: 24px;
+    gap: 10px;
 }
 
 .section-title i {
-    margin-right: 8px;
-    color: #0056b3;
+    color: var(--primary);
+    font-size: 20px;
 }
 
-/* Stage Card */
+/* ──────────────────────────────────────
+   STAGE CARD
+   ────────────────────────────────────── */
+
+.stages-grid {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
 .stage-card {
     background: #f9f9f9;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 20px;
+    margin-bottom: 20px;
 }
 
 .stage-header {
@@ -165,7 +204,13 @@
     align-items: flex-start;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 2px solid var(--border);
+    gap: 12px;
+}
+
+.stage-header-content {
+    flex: 1;
+    min-width: 0;
 }
 
 .stage-title {
@@ -173,60 +218,65 @@
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     margin-bottom: 8px;
+    color: var(--text);
 }
 
 .stage-number {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    background: #0056b3;
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
     color: white;
     border-radius: 50%;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 14px;
     flex-shrink: 0;
 }
 
 .stage-description {
-    color: #666;
-    font-size: 13px;
+    color: var(--text-light);
+    font-size: 14px;
     line-height: 1.5;
-    margin-bottom: 12px;
     margin: 0;
 }
 
-/* Evidence List */
+/* ──────────────────────────────────────
+   EVIDENCE LIST
+   ────────────────────────────────────── */
+
 .evidences-list {
     background: white;
-    padding: 12px;
+    padding: 16px;
     border-radius: 6px;
     margin-bottom: 16px;
-    border-left: 4px solid #28a745;
+    border-left: 4px solid var(--success);
 }
 
 .evidences-list h4 {
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 12px;
-    color: #333;
+    color: var(--text);
     margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .evidences-list h4 i {
-    color: #28a745;
-    margin-right: 6px;
+    color: var(--success);
 }
 
 .evidence-item {
     padding: 12px;
-    background: #f9f9f9;
+    background: #fafafa;
     border-radius: 4px;
     margin-bottom: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border);
 }
 
 .evidence-item:last-child {
@@ -237,6 +287,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 12px;
 }
 
 .evidence-item-content {
@@ -245,43 +296,47 @@
 
 .evidence-item-meta {
     font-size: 13px;
-    color: #333;
-    margin-bottom: 4px;
+    color: var(--text);
+    margin-bottom: 6px;
+    margin: 0 0 6px 0;
 }
 
 .evidence-item-meta strong {
     font-weight: 600;
+    color: var(--text);
 }
 
 .evidence-item-status {
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
 .evidence-comment {
     background: #f0f0f0;
-    padding: 8px;
+    padding: 10px;
     border-radius: 4px;
     margin-top: 8px;
     font-size: 12px;
 }
 
 .evidence-comment strong {
-    color: #333;
+    color: var(--text);
     font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
 }
 
 .evidence-comment p {
-    color: #666;
-    margin-top: 4px;
-    margin-bottom: 0;
+    color: var(--text-light);
+    margin: 0;
+    line-height: 1.4;
 }
 
 .download-btn {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 6px 12px;
-    background: #0056b3;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--primary);
     color: white;
     border-radius: 4px;
     text-decoration: none;
@@ -289,32 +344,42 @@
     font-weight: 600;
     transition: background 0.2s;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .download-btn:hover {
-    background: #004085;
+    background: var(--primary-dark);
     color: white;
 }
 
-/* Evidence Form Section */
+.download-btn i {
+    font-size: 11px;
+}
+
+/* ──────────────────────────────────────
+   EVIDENCE FORM SECTION
+   ────────────────────────────────────── */
+
 .evidence-form-section {
     background: white;
     padding: 16px;
     border-radius: 6px;
-    border-left: 4px solid #0056b3;
+    border-left: 4px solid var(--primary);
 }
 
 .evidence-form-section h4 {
     font-size: 14px;
     font-weight: 600;
-    margin-bottom: 12px;
-    color: #333;
+    margin-bottom: 16px;
+    color: var(--text);
     margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .evidence-form-section h4 i {
-    color: #0056b3;
-    margin-right: 6px;
+    color: var(--primary);
 }
 
 .form-evidence {
@@ -323,7 +388,7 @@
 
 .form-evidence-group {
     display: grid;
-    gap: 12px;
+    gap: 14px;
 }
 
 .form-field {
@@ -336,73 +401,92 @@
     font-size: 12px;
     font-weight: 600;
     margin-bottom: 6px;
-    color: #333;
+    color: var(--text);
 }
 
 .form-field textarea,
 .form-field input[type="file"] {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
     border-radius: 4px;
     font-size: 14px;
-    font-family: inherit;
+    font-family: 'Poppins', sans-serif;
+    background: white;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-field textarea {
     resize: vertical;
-    min-height: 80px;
+    min-height: 100px;
+    line-height: 1.5;
 }
 
-.form-field input[type="file"] {
-    background: white;
+.form-field textarea:focus,
+.form-field input[type="file"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+}
+
+.form-field textarea::placeholder {
+    color: var(--text-muted);
 }
 
 .form-field-help {
-    font-size: 11px;
-    color: #666;
+    font-size: 12px;
+    color: var(--text-light);
     margin-top: 4px;
 }
 
 .form-field-error {
-    color: #dc3545;
+    color: var(--danger);
     font-size: 12px;
     margin-top: 4px;
 }
 
-/* Buttons */
+/* ──────────────────────────────────────
+   BUTTONS
+   ────────────────────────────────────── */
+
 .btn-submit {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 10px 20px;
-    background: #0056b3;
+    padding: 10px 24px;
+    background: var(--primary);
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-weight: 600;
     font-size: 14px;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.2s;
     align-self: flex-start;
 }
 
 .btn-submit:hover {
-    background: #004085;
+    background: var(--primary-dark);
+    transform: translateY(-1px);
 }
 
 .btn-submit:active {
-    background: #003366;
+    transform: translateY(0);
 }
 
 .btn-submit i {
-    margin-right: 4px;
+    font-size: 14px;
 }
 
-/* Badges */
+/* ──────────────────────────────────────
+   BADGES
+   ────────────────────────────────────── */
+
 .badge {
     display: inline-block;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 4px;
     font-size: 11px;
     font-weight: 600;
@@ -425,36 +509,49 @@
     color: #721c24;
 }
 
-/* Empty State */
+.badge-info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* ──────────────────────────────────────
+   EMPTY STATE
+   ────────────────────────────────────── */
+
 .empty-state {
     text-align: center;
     padding: 60px 20px;
     background: white;
-    border: 1px dashed #e0e0e0;
+    border: 1px dashed var(--border);
     border-radius: 8px;
+    margin: 20px 0;
 }
 
 .empty-state-icon {
     font-size: 48px;
     color: #ccc;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     display: block;
 }
 
 .empty-state-title {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--text);
     margin-bottom: 8px;
+    margin: 0 0 8px 0;
 }
 
 .empty-state-message {
     font-size: 14px;
-    color: #666;
-    margin-bottom: 0;
+    color: var(--text-light);
+    margin: 0;
 }
 
-/* Responsive Design */
+/* ──────────────────────────────────────
+   RESPONSIVE DESIGN
+   ────────────────────────────────────── */
+
 @media (max-width: 768px) {
     .project-title {
         font-size: 24px;
@@ -463,32 +560,47 @@
     .project-info-section {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 12px;
+        padding: 16px;
     }
 
     .stage-header {
         flex-direction: column;
     }
 
-    .download-btn {
-        margin-top: 8px;
-        width: 100%;
-        justify-content: center;
+    .stage-title {
+        gap: 8px;
     }
 
     .evidence-item-header {
         flex-direction: column;
     }
 
-    .evidence-item-header .download-btn {
-        margin-top: 8px;
+    .download-btn {
+        width: 100%;
+        justify-content: center;
     }
 
     .section-title {
-        font-size: 18px;
+        font-size: 20px;
+        margin-top: 24px;
+        margin-bottom: 16px;
     }
 
     .stage-card {
         padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .project-description-section {
+        padding: 16px;
+    }
+
+    .form-field textarea {
+        min-height: 80px;
+    }
+
+    .btn-submit {
+        width: 100%;
     }
 }
 
@@ -498,13 +610,13 @@
     }
 
     .project-header {
-        margin-bottom: 16px;
+        margin-bottom: 24px;
     }
 
     .stage-number {
-        width: 24px;
-        height: 24px;
-        font-size: 10px;
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
     }
 
     .form-field textarea {
@@ -514,5 +626,26 @@
     .btn-submit {
         padding: 8px 16px;
         font-size: 13px;
+    }
+
+    .project-info-section {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .evidence-item-header {
+        gap: 8px;
+    }
+
+    .stage-card {
+        padding: 12px;
+    }
+
+    .card {
+        margin-bottom: 16px;
+    }
+
+    .project-image {
+        height: 200px;
     }
 }
