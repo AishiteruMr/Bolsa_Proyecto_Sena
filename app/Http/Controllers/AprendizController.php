@@ -170,7 +170,8 @@ class AprendizController extends Controller
         $proyectos = DB::table('postulacion')
             ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->leftJoin('instructor', 'proyecto.ins_usr_documento', '=', 'instructor.usr_documento')
+            ->leftJoin('usuario', 'proyecto.ins_usr_documento', '=', 'usuario.usr_documento')
+            ->leftJoin('instructor', 'usuario.usr_id', '=', 'instructor.usr_id')
             ->where('postulacion.apr_id', $aprendiz->apr_id)
             ->select(
                 'postulacion.pos_id',
