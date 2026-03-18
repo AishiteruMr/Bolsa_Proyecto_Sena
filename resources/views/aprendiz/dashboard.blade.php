@@ -71,7 +71,11 @@
                         <span class="badge badge-info" style="margin-bottom:8px;">{{ $p->pro_categoria }}</span>
                         <h4 style="font-size:14px; font-weight:600; margin-bottom:6px;">{{ $p->pro_titulo_proyecto }}</h4>
                         <p style="font-size:12px; color:#666; margin-bottom:10px;">{{ $p->emp_nombre }}</p>
-                        <a href="{{ route('aprendiz.proyectos') }}" class="btn btn-outline btn-sm">Ver más</a>
+                        @if(in_array($p->pro_id, $proyectosAprobados))
+                            <a href="{{ route('aprendiz.proyecto.detalle', $p->pro_id) }}" class="btn btn-primary btn-sm">Ver detalle</a>
+                        @else
+                            <a href="{{ route('aprendiz.proyectos') }}" class="btn btn-outline btn-sm">Ver más</a>
+                        @endif
                     </div>
                 </div>
             @empty

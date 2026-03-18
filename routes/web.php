@@ -57,6 +57,8 @@ Route::middleware(['auth.custom', 'rol:1'])->prefix('aprendiz')->name('aprendiz.
     Route::get('/proyectos', [AprendizController::class, 'proyectos'])->name('proyectos');
     Route::post('/proyectos/{id}/postular', [AprendizController::class, 'postular'])->name('postular');
     Route::get('/mis-postulaciones', [AprendizController::class, 'misPostulaciones'])->name('postulaciones');
+    Route::get('/proyectos/{id}/detalle', [AprendizController::class, 'verDetalleProyecto'])->name('proyecto.detalle');
+    Route::post('/proyectos/{proId}/etapas/{etaId}/evidencia', [AprendizController::class, 'enviarEvidencia'])->name('evidencia.enviar');
     Route::get('/historial', [AprendizController::class, 'historial'])->name('historial');
     Route::get('/mis-entregas', [AprendizController::class, 'misEntregas'])->name('entregas');
     Route::get('/perfil', [AprendizController::class, 'perfil'])->name('perfil');

@@ -1,0 +1,518 @@
+/* ============================================
+   APRENDIZ MODULE - STYLES
+   ============================================ */
+
+/* Success Messages */
+.success-message {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    color: #155724;
+}
+
+/* Project Detail Section */
+.project-detail {
+    margin: 0;
+}
+
+.project-header {
+    margin-bottom: 24px;
+}
+
+.project-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #0056b3;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    transition: color 0.2s;
+}
+
+.project-back-link:hover {
+    color: #004085;
+}
+
+.project-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.project-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 0;
+}
+
+/* Project Card */
+.card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.project-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.project-image-placeholder {
+    background: #f5f5f5;
+    padding: 60px;
+    text-align: center;
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+}
+
+.project-image-placeholder i {
+    font-size: 48px;
+}
+
+/* Project Info Section */
+.project-info-section {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.project-info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.project-info-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.project-info-value {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Project Description Section */
+.project-description-section {
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.project-description-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.project-description-section p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.project-description-section p:last-child {
+    margin-bottom: 0;
+}
+
+/* Section Title */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    margin-top: 24px;
+}
+
+.section-title i {
+    margin-right: 8px;
+    color: #0056b3;
+}
+
+/* Stage Card */
+.stage-card {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.stage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.stage-title {
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.stage-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: #0056b3;
+    color: white;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.stage-description {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    margin: 0;
+}
+
+/* Evidence List */
+.evidences-list {
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    border-left: 4px solid #28a745;
+}
+
+.evidences-list h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
+    margin-top: 0;
+}
+
+.evidences-list h4 i {
+    color: #28a745;
+    margin-right: 6px;
+}
+
+.evidence-item {
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.evidence-item:last-child {
+    margin-bottom: 0;
+}
+
+.evidence-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.evidence-item-content {
+    flex: 1;
+}
+
+.evidence-item-meta {
+    font-size: 13px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.evidence-item-meta strong {
+    font-weight: 600;
+}
+
+.evidence-item-status {
+    margin-bottom: 4px;
+}
+
+.evidence-comment {
+    background: #f0f0f0;
+    padding: 8px;
+    border-radius: 4px;
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+.evidence-comment strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.evidence-comment p {
+    color: #666;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+.download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: #0056b3;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.download-btn:hover {
+    background: #004085;
+    color: white;
+}
+
+/* Evidence Form Section */
+.evidence-form-section {
+    background: white;
+    padding: 16px;
+    border-radius: 6px;
+    border-left: 4px solid #0056b3;
+}
+
+.evidence-form-section h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
+    margin-top: 0;
+}
+
+.evidence-form-section h4 i {
+    color: #0056b3;
+    margin-right: 6px;
+}
+
+.form-evidence {
+    display: block;
+}
+
+.form-evidence-group {
+    display: grid;
+    gap: 12px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.form-field textarea,
+.form-field input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.form-field textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-field input[type="file"] {
+    background: white;
+}
+
+.form-field-help {
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.form-field-error {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Buttons */
+.btn-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.2s;
+    align-self: flex-start;
+}
+
+.btn-submit:hover {
+    background: #004085;
+}
+
+.btn-submit:active {
+    background: #003366;
+}
+
+.btn-submit i {
+    margin-right: 4px;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border: 1px dashed #e0e0e0;
+    border-radius: 8px;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.empty-state-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.empty-state-message {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .project-title {
+        font-size: 24px;
+    }
+
+    .project-info-section {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+    }
+
+    .stage-header {
+        flex-direction: column;
+    }
+
+    .download-btn {
+        margin-top: 8px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .evidence-item-header {
+        flex-direction: column;
+    }
+
+    .evidence-item-header .download-btn {
+        margin-top: 8px;
+    }
+
+    .section-title {
+        font-size: 18px;
+    }
+
+    .stage-card {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .project-title {
+        font-size: 20px;
+    }
+
+    .project-header {
+        margin-bottom: 16px;
+    }
+
+    .stage-number {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+
+    .form-field textarea {
+        min-height: 60px;
+    }
+
+    .btn-submit {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}

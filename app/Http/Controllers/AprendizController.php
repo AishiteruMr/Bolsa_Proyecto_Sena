@@ -28,9 +28,16 @@ class AprendizController extends Controller
             ->limit(6)
             ->get();
 
+        // Obtener IDs de proyectos con postulación aprobada
+        $proyectosAprobados = DB::table('postulacion')
+            ->where('apr_id', $aprendiz->apr_id ?? 0)
+            ->where('pos_estado', 'Aprobada')
+            ->pluck('pro_id')
+            ->toArray();
+
         return view('aprendiz.dashboard', compact(
             'aprendiz', 'totalPostulaciones', 'postulacionesAprobadas',
-            'proyectosDisponibles', 'proyectosRecientes'
+            'proyectosDisponibles', 'proyectosRecientes', 'proyectosAprobados'
         ));
     }
 
@@ -106,9 +113,9 @@ class AprendizController extends Controller
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
             ->where('postulacion.apr_id', $aprendiz->apr_id ?? 0)
             ->select('postulacion.*', 'proyecto.pro_titulo_proyecto', 'proyecto.pro_categoria',
-                     'proyecto.pro_imagen_url', 'empresa.emp_nombre')
+                     'proyecto.pro_imagen_url', 'proyecto.pro_id', 'empresa.emp_nombre')
             ->orderByDesc('postulacion.pos_fecha')
-            ->get();
+            ->paginate(10);
 
         return view('aprendiz.postulaciones', compact('postulaciones'));
     }
@@ -239,5 +246,121 @@ class AprendizController extends Controller
             ->get();
 
         return view('aprendiz.mis-entregas', compact('proyectos', 'entregas', 'evidencias'));
+    }
+
+    // ── VER DETALLE DE PROYECTO APROBADO ──
+    public function verDetalleProyecto(int $proId)
+    {
+        $usrId = session('usr_id');
+        $aprendiz = DB::table('aprendiz')->where('usr_id', $usrId)->first();
+
+        if (!$aprendiz) {
+            return back()->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
+
+        // Verificar que el aprendiz está aprobado en este proyecto
+        $postulacion = DB::table('postulacion')
+            ->where('apr_id', $aprendiz->apr_id)
+            ->where('pro_id', $proId)
+            ->where('pos_estado', 'Aprobada')
+            ->first();
+
+        if (!$postulacion) {
+            abort(403, 'No tienes acceso a este proyecto o tu postulación no ha sido aprobada.');
+        }
+
+        // Obtener información del proyecto
+        $proyecto = DB::table('proyecto')
+            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
+            ->leftJoin('instructor', 'proyecto.ins_usr_documento', '=', 'instructor.usr_documento')
+            ->where('proyecto.pro_id', $proId)
+            ->select(
+                'proyecto.*',
+                'empresa.emp_nombre',
+                DB::raw('COALESCE(CONCAT(instructor.ins_nombre, " ", instructor.ins_apellido), "No asignado") as instructor_nombre')
+            )
+            ->first();
+
+        if (!$proyecto) {
+            abort(404, 'El proyecto no existe.');
+        }
+
+        // Obtener etapas
+        $etapas = DB::table('etapa')
+            ->where('eta_pro_id', $proId)
+            ->orderBy('eta_orden')
+            ->get();
+
+        // Obtener evidencias subidas por el aprendiz para este proyecto
+        $evidencias = DB::table('evidencia')
+            ->join('etapa', 'evidencia.evid_eta_id', '=', 'etapa.eta_id')
+            ->where('evidencia.evid_pro_id', $proId)
+            ->where('evidencia.evid_apr_id', $aprendiz->apr_id)
+            ->select(
+                'evidencia.*',
+                'etapa.eta_nombre',
+                'etapa.eta_orden'
+            )
+            ->orderBy('etapa.eta_orden')
+            ->orderByDesc('evidencia.evid_fecha')
+            ->get();
+
+        return view('aprendiz.detalle-proyecto', compact('proyecto', 'etapas', 'evidencias', 'aprendiz'));
+    }
+
+    // ── ENVIAR EVIDENCIA DE ETAPA ──
+    public function enviarEvidencia(Request $request, int $proId, int $etaId)
+    {
+        $usrId = session('usr_id');
+        $aprendiz = DB::table('aprendiz')->where('usr_id', $usrId)->first();
+
+        if (!$aprendiz) {
+            return back()->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
+
+        // Verificar que está aprobado en el proyecto
+        $postulacion = DB::table('postulacion')
+            ->where('apr_id', $aprendiz->apr_id)
+            ->where('pro_id', $proId)
+            ->where('pos_estado', 'Aprobada')
+            ->first();
+
+        if (!$postulacion) {
+            abort(403, 'No tienes acceso a este proyecto.');
+        }
+
+        // Verificar que la etapa pertenece al proyecto
+        $etapa = DB::table('etapa')
+            ->where('eta_id', $etaId)
+            ->where('eta_pro_id', $proId)
+            ->first();
+
+        if (!$etapa) {
+            abort(404, 'La etapa no existe.');
+        }
+
+        $request->validate([
+            'descripcion' => 'required|string|max:1000',
+            'archivo'     => 'nullable|file|max:5120', // 5MB máximo
+        ]);
+
+        $archivoUrl = null;
+
+        if ($request->hasFile('archivo')) {
+            $path = $request->file('archivo')->store('evidencias', 'public');
+            $archivoUrl = $path;
+        }
+
+        DB::table('evidencia')->insert([
+            'evid_apr_id'    => $aprendiz->apr_id,
+            'evid_eta_id'    => $etaId,
+            'evid_pro_id'    => $proId,
+            'evid_archivo'   => $archivoUrl,
+            'evid_fecha'     => now(),
+            'evid_estado'    => 'Pendiente',
+            'evid_comentario'=> null,
+        ]);
+
+        return back()->with('success', '✅ Evidencia enviada correctamente. El instructor la revisará.');
     }
 }
