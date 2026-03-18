@@ -199,7 +199,77 @@ class InstructorController extends Controller
             ->get();
 
         return view('instructor.reporte-seguimiento', compact(
-            'proyecto', 'etapas', 'aprendices', 'entregas', 'evidencias'
-        ));
+    'proyecto', 'etapas', 'aprendices', 'entregas', 'evidencias'
+));
+}
+
+// ✅ MÉTODO SEPARADO (FUERA del anterior)
+public function detalleProyecto($id)
+{
+    $usrDocumento = session('documento');
+
+    $proyecto = DB::table('proyecto')
+        ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
+        ->where('proyecto.pro_id', $id)
+        ->where('proyecto.ins_usr_documento', $usrDocumento)
+        ->select('proyecto.*', 'empresa.emp_nombre')
+        ->first();
+
+    if (!$proyecto) {
+        abort(403, 'No tienes acceso a este proyecto');
     }
+
+    // Obtener etapas del proyecto
+    $etapas = DB::table('etapa')
+        ->where('eta_pro_id', $id)
+        ->orderBy('eta_orden')
+        ->get();
+
+    // Obtener postulaciones con estado
+    $postulaciones = DB::table('postulacion')
+        ->join('aprendiz', 'postulacion.apr_id', '=', 'aprendiz.apr_id')
+        ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
+        ->where('postulacion.pro_id', $id)
+        ->select('postulacion.*', 'aprendiz.apr_nombre', 'aprendiz.apr_apellido',
+                 'aprendiz.apr_programa', 'usuario.usr_correo')
+        ->orderByDesc('postulacion.pos_fecha')
+        ->get();
+
+    // Obtener integrantes aprobados
+    $integrantes = DB::table('postulacion')
+        ->join('aprendiz', 'postulacion.apr_id', '=', 'aprendiz.apr_id')
+        ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
+        ->where('postulacion.pro_id', $id)
+        ->where('postulacion.pos_estado', 'Aprobada')
+        ->select('aprendiz.*', 'usuario.usr_correo', 'postulacion.pos_fecha')
+        ->get();
+
+    return view('instructor.detalle_proyecto', compact('proyecto', 'etapas', 'postulaciones', 'integrantes'));
+}
+
+    // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN (SOLO EL INSTRUCTOR)
+    public function cambiarEstadoPostulacion(Request $request, int $id)
+    {
+        $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
+
+        $usrDocumento = session('documento');
+
+        // Verificar que la postulación pertenece a un proyecto del instructor
+        $postulacion = DB::table('postulacion')
+            ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
+            ->where('postulacion.pos_id', $id)
+            ->where('proyecto.ins_usr_documento', $usrDocumento)
+            ->first();
+
+        if (!$postulacion) {
+            abort(403, 'No tienes permiso para cambiar el estado de esta postulación.');
+        }
+
+        DB::table('postulacion')->where('pos_id', $id)->update(['pos_estado' => $request->estado]);
+
+        return back()->with('success', 'Estado de postulación actualizado correctamente.');
+    }
+
+        
+    
 }

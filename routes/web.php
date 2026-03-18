@@ -92,8 +92,11 @@ Route::middleware(['auth.custom', 'rol:3'])->prefix('empresa')->name('empresa.')
 Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instructor.')->group(function () {
     Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
     Route::get('/proyectos', [InstructorController::class, 'proyectos'])->name('proyectos');
+    // 🔥 ESTA ES LA QUE FALTABA
+    Route::get('/proyectos/{id}', [InstructorController::class, 'detalleProyecto'])->name('proyecto.detalle');
     Route::get('/historial', [InstructorController::class, 'historial'])->name('historial');
     Route::get('/proyectos/{id}/reporte', [InstructorController::class, 'reporteSeguimiento'])->name('reporte');
+    Route::post('/postulaciones/{id}/estado', [InstructorController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado');
     Route::get('/aprendices', [InstructorController::class, 'aprendices'])->name('aprendices');
     Route::get('/perfil', [InstructorController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [InstructorController::class, 'actualizarPerfil'])->name('perfil.update');
@@ -113,4 +116,9 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::post('/empresas/{id}/estado', [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
     Route::get('/proyectos', [AdminController::class, 'proyectos'])->name('proyectos');
     Route::post('/proyectos/{id}/estado', [AdminController::class, 'cambiarEstadoProyecto'])->name('proyectos.estado');
+    Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])
+    ->name('proyectos.asignar');
+    Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])
+    ->name('proyectos.asignar');
+    
 });
