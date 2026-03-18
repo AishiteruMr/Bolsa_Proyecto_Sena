@@ -416,6 +416,25 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #39a900;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: #2d8500;
+}
+
 /* CARD */
 .card {
     background: white;
@@ -423,6 +442,105 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     overflow: hidden;
+    margin-bottom: 20px;
+}
+
+/* FORMULARIOS */
+.stage-form {
+    width: 100%;
+}
+
+.image-upload-form {
+    width: 100%;
+}
+
+.stage-form input,
+.image-upload-form input {
+    font-family: inherit;
+}
+
+/* EVIDENCIAS */
+.evidence-item {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 20px;
+}
+
+.evidence-item:last-child {
+    border-bottom: none;
+}
+
+.evidence-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+}
+
+.evidence-info {
+    flex: 1;
+}
+
+.evidence-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.evidence-student {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.evidence-student i,
+.evidence-email i,
+.evidence-date i {
+    color: #39a900;
+    margin-right: 6px;
+}
+
+.evidence-email,
+.evidence-date {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.evidence-file {
+    text-align: right;
+}
+
+.file-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #0056b3;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.file-link:hover {
+    background: #004085;
+}
+
+.evidence-form {
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.evidence-form textarea {
+    font-family: inherit;
 }
 
 /* RESPONSIVE */
@@ -451,5 +569,17 @@
 
     .project-title {
         font-size: 18px;
+    }
+
+    .evidence-header {
+        grid-template-columns: 1fr;
+    }
+
+    .evidence-file {
+        text-align: left;
+    }
+
+    .stage-form {
+        grid-template-columns: 1fr !important;
     }
 }

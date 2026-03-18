@@ -97,6 +97,19 @@ Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instruc
     Route::get('/historial', [InstructorController::class, 'historial'])->name('historial');
     Route::get('/proyectos/{id}/reporte', [InstructorController::class, 'reporteSeguimiento'])->name('reporte');
     Route::post('/postulaciones/{id}/estado', [InstructorController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado');
+    
+    // RUTAS PARA ETAPAS
+    Route::post('/proyectos/{id}/etapas', [InstructorController::class, 'crearEtapa'])->name('etapas.crear');
+    Route::put('/etapas/{id}', [InstructorController::class, 'editarEtapa'])->name('etapas.editar');
+    Route::delete('/etapas/{id}', [InstructorController::class, 'eliminarEtapa'])->name('etapas.eliminar');
+    
+    // RUTAS PARA IMAGEN DE PROYECTO
+    Route::post('/proyectos/{id}/imagen', [InstructorController::class, 'subirImagenProyecto'])->name('proyectos.imagen');
+    
+    // RUTAS PARA EVIDENCIAS
+    Route::get('/proyectos/{id}/evidencias', [InstructorController::class, 'verEvidencias'])->name('evidencias.ver');
+    Route::put('/evidencias/{id}', [InstructorController::class, 'calificarEvidencia'])->name('evidencias.calificar');
+    
     Route::get('/aprendices', [InstructorController::class, 'aprendices'])->name('aprendices');
     Route::get('/perfil', [InstructorController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [InstructorController::class, 'actualizarPerfil'])->name('perfil.update');

@@ -35,13 +35,38 @@
             <p class="project-subtitle">Detalles del proyecto y gestión de postulaciones</p>
         </div>
 
-        <!-- INFORMACIÓN DEL PROYECTO -->
-        <div class="card">
-            @if($proyecto->pro_imagen_url)
-                <img src="{{ $proyecto->pro_imagen_url }}" alt="{{ $proyecto->pro_titulo_proyecto }}" class="project-image">
-            @endif
+        <!-- IMAGEN DEL PROYECTO -->
+        <h2 class="section-title">
+            <i class="fas fa-image" style="margin-right: 8px;"></i>Imagen del Proyecto
+        </h2>
 
-            <div class="project-info-section">
+        <div class="card">
+            <div style="padding: 20px;">
+                @if($proyecto->pro_imagen_url)
+                    <div style="margin-bottom: 20px;">
+                        <img src="{{ $proyecto->pro_imagen_url }}" alt="{{ $proyecto->pro_titulo_proyecto }}" class="project-image">
+                    </div>
+                @else
+                    <div style="background: #f5f5f5; padding: 40px; text-align: center; border-radius: 6px; margin-bottom: 20px;">
+                        <i class="fas fa-image" style="font-size: 48px; color: #ccc; margin-bottom: 12px;"></i>
+                        <p style="color: #666;">Sin imagen asignada</p>
+                    </div>
+                @endif
+
+                <form action="{{ route('instructor.proyectos.imagen', $proyecto->pro_id) }}" method="POST" enctype="multipart/form-data" class="image-upload-form">
+                    @csrf
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <input type="file" name="imagen" accept="image/*" required style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: white;">
+                        <button type="submit" class="btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #39a900; color: white; border-radius: 6px; border: none; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-upload"></i> Subir Imagen
+                        </button>
+                    </div>
+                    @error('imagen')
+                        <p style="color: #dc3545; font-size: 12px; margin-top: 8px;">{{ $message }}</p>
+                    @enderror
+                </form>
+            </div>
+        </div>
                 <div class="project-info-item">
                     <span class="project-info-label">Empresa:</span>
                     <span class="project-info-value">{{ $proyecto->emp_nombre }}</span>
@@ -183,28 +208,81 @@
             <i class="fas fa-tasks" style="margin-right: 8px;"></i>Etapas del Proyecto
         </h2>
 
+        <!-- FORMULARIO PARA AGREGAR ETAPA -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div style="padding: 20px;">
+                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">
+                    <i class="fas fa-plus" style="margin-right: 8px;"></i>Agregar Nueva Etapa
+                </h3>
+                <form action="{{ route('instructor.etapas.crear', $proyecto->pro_id) }}" method="POST" class="stage-form">
+                    @csrf
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 2fr auto; gap: 12px; align-items: flex-end;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: #333;">Orden</label>
+                            <input type="number" name="orden" required min="1" placeholder="1" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: #333;">Nombre</label>
+                            <input type="text" name="nombre" required placeholder="Ej: Análisis" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: #333;">Descripción</label>
+                            <input type="text" name="descripcion" required placeholder="Descripción de la etapa" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        </div>
+                        <button type="submit" class="btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #39a900; color: white; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; white-space: nowrap;">
+                            <i class="fas fa-plus"></i> Agregar
+                        </button>
+                    </div>
+                    @if ($errors->has('orden') || $errors->has('nombre') || $errors->has('descripcion'))
+                        <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+                            @error('orden'){{ $message }}@enderror
+                            @error('nombre'){{ $message }}@enderror
+                            @error('descripcion'){{ $message }}@enderror
+                        </div>
+                    @endif
+                </form>
+            </div>
+        </div>
+
+        <!-- LISTA DE ETAPAS -->
         <div style="display: grid; gap: 12px;">
             @forelse($etapas as $etapa)
                 <div class="stage-item">
-                    <div class="stage-name">
-                        <span class="stage-order">{{ $etapa->eta_orden }}</span>
-                        {{ $etapa->eta_nombre }}
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <div class="stage-name">
+                                <span class="stage-order">{{ $etapa->eta_orden }}</span>
+                                {{ $etapa->eta_nombre }}
+                            </div>
+                            <div class="stage-description">{{ $etapa->eta_descripcion ?? 'Sin descripción' }}</div>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-shrink: 0;">
+                            <form action="{{ route('instructor.etapas.eliminar', $etapa->eta_id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-reject" style="padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;" onclick="return confirm('¿Estás seguro?')">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="stage-description">{{ $etapa->eta_descripcion ?? 'Sin descripción' }}</div>
                 </div>
             @empty
                 <div class="empty-state">
                     <i class="fas fa-tasks empty-state-icon"></i>
                     <h4 class="empty-state-title">Sin etapas</h4>
-                    <p class="empty-state-message">No hay etapas definidas para este proyecto.</p>
+                    <p class="empty-state-message">No hay etapas definidas para este proyecto. ¡Crea una arriba!</p>
                 </div>
             @endforelse
         </div>
 
-        <!-- BOTÓN REPORTE DE SEGUIMIENTO -->
-        <div style="margin-top: 32px; display: flex; gap: 12px;">
+        <!-- BOTONES DE ACCIONES -->
+        <div style="margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap;">
             <a href="{{ route('instructor.reporte', $proyecto->pro_id) }}" class="btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #39a900; color: white; border-radius: 6px; text-decoration: none; font-weight: 600; transition: background 0.2s;">
-                <i class="fas fa-chart-bar"></i> Ver Reporte de Seguimiento
+                <i class="fas fa-chart-bar"></i> Reporte de Seguimiento
+            </a>
+            <a href="{{ route('instructor.evidencias.ver', $proyecto->pro_id) }}" class="btn-primary" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #0056b3; color: white; border-radius: 6px; text-decoration: none; font-weight: 600; transition: background 0.2s;">
+                <i class="fas fa-file-upload"></i> Ver Evidencias
             </a>
         </div>
     </div>

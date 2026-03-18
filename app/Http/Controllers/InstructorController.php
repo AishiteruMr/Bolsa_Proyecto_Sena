@@ -247,7 +247,7 @@ public function detalleProyecto($id)
     return view('instructor.detalle_proyecto', compact('proyecto', 'etapas', 'postulaciones', 'integrantes'));
 }
 
-    // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN (SOLO EL INSTRUCTOR)
+     // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN (SOLO EL INSTRUCTOR)
     public function cambiarEstadoPostulacion(Request $request, int $id)
     {
         $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
@@ -268,6 +268,189 @@ public function detalleProyecto($id)
         DB::table('postulacion')->where('pos_id', $id)->update(['pos_estado' => $request->estado]);
 
         return back()->with('success', 'Estado de postulación actualizado correctamente.');
+    }
+
+    // ✅ MÉTODO PARA CREAR ETAPA
+    public function crearEtapa(Request $request, int $proId)
+    {
+        $usrDocumento = session('documento');
+
+        // Verificar que el proyecto pertenece al instructor
+        $proyecto = DB::table('proyecto')
+            ->where('pro_id', $proId)
+            ->where('ins_usr_documento', $usrDocumento)
+            ->first();
+
+        if (!$proyecto) {
+            abort(403, 'No tienes permiso para agregar etapas a este proyecto.');
+        }
+
+        $request->validate([
+            'nombre'       => 'required|string|max:200',
+            'descripcion'  => 'required|string|max:1000',
+            'orden'        => 'required|integer|min:1',
+        ]);
+
+        DB::table('etapa')->insert([
+            'eta_pro_id'      => $proId,
+            'eta_orden'       => $request->orden,
+            'eta_nombre'      => $request->nombre,
+            'eta_descripcion' => $request->descripcion,
+        ]);
+
+        return back()->with('success', 'Etapa creada correctamente.');
+    }
+
+    // ✅ MÉTODO PARA EDITAR ETAPA
+    public function editarEtapa(Request $request, int $etaId)
+    {
+        $usrDocumento = session('documento');
+
+        // Verificar que la etapa pertenece a un proyecto del instructor
+        $etapa = DB::table('etapa')
+            ->join('proyecto', 'etapa.eta_pro_id', '=', 'proyecto.pro_id')
+            ->where('etapa.eta_id', $etaId)
+            ->where('proyecto.ins_usr_documento', $usrDocumento)
+            ->first();
+
+        if (!$etapa) {
+            abort(403, 'No tienes permiso para editar esta etapa.');
+        }
+
+        $request->validate([
+            'nombre'       => 'required|string|max:200',
+            'descripcion'  => 'required|string|max:1000',
+            'orden'        => 'required|integer|min:1',
+        ]);
+
+        DB::table('etapa')->where('eta_id', $etaId)->update([
+            'eta_orden'       => $request->orden,
+            'eta_nombre'      => $request->nombre,
+            'eta_descripcion' => $request->descripcion,
+        ]);
+
+        return back()->with('success', 'Etapa actualizada correctamente.');
+    }
+
+    // ✅ MÉTODO PARA ELIMINAR ETAPA
+    public function eliminarEtapa(int $etaId)
+    {
+        $usrDocumento = session('documento');
+
+        // Verificar que la etapa pertenece a un proyecto del instructor
+        $etapa = DB::table('etapa')
+            ->join('proyecto', 'etapa.eta_pro_id', '=', 'proyecto.pro_id')
+            ->where('etapa.eta_id', $etaId)
+            ->where('proyecto.ins_usr_documento', $usrDocumento)
+            ->first();
+
+        if (!$etapa) {
+            abort(403, 'No tienes permiso para eliminar esta etapa.');
+        }
+
+        DB::table('etapa')->where('eta_id', $etaId)->delete();
+
+        return back()->with('success', 'Etapa eliminada correctamente.');
+    }
+
+    // ✅ MÉTODO PARA SUBIR IMAGEN AL PROYECTO
+    public function subirImagenProyecto(Request $request, int $proId)
+    {
+        $usrDocumento = session('documento');
+
+        // Verificar que el proyecto pertenece al instructor
+        $proyecto = DB::table('proyecto')
+            ->where('pro_id', $proId)
+            ->where('ins_usr_documento', $usrDocumento)
+            ->first();
+
+        if (!$proyecto) {
+            abort(403, 'No tienes permiso para editar este proyecto.');
+        }
+
+        $request->validate([
+            'imagen' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        if ($request->hasFile('imagen')) {
+            $path = $request->file('imagen')->store('proyectos', 'public');
+            $imagenUrl = '/storage/' . $path;
+
+            DB::table('proyecto')->where('pro_id', $proId)->update([
+                'pro_imagen_url' => $imagenUrl,
+            ]);
+
+            return back()->with('success', 'Imagen del proyecto actualizada correctamente.');
+        }
+
+        return back()->with('error', 'No se pudo guardar la imagen.');
+    }
+
+    // ✅ MÉTODO PARA VER EVIDENCIAS DE UN PROYECTO
+    public function verEvidencias(int $proId)
+    {
+        $usrDocumento = session('documento');
+
+        // Verificar que el proyecto pertenece al instructor
+        $proyecto = DB::table('proyecto')
+            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
+            ->where('proyecto.pro_id', $proId)
+            ->where('proyecto.ins_usr_documento', $usrDocumento)
+            ->select('proyecto.*', 'empresa.emp_nombre')
+            ->first();
+
+        if (!$proyecto) {
+            abort(403, 'No tienes acceso a este proyecto.');
+        }
+
+        // Obtener evidencias del proyecto con detalles del aprendiz y etapa
+        $evidencias = DB::table('evidencia')
+            ->join('aprendiz', 'evidencia.evid_apr_id', '=', 'aprendiz.apr_id')
+            ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
+            ->join('etapa', 'evidencia.evid_eta_id', '=', 'etapa.eta_id')
+            ->where('evidencia.evid_pro_id', $proId)
+            ->select(
+                'evidencia.*',
+                'aprendiz.apr_nombre',
+                'aprendiz.apr_apellido',
+                'usuario.usr_correo',
+                'etapa.eta_nombre',
+                'etapa.eta_orden'
+            )
+            ->orderBy('etapa.eta_orden')
+            ->orderByDesc('evidencia.evid_fecha')
+            ->get();
+
+        return view('instructor.evidencias', compact('proyecto', 'evidencias'));
+    }
+
+    // ✅ MÉTODO PARA CALIFICAR EVIDENCIA
+    public function calificarEvidencia(Request $request, int $evidId)
+    {
+        $usrDocumento = session('documento');
+
+        // Verificar que la evidencia pertenece a un proyecto del instructor
+        $evidencia = DB::table('evidencia')
+            ->join('proyecto', 'evidencia.evid_pro_id', '=', 'proyecto.pro_id')
+            ->where('evidencia.evid_id', $evidId)
+            ->where('proyecto.ins_usr_documento', $usrDocumento)
+            ->first();
+
+        if (!$evidencia) {
+            abort(403, 'No tienes permiso para calificar esta evidencia.');
+        }
+
+        $request->validate([
+            'estado'      => 'required|in:Aprobada,Rechazada,Pendiente',
+            'comentario'  => 'nullable|string|max:1000',
+        ]);
+
+        DB::table('evidencia')->where('evid_id', $evidId)->update([
+            'evid_estado'     => $request->estado,
+            'evid_comentario' => $request->comentario,
+        ]);
+
+        return back()->with('success', 'Evidencia calificada correctamente.');
     }
 
         
