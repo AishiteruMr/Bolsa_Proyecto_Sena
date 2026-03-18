@@ -272,7 +272,8 @@ class AprendizController extends Controller
         // Obtener información del proyecto
         $proyecto = DB::table('proyecto')
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->leftJoin('instructor', 'proyecto.ins_usr_documento', '=', 'instructor.usr_documento')
+            ->leftJoin('usuario', 'proyecto.ins_usr_documento', '=', 'usuario.usr_documento')
+            ->leftJoin('instructor', 'usuario.usr_id', '=', 'instructor.usr_id')
             ->where('proyecto.pro_id', $proId)
             ->select(
                 'proyecto.*',
