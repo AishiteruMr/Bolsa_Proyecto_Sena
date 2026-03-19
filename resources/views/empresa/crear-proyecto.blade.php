@@ -11,10 +11,10 @@
 @endsection
 
 @section('content')
-<div style="max-width:760px;">
-    <div class="card">
+<div style="max-width:760px; margin:auto;">
+    <div class="card" >
         <h3 style="font-size:17px; font-weight:600; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid #f0f0f0;">
-            <i class="fas fa-plus-circle" style="color:#39a900;"></i> Detalles del Proyecto
+            <i style="color:#39a900;"></i> Detalles del Proyecto
         </h3>
 
         <form action="{{ route('empresa.proyectos.store') }}" method="POST" enctype="multipart/form-data">
