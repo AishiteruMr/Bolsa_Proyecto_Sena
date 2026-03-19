@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         
         if (!$usuarioAdmin) {
             $adminId = DB::table('usuario')->insertGetId([
-                'usr_documento'    => 10431,
+                'usr_documento'    => 1043178690,
                 'usr_correo'       => 'admin@gmail.com',
                 'usr_contrasena'   => Hash::make('admin123'),
                 'rol_id'           => 4,
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
         $empresa = DB::table('usuario')->where('usr_correo', 'empresa@gmail.com')->first();
         if (!$empresa) {
             $empresaId = DB::table('usuario')->insertGetId([
-                'usr_documento'      => 30123,
+                'usr_documento'      => 3012366765,
                 'usr_correo'         => 'empresa@gmail.com',
                 'usr_contrasena'     => Hash::make('empresa123'),
                 'rol_id'             => 3,
@@ -56,7 +56,7 @@ class DatabaseSeeder extends Seeder
 
             DB::table('empresa')->insertOrIgnore([
                 'usr_id'        => $empresaId,
-                'emp_nit'       => 1234,
+                'emp_nit'       => 12345475784,
                 'emp_nombre'    => 'Empresa',
                 'emp_representante' => 'Representante',
                 'emp_correo'    => 'empresa@gmail.com',
@@ -94,7 +94,7 @@ class DatabaseSeeder extends Seeder
         $aprendiz = DB::table('usuario')->where('usr_correo', 'aprendiz@gmail.com')->first();
         if (!$aprendiz) {
             $aprendizId = DB::table('usuario')->insertGetId([
-                'usr_documento'      => 10123,
+                'usr_documento'      => 1016555423,
                 'usr_correo'         => 'aprendiz@gmail.com',
                 'usr_contrasena'     => Hash::make('aprendiz123'),
                 'rol_id'             => 1,

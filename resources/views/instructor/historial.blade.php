@@ -1,6 +1,24 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Historial de Proyectos')
+@section('sidebar-nav')
+
+    <span class="nav-label">Principal</span>
+    <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
+        <i class="fas fa-home"></i> Dashboard
+    </a>
+    <a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos') ? 'active' : '' }}">
+        <i class="fas fa-project-diagram"></i> Mis Proyectos
+    </a>
+    <a href="{{ route('instructor.historial') }}" class="nav-item {{ request()->routeIs('instructor.historial') ? 'active' : '' }}">
+        <i class="fas fa-history"></i> Historial
+    </a>
+    <a href="{{ route('instructor.aprendices') }}" class="nav-item {{ request()->routeIs('instructor.aprendices') ? 'active' : '' }}">
+        <i class="fas fa-users"></i> Aprendices
+    </a>
+@endsection
+
+
 
 @section('content')
 <div class="container-fluid py-4">
