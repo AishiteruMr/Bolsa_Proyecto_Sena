@@ -41,7 +41,80 @@ class DatabaseSeeder extends Seeder
             'adm_estado'  => 1,
         ]);
 
-        $this->command->info('✅ Datos iniciales insertados correctamente.');
+        // =============================
+        // EMPRESA
+        // =============================
+        $empresa = DB::table('usuario')->where('usr_correo', 'empresa@gmail.com')->first();
+        if (!$empresa) {
+            $empresaId = DB::table('usuario')->insertGetId([
+                'usr_documento'      => 30123,
+                'usr_correo'         => 'empresa@gmail.com',
+                'usr_contrasena'     => Hash::make('empresa123'),
+                'rol_id'             => 3,
+                'usr_fecha_creacion' => now(),
+            ]);
+
+            DB::table('empresa')->insertOrIgnore([
+                'usr_id'        => $empresaId,
+                'emp_nit'       => 1234,
+                'emp_nombre'    => 'Empresa',
+                'emp_representante' => 'Representante',
+                'emp_correo'    => 'empresa@gmail.com',
+                'emp_contraseña' => Hash::make('empresa123'),
+                'emp_estado'    => 1,
+            ]);
+        }
+
+        // =============================
+        // INSTRUCTOR
+        // =============================
+        $instructor = DB::table('usuario')->where('usr_correo', 'instructor@gmail.com')->first();
+        if (!$instructor) {
+            $instructorId = DB::table('usuario')->insertGetId([
+                'usr_documento'      => 20123,
+                'usr_correo'         => 'instructor@gmail.com',
+                'usr_contrasena'     => Hash::make('instructor123'),
+                'rol_id'             => 2,
+                'usr_fecha_creacion' => now(),
+            ]);
+
+            DB::table('instructor')->insertOrIgnore([
+                'usr_id'        => $instructorId,
+                'ins_nombre'    => 'Instructor',
+                'ins_apellido'  => 'INS',
+                'ins_especialidad' => 'Programador',
+                'ins_estado'    => 1,
+                'ins_estado_dis' => 'Disponible',
+            ]);
+        }
+
+        // =============================
+        // APRENDIZ 
+        // =============================
+        $aprendiz = DB::table('usuario')->where('usr_correo', 'aprendiz@gmail.com')->first();
+        if (!$aprendiz) {
+            $aprendizId = DB::table('usuario')->insertGetId([
+                'usr_documento'      => 10123,
+                'usr_correo'         => 'aprendiz@gmail.com',
+                'usr_contrasena'     => Hash::make('aprendiz123'),
+                'rol_id'             => 1,
+                'usr_fecha_creacion' => now(),
+            ]);
+
+            DB::table('aprendiz')->insertOrIgnore([
+                'apr_id'        => $aprendizId,
+                'usr_id'        => $aprendizId,
+                'apr_nombre'    => 'Aprendiz',
+                'apr_apellido'  => 'APP',
+                'apr_programa'   => 'Analasis',
+                'apr_estado'    => 1,
+            ]);
+        }
+
+        $this->command->info('    Datos iniciales insertados correctamente.');
         $this->command->info('   Credenciales admin: admin@gmail.com / admin123');
+        $this->command->info('   Credenciales empresa: empresa@gmail.com / empresa123');
+        $this->command->info('   Credenciales instructor: instructor@gmail.com / instructor123');
+        $this->command->info('   Credenciales aprendiz: aprendiz@gmail.com / aprendiz123');
     }
 }
