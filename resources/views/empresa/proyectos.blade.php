@@ -50,9 +50,6 @@
                             <td style="font-size:12px;">{{ $proyecto->pro_duracion_estimada }} días</td>
                             <td>
                                 <div style="display:flex; gap:6px; align-items:center;">
-                                    <a href="{{ route('empresa.proyectos.postulantes', $proyecto->pro_id) }}" class="btn btn-outline btn-sm" title="Ver postulantes">
-                                        <i class="fas fa-users"></i>
-                                    </a>
                                     <a href="{{ route('empresa.proyectos.edit', $proyecto->pro_id) }}" class="btn btn-outline btn-sm" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>

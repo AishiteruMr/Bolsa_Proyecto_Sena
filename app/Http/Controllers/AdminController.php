@@ -52,7 +52,10 @@ class AdminController extends Controller
 
     public function cambiarEstadoUsuario(Request $request, int $id)
     {
-        $request->validate(['tipo' => 'required|in:aprendiz,instructor', 'estado' => 'required|in:0,1']);
+        $request->validate([
+            'tipo' => 'required|in:aprendiz,instructor',
+            'estado' => 'required|in:0,1'
+        ]);
 
         if ($request->tipo === 'aprendiz') {
             DB::table('aprendiz')->where('apr_id', $id)->update(['apr_estado' => $request->estado]);
@@ -72,7 +75,11 @@ class AdminController extends Controller
     public function cambiarEstadoEmpresa(Request $request, int $id)
     {
         $request->validate(['estado' => 'required|in:0,1']);
-        DB::table('empresa')->where('emp_id', $id)->update(['emp_estado' => $request->estado]);
+
+        DB::table('empresa')
+            ->where('emp_id', $id)
+            ->update(['emp_estado' => $request->estado]);
+
         return back()->with('success', 'Estado de la empresa actualizado.');
     }
 
@@ -80,17 +87,49 @@ class AdminController extends Controller
     {
         $proyectos = DB::table('proyecto')
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->select('proyecto.*', 'empresa.emp_nombre')
+            ->leftJoin('usuario', 'proyecto.ins_usr_documento', '=', 'usuario.usr_documento')
+            ->leftJoin('instructor', 'usuario.usr_id', '=', 'instructor.usr_id')
+            ->select(
+                'proyecto.*',
+                'empresa.emp_nombre',
+                'instructor.ins_nombre'
+            )
             ->orderByDesc('proyecto.pro_id')
             ->get();
 
-        return view('admin.proyectos', compact('proyectos'));
+        $instructores = DB::table('instructor')
+            ->join('usuario', 'instructor.usr_id', '=', 'usuario.usr_id')
+            ->select('instructor.ins_nombre', 'usuario.usr_documento')
+            ->get();
+
+        return view('admin.proyectos', compact('proyectos', 'instructores'));
     }
 
     public function cambiarEstadoProyecto(Request $request, int $id)
     {
-        $request->validate(['estado' => 'required|in:Activo,Inactivo,Aprobado,Rechazado']);
-        DB::table('proyecto')->where('pro_id', $id)->update(['pro_estado' => $request->estado]);
+        $request->validate([
+            'estado' => 'required|in:Activo,Inactivo,Aprobado,Rechazado'
+        ]);
+
+        DB::table('proyecto')
+            ->where('pro_id', $id)
+            ->update(['pro_estado' => $request->estado]);
+
         return back()->with('success', 'Estado del proyecto actualizado.');
+    }
+
+    public function asignarInstructor(Request $request, $id)
+    {
+        $request->validate([
+            'ins_usr_documento' => 'required|exists:usuario,usr_documento'
+        ]);
+
+        DB::table('proyecto')
+            ->where('pro_id', $id)
+            ->update([
+                'ins_usr_documento' => $request->ins_usr_documento
+            ]);
+
+        return back()->with('success', 'Instructor asignado correctamente');
     }
 }

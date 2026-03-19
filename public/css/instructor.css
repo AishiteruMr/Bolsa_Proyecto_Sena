@@ -1,0 +1,585 @@
+/* ========================================
+   ESTILOS DEL MÓDULO INSTRUCTOR
+   ======================================== */
+
+/* DETALLE PROYECTO */
+.project-detail {
+    margin-bottom: 24px;
+}
+
+.project-header {
+    margin-bottom: 24px;
+}
+
+.project-back-link {
+    color: #666;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.project-back-link:hover {
+    color: #333;
+}
+
+.project-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.project-subtitle {
+    color: #666;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.project-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 20px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.project-info-section {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.project-info-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.project-info-item:last-child {
+    margin-bottom: 0;
+}
+
+.project-info-label {
+    font-weight: 600;
+    color: #333;
+    min-width: 120px;
+}
+
+.project-info-value {
+    color: #666;
+    flex: 1;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 30px 0 20px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #39a900;
+    color: #333;
+}
+
+/* POSTULACIONES */
+.postulation-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.postulation-item:hover {
+    background: #fafafa;
+}
+
+.postulation-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #39a900, #2d8500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.postulation-avatar span {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.postulation-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.postulation-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.postulation-program {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.postulation-program i {
+    color: #39a900;
+    margin-right: 6px;
+}
+
+.postulation-email {
+    font-size: 12px;
+    color: #888;
+}
+
+.postulation-email i {
+    margin-right: 6px;
+}
+
+.postulation-actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.postulation-status-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.postulation-date {
+    font-size: 11px;
+    color: #888;
+}
+
+.postulation-date i {
+    margin-right: 4px;
+}
+
+.postulation-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.postulation-buttons form {
+    display: inline;
+}
+
+.postulation-buttons button {
+    padding: 6px 12px;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    color: #ddd;
+    margin-bottom: 16px;
+}
+
+.empty-state-title {
+    color: #666;
+    margin-bottom: 8px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.empty-state-message {
+    color: #999;
+    font-size: 14px;
+}
+
+/* ETAPAS */
+.stage-item {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.stage-item:hover {
+    border-color: #39a900;
+    box-shadow: 0 2px 8px rgba(57, 169, 0, 0.1);
+}
+
+.stage-order {
+    display: inline-block;
+    background: #39a900;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.stage-name {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.stage-description {
+    color: #666;
+    font-size: 14px;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+/* ENTREGAS Y EVIDENCIAS */
+.delivery-item {
+    background: #fff;
+    border-left: 4px solid #39a900;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.delivery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.delivery-learner {
+    font-weight: 600;
+    color: #333;
+}
+
+.delivery-date {
+    font-size: 12px;
+    color: #888;
+}
+
+.delivery-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.delivery-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.delivery-status.approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.delivery-status.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* INTEGRANTES */
+.member-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.member-item:last-child {
+    border-bottom: none;
+}
+
+.member-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #39a900, #2d8500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.member-avatar span {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.member-info {
+    flex: 1;
+}
+
+.member-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.member-program {
+    font-size: 13px;
+    color: #666;
+}
+
+/* BADGE STYLES */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.badge-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge-info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* BOTONES */
+.btn-approve {
+    background: #28a745;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-approve:hover {
+    background: #218838;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-reject {
+    background: #dc3545;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-reject:hover {
+    background: #c82333;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #39a900;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: #2d8500;
+}
+
+/* CARD */
+.card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+/* FORMULARIOS */
+.stage-form {
+    width: 100%;
+}
+
+.image-upload-form {
+    width: 100%;
+}
+
+.stage-form input,
+.image-upload-form input {
+    font-family: inherit;
+}
+
+/* EVIDENCIAS */
+.evidence-item {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 20px;
+}
+
+.evidence-item:last-child {
+    border-bottom: none;
+}
+
+.evidence-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+}
+
+.evidence-info {
+    flex: 1;
+}
+
+.evidence-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.evidence-student {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.evidence-student i,
+.evidence-email i,
+.evidence-date i {
+    color: #39a900;
+    margin-right: 6px;
+}
+
+.evidence-email,
+.evidence-date {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.evidence-file {
+    text-align: right;
+}
+
+.file-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #0056b3;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.file-link:hover {
+    background: #004085;
+}
+
+.evidence-form {
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.evidence-form textarea {
+    font-family: inherit;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .postulation-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .postulation-actions {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .postulation-buttons {
+        width: 100%;
+    }
+
+    .postulation-buttons button {
+        flex: 1;
+    }
+
+    .section-title {
+        font-size: 16px;
+    }
+
+    .project-title {
+        font-size: 18px;
+    }
+
+    .evidence-header {
+        grid-template-columns: 1fr;
+    }
+
+    .evidence-file {
+        text-align: left;
+    }
+
+    .stage-form {
+        grid-template-columns: 1fr !important;
+    }
+}

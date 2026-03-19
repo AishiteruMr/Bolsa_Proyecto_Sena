@@ -47,7 +47,7 @@
                         <i class="fas fa-calendar-alt" style="margin-right:6px;"></i>Postulado: {{ \Carbon\Carbon::parse($post->pos_fecha)->format('d/m/Y') }}
                     </p>
                 </div>
-                <div style="flex-shrink:0;">
+                <div style="flex-shrink:0; display: flex; align-items: center; gap: 12px;">
                     @switch($post->pos_estado)
                         @case('Pendiente')
                             <span class="badge badge-warning">
@@ -58,6 +58,9 @@
                             <span class="badge badge-success">
                                 <i class="fas fa-check-circle" style="margin-right:4px;"></i>Aprobada
                             </span>
+                            <a href="{{ route('aprendiz.proyecto.detalle', $post->pro_id) }}" class="btn-action" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #0056b3; color: white; border: none; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#004085'" onmouseout="this.style.background='#0056b3'">
+                                <i class="fas fa-eye"></i> Ver Detalle
+                            </a>
                             @break
                         @case('Rechazada')
                             <span class="badge badge-danger">

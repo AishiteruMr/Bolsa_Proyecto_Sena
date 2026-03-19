@@ -58,7 +58,6 @@ class EmpresaController extends Controller
         $request->validate([
             'titulo'       => 'required|string|max:200',
             'categoria'    => 'required|string|max:100',
-            'ubicacion'    => 'required|string|max:255',
             'descripcion'  => 'required|string|max:500',
             'requisitos'   => 'required|string|max:200',
             'habilidades'  => 'required|string|max:200',
@@ -82,7 +81,6 @@ class EmpresaController extends Controller
             'emp_nit'                    => $nit,
             'pro_titulo_proyecto'        => $request->titulo,
             'pro_categoria'              => $request->categoria,
-            'pro_ubicacion'              => $request->ubicacion,
             'pro_descripcion'            => $request->descripcion,
             'pro_requisitos_especificos' => $request->requisitos,
             'pro_habilidades_requerida'  => $request->habilidades,
@@ -112,7 +110,6 @@ class EmpresaController extends Controller
         $request->validate([
             'titulo'      => 'required|string|max:200',
             'categoria'   => 'required|string|max:100',
-            'ubicacion'   => 'required|string|max:255',
             'descripcion' => 'required|string|max:500',
             'requisitos'  => 'required|string|max:200',
             'habilidades' => 'required|string|max:200',
@@ -129,7 +126,6 @@ class EmpresaController extends Controller
         $datos = [
             'pro_titulo_proyecto'        => $request->titulo,
             'pro_categoria'              => $request->categoria,
-            'pro_ubicacion'              => $request->ubicacion,
             'pro_descripcion'            => $request->descripcion,
             'pro_requisitos_especificos' => $request->requisitos,
             'pro_habilidades_requerida'  => $request->habilidades,

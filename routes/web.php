@@ -57,6 +57,8 @@ Route::middleware(['auth.custom', 'rol:1'])->prefix('aprendiz')->name('aprendiz.
     Route::get('/proyectos', [AprendizController::class, 'proyectos'])->name('proyectos');
     Route::post('/proyectos/{id}/postular', [AprendizController::class, 'postular'])->name('postular');
     Route::get('/mis-postulaciones', [AprendizController::class, 'misPostulaciones'])->name('postulaciones');
+    Route::get('/proyectos/{id}/detalle', [AprendizController::class, 'verDetalleProyecto'])->name('proyecto.detalle');
+    Route::post('/proyectos/{proId}/etapas/{etaId}/evidencia', [AprendizController::class, 'enviarEvidencia'])->name('evidencia.enviar');
     Route::get('/historial', [AprendizController::class, 'historial'])->name('historial');
     Route::get('/mis-entregas', [AprendizController::class, 'misEntregas'])->name('entregas');
     Route::get('/perfil', [AprendizController::class, 'perfil'])->name('perfil');
@@ -92,8 +94,24 @@ Route::middleware(['auth.custom', 'rol:3'])->prefix('empresa')->name('empresa.')
 Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instructor.')->group(function () {
     Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
     Route::get('/proyectos', [InstructorController::class, 'proyectos'])->name('proyectos');
+    // 🔥 ESTA ES LA QUE FALTABA
+    Route::get('/proyectos/{id}', [InstructorController::class, 'detalleProyecto'])->name('proyecto.detalle');
     Route::get('/historial', [InstructorController::class, 'historial'])->name('historial');
     Route::get('/proyectos/{id}/reporte', [InstructorController::class, 'reporteSeguimiento'])->name('reporte');
+    Route::post('/postulaciones/{id}/estado', [InstructorController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado');
+    
+    // RUTAS PARA ETAPAS
+    Route::post('/proyectos/{id}/etapas', [InstructorController::class, 'crearEtapa'])->name('etapas.crear');
+    Route::put('/etapas/{id}', [InstructorController::class, 'editarEtapa'])->name('etapas.editar');
+    Route::delete('/etapas/{id}', [InstructorController::class, 'eliminarEtapa'])->name('etapas.eliminar');
+    
+    // RUTAS PARA IMAGEN DE PROYECTO
+    Route::post('/proyectos/{id}/imagen', [InstructorController::class, 'subirImagenProyecto'])->name('proyectos.imagen');
+    
+    // RUTAS PARA EVIDENCIAS
+    Route::get('/proyectos/{id}/evidencias', [InstructorController::class, 'verEvidencias'])->name('evidencias.ver');
+    Route::put('/evidencias/{id}', [InstructorController::class, 'calificarEvidencia'])->name('evidencias.calificar');
+    
     Route::get('/aprendices', [InstructorController::class, 'aprendices'])->name('aprendices');
     Route::get('/perfil', [InstructorController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [InstructorController::class, 'actualizarPerfil'])->name('perfil.update');
@@ -113,4 +131,9 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::post('/empresas/{id}/estado', [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
     Route::get('/proyectos', [AdminController::class, 'proyectos'])->name('proyectos');
     Route::post('/proyectos/{id}/estado', [AdminController::class, 'cambiarEstadoProyecto'])->name('proyectos.estado');
+    Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])
+    ->name('proyectos.asignar');
+    Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])
+    ->name('proyectos.asignar');
+    
 });
