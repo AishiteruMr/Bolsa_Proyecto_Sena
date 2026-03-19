@@ -1,0 +1,350 @@
+/* -------------------- BODY -------------------- */
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, rgba(58, 185, 122, 0.4) 0%, #1a5c00 40%, #39a900 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+@keyframes bgMove {
+    from {
+        background-position: center top;
+    }
+    to {
+        background-position: center bottom;
+    }
+}
+
+/* -------------------- WRAPPER -------------------- */
+.wrapper {
+    display: flex;
+    max-width: 950px;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px; /* antes: 24px — igualado al .container del proyecto antiguo */
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.15); /* mismo del .container antiguo */
+
+    /* Animación de entrada igual al proyecto antiguo */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+/* -------------------- LADO DEL FORMULARIO -------------------- */
+.form-side {
+    flex: 1;
+    padding: 52px 44px;
+    background: #f3f4f6; /* fondo del .container del proyecto antiguo */
+    transition:
+        transform 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+.form-side:hover {
+    transform: scale(1.01) translateY(-3px);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+}
+
+/* -------------------- CABECERA DEL FORM -------------------- */
+.form-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.form-header img {
+    width: 68px;
+    margin-bottom: 14px;
+}
+
+.form-header h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #264653;
+    margin-bottom: 4px;
+}
+
+.form-header p {
+    font-size: 13px;
+    color: #666;
+}
+
+/* -------------------- INPUTS -------------------- */
+.form-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #264653; 
+    margin-bottom: 8px;
+}
+
+.input-icon {
+    position: relative;
+}
+
+.input-icon i.icon-left {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 15px;
+    pointer-events: none;
+}
+
+.input-icon input {
+    width: 100%;
+    padding: 14px 16px 14px 46px;
+    border: 2px solid #e8edf0;
+    border-radius: 6px; 
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition:
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.input-icon input:focus {
+    border-color: #3ab97a; /* antes: #39a900 */
+    box-shadow: 0 0 8px rgba(58, 185, 122, 0.6); /* mismo del proyecto antiguo */
+    background: #f9fdfb;
+}
+
+/* -------------------- BOTÓN LOGIN -------------------- */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background: #3ab97a; /* antes: gradiente — simplificado al color del proyecto antiguo */
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-family: "Poppins", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(58, 185, 122, 0.3);
+}
+
+.btn-login:hover {
+    background: #34a36b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(58, 185, 122, 0.4);
+}
+
+.btn-login:active {
+    transform: scale(0.97);
+}
+
+/* -------------------- LINKS -------------------- */
+.links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-top: 20px;
+    color: #666;
+}
+
+.links a {
+    color: #3ab97a; /* antes: #39a900 */
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.links a:hover {
+    text-decoration: underline;
+    color: #34a36b;
+}
+
+/* -------------------- DIVISOR -------------------- */
+.divider {
+    text-align: center;
+    color: #aaa;
+    font-size: 12px;
+    margin: 24px 0;
+    position: relative;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 38%;
+    height: 1px;
+    background: #ddd;
+}
+
+.divider::before {
+    left: 0;
+}
+.divider::after {
+    right: 0;
+}
+
+/* -------------------- OPCIONES DE REGISTRO -------------------- */
+.register-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reg-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    border: 1px solid #ddd; /* igualado al .roles button del proyecto antiguo */
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #fff;
+    color: #264653;
+}
+
+.reg-btn:hover {
+    border-color: #3ab97a;
+    background: rgba(
+        58,
+        185,
+        122,
+        0.1
+    ); /* mismo del .roles button:hover antiguo */
+    transform: scale(1.03);
+}
+
+.reg-btn i {
+    font-size: 18px;
+    width: 22px;
+    text-align: center;
+}
+
+/* -------------------- LADO DEL MENSAJE -------------------- */
+.message-side {
+    width: 380px;
+    background: rgba(
+        255,
+        255,
+        255,
+        0.92
+    ); /* antes: gradiente oscuro — adaptado al proyecto antiguo */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-left: 1px solid #eee;
+}
+
+.message-side::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(
+        circle,
+        rgba(58, 185, 122, 0.1) 0%,
+        transparent 70%
+    );
+    border-radius: 50%;
+}
+
+.message-side img {
+    width: 80px;
+    margin-bottom: 24px;
+    border-radius: 50%;
+    background: rgba(58, 185, 122, 0.15);
+    padding: 8px;
+}
+
+.message-side .quote {
+    color: #264653;
+    font-size: 16px;
+    line-height: 1.8;
+    font-style: italic;
+    margin-bottom: 32px;
+}
+
+.message-side .team {
+    color: #888;
+    font-size: 12px;
+}
+
+.message-side .team strong {
+    color: #3ab97a;
+    font-size: 14px;
+}
+
+/* -------------------- ALERTAS -------------------- */
+.alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border-left: 3px solid #3ab97a;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border-left: 3px solid #e74c3c;
+}
+
+.input-error {
+    border-color: #e74c3c !important;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* -------------------- ANIMACIONES -------------------- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* -------------------- RESPONSIVO -------------------- */
+@media (max-width: 700px) {
+    .message-side {
+        display: none;
+    }
+
+    .form-side {
+        padding: 36px 24px;
+    }
+
+    .wrapper {
+        border-radius: 12px;
+    }
+}
