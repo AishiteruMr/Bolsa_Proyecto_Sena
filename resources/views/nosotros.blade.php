@@ -3,82 +3,12 @@
 @section('title', 'Inspírate SENA - Nosotros')
 
 @section('styles')
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-    body {
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-        color: #2c3e50;
-        background: #fff;
-    }
-
-    a {
-        text-decoration: none;
-        color: inherit;
-    }
-
-    /* ── NAVBAR ── */
-    .navbar {
-        background: #fff;
-        padding: 0 48px;
-        height: 68px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, .07);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .logo img {
-        width: 40px;
-    }
-
-    .logo span {
-        font-weight: 700;
-        font-size: 18px;
-        color: #1a5c00;
-    }
-
-    .menu a {
-        margin-left: 28px;
-        font-size: 14px;
-        font-weight: 600;
-        color: #555;
-        transition: color .2s;
-    }
-
-    .menu a:hover,
-    .menu a.active {
-        color: #39a900;
-    }
-
-    .btn-login {
-        background: #39a900;
-        color: #fff;
-        padding: 9px 22px;
-        border-radius: 30px;
-        font-size: 14px;
-        font-weight: 600;
-        transition: background .2s;
-    }
-
-    .btn-login:hover {
-        background: #2d8500;
-    }
-
     /* ── HERO ── */
     .hero-nosotros {
-        background: linear-gradient(135deg, #1a5c00 0%, #39a900 100%);
+        background: linear-gradient(135deg, #1a5c00 0%, var(--verde) 100%);
         padding: 80px 80px;
-        color: #fff;
+        color: var(--blanco);
     }
 
     .hero-nosotros h1 {
@@ -97,7 +27,7 @@
     /* ── ABOUT ── */
     .about {
         padding: 80px;
-        background: #fff;
+        background: var(--blanco);
     }
 
     .about-content {
@@ -121,7 +51,7 @@
 
     .about-text p {
         font-size: 15px;
-        color: #555;
+        color: var(--texto-suave);
         line-height: 1.8;
         margin-bottom: 14px;
     }
@@ -140,7 +70,7 @@
 
     /* ── MISIÓN Y VISIÓN ── */
     .mision-vision {
-        background: #f4f6f9;
+        background: var(--gris);
         padding: 80px;
         text-align: center;
     }
@@ -161,11 +91,11 @@
     }
 
     .mv-card {
-        background: #fff;
+        background: var(--blanco);
         border-radius: 16px;
         padding: 36px 32px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, .07);
-        border-top: 4px solid #39a900;
+        border-top: 4px solid var(--verde);
         text-align: left;
     }
 
@@ -177,13 +107,13 @@
 
     .mv-card p {
         font-size: 14px;
-        color: #555;
+        color: var(--texto-suave);
         line-height: 1.8;
     }
 
     /* ── CTA FINAL ── */
     .cta-final {
-        background: linear-gradient(135deg, #39a900, #2d8500);
+        background: linear-gradient(135deg, var(--verde), var(--verde-dark));
         padding: 64px 80px;
         text-align: center;
     }
@@ -191,15 +121,15 @@
     .cta-final h2 {
         font-size: 30px;
         font-weight: 700;
-        color: #fff;
+        color: var(--blanco);
         margin-bottom: 24px;
     }
 
     .cta-final a {
         display: inline-block;
         padding: 13px 32px;
-        background: #fff;
-        color: #39a900;
+        background: var(--blanco);
+        color: var(--verde);
         border-radius: 30px;
         font-size: 15px;
         font-weight: 700;
@@ -211,118 +141,19 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
     }
 
-    /* ── FOOTER ── */
-    .footer {
-        background: #1a1a1a;
-        color: #ccc;
-        padding: 48px 80px 24px;
-    }
-
-    .footer-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 32px;
-        margin-bottom: 32px;
-    }
-
-    .footer-col h3 {
-        color: #fff;
-        font-size: 15px;
-        font-weight: 600;
-        margin-bottom: 12px;
-    }
-
-    .footer-col p,
-    .footer-col a {
-        font-size: 13px;
-        color: #888;
-        display: block;
-        margin-bottom: 6px;
-    }
-
-    .footer-col a:hover {
-        color: #39a900;
-    }
-
-    .footer-col ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .footer-col ul li {
-        margin-bottom: 6px;
-    }
-
-    .footer-bottom {
-        border-top: 1px solid #333;
-        padding-top: 16px;
-        text-align: center;
-        font-size: 13px;
-        color: #555;
-    }
-
     @media (max-width: 768px) {
-        .navbar {
-            padding: 0 20px;
-        }
-
-        .hero-nosotros {
-            padding: 48px 24px;
-        }
-
-        .hero-nosotros h1 {
-            font-size: 28px;
-        }
-
-        .about {
-            padding: 48px 24px;
-        }
-
-        .about-content {
-            flex-direction: column;
-            gap: 32px;
-        }
-
-        .mision-vision {
-            padding: 48px 24px;
-        }
-
-        .mv-container {
-            grid-template-columns: 1fr;
-        }
-
-        .cta-final {
-            padding: 48px 24px;
-        }
-
-        .footer {
-            padding: 40px 24px 20px;
-        }
+        .hero-nosotros { padding: 48px 24px; }
+        .hero-nosotros h1 { font-size: 28px; }
+        .about { padding: 48px 24px; }
+        .about-content { flex-direction: column; gap: 32px; }
+        .mision-vision { padding: 48px 24px; }
+        .mv-container { grid-template-columns: 1fr; }
+        .cta-final { padding: 48px 24px; }
     }
 </style>
 @endsection
 
 @section('content')
-
-{{-- ══ NAVBAR ══ --}}
-<header class="navbar">
-    <div class="logo">
-        <a href="{{ route('home') }}">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo SENA">
-        </a>
-        <span>Inspírate SENA</span>
-    </div>
-
-    <nav class="menu">
-        <a href="{{ route('home') }}">Inicio</a>
-        <a href="{{ route('nosotros') }}" class="active">Nosotros</a>
-    </nav>
-
-    <div class="nav-right">
-        <a href="{{ route('login') }}" class="btn-login">Ingresar</a>
-    </div>
-</header>
 
 {{-- ══ HERO ══ --}}
 <section class="hero-nosotros">
@@ -394,36 +225,5 @@
     <h2>¿Quieres ser parte de la transformación?</h2>
     <a href="{{ route('registro.aprendiz') }}">Únete ahora</a>
 </section>
-
-{{-- ══ FOOTER ══ --}}
-<footer class="footer">
-    <div class="footer-container">
-        <div class="footer-col">
-            <h3>SENA - Servicio Nacional de Aprendizaje</h3>
-            <p>
-                El SENA es un establecimiento público del orden nacional, con personería jurídica,
-                patrimonio propio e independiente, adscrito al Ministerio del Trabajo de Colombia.
-            </p>
-        </div>
-        <div class="footer-col">
-            <h3>Contáctanos</h3>
-            <p>📍 Calle 57 No. 8-69, Bogotá D.C., Colombia</p>
-            <p>📧 <a href="mailto:atencionalciudadano@sena.edu.co">atencionalciudadano@sena.edu.co</a></p>
-            <p>📞 PBX: (601) 5461500</p>
-            <p>☎ Línea gratuita: 018000-910-270</p>
-        </div>
-        <div class="footer-col">
-            <h3>Enlaces oficiales</h3>
-            <ul>
-                <li><a href="https://www.sena.edu.co" target="_blank" rel="noopener noreferrer">Portal SENA</a></li>
-                <li><a href="https://oferta.senasofiaplus.edu.co" target="_blank" rel="noopener noreferrer">Sofía Plus</a></li>
-                <li><a href="https://sciudadanos.sena.edu.co" target="_blank" rel="noopener noreferrer">PQRS</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; {{ date('Y') }} Servicio Nacional de Aprendizaje - SENA. Todos los derechos reservados.</p>
-    </div>
-</footer>
 
 @endsection
