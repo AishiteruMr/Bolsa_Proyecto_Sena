@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\PostulacionExitosa;
 
 class AprendizController extends Controller
 {
@@ -100,7 +103,25 @@ class AprendizController extends Controller
             'pos_estado' => 'Pendiente',
         ]);
 
-        return back()->with('success', '✅ Postulación enviada correctamente.');
+        // Enviar correo de confirmación con detalles del proyecto
+        try {
+            $proyecto = DB::table('proyecto')
+                ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
+                ->where('proyecto.pro_id', $id)
+                ->select('proyecto.*', 'empresa.emp_nombre')
+                ->first();
+
+            $usuario = DB::table('usuario')->where('usr_id', $usrId)->first();
+
+            if ($proyecto && $usuario) {
+                Mail::to($usuario->usr_correo)
+                    ->send(new PostulacionExitosa($aprendiz->apr_nombre, $proyecto));
+            }
+        } catch (\Exception $e) {
+            Log::error('Error al enviar correo de postulación: ' . $e->getMessage());
+        }
+
+        return back()->with('success', '✅ Postulación enviada correctamente. Revisa tu correo para más detalles.');
     }
 
     public function misPostulaciones()

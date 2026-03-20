@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
                 'emp_nombre'    => 'Empresa',
                 'emp_representante' => 'Representante',
                 'emp_correo'    => 'empresa@gmail.com',
-                'emp_contraseña' => Hash::make('empresa123'),
+                'emp_contrasena' => Hash::make('empresa123'),
                 'emp_estado'    => 1,
             ]);
         }
