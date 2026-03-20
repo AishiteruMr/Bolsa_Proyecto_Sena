@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\InstructorAsignado;
+use App\Mail\InstructorDesasignado;
 
 class AdminController extends Controller
 {
@@ -111,14 +115,44 @@ class AdminController extends Controller
             'estado' => 'required|in:Activo,Inactivo,Aprobado,Rechazado'
         ]);
 
-        // Si el proyecto se inactiva, desasociar el instructor
+        // Si el proyecto se inactiva, desasociar el instructor y notificarlo
         if ($request->estado === 'Inactivo') {
+            // Obtener datos antes de desasignar para poder enviar el correo
+            $proyectoActual = DB::table('proyecto')
+                ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
+                ->where('proyecto.pro_id', $id)
+                ->whereNotNull('proyecto.ins_usr_documento')
+                ->select('proyecto.pro_titulo_proyecto', 'proyecto.ins_usr_documento', 'empresa.emp_nombre')
+                ->first();
+
             DB::table('proyecto')
                 ->where('pro_id', $id)
                 ->update([
                     'pro_estado' => $request->estado,
                     'ins_usr_documento' => null
                 ]);
+
+            // Notificar al instructor que fue desasignado
+            if ($proyectoActual && $proyectoActual->ins_usr_documento) {
+                try {
+                    $instructorUsuario = DB::table('instructor')
+                        ->join('usuario', 'instructor.usr_id', '=', 'usuario.usr_id')
+                        ->where('usuario.usr_documento', $proyectoActual->ins_usr_documento)
+                        ->select('instructor.ins_nombre', 'usuario.usr_correo')
+                        ->first();
+
+                    if ($instructorUsuario) {
+                        Mail::to($instructorUsuario->usr_correo)
+                            ->send(new InstructorDesasignado(
+                                $instructorUsuario->ins_nombre,
+                                $proyectoActual->pro_titulo_proyecto,
+                                $proyectoActual->emp_nombre
+                            ));
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Error al enviar correo de desasignación: ' . $e->getMessage());
+                }
+            }
         } else {
             DB::table('proyecto')
                 ->where('pro_id', $id)
@@ -139,6 +173,37 @@ class AdminController extends Controller
             ->update([
                 'ins_usr_documento' => $request->ins_usr_documento
             ]);
+
+        // Enviar correo de notificación al instructor asignado
+        try {
+            $proyecto = DB::table('proyecto')
+                ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
+                ->where('proyecto.pro_id', $id)
+                ->select('proyecto.*', 'empresa.emp_nombre')
+                ->first();
+
+            $instructorUsuario = DB::table('instructor')
+                ->join('usuario', 'instructor.usr_id', '=', 'usuario.usr_id')
+                ->where('usuario.usr_documento', $request->ins_usr_documento)
+                ->select('instructor.ins_nombre', 'usuario.usr_correo')
+                ->first();
+
+            if ($proyecto && $instructorUsuario) {
+                $totalPostulaciones = DB::table('postulacion')
+                    ->where('pro_id', $id)
+                    ->where('pos_estado', 'Pendiente')
+                    ->count();
+
+                Mail::to($instructorUsuario->usr_correo)
+                    ->send(new InstructorAsignado(
+                        $instructorUsuario->ins_nombre,
+                        $proyecto,
+                        $totalPostulaciones
+                    ));
+            }
+        } catch (\Exception $e) {
+            Log::error('Error al enviar correo de asignación de instructor: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Instructor asignado correctamente');
     }
