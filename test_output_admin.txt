@@ -1,0 +1,98 @@
+﻿
+   WARN  Metadata found in doc-comment for method Tests\Feature\AdminTest::admin_can_view_dashboard(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AdminTest::admin_can_change_user_status(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AdminTest::admin_can_change_company_status(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AdminTest::admin_can_assign_instructor_to_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_view_dashboard(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_apply_to_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_send_evidence_if_approved(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_update_profile(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_view_dashboard(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_create_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_update_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_delete_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_update_profile(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\InstructorTest::instructor_can_view_dashboard(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\InstructorTest::instructor_can_manage_stages(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\InstructorTest::instructor_can_grade_evidence(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   FAIL  Tests\Feature\AdminTest
+  Ô£ô admin canÔÇª  13.41s  
+  Ô¿» admin can cÔÇª 0.07s  
+  Ô¿» admin can cÔÇª 0.04s  
+  Ô¿» admin can aÔÇª 0.05s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminTest > admin can change user status  RouteNotFoundException   
+  Route [admin.usuarios.status] not defined.
+
+  at vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:517
+    513Ôûò             ! is_null($url = call_user_func($this->missingNamedRouteResolver, $name, $parameters, $absolute))) {
+    514Ôûò             return $url;
+    515Ôûò         }
+    516Ôûò 
+  Ô×£ 517Ôûò         throw new RouteNotFoundException("Route [{$name}] not defined.");
+    518Ôûò     }
+    519Ôûò 
+    520Ôûò     /**
+    521Ôûò      * Get the URL for a given route instance.
+
+  1   vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:517
+  2   vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:853
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\AdminTest > admin can change company status  RouteNotFoundException   
+  Route [admin.empresas.status] not defined.
+
+  at vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:517
+    513Ôûò             ! is_null($url = call_user_func($this->missingNamedRouteResolver, $name, $parameters, $absolute))) {
+    514Ôûò             return $url;
+    515Ôûò         }
+    516Ôûò 
+  Ô×£ 517Ôûò         throw new RouteNotFoundException("Route [{$name}] not defined.");
+    518Ôûò     }
+    519Ôûò 
+    520Ôûò     /**
+    521Ôûò      * Get the URL for a given route instance.
+
+  1   vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:517
+  2   vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:853
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FÔÇª  QueryException   
+  SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`bolsa_de_proyectos_test`.`proyecto`, CONSTRAINT `proyecto_emp_nit_foreign` FOREIGN KEY (`emp_nit`) REFERENCES `empresa` (`emp_nit`) ON DELETE RESTRICT ON UPDATE CASCADE) (Connection: mysql, SQL: insert into `proyecto` (`emp_nit`, `pro_titulo_proyecto`, `pro_categoria`, `pro_descripcion`, `pro_requisitos_especificos`, `pro_habilidades_requerida`, `pro_fecha_publi`, `pro_duracion_estimada`, `pro_estado`) values (999000999, P, C, D, R, H, 2026-03-20 16:28:48, 10, Activo))
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:825
+    821Ôûò                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    822Ôûò                 );
+    823Ôûò             }
+    824Ôûò 
+  Ô×£ 825Ôûò             throw new QueryException(
+    826Ôûò                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    827Ôûò             );
+    828Ôûò         }
+    829Ôûò     }
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:825
+
+  2   vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php:53
+      NunoMaduro\Collision\Exceptions\TestException::("SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`bolsa_de_proyectos_test`.`proyecto`, CONSTRAINT `proyecto_emp_nit_foreign` FOREIGN KEY (`emp_nit`) REFERENCES `empresa` (`emp_nit`) ON DELETE RESTRICT ON UPDATE CASCADE)")
+
+
+  Tests:    3 failed, 1 passed (2 assertions)
+  Duration: 13.78s
+

@@ -1,0 +1,69 @@
+﻿
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_view_dashboard(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_apply_to_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_send_evidence_if_approved(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_update_profile(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_view_dashboard(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_create_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_update_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_delete_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_update_profile(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\InstructorTest::instructor_can_view_dashboard(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\InstructorTest::instructor_can_manage_stages(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\InstructorTest::instructor_can_grade_evidence(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   FAIL  Tests\Feature\InstructorTest
+  Ô£ô instructorÔÇª 10.67s  
+  Ô¿» instructorÔÇª  0.04s  
+  Ô¿» instructorÔÇª  0.07s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\InstructorTest > instructor can manage stages  RouteNotFoundException   
+  Route [instructor.etapa.crear] not defined.
+
+  at vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:517
+    513Ôûò             ! is_null($url = call_user_func($this->missingNamedRouteResolver, $name, $parameters, $absolute))) {
+    514Ôûò             return $url;
+    515Ôûò         }
+    516Ôûò 
+  Ô×£ 517Ôûò         throw new RouteNotFoundException("Route [{$name}] not defined.");
+    518Ôûò     }
+    519Ôûò 
+    520Ôûò     /**
+    521Ôûò      * Get the URL for a given route instance.
+
+  1   vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:517
+  2   vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:853
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\InstructorTest > instructor can grade evidence  RouteNotFoundException   
+  Route [instructor.evidencia.calificar] not defined.
+
+  at vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:517
+    513Ôûò             ! is_null($url = call_user_func($this->missingNamedRouteResolver, $name, $parameters, $absolute))) {
+    514Ôûò             return $url;
+    515Ôûò         }
+    516Ôûò 
+  Ô×£ 517Ôûò         throw new RouteNotFoundException("Route [{$name}] not defined.");
+    518Ôûò     }
+    519Ôûò 
+    520Ôûò     /**
+    521Ôûò      * Get the URL for a given route instance.
+
+  1   vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php:517
+  2   vendor\laravel\framework\src\Illuminate\Foundation\helpers.php:853
+
+
+  Tests:    2 failed, 1 passed (2 assertions)
+  Duration: 10.98s
+

@@ -1,0 +1,192 @@
+﻿
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_view_dashboard(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_apply_to_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_send_evidence_if_approved(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\AprendizTest::aprendiz_can_update_profile(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_view_dashboard(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_create_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_update_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_delete_project(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   WARN  Metadata found in doc-comment for method Tests\Feature\EmpresaTest::empresa_can_update_profile(). Metadata in doc-comments is deprecated and will no longer be supported in PHPUnit 12. Update your test code to use attributes instead.
+
+   FAIL  Tests\Feature\AprendizTest
+  Ô£ô aprendiz cÔÇª 12.64s  
+  Ô£ô aprendiz caÔÇª 0.07s  
+  Ô¿» aprendiz caÔÇª 0.98s  
+  Ô£ô aprendiz caÔÇª 0.03s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\FeaÔÇª   
+  Expected response status code [302] but received 500.
+Failed asserting that 500 is identical to 302.
+
+The following exception occurred during the last request:
+
+PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'evid_archivo' cannot be null in C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php:53
+Stack trace:
+#0 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php(53): PDOStatement->execute()
+#1 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Database\Connection.php(812): Illuminate\Database\MySqlConnection->{closure:Illuminate\Database\MySqlConnection::insert():42}('insert into `ev...', Array)
+#2 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Database\Connection.php(779): Illuminate\Database\Connection->runQueryCallback('insert into `ev...', Array, Object(Closure))
+#3 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php(42): Illuminate\Database\Connection->run('insert into `ev...', Array, Object(Closure))
+#4 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php(3717): Illuminate\Database\MySqlConnection->insert('insert into `ev...', Array)
+#5 C:\laragon\www\Bolsa_Proyecto_Sena\app\Http\Controllers\AprendizController.php(377): Illuminate\Database\Query\Builder->insert(Array)
+#6 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Controller.php(54): App\Http\Controllers\AprendizController->enviarEvidencia(Object(Illuminate\Http\Request), 3, 1)
+#7 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\ControllerDispatcher.php(44): Illuminate\Routing\Controller->callAction('enviarEvidencia', Array)
+#8 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Route.php(266): Illuminate\Routing\ControllerDispatcher->dispatch(Object(Illuminate\Routing\Route), Object(App\Http\Controllers\AprendizController), 'enviarEvidencia')
+#9 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Route.php(212): Illuminate\Routing\Route->runController()
+#10 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Router.php(808): Illuminate\Routing\Route->run()
+#11 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(170): Illuminate\Routing\Router->{closure:Illuminate\Routing\Router::runRouteWithinStack():807}(Object(Illuminate\Http\Request))
+#12 C:\laragon\www\Bolsa_Proyecto_Sena\app\Http\Middleware\RolMiddleware.php(26): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():168}(Object(Illuminate\Http\Request))
+#13 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): App\Http\Middleware\RolMiddleware->handle(Object(Illuminate\Http\Request), Object(Closure), 1)
+#14 C:\laragon\www\Bolsa_Proyecto_Sena\app\Http\Middleware\AuthMiddleware.php(17): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#15 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): App\Http\Middleware\AuthMiddleware->handle(Object(Illuminate\Http\Request), Object(Closure))
+#16 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Middleware\SubstituteBindings.php(51): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#17 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Routing\Middleware\SubstituteBindings->handle(Object(Illuminate\Http\Request), Object(Closure))
+#18 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken.php(88): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#19 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\VerifyCsrfToken->handle(Object(Illuminate\Http\Request), Object(Closure))
+#20 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\View\Middleware\ShareErrorsFromSession.php(49): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#21 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\View\Middleware\ShareErrorsFromSession->handle(Object(Illuminate\Http\Request), Object(Closure))
+#22 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Session\Middleware\StartSession.php(121): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#23 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Session\Middleware\StartSession.php(64): Illuminate\Session\Middleware\StartSession->handleStatefulRequest(Object(Illuminate\Http\Request), Object(Illuminate\Session\Store), Object(Closure))
+#24 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Session\Middleware\StartSession->handle(Object(Illuminate\Http\Request), Object(Closure))
+#25 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse.php(37): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#26 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse->handle(Object(Illuminate\Http\Request), Object(Closure))
+#27 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Cookie\Middleware\EncryptCookies.php(75): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#28 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Cookie\Middleware\EncryptCookies->handle(Object(Illuminate\Http\Request), Object(Closure))
+#29 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(127): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#30 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Router.php(807): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#31 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Router.php(786): Illuminate\Routing\Router->runRouteWithinStack(Object(Illuminate\Routing\Route), Object(Illuminate\Http\Request))
+#32 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Router.php(750): Illuminate\Routing\Router->runRoute(Object(Illuminate\Http\Request), Object(Illuminate\Routing\Route))
+#33 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Router.php(739): Illuminate\Routing\Router->dispatchToRoute(Object(Illuminate\Http\Request))
+#34 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(201): Illuminate\Routing\Router->dispatch(Object(Illuminate\Http\Request))
+#35 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(170): Illuminate\Foundation\Http\Kernel->{closure:Illuminate\Foundation\Http\Kernel::dispatchToRouter():198}(Object(Illuminate\Http\Request))
+#36 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():168}(Object(Illuminate\Http\Request))
+#37 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle(Object(Illuminate\Http\Request), Object(Closure))
+#38 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle(Object(Illuminate\Http\Request), Object(Closure))
+#39 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#40 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php(51): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle(Object(Illuminate\Http\Request), Object(Closure))
+#41 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\TrimStrings->handle(Object(Illuminate\Http\Request), Object(Closure))
+#42 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Http\Middleware\ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#43 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Http\Middleware\ValidatePostSize->handle(Object(Illuminate\Http\Request), Object(Closure))
+#44 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php(110): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#45 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle(Object(Illuminate\Http\Request), Object(Closure))
+#46 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Http\Middleware\HandleCors.php(49): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#47 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Http\Middleware\HandleCors->handle(Object(Illuminate\Http\Request), Object(Closure))
+#48 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Http\Middleware\TrustProxies.php(58): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#49 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Http\Middleware\TrustProxies->handle(Object(Illuminate\Http\Request), Object(Closure))
+#50 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks.php(22): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#51 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks->handle(Object(Illuminate\Http\Request), Object(Closure))
+#52 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(127): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#53 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(176): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#54 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(145): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#55 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\MakesHttpRequests.php(607): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#56 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\MakesHttpRequests.php(397): Illuminate\Foundation\Testing\TestCase->call('POST', 'http://localhos...', Array, Array, Array, Array)
+#57 C:\laragon\www\Bolsa_Proyecto_Sena\tests\Feature\AprendizTest.php(139): Illuminate\Foundation\Testing\TestCase->post('http://localhos...', Array)
+#58 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestCase.php(1667): Tests\Feature\AprendizTest->aprendiz_can_send_evidence_if_approved()
+#59 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestCase.php(519): PHPUnit\Framework\TestCase->runTest()
+#60 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestRunner\TestRunner.php(87): PHPUnit\Framework\TestCase->runBare()
+#61 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestCase.php(365): PHPUnit\Framework\TestRunner->run(Object(Tests\Feature\AprendizTest))
+#62 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestCase->run()
+#63 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#64 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#65 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\TextUI\TestRunner.php(64): PHPUnit\Framework\TestSuite->run()
+#66 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\TextUI\Application.php(211): PHPUnit\TextUI\TestRunner->run(Object(PHPUnit\TextUI\Configuration\Configuration), Object(PHPUnit\Runner\ResultCache\DefaultResultCache), Object(PHPUnit\Framework\TestSuite))
+#67 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\phpunit(104): PHPUnit\TextUI\Application->run(Array)
+#68 {main}
+
+Next Illuminate\Database\QueryException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'evid_archivo' cannot be null (Connection: mysql, SQL: insert into `evidencia` (`evid_apr_id`, `evid_eta_id`, `evid_pro_id`, `evid_archivo`, `evid_fecha`, `evid_estado`, `evid_comentario`) values (3, 1, 3, ?, 2026-03-20 16:08:34, Pendiente, ?)) in C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Database\Connection.php:825
+Stack trace:
+#0 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Database\Connection.php(779): Illuminate\Database\Connection->runQueryCallback('insert into `ev...', Array, Object(Closure))
+#1 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Database\MySqlConnection.php(42): Illuminate\Database\Connection->run('insert into `ev...', Array, Object(Closure))
+#2 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php(3717): Illuminate\Database\MySqlConnection->insert('insert into `ev...', Array)
+#3 C:\laragon\www\Bolsa_Proyecto_Sena\app\Http\Controllers\AprendizController.php(377): Illuminate\Database\Query\Builder->insert(Array)
+#4 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Controller.php(54): App\Http\Controllers\AprendizController->enviarEvidencia(Object(Illuminate\Http\Request), 3, 1)
+#5 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\ControllerDispatcher.php(44): Illuminate\Routing\Controller->callAction('enviarEvidencia', Array)
+#6 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Route.php(266): Illuminate\Routing\ControllerDispatcher->dispatch(Object(Illuminate\Routing\Route), Object(App\Http\Controllers\AprendizController), 'enviarEvidencia')
+#7 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Route.php(212): Illuminate\Routing\Route->runController()
+#8 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Router.php(808): Illuminate\Routing\Route->run()
+#9 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(170): Illuminate\Routing\Router->{closure:Illuminate\Routing\Router::runRouteWithinStack():807}(Object(Illuminate\Http\Request))
+#10 C:\laragon\www\Bolsa_Proyecto_Sena\app\Http\Middleware\RolMiddleware.php(26): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():168}(Object(Illuminate\Http\Request))
+#11 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): App\Http\Middleware\RolMiddleware->handle(Object(Illuminate\Http\Request), Object(Closure), 1)
+#12 C:\laragon\www\Bolsa_Proyecto_Sena\app\Http\Middleware\AuthMiddleware.php(17): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#13 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): App\Http\Middleware\AuthMiddleware->handle(Object(Illuminate\Http\Request), Object(Closure))
+#14 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Middleware\SubstituteBindings.php(51): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#15 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Routing\Middleware\SubstituteBindings->handle(Object(Illuminate\Http\Request), Object(Closure))
+#16 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken.php(88): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#17 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\VerifyCsrfToken->handle(Object(Illuminate\Http\Request), Object(Closure))
+#18 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\View\Middleware\ShareErrorsFromSession.php(49): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#19 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\View\Middleware\ShareErrorsFromSession->handle(Object(Illuminate\Http\Request), Object(Closure))
+#20 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Session\Middleware\StartSession.php(121): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#21 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Session\Middleware\StartSession.php(64): Illuminate\Session\Middleware\StartSession->handleStatefulRequest(Object(Illuminate\Http\Request), Object(Illuminate\Session\Store), Object(Closure))
+#22 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Session\Middleware\StartSession->handle(Object(Illuminate\Http\Request), Object(Closure))
+#23 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse.php(37): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#24 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse->handle(Object(Illuminate\Http\Request), Object(Closure))
+#25 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Cookie\Middleware\EncryptCookies.php(75): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#26 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Cookie\Middleware\EncryptCookies->handle(Object(Illuminate\Http\Request), Object(Closure))
+#27 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(127): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#28 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Router.php(807): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#29 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Router.php(786): Illuminate\Routing\Router->runRouteWithinStack(Object(Illuminate\Routing\Route), Object(Illuminate\Http\Request))
+#30 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Router.php(750): Illuminate\Routing\Router->runRoute(Object(Illuminate\Http\Request), Object(Illuminate\Routing\Route))
+#31 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Routing\Router.php(739): Illuminate\Routing\Router->dispatchToRoute(Object(Illuminate\Http\Request))
+#32 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(201): Illuminate\Routing\Router->dispatch(Object(Illuminate\Http\Request))
+#33 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(170): Illuminate\Foundation\Http\Kernel->{closure:Illuminate\Foundation\Http\Kernel::dispatchToRouter():198}(Object(Illuminate\Http\Request))
+#34 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:Illuminate\Pipeline\Pipeline::prepareDestination():168}(Object(Illuminate\Http\Request))
+#35 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php(31): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle(Object(Illuminate\Http\Request), Object(Closure))
+#36 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull->handle(Object(Illuminate\Http\Request), Object(Closure))
+#37 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php(21): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#38 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php(51): Illuminate\Foundation\Http\Middleware\TransformsRequest->handle(Object(Illuminate\Http\Request), Object(Closure))
+#39 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\TrimStrings->handle(Object(Illuminate\Http\Request), Object(Closure))
+#40 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Http\Middleware\ValidatePostSize.php(27): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#41 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Http\Middleware\ValidatePostSize->handle(Object(Illuminate\Http\Request), Object(Closure))
+#42 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php(110): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#43 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance->handle(Object(Illuminate\Http\Request), Object(Closure))
+#44 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Http\Middleware\HandleCors.php(49): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#45 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Http\Middleware\HandleCors->handle(Object(Illuminate\Http\Request), Object(Closure))
+#46 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Http\Middleware\TrustProxies.php(58): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#47 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Http\Middleware\TrustProxies->handle(Object(Illuminate\Http\Request), Object(Closure))
+#48 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks.php(22): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#49 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(209): Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks->handle(Object(Illuminate\Http\Request), Object(Closure))
+#50 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php(127): Illuminate\Pipeline\Pipeline->{closure:{closure:Illuminate\Pipeline\Pipeline::carry():184}:185}(Object(Illuminate\Http\Request))
+#51 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(176): Illuminate\Pipeline\Pipeline->then(Object(Closure))
+#52 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php(145): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
+#53 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\MakesHttpRequests.php(607): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#54 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\MakesHttpRequests.php(397): Illuminate\Foundation\Testing\TestCase->call('POST', 'http://localhos...', Array, Array, Array, Array)
+#55 C:\laragon\www\Bolsa_Proyecto_Sena\tests\Feature\AprendizTest.php(139): Illuminate\Foundation\Testing\TestCase->post('http://localhos...', Array)
+#56 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestCase.php(1667): Tests\Feature\AprendizTest->aprendiz_can_send_evidence_if_approved()
+#57 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestCase.php(519): PHPUnit\Framework\TestCase->runTest()
+#58 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestRunner\TestRunner.php(87): PHPUnit\Framework\TestCase->runBare()
+#59 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestCase.php(365): PHPUnit\Framework\TestRunner->run(Object(Tests\Feature\AprendizTest))
+#60 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestCase->run()
+#61 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#62 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\Framework\TestSuite.php(369): PHPUnit\Framework\TestSuite->run()
+#63 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\TextUI\TestRunner.php(64): PHPUnit\Framework\TestSuite->run()
+#64 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\src\TextUI\Application.php(211): PHPUnit\TextUI\TestRunner->run(Object(PHPUnit\TextUI\Configuration\Configuration), Object(PHPUnit\Runner\ResultCache\DefaultResultCache), Object(PHPUnit\Framework\TestSuite))
+#65 C:\laragon\www\Bolsa_Proyecto_Sena\vendor\phpunit\phpunit\phpunit(104): PHPUnit\TextUI\Application->run(Array)
+#66 {main}
+
+----------------------------------------------------------------------------------
+
+SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'evid_archivo' cannot be null (Connection: mysql, SQL: insert into `evidencia` (`evid_apr_id`, `evid_eta_id`, `evid_pro_id`, `evid_archivo`, `evid_fecha`, `evid_estado`, `evid_comentario`) values (3, 1, 3, ?, 2026-03-20 16:08:34, Pendiente, ?))
+
+  at tests\Feature\AprendizTest.php:141
+    137Ôûò             'usr_id' => $this->usuario->usr_id,
+    138Ôûò             'rol'    => 1
+    139Ôûò         ])->post(route('aprendiz.evidencia.enviar', ['proId' => $this->proyecto->pro_id, 'etaId' => $etaId]), $evidenceData);
+    140Ôûò 
+  Ô×£ 141Ôûò         $response->assertStatus(302);
+    142Ôûò         $this->assertDatabaseHas('evidencia', [
+    143Ôûò             'evid_apr_id' => $this->aprendiz->apr_id,
+    144Ôûò             'evid_eta_id' => $etaId,
+    145Ôûò             'evid_pro_id' => $this->proyecto->pro_id,
+
+
+  Tests:    1 failed, 3 passed (7 assertions)
+  Duration: 13.96s
+
