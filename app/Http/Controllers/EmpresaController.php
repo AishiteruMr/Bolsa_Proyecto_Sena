@@ -150,8 +150,30 @@ class EmpresaController extends Controller
     public function eliminarProyecto(int $id)
     {
         $nit = session('nit');
-        DB::table('proyecto')->where('pro_id', $id)->where('emp_nit', $nit)->delete();
-        return redirect()->route('empresa.proyectos')->with('success', 'Proyecto eliminado.');
+        
+        // Verificar que el proyecto pertenece a la empresa
+        $proyecto = DB::table('proyecto')
+            ->where('pro_id', $id)
+            ->where('emp_nit', $nit)
+            ->first();
+        
+        if (!$proyecto) {
+            return redirect()->route('empresa.proyectos')->with('error', 'Proyecto no encontrado.');
+        }
+        
+        // Eliminar evidencias del proyecto
+        DB::table('evidencia')->where('evid_pro_id', $id)->delete();
+        
+        // Eliminar etapas del proyecto
+        DB::table('etapa')->where('eta_pro_id', $id)->delete();
+        
+        // Eliminar postulaciones del proyecto
+        DB::table('postulacion')->where('pro_id', $id)->delete();
+        
+        // Finalmente eliminar el proyecto
+        DB::table('proyecto')->where('pro_id', $id)->delete();
+        
+        return redirect()->route('empresa.proyectos')->with('success', 'Proyecto eliminado correctamente.');
     }
 
     public function verPostulantes(int $id)
