@@ -3,36 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Mail\InstructorAsignado;
 use App\Mail\InstructorDesasignado;
+use App\Models\Aprendiz;
+use App\Models\Instructor;
+use App\Models\Empresa;
+use App\Models\Proyecto;
+use App\Models\User;
+use App\Models\Postulacion;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
         $stats = [
-            'aprendices'   => DB::table('aprendiz')->count(),
-            'instructores' => DB::table('instructor')->count(),
-            'empresas'     => DB::table('empresa')->count(),
-            'proyectos'    => DB::table('proyecto')->count(),
-            'postulaciones'=> DB::table('postulacion')->count(),
-            'aprobadas'    => DB::table('postulacion')->where('pos_estado', 'Aprobada')->count(),
+            'aprendices'    => Aprendiz::count(),
+            'instructores'  => Instructor::count(),
+            'empresas'      => Empresa::count(),
+            'proyectos'     => Proyecto::count(),
+            'postulaciones' => Postulacion::count(),
+            'aprobadas'     => Postulacion::where('pos_estado', 'Aprobada')->count(),
         ];
 
-        $proyectosRecientes = DB::table('proyecto')
-            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->select('proyecto.*', 'empresa.emp_nombre')
-            ->orderByDesc('proyecto.pro_id')
+        $proyectosRecientes = Proyecto::with('empresa')
+            ->orderByDesc('pro_id')
             ->limit(5)
             ->get();
 
-        $usuariosRecientes = DB::table('usuario')
-            ->join('rol', 'usuario.rol_id', '=', 'rol.rol_id')
-            ->select('usuario.*', 'rol.rol_nombre')
-            ->orderByDesc('usuario.usr_fecha_creacion')
+        $usuariosRecientes = User::orderByDesc('usr_fecha_creacion')
             ->limit(5)
             ->get();
 
@@ -41,15 +41,8 @@ class AdminController extends Controller
 
     public function usuarios()
     {
-        $aprendices = DB::table('aprendiz')
-            ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
-            ->select('aprendiz.*', 'usuario.usr_correo', 'usuario.usr_fecha_creacion', 'usuario.usr_documento')
-            ->get();
-
-        $instructores = DB::table('instructor')
-            ->join('usuario', 'instructor.usr_id', '=', 'usuario.usr_id')
-            ->select('instructor.*', 'usuario.usr_correo', 'usuario.usr_fecha_creacion', 'usuario.usr_documento')
-            ->get();
+        $aprendices = Aprendiz::with('usuario')->get();
+        $instructores = Instructor::with('usuario')->get();
 
         return view('admin.usuarios', compact('aprendices', 'instructores'));
     }
@@ -62,9 +55,11 @@ class AdminController extends Controller
         ]);
 
         if ($request->tipo === 'aprendiz') {
-            DB::table('aprendiz')->where('apr_id', $id)->update(['apr_estado' => $request->estado]);
+            $aprendiz = Aprendiz::findOrFail($id);
+            $aprendiz->update(['apr_estado' => $request->estado]);
         } else {
-            DB::table('instructor')->where('usr_id', $id)->update(['ins_estado' => $request->estado]);
+            $instructor = Instructor::where('usr_id', $id)->firstOrFail();
+            $instructor->update(['ins_estado' => $request->estado]);
         }
 
         return back()->with('success', 'Estado del usuario actualizado.');
@@ -72,7 +67,7 @@ class AdminController extends Controller
 
     public function empresas()
     {
-        $empresas = DB::table('empresa')->orderByDesc('emp_id')->get();
+        $empresas = Empresa::orderByDesc('emp_id')->get();
         return view('admin.empresas', compact('empresas'));
     }
 
@@ -80,31 +75,37 @@ class AdminController extends Controller
     {
         $request->validate(['estado' => 'required|in:0,1']);
 
-        DB::table('empresa')
-            ->where('emp_id', $id)
-            ->update(['emp_estado' => $request->estado]);
+        $empresa = Empresa::findOrFail($id);
+        $empresa->update(['emp_estado' => $request->estado]);
 
         return back()->with('success', 'Estado de la empresa actualizado.');
     }
 
     public function proyectos()
     {
-        $proyectos = DB::table('proyecto')
-            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->leftJoin('usuario', 'proyecto.ins_usr_documento', '=', 'usuario.usr_documento')
-            ->leftJoin('instructor', 'usuario.usr_id', '=', 'instructor.usr_id')
-            ->select(
-                'proyecto.*',
-                'empresa.emp_nombre',
-                'instructor.ins_nombre'
-            )
-            ->orderByDesc('proyecto.pro_id')
-            ->get();
+        $proyectos = Proyecto::with(['empresa', 'instructor.usuario'])
+            ->orderByDesc('pro_id')
+            ->get()
+            ->map(function($proyecto) {
+                return (object)[
+                    'pro_id' => $proyecto->pro_id,
+                    'pro_titulo_proyecto' => $proyecto->pro_titulo_proyecto,
+                    'emp_nit' => $proyecto->emp_nit,
+                    'ins_usr_documento' => $proyecto->ins_usr_documento,
+                    'pro_estado' => $proyecto->pro_estado,
+                    'emp_nombre' => $proyecto->empresa->emp_nombre,
+                    'ins_nombre' => $proyecto->instructor ? $proyecto->instructor->ins_nombre : null,
+                ];
+            });
 
-        $instructores = DB::table('instructor')
-            ->join('usuario', 'instructor.usr_id', '=', 'usuario.usr_id')
-            ->select('instructor.ins_nombre', 'usuario.usr_documento')
-            ->get();
+        $instructores = Instructor::with('usuario')
+            ->get()
+            ->map(function($instructor) {
+                return (object)[
+                    'ins_nombre' => $instructor->ins_nombre,
+                    'usr_documento' => $instructor->usuario->usr_documento,
+                ];
+            });
 
         return view('admin.proyectos', compact('proyectos', 'instructores'));
     }
@@ -115,38 +116,31 @@ class AdminController extends Controller
             'estado' => 'required|in:Activo,Inactivo,Aprobado,Rechazado'
         ]);
 
+        $proyecto = Proyecto::findOrFail($id);
+
         // Si el proyecto se inactiva, desasociar el instructor y notificarlo
         if ($request->estado === 'Inactivo') {
-            // Obtener datos antes de desasignar para poder enviar el correo
-            $proyectoActual = DB::table('proyecto')
-                ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-                ->where('proyecto.pro_id', $id)
-                ->whereNotNull('proyecto.ins_usr_documento')
-                ->select('proyecto.pro_titulo_proyecto', 'proyecto.ins_usr_documento', 'empresa.emp_nombre')
-                ->first();
+            $proyectoActual = $proyecto->load('empresa');
+            $instructorDocumento = $proyecto->ins_usr_documento;
 
-            DB::table('proyecto')
-                ->where('pro_id', $id)
-                ->update([
-                    'pro_estado' => $request->estado,
-                    'ins_usr_documento' => null
-                ]);
+            $proyecto->update([
+                'pro_estado' => $request->estado,
+                'ins_usr_documento' => null
+            ]);
 
             // Notificar al instructor que fue desasignado
-            if ($proyectoActual && $proyectoActual->ins_usr_documento) {
+            if ($instructorDocumento) {
                 try {
-                    $instructorUsuario = DB::table('instructor')
-                        ->join('usuario', 'instructor.usr_id', '=', 'usuario.usr_id')
-                        ->where('usuario.usr_documento', $proyectoActual->ins_usr_documento)
-                        ->select('instructor.ins_nombre', 'usuario.usr_correo')
+                    $instructorUsuario = User::where('usr_documento', $instructorDocumento)
+                        ->with('instructor')
                         ->first();
 
-                    if ($instructorUsuario) {
+                    if ($instructorUsuario && $instructorUsuario->instructor) {
                         Mail::to($instructorUsuario->usr_correo)
                             ->send(new InstructorDesasignado(
-                                $instructorUsuario->ins_nombre,
+                                $instructorUsuario->instructor->ins_nombre,
                                 $proyectoActual->pro_titulo_proyecto,
-                                $proyectoActual->emp_nombre
+                                $proyectoActual->empresa->emp_nombre
                             ));
                     }
                 } catch (\Exception $e) {
@@ -154,9 +148,7 @@ class AdminController extends Controller
                 }
             }
         } else {
-            DB::table('proyecto')
-                ->where('pro_id', $id)
-                ->update(['pro_estado' => $request->estado]);
+            $proyecto->update(['pro_estado' => $request->estado]);
         }
 
         return back()->with('success', 'Estado del proyecto actualizado.');
@@ -168,35 +160,25 @@ class AdminController extends Controller
             'ins_usr_documento' => 'required|exists:usuario,usr_documento'
         ]);
 
-        DB::table('proyecto')
-            ->where('pro_id', $id)
-            ->update([
-                'ins_usr_documento' => $request->ins_usr_documento
-            ]);
+        $proyecto = Proyecto::findOrFail($id);
+        $proyecto->update(['ins_usr_documento' => $request->ins_usr_documento]);
 
         // Enviar correo de notificación al instructor asignado
         try {
-            $proyecto = DB::table('proyecto')
-                ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-                ->where('proyecto.pro_id', $id)
-                ->select('proyecto.*', 'empresa.emp_nombre')
+            $proyecto->load('empresa');
+            
+            $instructorUsuario = User::where('usr_documento', $request->ins_usr_documento)
+                ->with('instructor')
                 ->first();
 
-            $instructorUsuario = DB::table('instructor')
-                ->join('usuario', 'instructor.usr_id', '=', 'usuario.usr_id')
-                ->where('usuario.usr_documento', $request->ins_usr_documento)
-                ->select('instructor.ins_nombre', 'usuario.usr_correo')
-                ->first();
-
-            if ($proyecto && $instructorUsuario) {
-                $totalPostulaciones = DB::table('postulacion')
-                    ->where('pro_id', $id)
+            if ($proyecto && $instructorUsuario && $instructorUsuario->instructor) {
+                $totalPostulaciones = Postulacion::where('pro_id', $id)
                     ->where('pos_estado', 'Pendiente')
                     ->count();
 
                 Mail::to($instructorUsuario->usr_correo)
                     ->send(new InstructorAsignado(
-                        $instructorUsuario->ins_nombre,
+                        $instructorUsuario->instructor->ins_nombre,
                         $proyecto,
                         $totalPostulaciones
                     ));

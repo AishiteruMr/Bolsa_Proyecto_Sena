@@ -3,30 +3,38 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Proyecto;
+use App\Models\Postulacion;
+use App\Models\Empresa;
+use App\Models\Evidencia;
+use App\Models\Etapa;
 
 class EmpresaController extends Controller
 {
     public function dashboard()
     {
         $nit = session('nit');
+        $empresa = Empresa::where('emp_nit', $nit)->firstOrFail();
 
-        $totalProyectos = DB::table('proyecto')->where('emp_nit', $nit)->count();
-        $proyectosActivos = DB::table('proyecto')->where('emp_nit', $nit)->where('pro_estado', 'Activo')->count();
-        $totalPostulaciones = DB::table('postulacion')
-            ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
-            ->where('proyecto.emp_nit', $nit)
-            ->count();
-        $postulacionesPendientes = DB::table('postulacion')
-            ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
-            ->where('proyecto.emp_nit', $nit)
-            ->where('postulacion.pos_estado', 'Pendiente')
-            ->count();
+        // Obtener proyectos de la empresa
+        $proyectos = $empresa->proyectos();
 
-        $proyectosRecientes = DB::table('proyecto')
-            ->where('emp_nit', $nit)
+        $totalProyectos = $proyectos->count();
+        $proyectosActivos = $proyectos->where('pro_estado', 'Activo')->count();
+        
+        // Contar postulaciones totales (a través de proyectos)
+        $totalPostulaciones = Postulacion::whereIn('pro_id', 
+            $empresa->proyectos()->pluck('pro_id')
+        )->count();
+
+        $postulacionesPendientes = Postulacion::whereIn('pro_id', 
+            $empresa->proyectos()->pluck('pro_id')
+        )->where('pos_estado', 'Pendiente')->count();
+
+        // Proyectos recientes
+        $proyectosRecientes = $empresa->proyectos()
             ->orderByDesc('pro_id')
             ->limit(5)
             ->get();
@@ -40,8 +48,9 @@ class EmpresaController extends Controller
     public function proyectos()
     {
         $nit = session('nit');
-        $proyectos = DB::table('proyecto')
-            ->where('emp_nit', $nit)
+        $empresa = Empresa::where('emp_nit', $nit)->firstOrFail();
+        
+        $proyectos = $empresa->proyectos()
             ->orderByDesc('pro_id')
             ->get();
 
@@ -77,7 +86,7 @@ class EmpresaController extends Controller
         $fechaPubli = \Carbon\Carbon::parse($request->fecha_publi);
         $fechaFinalizacion = $fechaPubli->addMonths(6);
 
-        DB::table('proyecto')->insert([
+        Proyecto::create([
             'emp_nit'                    => $nit,
             'pro_titulo_proyecto'        => $request->titulo,
             'pro_categoria'              => $request->categoria,
@@ -97,8 +106,7 @@ class EmpresaController extends Controller
     public function editarProyecto(int $id)
     {
         $nit = session('nit');
-        $proyecto = DB::table('proyecto')
-            ->where('pro_id', $id)
+        $proyecto = Proyecto::where('pro_id', $id)
             ->where('emp_nit', $nit)
             ->firstOrFail();
 
@@ -118,7 +126,10 @@ class EmpresaController extends Controller
         ]);
 
         $nit = session('nit');
-        
+        $proyecto = Proyecto::where('pro_id', $id)
+            ->where('emp_nit', $nit)
+            ->firstOrFail();
+
         // Calcular fecha de finalización (6 meses desde la fecha de publicación)
         $fechaPubli = \Carbon\Carbon::parse($request->fecha_publi);
         $fechaFinalizacion = $fechaPubli->addMonths(6);
@@ -139,10 +150,7 @@ class EmpresaController extends Controller
             $datos['pro_imagen_url'] = '/storage/' . $path;
         }
 
-        DB::table('proyecto')
-            ->where('pro_id', $id)
-            ->where('emp_nit', $nit)
-            ->update($datos);
+        $proyecto->update($datos);
 
         return redirect()->route('empresa.proyectos')->with('success', 'Proyecto actualizado correctamente.');
     }
@@ -150,27 +158,55 @@ class EmpresaController extends Controller
     public function eliminarProyecto(int $id)
     {
         $nit = session('nit');
-        DB::table('proyecto')->where('pro_id', $id)->where('emp_nit', $nit)->delete();
-        return redirect()->route('empresa.proyectos')->with('success', 'Proyecto eliminado.');
+        
+        // Verificar que el proyecto pertenece a la empresa
+        $proyecto = Proyecto::where('pro_id', $id)
+            ->where('emp_nit', $nit)
+            ->first();
+        
+        if (!$proyecto) {
+            return redirect()->route('empresa.proyectos')->with('error', 'Proyecto no encontrado.');
+        }
+        
+        // Eliminar evidencias del proyecto
+        Evidencia::where('evid_pro_id', $id)->delete();
+        
+        // Eliminar etapas del proyecto
+        Etapa::where('eta_pro_id', $id)->delete();
+        
+        // Eliminar postulaciones del proyecto
+        Postulacion::where('pro_id', $id)->delete();
+        
+        // Finalmente eliminar el proyecto
+        $proyecto->delete();
+        
+        return redirect()->route('empresa.proyectos')->with('success', 'Proyecto eliminado correctamente.');
     }
 
     public function verPostulantes(int $id)
     {
         $nit = session('nit');
 
-        $proyecto = DB::table('proyecto')
-            ->where('pro_id', $id)
+        $proyecto = Proyecto::where('pro_id', $id)
             ->where('emp_nit', $nit)
             ->firstOrFail();
 
-        $postulantes = DB::table('postulacion')
-            ->join('aprendiz', 'postulacion.apr_id', '=', 'aprendiz.apr_id')
-            ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
-            ->where('postulacion.pro_id', $id)
-            ->select('postulacion.*', 'aprendiz.apr_nombre', 'aprendiz.apr_apellido',
-                     'aprendiz.apr_programa', 'usuario.usr_correo')
-            ->orderByDesc('postulacion.pos_fecha')
-            ->get();
+        // Obtener postulantes con relaciones eager loaded
+        $postulantes = $proyecto->postulaciones()
+            ->with(['aprendiz.usuario'])
+            ->orderByDesc('pos_fecha')
+            ->get()
+            ->map(function($postulacion) {
+                return (object)[
+                    'pos_id' => $postulacion->pos_id,
+                    'pos_estado' => $postulacion->pos_estado,
+                    'pos_fecha' => $postulacion->pos_fecha,
+                    'apr_nombre' => $postulacion->aprendiz->apr_nombre,
+                    'apr_apellido' => $postulacion->aprendiz->apr_apellido,
+                    'apr_programa' => $postulacion->aprendiz->apr_programa,
+                    'usr_correo' => $postulacion->aprendiz->usuario->usr_correo,
+                ];
+            });
 
         return view('empresa.postulantes', compact('proyecto', 'postulantes'));
     }
@@ -179,7 +215,17 @@ class EmpresaController extends Controller
     {
         $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
 
-        DB::table('postulacion')->where('pos_id', $id)->update(['pos_estado' => $request->estado]);
+        $nit = session('nit');
+        
+        // SEGURIDAD: Validar que la postulación pertenece a un proyecto de esta empresa
+        $postulacion = Postulacion::with('proyecto')
+            ->where('pos_id', $id)
+            ->whereHas('proyecto', function($query) use ($nit) {
+                $query->where('emp_nit', $nit);
+            })
+            ->firstOrFail();
+
+        $postulacion->update(['pos_estado' => $request->estado]);
 
         return back()->with('success', 'Estado de postulación actualizado.');
     }
@@ -187,13 +233,14 @@ class EmpresaController extends Controller
     public function perfil()
     {
         $empId = session('emp_id');
-        $empresa = DB::table('empresa')->where('emp_id', $empId)->first();
+        $empresa = Empresa::findOrFail($empId);
         return view('empresa.perfil', compact('empresa'));
     }
 
     public function actualizarPerfil(Request $request)
     {
         $empId = session('emp_id');
+        $empresa = Empresa::findOrFail($empId);
 
         $request->validate([
             'nombre_empresa' => 'required|string|max:150',
@@ -210,7 +257,7 @@ class EmpresaController extends Controller
             $datos['emp_contrasena'] = Hash::make($request->password);
         }
 
-        DB::table('empresa')->where('emp_id', $empId)->update($datos);
+        $empresa->update($datos);
         session(['nombre' => $request->nombre_empresa]);
 
         return back()->with('success', 'Perfil actualizado correctamente.');

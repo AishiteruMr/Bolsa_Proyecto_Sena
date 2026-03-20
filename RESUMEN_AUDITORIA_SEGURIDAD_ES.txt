@@ -1,0 +1,241 @@
+================================================================================
+RESUMEN EJECUTIVO - AUDITORÍA DE SEGURIDAD
+Bolsa de Proyectos SENA
+Fecha: 20 de Marzo de 2026
+================================================================================
+
+RIESGO GENERAL: ALTO - CRÍTICO
+
+Se identificaron 21 vulnerabilidades en la base de código, incluyendo:
+- 4 vulnerabilidades CRÍTICAS
+- 5 vulnerabilidades ALTAS
+- 6 vulnerabilidades MEDIAS
+- 6 vulnerabilidades BAJAS
+
+================================================================================
+VULNERABILIDADES CRÍTICAS (REMEDIACIÓN INMEDIATA REQUERIDA)
+================================================================================
+
+1. CAMBIO DE ESTADO DE POSTULACIÓN SIN VALIDACIÓN
+   Ubicación: EmpresaController::cambiarEstadoPostulacion() (línea 214)
+   Riesgo: CRÍTICO - Una empresa puede cambiar estado de postulaciones de otra empresa
+   
+   Problema:
+   - No valida que la postulación pertenezca a un proyecto de la empresa
+   - Permite aprobar/rechazar aprendices sin autoridad
+   - Fraude en el sistema de selección
+   
+   Acción: ARREGLAR INMEDIATAMENTE
+   Tiempo estimado: 15 minutos
+
+
+2. API SIN AUTENTICACIÓN - EXPOSICIÓN DE DATOS SENSIBLES
+   Ubicación: Api/EmpresaApiController.php (TODOS LOS ENDPOINTS)
+   Riesgo: CRÍTICO - Cualquier persona puede acceder a datos de todas las empresas
+   
+   Endpoints Expuestos:
+   - GET /api/empresa/{nit}/ubicacion
+   - GET /api/empresas
+   - PUT /api/empresa/{id}/ubicacion
+   
+   Datos Expuestos:
+   - NITs, nombres, representantes, ubicaciones, direcciones
+   
+   Acción: PROTEGER CON MIDDLEWARE AUTENTICACIÓN (auth:sanctum)
+   Tiempo estimado: 30 minutos
+
+
+3. DEBUG MODE HABILITADO EN PRODUCCIÓN
+   Ubicación: .env (APP_DEBUG=true)
+   Riesgo: CRÍTICO - Expone stack traces, rutas, variables de entorno
+   
+   Problema:
+   - Información del sistema visible en errores
+   - Facilita identificación de otras vulnerabilidades
+   
+   Acción: CAMBIAR APP_DEBUG=false
+   Tiempo estimado: 5 minutos
+
+
+4. SESIÓN SIN ENCRIPTACIÓN
+   Ubicación: config/session.php (encrypt => false)
+   Riesgo: CRÍTICO - Datos de sesión en texto plano
+   
+   Problema:
+   - usr_id, emp_id, nit, rol en texto plano en archivos
+   - Si alguien accede al archivo, obtiene acceso como ese usuario
+   
+   Acción: CAMBIAR encrypt => true
+   Tiempo estimado: 5 minutos
+
+================================================================================
+PROBLEMAS DE AUTORIZACIÓN DETECTADOS
+================================================================================
+
+1. Cambio de estado de postulación (EmpresaController)
+   - SIN validación de pertenencia a proyecto
+   - SIN verificación de autoridad
+   - VULNERABLE a ataques de autorización horizontal
+
+2. API pública sin autenticación
+   - SIN protección de endpoints
+   - SIN validación de usuario
+   - ACCESO PÚBLICO A DATOS SENSIBLES
+
+3. Middleware de autenticación débil
+   - Usa comparador ! en lugar de !==
+   - NO valida rol correctamente
+   - Usuario puede acceder a múltiples módulos
+
+4. Middleware de roles con comparador débil
+   - Usa != en lugar de !==
+   - Puede ser eludido con conversión de tipos
+   - "1" == 1 es verdadero
+
+================================================================================
+VALIDACIONES INCOMPLETAS
+================================================================================
+
+1. Validación de Contraseña DÉBIL
+   - Mínimo 6 caracteres (OWASP recomienda 12+)
+   - Sin requisitos de complejidad
+   - Sin validación contra contraseñas comunes
+   
+   Recomendación: Aumentar a 12+ caracteres con mayúsculas, minúsculas, números, símbolos
+
+2. Soporte de Contraseñas Sin Hash (Legacy)
+   - AuthController acepta comparación de texto plano
+   - Heredado de sistema anterior inseguro
+   - Debería forzar reset
+   
+   Recomendación: Requerir reset para usuarios sin contraseña hasheada
+
+3. Búsqueda sin XSS Protection
+   - Aunque Eloquent sanitiza, hay exposición potencial
+   - Sin validación de entrada adicional
+   
+   Recomendación: Adicionar validación de entrada
+
+================================================================================
+EXPOSICIÓN DE DATOS SENSIBLES
+================================================================================
+
+1. PII en Sesión (Personal Identifiable Information)
+   - Documento de identidad
+   - Emails
+   - Información de rol
+   
+   Problema: Sin encriptación de sesión, datos expuestos
+   Acción: Mover solo datos esenciales a sesión
+
+2. Emails en Respuestas de API
+   - EmpresaController::verPostulantes() expone emails
+   - Violación de privacidad
+   
+   Acción: Remover emails de respuestas
+
+3. Errores Detallados en API
+   - EmpresaApiController retorna $e->getMessage()
+   - Stack traces expuestos
+   
+   Acción: Mostrar mensajes genéricos en producción
+
+================================================================================
+CONTROL DE ACCESO - MÉTODOS PROTEGIDOS CORRECTAMENTE
+================================================================================
+
+✅ AprendizController::verDetalleProyecto()
+   - Valida que aprendiz esté aprobado
+   - Valida pertenencia a proyecto
+   - Obtiene solo datos propios
+
+✅ EmpresaController::eliminarProyecto()
+   - Valida que proyecto pertenece a empresa
+   - Manejo correcto de datos relacionados
+
+✅ AdminController::cambiarEstadoProyecto()
+   - Protegido por middleware rol:4
+   - Solo admin puede acceder
+
+✅ AdminController::asignarInstructor()
+   - Valida existencia de instructor
+   - Protegido por middleware rol:4
+
+================================================================================
+AUTENTICACIÓN Y SESIONES - ANÁLISIS
+================================================================================
+
+✅ Rate Limiting en Login
+   - Implementado con cache
+   - 5 intentos en 15 minutos
+   - Protección contra fuerza bruta
+
+✅ Token de Recuperación de Contraseña
+   - Token hasheado con SHA256
+   - Expira en 30 minutos
+   - Validación antes de usar
+
+⚠️ Session Encryption
+   - DESHABILITADO (encrypt => false)
+   - Requerida habilitación
+
+⚠️ Session Lifetime
+   - 120 minutos por defecto
+   - Sin expire_on_close
+   - Recomendación: Reducir a 60 minutos
+
+================================================================================
+RECOMENDACIONES PRIORITARIAS
+================================================================================
+
+ACCIÓN INMEDIATA (HOY):
+1. [ ] Deshabilitar EmpresaApiController o proteger con autenticación
+2. [ ] Arreglar EmpresaController::cambiarEstadoPostulacion()
+3. [ ] Cambiar APP_DEBUG=false
+4. [ ] Cambiar encrypt=>true en config/session.php
+
+ESTA SEMANA:
+1. [ ] Implementar autenticación en API (Sanctum)
+2. [ ] Auditar todos los cambios de estado
+3. [ ] Mejorar validación de contraseñas
+4. [ ] Implementar rate limiting global
+
+PRÓXIMAS 2 SEMANAS:
+1. [ ] Realizar penetration testing completo
+2. [ ] Implementar 2FA para admin
+3. [ ] Implementar logging de acciones sensibles
+4. [ ] Auditoría de código completa
+
+PRÓXIMO MES:
+1. [ ] Implementar 2FA opcional para usuarios
+2. [ ] Conformidad con LGPD
+3. [ ] Implementar encryption at rest para datos sensibles
+4. [ ] Realizar auditoría anual de seguridad
+
+================================================================================
+ARCHIVOS GENERADOS PARA REMEDIACIÓN
+================================================================================
+
+1. SECURITY_AUDIT_REPORT.md
+   - Reporte detallado de todas las vulnerabilidades
+   - Código vulnerable vs. código seguro
+   - Análisis técnico completo
+
+2. VULNERABILITY_SUMMARY.txt
+   - Resumen ejecutivo de vulnerabilidades
+   - CVSS scores
+   - Exploits potenciales
+
+3. FIXES_AND_PATCHES.md
+   - Código de remediación
+   - Patches listos para implementar
+   - Checklist de implementación
+
+================================================================================
+IMPACTO EN CASO DE NO REMEDIAR
+================================================================================
+
+RIESGOS DE SEGURIDAD:
+- Fraude en sistema de selección (empresas manipulando postulaciones)
+- Robo de identidad comercial
+- Exposición completa
