@@ -3,7 +3,7 @@
 @section('page-title', 'Mis Proyectos')
 
 @section('sidebar-nav')
-    <a href="{{ route('empresa.dashboard') }}" class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="{{ route('empresa.dashboard') }}" class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}"><i class="fas fa-home"></i> Principal</a>
     <a href="{{ route('empresa.proyectos') }}" class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}"><i class="fas fa-project-diagram"></i> Mis Proyectos</a>
     <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}"><i class="fas fa-plus-circle"></i> Publicar Proyecto</a>
     <span class="nav-label">Cuenta</span>

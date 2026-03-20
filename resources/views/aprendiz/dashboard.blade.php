@@ -1,12 +1,12 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Dashboard Aprendiz')
-@section('page-title', 'Mi Dashboard')
+@section('title', 'Principal Aprendiz')
+@section('page-title', 'Mi Principal')
 
 @section('sidebar-nav')
     <span class="nav-label">Principal</span>
     <a href="{{ route('aprendiz.dashboard') }}" class="nav-item {{ request()->routeIs('aprendiz.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Dashboard
+        <i class="fas fa-home"></i> Principal
     </a>
     <a href="{{ route('aprendiz.proyectos') }}" class="nav-item {{ request()->routeIs('aprendiz.proyectos') ? 'active' : '' }}">
         <i class="fas fa-briefcase"></i> Explorar Proyectos

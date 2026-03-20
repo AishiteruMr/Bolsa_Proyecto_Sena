@@ -1,11 +1,11 @@
 @extends('layouts.dashboard')
-@section('title', 'Dashboard Empresa')
+@section('title', 'Principal Empresa')
 @section('page-title', 'Panel Empresa')
 
 @section('sidebar-nav')
     <a href="{{ route('empresa.dashboard') }}"
         class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}"><i class="fas fa-home"></i>
-        Dashboard</a>
+        Principal</a>
     <a href="{{ route('empresa.proyectos') }}"
         class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}"><i
             class="fas fa-project-diagram"></i> Mis Proyectos</a>

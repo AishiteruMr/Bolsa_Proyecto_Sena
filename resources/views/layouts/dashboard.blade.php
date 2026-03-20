@@ -170,7 +170,7 @@
     <!-- MAIN -->
     <div class="main">
         <header class="topbar">
-            <span class="topbar-title">@yield('page-title', 'Dashboard')</span>
+            <span class="topbar-title">@yield('page-title', 'Principal')</span>
             <div class="topbar-right">
                 <span style="font-size:13px; color:#666;">{{ now()->format('d/m/Y') }}</span>
             </div>

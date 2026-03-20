@@ -29,14 +29,14 @@
 
         <div style="text-align:center; margin:30px 0;">
             <a href="{{ url('/login') }}"
-               style="background:linear-gradient(135deg,#39a900,#2d8500);
-                      color:#ffffff;
-                      padding:14px 28px;
-                      text-decoration:none;
-                      border-radius:30px;
-                      font-size:15px;
-                      font-weight:bold;
-                      display:inline-block;">
+                style="background:linear-gradient(135deg,#39a900,#2d8500);
+                    color:#ffffff;
+                    padding:14px 28px;
+                    text-decoration:none;
+                    border-radius:30px;
+                    font-size:15px;
+                    font-weight:bold;
+                    display:inline-block;">
                 🚀 Iniciar Sesión
             </a>
         </div>
