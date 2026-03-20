@@ -27,192 +27,211 @@
 @endsection
 
 @section('content')
-    <link rel="stylesheet" href="{{ asset('css/aprendiz.css') }}">
+<link rel="stylesheet" href="{{ asset('css/instructor.css') }}">
 
-    <div class="project-detail">
-        <div class="project-header">
-            <a href="{{ route('aprendiz.postulaciones') }}" class="project-back-link">
-                <i class="fas fa-arrow-left"></i> Volver a mis postulaciones
-            </a>
+<div class="project-detail">
+
+    <!-- HEADER -->
+    <div class="project-header">
+        <a href="{{ route('aprendiz.postulaciones') }}" class="project-back-link">
+            <i class="fas fa-arrow-left"></i> Volver a mis postulaciones
+        </a>
+
+        <div class="header-content">
             <h1 class="project-title">{{ $proyecto->pro_titulo_proyecto }}</h1>
             <p class="project-subtitle">Detalles del proyecto y envío de evidencias</p>
         </div>
+    </div>
 
-        @if(session('success'))
-            <div class="success-message">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-            </div>
-        @endif
+    @if(session('success'))
+        <div class="success-message">
+            <i class="fas fa-check-circle"></i> {{ session('success') }}
+        </div>
+    @endif
 
-        <!-- INFORMACIÓN DEL PROYECTO -->
-        <div class="card">
+    <!-- IMAGEN -->
+    <h2 class="section-title">
+        <i class="fas fa-image"></i> Imagen del Proyecto
+    </h2>
+
+    <div class="card">
+        <div class="card-content image-section">
             @if($proyecto->pro_imagen_url)
-                <img src="{{ $proyecto->pro_imagen_url }}" alt="{{ $proyecto->pro_titulo_proyecto }}" class="project-image">
+                <img src="{{ $proyecto->pro_imagen_url }}" class="project-image-large">
             @else
-                <div class="project-image-placeholder">
+                <div class="no-image-placeholder-large">
                     <i class="fas fa-image"></i>
+                    <h3>Sin imagen</h3>
                 </div>
             @endif
+        </div>
+    </div>
 
-            <div class="project-info-section">
+    <!-- INFO -->
+    <div class="card">
+        <div class="card-content">
+            <h3 class="card-subtitle">Información General</h3>
+
+            <div class="project-info-grid">
                 <div class="project-info-item">
                     <span class="project-info-label">Empresa:</span>
-                    <span class="project-info-value">{{ $proyecto->emp_nombre }}</span>
+                    <span>{{ $proyecto->emp_nombre }}</span>
                 </div>
+
                 <div class="project-info-item">
                     <span class="project-info-label">Categoría:</span>
-                    <span class="project-info-value">{{ $proyecto->pro_categoria }}</span>
+                    <span>{{ $proyecto->pro_categoria }}</span>
                 </div>
+
                 <div class="project-info-item">
                     <span class="project-info-label">Instructor:</span>
-                    <span class="project-info-value">{{ $proyecto->instructor_nombre }}</span>
+                    <span>{{ $proyecto->instructor_nombre }}</span>
                 </div>
+
                 <div class="project-info-item">
                     <span class="project-info-label">Estado:</span>
-                    <span class="project-info-value">
-                        @if($proyecto->pro_estado === 'Activo')
-                            <span class="badge badge-success">{{ $proyecto->pro_estado }}</span>
-                        @else
-                            <span class="badge badge-danger">{{ $proyecto->pro_estado }}</span>
-                        @endif
-                    </span>
+                    @if($proyecto->pro_estado === 'Activo')
+                        <span class="badge badge-success">{{ $proyecto->pro_estado }}</span>
+                    @else
+                        <span class="badge badge-danger">{{ $proyecto->pro_estado }}</span>
+                    @endif
                 </div>
+
                 <div class="project-info-item">
-                    <span class="project-info-label">Fecha Publicación:</span>
-                    <span class="project-info-value">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d/m/Y') }}</span>
+                    <span class="project-info-label">Publicación:</span>
+                    <span>{{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d/m/Y') }}</span>
                 </div>
+
                 <div class="project-info-item">
-                    <span class="project-info-label">Fecha Finalización:</span>
-                    <span class="project-info-value">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d/m/Y') }}</span>
+                    <span class="project-info-label">Finalización:</span>
+                    <span>{{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d/m/Y') }}</span>
                 </div>
             </div>
 
             <div class="project-description-section">
-                <h3>Descripción</h3>
+                <h3 class="card-subtitle">Descripción</h3>
                 <p>{{ $proyecto->pro_descripcion }}</p>
 
-                <h3>Requisitos Específicos</h3>
+                <h3 class="card-subtitle">Requisitos</h3>
                 <p>{{ $proyecto->pro_requisitos_especificos }}</p>
 
-                <h3>Habilidades Requeridas</h3>
+                <h3 class="card-subtitle">Habilidades</h3>
                 <p>{{ $proyecto->pro_habilidades_requerida }}</p>
             </div>
         </div>
+    </div>
 
-        <!-- ETAPAS Y FORMULARIO DE EVIDENCIA -->
-        <h2 class="section-title">
-            <i class="fas fa-tasks"></i>Etapas del Proyecto
-        </h2>
+    <!-- ETAPAS -->
+    <h2 class="section-title">
+        <i class="fas fa-tasks"></i> Etapas del Proyecto
+    </h2>
 
-        <div class="stages-grid">
-            @forelse($etapas as $etapa)
-                <div class="stage-card">
-                    <div class="stage-header">
-                        <div class="stage-header-content">
-                            <div class="stage-title">
-                                <span class="stage-number">{{ $etapa->eta_orden }}</span>
-                                {{ $etapa->eta_nombre }}
-                            </div>
-                            <p class="stage-description">{{ $etapa->eta_descripcion }}</p>
-                        </div>
-                    </div>
+    <div class="stages-grid">
+        @forelse($etapas as $etapa)
+            <div class="card">
+                <div class="card-content">
 
-                    <!-- EVIDENCIAS ANTERIORES -->
+                    <h3>
+                        <span class="stage-order">{{ $etapa->eta_orden }}</span>
+                        {{ $etapa->eta_nombre }}
+                    </h3>
+
+                    <p>{{ $etapa->eta_descripcion }}</p>
+
+                    <!-- EVIDENCIAS -->
                     @php
                         $evidenciasEtapa = $evidencias->where('eta_id', $etapa->eta_id);
                     @endphp
 
-                    @if($evidenciasEtapa->count() > 0)
+                    @if($evidenciasEtapa->count())
                         <div class="evidences-list">
-                            <h4>
-                                <i class="fas fa-check"></i>Evidencias Subidas
-                            </h4>
+                            <h4>Evidencias</h4>
+
                             @foreach($evidenciasEtapa as $evid)
                                 <div class="evidence-item">
-                                    <div class="evidence-item-header">
-                                        <div class="evidence-item-content">
-                                            <p class="evidence-item-meta">
-                                                <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($evid->evid_fecha)->format('d/m/Y H:i') }}
-                                            </p>
-                                            <p class="evidence-item-meta evidence-item-status">
-                                                <strong>Estado:</strong>
-                                                @switch($evid->evid_estado)
-                                                    @case('Aprobada')
-                                                        <span class="badge badge-success">{{ $evid->evid_estado }}</span>
-                                                        @break
-                                                    @case('Pendiente')
-                                                        <span class="badge badge-warning">{{ $evid->evid_estado }}</span>
-                                                        @break
-                                                    @case('Rechazada')
-                                                        <span class="badge badge-danger">{{ $evid->evid_estado }}</span>
-                                                        @break
-                                                @endswitch
-                                            </p>
-                                            @if($evid->evid_comentario)
-                                                <div class="evidence-comment">
-                                                    <strong>Comentario del instructor:</strong>
-                                                    <p>{{ $evid->evid_comentario }}</p>
-                                                </div>
-                                            @endif
-                                        </div>
-                                        @if($evid->evid_archivo)
-                                            <a href="{{ asset('storage/' . $evid->evid_archivo) }}" target="_blank" class="download-btn">
-                                                <i class="fas fa-download"></i> Descargar
-                                            </a>
+                                    <p><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($evid->evid_fecha)->format('d/m/Y H:i') }}</p>
+
+                                    <p><strong>Estado:</strong>
+                                        @if($evid->evid_estado == 'Aprobada')
+                                            <span class="badge badge-success">Aprobada</span>
+                                        @elseif($evid->evid_estado == 'Pendiente')
+                                            <span class="badge badge-warning">Pendiente</span>
+                                        @else
+                                            <span class="badge badge-danger">Rechazada</span>
                                         @endif
-                                    </div>
+                                    </p>
+
+                                    @if($evid->evid_comentario)
+                                        <p><strong>Comentario:</strong> {{ $evid->evid_comentario }}</p>
+                                    @endif
+
+                                    @if($evid->evid_archivo)
+                                        <a href="{{ asset('storage/' . $evid->evid_archivo) }}" target="_blank" class="btn-secondary btn-sm">
+                                            Descargar
+                                        </a>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>
                     @endif
 
-                    <!-- FORMULARIO PARA ENVIAR EVIDENCIA -->
-                    <div class="evidence-form-section">
-                        <h4>
-                            <i class="fas fa-upload"></i>Enviar Nueva Evidencia
-                        </h4>
+                    <!-- FORM -->
+                    <form action="{{ route('aprendiz.evidencia.enviar', [$proyecto->pro_id, $etapa->eta_id]) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
 
-                        <form action="{{ route('aprendiz.evidencia.enviar', [$proyecto->pro_id, $etapa->eta_id]) }}" method="POST" enctype="multipart/form-data" class="form-evidence">
-                            @csrf
+                        <textarea name="descripcion" required placeholder="Describe tu evidencia..." class="form-input"></textarea>
 
-                            <div class="form-evidence-group">
-                                <div class="form-field">
-                                    <label>Descripción de la Evidencia *</label>
-                                    <textarea 
-                                        name="descripcion" 
-                                        required 
-                                        placeholder="Describe lo que has realizado en esta etapa...">{{ old('descripcion') }}</textarea>
-                                    @error('descripcion')
-                                        <p class="form-field-error">{{ $message }}</p>
-                                    @enderror
-                                </div>
+                        <input type="file" name="archivo" class="form-input">
 
-                                <div class="form-field">
-                                    <label>Archivo (máx. 5MB)</label>
-                                    <input 
-                                        type="file" 
-                                        name="archivo"
-                                        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.zip">
-                                    @error('archivo')
-                                        <p class="form-field-error">{{ $message }}</p>
-                                    @enderror
-                                    <p class="form-field-help">Formatos aceptados: PDF, Word, Excel, PowerPoint, Imágenes, ZIP</p>
-                                </div>
+                        <button class="btn-primary btn-sm">
+                            Enviar Evidencia
+                        </button>
+                    </form>
 
-                                <button type="submit" class="btn-submit">
-                                    <i class="fas fa-paper-plane"></i> Enviar Evidencia
-                                </button>
-                            </div>
-                        </form>
-                    </div>
                 </div>
-            @empty
-                <div class="empty-state">
-                    <i class="fas fa-tasks empty-state-icon"></i>
-                    <h4 class="empty-state-title">Sin etapas</h4>
-                    <p class="empty-state-message">Este proyecto aún no tiene etapas definidas.</p>
-                </div>
-            @endforelse
-        </div>
+            </div>
+        @empty
+            <div class="empty-state">
+                <h4>Sin etapas</h4>
+            </div>
+        @endforelse
     </div>
 
+</div>
+
+<style>
+.project-detail {
+    padding: 20px;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.project-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.project-image-large {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.stages-grid {
+    display: grid;
+    gap: 20px;
+}
+
+textarea.form-input, input.form-input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+</style>
+
+@endsection
