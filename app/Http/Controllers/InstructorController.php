@@ -15,6 +15,7 @@ class InstructorController extends Controller
 
         $proyectosAsignados = DB::table('proyecto')
             ->where('ins_usr_documento', session('documento'))
+            ->where('pro_estado', 'Activo')
             ->count();
 
         $proyectosActivos = DB::table('proyecto')
@@ -25,6 +26,7 @@ class InstructorController extends Controller
         $proyectos = DB::table('proyecto')
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
             ->where('proyecto.ins_usr_documento', session('documento'))
+            ->where('proyecto.pro_estado', 'Activo')
             ->select('proyecto.*', 'empresa.emp_nombre')
             ->orderByDesc('proyecto.pro_id')
             ->limit(5)
@@ -33,6 +35,7 @@ class InstructorController extends Controller
         $totalAprendices = DB::table('postulacion')
             ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
             ->where('proyecto.ins_usr_documento', session('documento'))
+            ->where('proyecto.pro_estado', 'Activo')
             ->where('postulacion.pos_estado', 'Aprobada')
             ->distinct()
             ->count('postulacion.apr_id');
@@ -48,6 +51,7 @@ class InstructorController extends Controller
         $proyectos = DB::table('proyecto')
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
             ->where('proyecto.ins_usr_documento', session('documento'))
+            ->where('proyecto.pro_estado', 'Activo')
             ->select('proyecto.*', 'empresa.emp_nombre')
             ->orderByDesc('proyecto.pro_id')
             ->get();
@@ -62,6 +66,7 @@ class InstructorController extends Controller
             ->join('aprendiz', 'postulacion.apr_id', '=', 'aprendiz.apr_id')
             ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
             ->where('proyecto.ins_usr_documento', session('documento'))
+            ->where('proyecto.pro_estado', 'Activo')
             ->where('postulacion.pos_estado', 'Aprobada')
             ->select('aprendiz.*', 'usuario.usr_correo', 'proyecto.pro_titulo_proyecto',
                      'postulacion.pos_estado', 'postulacion.pos_fecha')
@@ -109,6 +114,7 @@ class InstructorController extends Controller
     {
         $usrDocumento = session('documento');
         
+        // El historial muestra proyectos asignados, sin importar si están activos o inactivos
         $proyectos = DB::table('proyecto')
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
             ->leftJoin('postulacion', 'proyecto.pro_id', '=', 'postulacion.pro_id')

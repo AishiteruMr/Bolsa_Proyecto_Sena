@@ -42,12 +42,43 @@
         .badge-warning { background: #fff3cd; color: #856404; }
         .badge-danger  { background: #f8d7da; color: #721c24; }
         .badge-info    { background: #cce5ff; color: #004085; }
+
+        /* --- GLOBAL NAVBAR --- */
+        .navbar { background: var(--blanco); padding: 0 48px; height: 68px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0, 0, 0, .07); position: sticky; top: 0; z-index: 100; }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo img { width: 40px; }
+        .logo span { font-weight: 700; font-size: 18px; color: var(--verde-dark); }
+        .menu a { margin-left: 28px; font-size: 14px; font-weight: 600; color: var(--texto-suave); transition: color .2s; }
+        .menu a:hover, .menu a.active { color: var(--verde); }
+        .btn-login { background: var(--verde); color: var(--blanco); padding: 9px 22px; border-radius: 30px; font-size: 14px; font-weight: 600; transition: background .2s; }
+        .btn-login:hover { background: var(--verde-dark); color: var(--blanco); }
+
+        /* --- GLOBAL FOOTER --- */
+        .footer { background: #1a1a1a; color: #ccc; padding: 48px 80px 24px; }
+        .footer-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; margin-bottom: 32px; }
+        .footer-col h3 { color: var(--blanco); font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+        .footer-col p, .footer-col a { font-size: 13px; color: #888; display: block; margin-bottom: 6px; }
+        .footer-col a:hover { color: var(--verde); }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; }
+        .footer-col ul li { margin-bottom: 6px; }
+        .footer-bottom { border-top: 1px solid #333; padding-top: 16px; text-align: center; font-size: 13px; color: #555; }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 20px; }
+            .footer { padding: 40px 24px 20px; }
+        }
     </style>
 
     @yield('styles')
 </head>
 <body>
-    @yield('content')
+    @include('partials.navbar')
+
+    <main>
+        @yield('content')
+    </main>
+
+    @include('partials.footer')
 
     <script>
         // Auto-hide alerts

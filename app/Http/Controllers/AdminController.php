@@ -111,9 +111,19 @@ class AdminController extends Controller
             'estado' => 'required|in:Activo,Inactivo,Aprobado,Rechazado'
         ]);
 
-        DB::table('proyecto')
-            ->where('pro_id', $id)
-            ->update(['pro_estado' => $request->estado]);
+        // Si el proyecto se inactiva, desasociar el instructor
+        if ($request->estado === 'Inactivo') {
+            DB::table('proyecto')
+                ->where('pro_id', $id)
+                ->update([
+                    'pro_estado' => $request->estado,
+                    'ins_usr_documento' => null
+                ]);
+        } else {
+            DB::table('proyecto')
+                ->where('pro_id', $id)
+                ->update(['pro_estado' => $request->estado]);
+        }
 
         return back()->with('success', 'Estado del proyecto actualizado.');
     }
