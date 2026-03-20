@@ -44,9 +44,10 @@ class DatabaseSeeder extends Seeder
         // =============================
         // EMPRESA
         // =============================
-        $empresa = DB::table('usuario')->where('usr_correo', 'empresa@gmail.com')->first();
+        $empresa = DB::table('empresa')->where('emp_correo', 'empresa@gmail.com')->first();
         if (!$empresa) {
-            $empresaId = DB::table('usuario')->insertGetId([
+            $empresaId = DB::table('empresa')->insertGetId([
+
                 'usr_documento'      => 3012366765,
                 'usr_correo'         => 'empresa@gmail.com',
                 'usr_contrasena'     => Hash::make('empresa123'),
