@@ -202,8 +202,10 @@ class AprendizController extends Controller
         $evidencias = $aprendiz->evidencias()
             ->where('evid_pro_id', $proId)
             ->with('etapa')
+            ->join('etapa', 'evidencia.evid_eta_id', '=', 'etapa.eta_id')
             ->orderBy('etapa.eta_orden')
             ->orderByDesc('evid_fecha')
+            ->select('evidencia.*')
             ->get();
 
         return view('aprendiz.detalle-proyecto', compact('proyecto', 'etapas', 'evidencias', 'aprendiz'));
