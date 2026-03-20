@@ -10,75 +10,6 @@
             overflow-x: hidden;
         }
 
-        /* NAVBAR */
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 0 48px;
-            height: 68px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, .05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo img {
-            width: 40px;
-        }
-
-        .logo span {
-            font-weight: 700;
-            font-size: 18px;
-            color: #298564;
-        }
-
-        .menu {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .menu a {
-            margin-left: 28px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #555;
-            transition: color .2s, background .2s;
-            padding: 8px 16px;
-            border-radius: 20px;
-        }
-
-        .menu a:hover,
-        .menu a.active {
-            color: #298564;
-            background: #e8f5e0;
-        }
-
-        .btn-login {
-            background: linear-gradient(135deg, #298564, #298564);
-            color: #fff;
-            padding: 10px 24px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all .3s;
-            box-shadow: 0 4px 15px rgba(57, 169, 0, 0.3);
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(57, 169, 0, 0.4);
-        }
-
         /* HERO */
         .hero {
             min-height: 85vh;
@@ -221,20 +152,6 @@
             background: #fff;
         }
 
-        .benefits h2 {
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #1a1a1a;
-        }
-
-        .benefits > p {
-            font-size: 16px;
-            color: #666;
-            max-width: 600px;
-            margin: 0 auto 48px;
-        }
-
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -367,48 +284,6 @@
             line-height: 1.7;
         }
 
-        /* FOOTER */
-        .footer {
-            background: #111;
-            color: #ccc;
-            padding: 60px 80px 24px;
-        }
-
-        .footer-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer-col h3 {
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-
-        .footer-col p,
-        .footer-col a {
-            font-size: 13px;
-            color: #888;
-            display: block;
-            margin-bottom: 8px;
-            transition: color .2s;
-        }
-
-        .footer-col a:hover {
-            color: #298564;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #222;
-            padding-top: 20px;
-            text-align: center;
-            font-size: 13px;
-            color: #555;
-        }
-
         @media (max-width: 900px) {
             .hero {
                 flex-direction: column;
@@ -434,36 +309,14 @@
 
             .benefits,
             .stats,
-            .cta,
-            .footer {
+            .cta {
                 padding: 60px 24px;
-            }
-
-            .navbar {
-                padding: 0 20px;
-            }
-
-            .menu a {
-                display: none;
             }
         }
     </style>
 @endsection
 
 @section('content')
-<header class="navbar">
-    <div class="logo">
-        <img src="{{ asset('assets/logo.png') }}" alt="Logo SENA" width="120">
-        <span>Inspírate SENA</span>
-    </div>
-    <nav class="menu">
-        <a href="{{ route('home') }}" class="active">Inicio</a>
-        <a href="{{ route('nosotros') }}">Nosotros</a>
-    </nav>
-    <a href="{{ route('login') }}" class="btn-login">Ingresar</a>
-</header>
-
-<main>
     <section class="hero">
         <div class="hero-text">
             <h1>Conectamos <span>Empresas</span>,<br><span>Instructores</span> y<br><span>Aprendices</span></h1>
@@ -526,28 +379,4 @@
         <p>Empresas, instructores y aprendices trabajando en proyectos reales que generan innovación y crecimiento profesional.</p>
         <a href="{{ route('registro.aprendiz') }}" class="btn primary">Comenzar ahora</a>
     </section>
-</main>
-
-<footer class="footer">
-    <div class="footer-container">
-        <div class="footer-col">
-            <h3>SENA</h3>
-            <p>Servicio Nacional de Aprendizaje encargado de la formación profesional en Colombia.</p>
-        </div>
-        <div class="footer-col">
-            <h3>Contacto</h3>
-            <p>Bogotá D.C.</p>
-            <p>PBX: (601) 5461500</p>
-            <p>atencionalciudadano@sena.edu.co</p>
-        </div>
-        <div class="footer-col">
-            <h3>Enlaces</h3>
-            <a href="https://www.sena.edu.co" target="_blank">Portal SENA</a>
-            <a href="https://oferta.senasofiaplus.edu.co" target="_blank">Sofía Plus</a>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>© {{ date('Y') }} SENA — Inspírate SENA. Todos los derechos reservados.</p>
-    </div>
-</footer>
 @endsection

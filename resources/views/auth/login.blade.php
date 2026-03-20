@@ -4,96 +4,207 @@
 
 @section('styles')
 <style>
-    body { 
-        background: linear-gradient(135deg, #0d3a00 0%, #1a5c00 40%, #39a900 100%); 
-        min-height: 100vh; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        padding: 20px; 
+    /* Estilos específicos para la página de login */
+    main {
+        background: linear-gradient(135deg, #0d3a00 0%, #1a5c00 40%, #39a900 100%);
+        min-height: calc(100vh - 68px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
     }
-    .wrapper { 
-        display: flex; 
-        max-width: 950px; 
-        width: 100%; 
-        background: #fff; 
-        border-radius: 24px; 
-        overflow: hidden; 
-        box-shadow: 0 25px 80px rgba(0,0,0,.35); 
+
+    .login-wrapper {
+        display: flex;
+        max-width: 950px;
+        width: 100%;
+        background: #fff;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 25px 80px rgba(0,0,0,.35);
     }
-    .form-side { flex: 1; padding: 52px 44px; }
-    .form-header { text-align: center; margin-bottom: 32px; }
-    .form-header img { width: 68px; margin-bottom: 14px; }
-    .form-header h2 { font-size: 24px; font-weight: 700; color: #1a5c00; margin-bottom: 4px; }
-    .form-header p { font-size: 13px; color: #666; }
-    .form-group { position: relative; margin-bottom: 20px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #2c3e50; margin-bottom: 8px; }
-    .input-icon { position: relative; }
-    .input-icon i.icon-left { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 15px; }
-    .input-icon input { 
-        width: 100%; 
-        padding: 14px 16px 14px 46px; 
-        border: 2px solid #e8edf0; 
-        border-radius: 12px; 
-        font-family: 'Poppins', sans-serif; 
-        font-size: 14px; 
-        outline: none; 
-        transition: all .2s; 
+
+    .login-form {
+        flex: 1;
+        padding: 52px 44px;
     }
-    .input-icon input:focus { border-color: #39a900; box-shadow: 0 0 0 4px rgba(57,169,0,0.1); }
-    .btn-login { 
-        width: 100%; 
-        padding: 14px; 
-        background: linear-gradient(135deg, #39a900, #2d8500); 
-        color: #fff; 
-        border: none; 
-        border-radius: 30px; 
-        font-family: 'Poppins', sans-serif; 
-        font-size: 15px; 
-        font-weight: 600; 
-        cursor: pointer; 
-        margin-top: 12px; 
-        transition: all .3s; 
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .form-header img {
+        width: 68px;
+        margin-bottom: 14px;
+    }
+
+    .form-header h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a5c00;
+        margin-bottom: 4px;
+    }
+
+    .form-header p {
+        font-size: 13px;
+        color: #666;
+    }
+
+    .form-group {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+    }
+
+    .input-icon {
+        position: relative;
+    }
+
+    .input-icon i.icon-left {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
+        font-size: 15px;
+    }
+
+    .input-icon input {
+        width: 100%;
+        padding: 14px 16px 14px 46px;
+        border: 2px solid #e8edf0;
+        border-radius: 12px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        outline: none;
+        transition: all .2s;
+    }
+
+    .input-icon input:focus {
+        border-color: #39a900;
+        box-shadow: 0 0 0 4px rgba(57,169,0,0.1);
+    }
+
+    .btn-login-form {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #39a900, #2d8500);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 12px;
+        transition: all .3s;
         box-shadow: 0 4px 15px rgba(57,169,0,0.3);
     }
-    .btn-login:hover { 
-        transform: translateY(-2px); 
+
+    .btn-login-form:hover {
+        transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(57,169,0,0.4);
     }
-    .links { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-top: 20px; color: #666; }
-    .links a { color: #39a900; font-weight: 500; }
-    .links a:hover { text-decoration: underline; }
-    .divider { text-align: center; color: #ccc; font-size: 12px; margin: 24px 0; position: relative; }
-    .divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 38%; height: 1px; background: #e8edf0; }
-    .divider::before { left: 0; } .divider::after { right: 0; }
-    .register-options { display: flex; flex-direction: column; gap: 10px; }
-    .reg-btn { 
-        display: flex; 
-        align-items: center; 
-        gap: 12px; 
-        padding: 12px 18px; 
-        border: 2px solid #e8edf0; 
-        border-radius: 12px; 
-        font-size: 14px; 
-        font-weight: 500; 
-        transition: all .2s; 
-        cursor: pointer; 
+
+    .links {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        margin-top: 20px;
+        color: #666;
     }
-    .reg-btn:hover { border-color: #39a900; background: #f0fbe8; transform: translateX(4px); }
-    .reg-btn i { font-size: 18px; width: 22px; text-align: center; }
-    .message-side { 
-        width: 380px; 
-        background: linear-gradient(180deg, #0d3a00, #1a5c00, #2d8500); 
-        display: flex; 
-        flex-direction: column; 
-        justify-content: center; 
-        align-items: center; 
-        padding: 48px 36px; 
+
+    .links a {
+        color: #39a900;
+        font-weight: 500;
+    }
+
+    .links a:hover {
+        text-decoration: underline;
+    }
+
+    .divider {
+        text-align: center;
+        color: #ccc;
+        font-size: 12px;
+        margin: 24px 0;
+        position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 38%;
+        height: 1px;
+        background: #e8edf0;
+    }
+
+    .divider::before {
+        left: 0;
+    }
+
+    .divider::after {
+        right: 0;
+    }
+
+    .register-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .reg-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 18px;
+        border: 2px solid #e8edf0;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all .2s;
+        cursor: pointer;
+        text-decoration: none;
+        color: #2c3e50;
+    }
+
+    .reg-btn:hover {
+        border-color: #39a900;
+        background: #f0fbe8;
+        transform: translateX(4px);
+    }
+
+    .reg-btn i {
+        font-size: 18px;
+        width: 22px;
+        text-align: center;
+    }
+
+    .login-message {
+        width: 380px;
+        background: linear-gradient(180deg, #0d3a00, #1a5c00, #2d8500);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 48px 36px;
         text-align: center;
         position: relative;
         overflow: hidden;
     }
-    .message-side::before {
+
+    .login-message::before {
         content: '';
         position: absolute;
         top: -50px;
@@ -103,25 +214,69 @@
         background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
         border-radius: 50%;
     }
-    .message-side .quote { color: rgba(255,255,255,.95); font-size: 16px; line-height: 1.8; font-style: italic; margin-bottom: 32px; }
-    .message-side .team { color: rgba(255,255,255,.7); font-size: 12px; }
-    .back-link { position: absolute; top: 20px; left: 20px; color: rgba(255,255,255,.7); font-size: 13px; display: flex; align-items: center; gap: 6px; }
-    .back-link:hover { color: #fff; }
-    
-    .input-error { border-color: #e74c3c !important; }
-    .error-message { color: #e74c3c; font-size: 12px; margin-top: 4px; }
-    
-    @media (max-width: 700px) { 
-        .message-side { display: none; } 
-        .form-side { padding: 36px 24px; }
-        .wrapper { border-radius: 16px; }
+
+    .login-message .quote {
+        color: rgba(255,255,255,.95);
+        font-size: 16px;
+        line-height: 1.8;
+        font-style: italic;
+        margin-bottom: 32px;
+        z-index: 1;
+        position: relative;
+    }
+
+    .login-message .team {
+        color: rgba(255,255,255,.7);
+        font-size: 12px;
+        z-index: 1;
+        position: relative;
+    }
+
+    .back-link {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        color: rgba(255,255,255,.7);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        color: #fff;
+    }
+
+    .input-error {
+        border-color: #e74c3c !important;
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    @media (max-width: 700px) {
+        .login-message {
+            display: none;
+        }
+
+        .login-form {
+            padding: 36px 24px;
+        }
+
+        .login-wrapper {
+            border-radius: 16px;
+        }
     }
 </style>
 @endsection
 
 @section('content')
-<div class="wrapper">
-    <div class="form-side">
+<div class="login-wrapper">
+    <div class="login-form">
         <div class="form-header">
             <img src="{{ asset('assets/logo.png') }}" alt="SENA">
             <h2>Bolsa de Proyecto</h2>
@@ -162,7 +317,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-login">Iniciar Sesión</button>
+            <button type="submit" class="btn-login-form">Iniciar Sesión</button>
         </form>
 
         <div class="links">
@@ -185,7 +340,7 @@
         </div>
     </div>
 
-    <div class="message-side">
+    <div class="login-message">
         <img src="{{ asset('assets/logo.png') }}" alt="SENA" style="width:80px; margin-bottom:24px; border-radius:50%; background:rgba(255,255,255,.2); padding:8px;">
         <p class="quote">
             "Cada proyecto que nace aquí tiene el poder de transformar ideas en realidades.
