@@ -4,55 +4,131 @@
 
 @section('styles')
 <style>
-    /* Estilos específicos para la página de login */
     main {
-        background: linear-gradient(135deg, #0d3a00 0%, #1a5c00 40%, #39a900 100%);
-        min-height: calc(100vh - 68px);
+        background: linear-gradient(135deg, #0f4a41 0%, #1b6b5f 40%, #4a9b8d 100%);
+        min-height: calc(100vh - 70px);
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px;
+        padding: 30px 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    main::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    main::after {
+        content: '';
+        position: absolute;
+        bottom: -50px;
+        left: -50px;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+        border-radius: 50%;
     }
 
     .login-wrapper {
         display: flex;
-        max-width: 950px;
+        max-width: 1000px;
         width: 100%;
         background: #fff;
-        border-radius: 24px;
+        border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 25px 80px rgba(0,0,0,.35);
+        box-shadow: 0 30px 80px rgba(15, 74, 65, 0.3);
+        z-index: 1;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .login-form {
         flex: 1;
-        padding: 52px 44px;
+        padding: 56px 48px;
     }
 
     .form-header {
         text-align: center;
-        margin-bottom: 32px;
+        margin-bottom: 36px;
     }
 
     .form-header img {
-        width: 68px;
-        margin-bottom: 14px;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 16px;
+        animation: fadeIn 0.6s ease-out;
     }
 
     .form-header h2 {
-        font-size: 24px;
-        font-weight: 700;
-        color: #1a5c00;
+        font-size: 28px;
+        font-weight: 800;
+        color: #0f2419;
         margin-bottom: 4px;
+        letter-spacing: -0.5px;
     }
 
     .form-header p {
+        font-size: 14px;
+        color: #999;
+        font-weight: 500;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .alert {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
         font-size: 13px;
-        color: #666;
+        border-left: 4px solid;
+        animation: slideDown 0.4s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .alert-success {
+        background: #ecf7f3;
+        color: #0f4a41;
+        border-left-color: #1b6b5f;
+    }
+
+    .alert-error {
+        background: #fef0f0;
+        color: #c0392b;
+        border-left-color: #e74c3c;
     }
 
     .form-group {
-        position: relative;
         margin-bottom: 20px;
     }
 
@@ -60,8 +136,9 @@
         display: block;
         font-size: 13px;
         font-weight: 600;
-        color: #2c3e50;
+        color: #1a1a1a;
         margin-bottom: 8px;
+        letter-spacing: 0.3px;
     }
 
     .input-icon {
@@ -70,48 +147,60 @@
 
     .input-icon i.icon-left {
         position: absolute;
-        left: 16px;
+        left: 14px;
         top: 50%;
         transform: translateY(-50%);
-        color: #aaa;
-        font-size: 15px;
+        color: #bbb;
+        font-size: 16px;
+        transition: color .3s;
     }
 
     .input-icon input {
         width: 100%;
-        padding: 14px 16px 14px 46px;
-        border: 2px solid #e8edf0;
-        border-radius: 12px;
+        padding: 12px 14px 12px 44px;
+        border: 2px solid #e8e8e8;
+        border-radius: 8px;
         font-family: 'Poppins', sans-serif;
         font-size: 14px;
         outline: none;
-        transition: all .2s;
+        transition: all .3s ease;
+        background: #fafafa;
     }
 
     .input-icon input:focus {
-        border-color: #39a900;
-        box-shadow: 0 0 0 4px rgba(57,169,0,0.1);
+        border-color: #1b6b5f;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(27, 107, 95, 0.1);
+    }
+
+    .input-icon input:focus + i {
+        color: #1b6b5f;
     }
 
     .btn-login-form {
         width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, #39a900, #2d8500);
+        padding: 13px;
+        background: linear-gradient(135deg, #1b6b5f 0%, #0f4a41 100%);
         color: #fff;
         border: none;
-        border-radius: 30px;
+        border-radius: 8px;
         font-family: 'Poppins', sans-serif;
         font-size: 15px;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
-        margin-top: 12px;
-        transition: all .3s;
-        box-shadow: 0 4px 15px rgba(57,169,0,0.3);
+        margin-top: 8px;
+        transition: all .3s ease;
+        box-shadow: 0 4px 15px rgba(27, 107, 95, 0.25);
+        letter-spacing: 0.3px;
     }
 
     .btn-login-form:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(57,169,0,0.4);
+        box-shadow: 0 8px 25px rgba(27, 107, 95, 0.35);
+    }
+
+    .btn-login-form:active {
+        transform: translateY(0);
     }
 
     .links {
@@ -120,24 +209,28 @@
         align-items: center;
         font-size: 13px;
         margin-top: 20px;
-        color: #666;
+        gap: 12px;
+        flex-wrap: wrap;
     }
 
     .links a {
-        color: #39a900;
-        font-weight: 500;
+        color: #1b6b5f;
+        font-weight: 600;
+        transition: color .2s;
+        text-decoration: none;
     }
 
     .links a:hover {
-        text-decoration: underline;
+        color: #0f4a41;
     }
 
     .divider {
         text-align: center;
         color: #ccc;
         font-size: 12px;
-        margin: 24px 0;
+        margin: 28px 0;
         position: relative;
+        font-weight: 600;
     }
 
     .divider::before,
@@ -145,9 +238,9 @@
         content: '';
         position: absolute;
         top: 50%;
-        width: 38%;
+        width: 36%;
         height: 1px;
-        background: #e8edf0;
+        background: #e8e8e8;
     }
 
     .divider::before {
@@ -168,37 +261,38 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 12px 18px;
-        border: 2px solid #e8edf0;
-        border-radius: 12px;
+        padding: 12px 16px;
+        border: 2px solid #e8e8e8;
+        border-radius: 8px;
         font-size: 14px;
-        font-weight: 500;
-        transition: all .2s;
+        font-weight: 600;
+        transition: all .3s ease;
         cursor: pointer;
         text-decoration: none;
-        color: #2c3e50;
+        color: #1a1a1a;
+        background: #fafafa;
     }
 
     .reg-btn:hover {
-        border-color: #39a900;
-        background: #f0fbe8;
+        border-color: #1b6b5f;
+        background: #f0f9f7;
         transform: translateX(4px);
     }
 
     .reg-btn i {
         font-size: 18px;
-        width: 22px;
+        width: 24px;
         text-align: center;
     }
 
     .login-message {
         width: 380px;
-        background: linear-gradient(180deg, #0d3a00, #1a5c00, #2d8500);
+        background: linear-gradient(180deg, #0f4a41 0%, #1b6b5f 50%, #4a9b8d 100%);
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 48px 36px;
+        padding: 56px 40px;
         text-align: center;
         position: relative;
         overflow: hidden;
@@ -207,12 +301,23 @@
     .login-message::before {
         content: '';
         position: absolute;
-        top: -50px;
-        right: -50px;
-        width: 200px;
-        height: 200px;
+        top: -100px;
+        right: -100px;
+        width: 300px;
+        height: 300px;
         background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
         border-radius: 50%;
+    }
+
+    .login-message img {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 28px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.15);
+        padding: 8px;
+        z-index: 1;
+        position: relative;
     }
 
     .login-message .quote {
@@ -220,55 +325,47 @@
         font-size: 16px;
         line-height: 1.8;
         font-style: italic;
-        margin-bottom: 32px;
+        margin-bottom: 36px;
         z-index: 1;
         position: relative;
+        font-weight: 500;
     }
 
     .login-message .team {
-        color: rgba(255,255,255,.7);
+        color: rgba(255,255,255,.8);
         font-size: 12px;
         z-index: 1;
         position: relative;
+        line-height: 1.6;
     }
 
-    .back-link {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        color: rgba(255,255,255,.7);
-        font-size: 13px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        text-decoration: none;
+    .login-message .team strong {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 4px;
+        font-weight: 700;
     }
 
-    .back-link:hover {
-        color: #fff;
-    }
-
-    .input-error {
-        border-color: #e74c3c !important;
-    }
-
-    .error-message {
-        color: #e74c3c;
-        font-size: 12px;
-        margin-top: 4px;
-    }
-
-    @media (max-width: 700px) {
+    @media (max-width: 800px) {
         .login-message {
             display: none;
         }
 
         .login-form {
-            padding: 36px 24px;
+            padding: 40px 30px;
         }
 
         .login-wrapper {
-            border-radius: 16px;
+            border-radius: 12px;
+        }
+
+        .form-header h2 {
+            font-size: 24px;
+        }
+
+        main {
+            padding: 20px;
+            min-height: auto;
         }
     }
 </style>
@@ -284,17 +381,17 @@
         </div>
 
         @if(session('success'))
-            <div class="alert alert-success" style="background:#d4edda; color:#155724; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:13px;">
+            <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
         @if(session('error'))
-            <div class="alert alert-error" style="background:#f8d7da; color:#721c24; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:13px;">
+            <div class="alert alert-error">
                 {{ session('error') }}
             </div>
         @endif
         @if($errors->any())
-            <div style="background:#f8d7da; color:#721c24; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:13px;">
+            <div class="alert alert-error">
                 @foreach($errors->all() as $error){{ $error }}<br>@endforeach
             </div>
         @endif
@@ -329,13 +426,13 @@
 
         <div class="register-options">
             <a href="{{ route('registro.aprendiz') }}" class="reg-btn">
-                <i class="fas fa-graduation-cap" style="color:#39a900;"></i> Aprendiz
+                <i class="fas fa-graduation-cap" style="color:#1b6b5f;"></i> Aprendiz
             </a>
             <a href="{{ route('registro.instructor') }}" class="reg-btn">
-                <i class="fas fa-chalkboard-teacher" style="color:#2980b9;"></i> Instructor
+                <i class="fas fa-chalkboard-teacher" style="color:#1b6b5f;"></i> Instructor
             </a>
             <a href="{{ route('registro.empresa') }}" class="reg-btn">
-                <i class="fas fa-building" style="color:#8e44ad;"></i> Empresa
+                <i class="fas fa-building" style="color:#1b6b5f;"></i> Empresa
             </a>
         </div>
     </div>
