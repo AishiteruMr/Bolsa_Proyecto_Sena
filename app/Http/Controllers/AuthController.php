@@ -392,7 +392,7 @@ class AuthController extends Controller
         }
 
         // Verificar que no haya expirado (30 minutos)
-        if ($registro->created_at->addMinutes(30)->isPast()) {
+        if (\Carbon\Carbon::parse($registro->created_at)->addMinutes(30)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $correo)->delete();
             return redirect()->route('login')->with('error', 'El enlace de recuperación ha expirado. Solicita uno nuevo.');
         }
@@ -426,7 +426,7 @@ class AuthController extends Controller
         }
 
         // Verificar que no haya expirado (30 minutos)
-        if ($registro->created_at->addMinutes(30)->isPast()) {
+        if (\Carbon\Carbon::parse($registro->created_at)->addMinutes(30)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $correo)->delete();
             return back()->with('error', 'El enlace de recuperación ha expirado.');
         }

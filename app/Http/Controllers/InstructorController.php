@@ -21,11 +21,6 @@ class InstructorController extends Controller
             ->where('pro_estado', 'Activo')
             ->count();
 
-        $proyectosActivos = DB::table('proyecto')
-            ->where('ins_usr_documento', session('documento'))
-            ->where('pro_estado', 'Activo')
-            ->count();
-
         $proyectos = DB::table('proyecto')
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
             ->where('proyecto.ins_usr_documento', session('documento'))
@@ -44,7 +39,7 @@ class InstructorController extends Controller
             ->count('postulacion.apr_id');
 
         return view('instructor.dashboard', compact(
-            'instructor', 'proyectosAsignados', 'proyectosActivos',
+            'instructor', 'proyectosAsignados',
             'proyectos', 'totalAprendices'
         ));
     }
