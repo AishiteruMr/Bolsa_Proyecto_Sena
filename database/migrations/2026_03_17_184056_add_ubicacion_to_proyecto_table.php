@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('proyecto', function (Blueprint $table) {
             $table->string('pro_ubicacion', 255)->nullable()->after('pro_categoria');
-            $table->date('pro_fecha_finalizacion')->nullable()->after('pro_fecha_publi');
+            $table->dateTime('pro_fecha_finalizacion')->nullable()->after('pro_fecha_publi');
         });
     }
 

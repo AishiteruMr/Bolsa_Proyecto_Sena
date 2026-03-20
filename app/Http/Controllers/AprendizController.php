@@ -10,6 +10,9 @@ use App\Models\Etapa;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\PostulacionExitosa;
 
 class AprendizController extends Controller
 {
@@ -105,7 +108,7 @@ class AprendizController extends Controller
             'pos_estado' => 'Pendiente',
         ]);
 
-        return back()->with('success', '✅ Postulación enviada correctamente. Espera la revisión del instructor.');
+        return back()->with('success', '✅ Postulación enviada correctamente.');
     }
 
     // ══════════════════════════════════════════════════════════════
