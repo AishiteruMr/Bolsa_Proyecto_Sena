@@ -215,7 +215,16 @@ class EmpresaController extends Controller
     {
         $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
 
-        $postulacion = Postulacion::findOrFail($id);
+        $nit = session('nit');
+        
+        // SEGURIDAD: Validar que la postulación pertenece a un proyecto de esta empresa
+        $postulacion = Postulacion::with('proyecto')
+            ->where('pos_id', $id)
+            ->whereHas('proyecto', function($query) use ($nit) {
+                $query->where('emp_nit', $nit);
+            })
+            ->firstOrFail();
+
         $postulacion->update(['pos_estado' => $request->estado]);
 
         return back()->with('success', 'Estado de postulación actualizado.');

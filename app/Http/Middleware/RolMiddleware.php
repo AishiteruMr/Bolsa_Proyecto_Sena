@@ -12,7 +12,8 @@ class RolMiddleware
     {
         $rolSesion = session('rol');
 
-        if ($rolSesion != $rol) {
+        // Usar comparación estricta (===) en lugar de débil (!=)
+        if ((int)$rolSesion !== $rol) {
             // Redirigir al dashboard correcto según el rol en sesión
             return match ((int) $rolSesion) {
                 1 => redirect()->route('aprendiz.dashboard'),
