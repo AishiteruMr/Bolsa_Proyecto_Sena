@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\PostulacionEstadoCambiado;
 
 class InstructorController extends Controller
 {
@@ -272,6 +275,30 @@ public function detalleProyecto($id)
         }
 
         DB::table('postulacion')->where('pos_id', $id)->update(['pos_estado' => $request->estado]);
+
+        // Enviar correo al aprendiz si se aprueba o rechaza
+        if (in_array($request->estado, ['Aprobada', 'Rechazada'])) {
+            try {
+                $postulacionCompleta = DB::table('postulacion')
+                    ->join('aprendiz', 'postulacion.apr_id', '=', 'aprendiz.apr_id')
+                    ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
+                    ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
+                    ->where('postulacion.pos_id', $id)
+                    ->select('aprendiz.apr_nombre', 'usuario.usr_correo', 'proyecto.pro_titulo_proyecto')
+                    ->first();
+
+                if ($postulacionCompleta) {
+                    Mail::to($postulacionCompleta->usr_correo)
+                        ->send(new PostulacionEstadoCambiado(
+                            $postulacionCompleta->apr_nombre,
+                            $postulacionCompleta->pro_titulo_proyecto,
+                            $request->estado
+                        ));
+                }
+            } catch (\Exception $e) {
+                Log::error('Error al enviar correo de estado de postulación: ' . $e->getMessage());
+            }
+        }
 
         return back()->with('success', 'Estado de postulación actualizado correctamente.');
     }
