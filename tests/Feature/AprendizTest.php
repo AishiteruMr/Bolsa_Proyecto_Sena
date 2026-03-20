@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -82,7 +83,7 @@ class AprendizTest extends TestCase
         $this->proyecto = DB::table('proyecto')->where('pro_id', $proId)->first();
     }
 
-    /** @test */
+    #[Test]
     public function aprendiz_can_view_dashboard()
     {
         $response = $this->withSession([
@@ -95,7 +96,7 @@ class AprendizTest extends TestCase
         $response->assertViewIs('aprendiz.dashboard');
     }
 
-    /** @test */
+    #[Test]
     public function aprendiz_can_apply_to_project()
     {
         $response = $this->withSession([
@@ -111,7 +112,7 @@ class AprendizTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function aprendiz_can_send_evidence_if_approved()
     {
         // 1. Aprobar postulación
@@ -149,7 +150,7 @@ class AprendizTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function aprendiz_can_update_profile()
     {
         $profileData = [

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ class SecurityTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function guest_cannot_access_protected_routes()
     {
         $protectedRoutes = [
@@ -30,7 +31,7 @@ class SecurityTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function user_cannot_access_other_role_dashboard()
     {
         // 1. Crear un aprendiz
@@ -52,7 +53,7 @@ class SecurityTest extends TestCase
         $response->assertRedirect(route('aprendiz.dashboard'));
     }
 
-    /** @test */
+    #[Test]
     public function login_validation_fails_with_empty_data()
     {
         $response = $this->post(route('login.post'), [
@@ -63,7 +64,7 @@ class SecurityTest extends TestCase
         $response->assertSessionHasErrors(['correo', 'password']);
     }
 
-    /** @test */
+    #[Test]
     public function login_validation_fails_with_invalid_email()
     {
         $response = $this->post(route('login.post'), [
@@ -74,7 +75,7 @@ class SecurityTest extends TestCase
         $response->assertSessionHasErrors(['correo']);
     }
 
-    /** @test */
+    #[Test]
     public function registration_validation_fails_with_short_password()
     {
         $response = $this->post(route('registro.aprendiz.post'), [
@@ -91,7 +92,7 @@ class SecurityTest extends TestCase
         $response->assertSessionHasErrors(['password']);
     }
 
-    /** @test */
+    #[Test]
     public function registration_validation_fails_with_duplicate_email()
     {
         // 1. Crear un usuario existente
@@ -116,7 +117,7 @@ class SecurityTest extends TestCase
         $response->assertSessionHasErrors(['correo']);
     }
 
-    /** @test */
+    #[Test]
     public function deactivated_account_cannot_login()
     {
         // 1. Crear usuario desactivado

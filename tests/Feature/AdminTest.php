@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -34,7 +35,7 @@ class AdminTest extends TestCase
         $this->usuario = DB::table('usuario')->where('usr_id', $usrId)->first();
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_view_dashboard()
     {
         $response = $this->withSession([
@@ -46,7 +47,7 @@ class AdminTest extends TestCase
         $response->assertViewIs('admin.dashboard');
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_change_user_status()
     {
         // 1. Crear un aprendiz
@@ -74,7 +75,7 @@ class AdminTest extends TestCase
         $this->assertDatabaseHas('aprendiz', ['apr_id' => $aprId, 'apr_estado' => 0]);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_change_company_status()
     {
         $empUsrId = DB::table('usuario')->insertGetId([
@@ -102,7 +103,7 @@ class AdminTest extends TestCase
         $this->assertDatabaseHas('empresa', ['emp_id' => $empId, 'emp_estado' => 0]);
     }
 
-    /** @test */
+    #[Test]
     public function admin_can_assign_instructor_to_project()
     {
         // 1. Crear instructor

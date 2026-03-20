@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -79,7 +80,7 @@ class InstructorTest extends TestCase
         $this->proyecto = DB::table('proyecto')->where('pro_id', $proId)->first();
     }
 
-    /** @test */
+    #[Test]
     public function instructor_can_view_dashboard()
     {
         $response = $this->withSession([
@@ -93,7 +94,7 @@ class InstructorTest extends TestCase
         $response->assertViewIs('instructor.dashboard');
     }
 
-    /** @test */
+    #[Test]
     public function instructor_can_manage_stages()
     {
         $session = [
@@ -131,7 +132,7 @@ class InstructorTest extends TestCase
         $this->assertDatabaseMissing('etapa', ['eta_id' => $etaId]);
     }
 
-    /** @test */
+    #[Test]
     public function instructor_can_grade_evidence()
     {
         // 1. Crear etapa

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -46,7 +47,7 @@ class EmpresaTest extends TestCase
         $this->empresa = DB::table('empresa')->where('usr_id', $usrId)->first();
     }
 
-    /** @test */
+    #[Test]
     public function empresa_can_view_dashboard()
     {
         $response = $this->withSession([
@@ -60,7 +61,7 @@ class EmpresaTest extends TestCase
         $response->assertViewIs('empresa.dashboard');
     }
 
-    /** @test */
+    #[Test]
     public function empresa_can_create_project()
     {
         $projectData = [
@@ -85,7 +86,7 @@ class EmpresaTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function empresa_can_update_project()
     {
         // Primero creamos un proyecto
@@ -123,7 +124,7 @@ class EmpresaTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function empresa_can_delete_project()
     {
         $proId = DB::table('proyecto')->insertGetId([
@@ -148,7 +149,7 @@ class EmpresaTest extends TestCase
         $this->assertDatabaseMissing('proyecto', ['pro_id' => $proId]);
     }
 
-    /** @test */
+    #[Test]
     public function empresa_can_update_profile()
     {
         $profileData = [
