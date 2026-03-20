@@ -83,6 +83,7 @@ class EvidenciaService
         return Evidencia::where('evid_apr_id', $aprendizId)
             ->where('evid_pro_id', $proyectoId)
             ->with('etapa')
+            ->join('etapa', 'evidencia.evid_eta_id', '=', 'etapa.eta_id')
             ->orderBy('etapa.eta_orden')
             ->orderByDesc('evid_fecha')
             ->get();
