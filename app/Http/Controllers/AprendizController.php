@@ -164,7 +164,6 @@ class AprendizController extends Controller
 
         // Proyectos aprobados del aprendiz
         $proyectos = $aprendiz->proyectosAprobados()
-            ->get()
             ->map(fn($postulacion) => $postulacion->proyecto->load('empresa'));
 
         // Evidencias del aprendiz
