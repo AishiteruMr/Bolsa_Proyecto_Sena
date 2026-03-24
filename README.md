@@ -23,7 +23,7 @@ Este proyecto representa la migración completa de una solución robusta desarro
 ### 1. Preparar el Entorno
 Clona el repositorio y accede a la carpeta del proyecto:
 ```bash
-git clone [url-del-repositorio]
+git clone (https://github.com/AishiteruMr/Bolsa_Proyecto_Sena.git)
 cd Bolsa_Proyecto_Sena
 ```
 
