@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Mail\PostulacionEstadoCambiado;
 use App\Models\Instructor;
 use App\Models\Proyecto;
@@ -22,17 +23,21 @@ class InstructorController extends Controller
         $usrId = session('usr_id');
         $usrDocumento = session('documento');
         
-        $instructor = Instructor::where('usr_id', $usrId)->firstOrFail();
+        $instructor = Instructor::where('usr_id', $usrId)->first();
+
+        if (!$instructor) {
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de instructor.');
+        }
 
         // Proyectos asignados activos
         $proyectosAsignados = Proyecto::where('ins_usr_documento', $usrDocumento)
             ->where('pro_estado', 'Activo')
             ->count();
 
-        // Proyectos recientes con relación a empresa
+        // Proyectos recientes con relación a empresa (eager loading)
         $proyectos = Proyecto::where('ins_usr_documento', $usrDocumento)
             ->where('pro_estado', 'Activo')
-            ->with('empresa')
+            ->with(['empresa', 'postulaciones'])
             ->orderByDesc('pro_id')
             ->limit(5)
             ->get();
@@ -95,7 +100,12 @@ class InstructorController extends Controller
     public function perfil()
     {
         $usrId = session('usr_id');
-        $instructor = Instructor::where('usr_id', $usrId)->firstOrFail();
+        $instructor = Instructor::where('usr_id', $usrId)->first();
+
+        if (!$instructor) {
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de instructor.');
+        }
+
         $usuario = User::findOrFail($usrId);
         return view('instructor.perfil', compact('instructor', 'usuario'));
     }
@@ -140,8 +150,8 @@ class InstructorController extends Controller
             ->orderByDesc('pro_fecha_publi')
             ->get()
             ->map(function($proyecto) {
-                $totalAprendices = $proyecto->postulaciones()->count();
-                $aprendicesAprobados = $proyecto->postulaciones()
+                $totalAprendices = $proyecto->postulaciones->count();
+                $aprendicesAprobados = $proyecto->postulaciones
                     ->where('pos_estado', 'Aprobada')
                     ->count();
                 

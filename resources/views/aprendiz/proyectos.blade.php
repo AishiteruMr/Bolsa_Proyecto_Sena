@@ -67,7 +67,7 @@
         @foreach($proyectos as $p)
             <div class="project-card glass-card" style="display: flex; flex-direction: column; height: 100%; transition: transform 0.3s ease;">
                 <div class="project-image" style="height: 180px; position: relative;">
-                    <img src="{{ $p->pro_imagen_url ?? asset('assets/default-project.jpg') }}" alt="" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
                     <div class="status-badge" style="background: var(--primary); font-size: 10px; position: absolute; top: 1rem; right: 1rem;">{{ $p->pro_categoria }}</div>
                 </div>
                 

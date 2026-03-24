@@ -149,5 +149,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
-style>
-@endsection

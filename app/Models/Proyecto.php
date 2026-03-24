@@ -201,10 +201,28 @@ class Proyecto extends Model
     }
 
     /**
-     * Obtener nombre de la empresa
+     * Obtener el nombre de la empresa
      */
     public function getEmpresaNombreAttribute(): string
     {
         return $this->empresa?->emp_nombre ?? 'Empresa no asignada';
+    }
+
+    /**
+     * Accesor para la URL de la imagen del proyecto
+     */
+    public function getImagenUrlAttribute(): string
+    {
+        if (empty($this->pro_imagen_url)) {
+            return asset('assets/default-project.jpg');
+        }
+
+        // Si la URL ya es completa o empieza por /storage, la devolvemos tal cual
+        if (str_starts_with($this->pro_imagen_url, 'http') || str_starts_with($this->pro_imagen_url, '/storage')) {
+            return $this->pro_imagen_url;
+        }
+
+        // De lo contrario, asumimos que está en el disco public de storage
+        return asset('storage/' . $this->pro_imagen_url);
     }
 }
