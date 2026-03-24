@@ -7,9 +7,10 @@
 }
 
 :root {
-    --verde-marino: #298564;
-    --verde-marino-dark: #1b6b5f;
-    --verde-marino-light: #3eb489;
+    --verde-dark: #298564;
+    --verde-void: #1b6b5f;
+    --verde-light: #3eb489;
+
     --verde-claro: #d4f1ed;
     --verde-bg: #f0f9f7;
     --texto: #1a1a1a;
@@ -47,25 +48,25 @@ a {
 }
 
 .btn-primary {
-    background: var(--verde-marino);
+    background: var(--verde-dark);
     color: #fff;
-    box-shadow: 0 4px 15px var(--verde-marino-light);
+    box-shadow: 0 4px 15px var(--verde-light);
 }
 
 .btn-primary:hover {
-    background: var(--verde-marino-dark);
+    background: var(--verde-void);
     transform: translateY(-2px);
     box-shadow: var(--sombra-hover);
 }
 
 .btn-outline {
     background: transparent;
-    border: 2px solid var(--verde-marino);
-    color: var(--verde-marino);
+    border: 2px solid var(--verde-dark);
+    color: var(--verde-dark);
 }
 
 .btn-outline:hover {
-    background: var(--verde-marino);
+    background: var(--verde-dark);
     color: #fff;
 }
 
@@ -176,8 +177,8 @@ a {
     font-size: 19px;
     background: linear-gradient(
         135deg,
-        var(--verde-marino) 0%,
-        var(--verde-marino-light) 100%
+        var(--verde-dark) 0%,
+        var(--verde) 100%
     );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -205,7 +206,7 @@ a {
 
 .menu a:hover,
 .menu a.active {
-    color: var(--verde-marino);
+    color: var(--verde-dark);
     background: var(--verde-bg);
 }
 
@@ -216,7 +217,7 @@ a {
     left: 16px;
     right: 16px;
     height: 3px;
-    background: var(--verde-marino);
+    background: var(--verde-dark);
     border-radius: 2px 2px 0 0;
 }
 
@@ -227,7 +228,7 @@ a {
 }
 
 .btn-login {
-    background: var(--verde-marino);
+    background: var(--verde-dark);
     color: var(--blanco);
     padding: 10px 24px;
     border-radius: 8px;
@@ -241,7 +242,7 @@ a {
 }
 
 .btn-login:hover {
-    background: var(--verde-marino-dark);
+    background: var(--verde-void);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(27, 107, 95, 0.35);
 }
@@ -280,7 +281,7 @@ a {
 }
 
 .footer-col a:hover {
-    color: var(--verde-marino-light);
+    color: var(--verde-light);
 }
 
 .footer-col ul {

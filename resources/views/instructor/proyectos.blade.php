@@ -31,7 +31,7 @@
 
 <div class="projects-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
     @forelse($proyectos as $p)
-    <div class="project-card glass-card" style="display: flex; flex-direction: column; height: 100%;">
+    <div class="project-card glass-card" style="display: flex; flex-direction: column; height: 100%; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
         <div class="project-image" style="height: 180px;">
             <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
             <div class="status-badge" style="background: var(--primary); font-size: 10px;">{{ $p->pro_estado }}</div>
