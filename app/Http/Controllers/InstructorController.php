@@ -46,9 +46,16 @@ class InstructorController extends Controller
             ->distinct('apr_id')
             ->count();
 
+        // Evidencias pendientes por calificar
+        $evidenciasPendientes = Evidencia::whereIn('evid_pro_id',
+            Proyecto::where('ins_usr_documento', $usrDocumento)
+                ->pluck('pro_id')
+        )->where('evid_estado', 'Pendiente')
+            ->count();
+
         return view('instructor.dashboard', compact(
             'instructor', 'proyectosAsignados',
-            'proyectos', 'totalAprendices'
+            'proyectos', 'totalAprendices', 'evidenciasPendientes'
         ));
     }
 

@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/instructorDash.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/instructor-premium.css') }}">
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -147,7 +148,7 @@
         <div class="sidebar-footer">
             <div class="user-info">
                 <div class="user-avatar">{{ strtoupper(substr(session('nombre', 'U'), 0, 1)) }}</div>
-                <div>
+                <div style="flex:1">
                     <div class="user-name">{{ session('nombre') }} {{ session('apellido') }}</div>
                     <div class="user-role">
                         @switch(session('rol'))
@@ -158,13 +159,13 @@
                         @endswitch
                     </div>
                 </div>
+                <form action="{{ route('logout') }}" method="POST" style="margin:0">
+                    @csrf
+                    <button type="submit" class="logout-btn" title="Cerrar Sesión" style="background:transparent; border:none; color:white; opacity:0.6; cursor:pointer; font-size:1.1rem; transition:opacity .2s">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
             </div>
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-danger" style="width:100%; justify-content: center;">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
-            </form>
         </div>
     </aside>
 
