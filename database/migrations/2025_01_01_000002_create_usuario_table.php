@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('usr_correo', 100)->unique();
             $table->string('usr_contrasena', 255);
             $table->unsignedInteger('rol_id');
+            $table->tinyInteger('usr_estado')->default(1);
             $table->timestamp('usr_fecha_creacion')->useCurrent();
 
             $table->foreign('rol_id')

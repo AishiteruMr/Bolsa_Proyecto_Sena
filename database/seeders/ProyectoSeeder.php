@@ -101,7 +101,6 @@ class ProyectoSeeder extends Seeder
                 'emp_nit' => $emp_nit,
                 'ins_usr_documento' => $ins_doc,
                 'pro_fecha_publi' => Carbon::now(),
-                'pro_fecha_inicio' => Carbon::now()->addDays(7),
                 'pro_fecha_finalizacion' => Carbon::now()->addDays($data['pro_duracion_estimada'] + 7),
                 'pro_num_postulantes' => 0,
             ]));
