@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AprendizController;
@@ -14,9 +15,8 @@ use App\Http\Controllers\ProyectoController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('index');
-})->name('home');
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/nosotros', function () {
     return view('nosotros');
