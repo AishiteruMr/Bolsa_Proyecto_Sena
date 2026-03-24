@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 
 class Proyecto extends Model
 {
@@ -22,16 +23,30 @@ class Proyecto extends Model
         'pro_fecha_inicio',
         'pro_fecha_fin',
         'pro_num_postulantes',
+        'pro_requisitos_especificos',
+        'pro_habilidades_requerida',
+        'pro_duracion_estimada',
+        'pro_fecha_publi',
+        'pro_fecha_finalizacion',
+        'ins_usr_documento',
     ];
 
     protected $casts = [
         'pro_fecha_inicio' => 'datetime',
         'pro_fecha_fin' => 'datetime',
+        'pro_fecha_publi' => 'datetime',
+        'pro_fecha_finalizacion' => 'datetime',
     ];
 
+    // ── RELACIONES ──
     public function empresa(): BelongsTo
     {
         return $this->belongsTo(Empresa::class, 'emp_nit', 'emp_nit');
+    }
+
+    public function instructor(): BelongsTo
+    {
+        return $this->belongsTo(Instructor::class, 'ins_usr_documento', 'usr_id');
     }
 
     public function postulaciones(): HasMany
@@ -39,13 +54,157 @@ class Proyecto extends Model
         return $this->hasMany(Postulacion::class, 'pro_id', 'pro_id');
     }
 
+    public function etapas(): HasMany
+    {
+        return $this->hasMany(Etapa::class, 'eta_pro_id', 'pro_id');
+    }
+
+    public function evidencias(): HasMany
+    {
+        return $this->hasMany(Evidencia::class, 'evid_pro_id', 'pro_id');
+    }
+
+    // ── SCOPES ──
+    public function scopeActivos(Builder $query): Builder
+    {
+        return $query->where('pro_estado', 'Activo');
+    }
+
+    public function scopeInactivos(Builder $query): Builder
+    {
+        return $query->where('pro_estado', 'Inactivo');
+    }
+
+    public function scopeFinalizados(Builder $query): Builder
+    {
+        return $query->where('pro_estado', 'Finalizado');
+    }
+
+    public function scopePorEmpresa(Builder $query, $empNit): Builder
+    {
+        return $query->where('emp_nit', $empNit);
+    }
+
+    public function scopePorCategoria(Builder $query, $categoria): Builder
+    {
+        return $query->where('pro_categoria', $categoria);
+    }
+
+    public function scopeBusqueda(Builder $query, $termino): Builder
+    {
+        return $query->where('pro_titulo_proyecto', 'like', "%{$termino}%")
+                     ->orWhere('pro_descripcion', 'like', "%{$termino}%");
+    }
+
+    public function scopeRecientes(Builder $query): Builder
+    {
+        return $query->orderByDesc('pro_fecha_publi');
+    }
+
+    // ── MÉTODOS ──
     public function isActivo(): bool
     {
         return $this->pro_estado === 'Activo';
     }
 
-    public function getPostulantesCountAttribute(): int
+    public function isFinalizado(): bool
+    {
+        return $this->pro_estado === 'Finalizado';
+    }
+
+    /**
+     * Obtener postulaciones aprobadas
+     */
+    public function postulacionesAprobadas()
+    {
+        return $this->postulaciones()->where('pos_estado', 'Aprobada');
+    }
+
+    /**
+     * Obtener postulaciones pendientes
+     */
+    public function postulacionesPendientes()
+    {
+        return $this->postulaciones()->where('pos_estado', 'Pendiente');
+    }
+
+    /**
+     * Obtener postulaciones rechazadas
+     */
+    public function postulacionesRechazadas()
+    {
+        return $this->postulaciones()->where('pos_estado', 'Rechazada');
+    }
+
+    /**
+     * Contar postulantes aprobados
+     */
+    public function countPostulantesAprobados(): int
+    {
+        return $this->postulacionesAprobadas()->count();
+    }
+
+    /**
+     * Contar postulantes pendientes
+     */
+    public function countPostulantesPendientes(): int
+    {
+        return $this->postulacionesPendientes()->count();
+    }
+
+    /**
+     * Contar todas las postulaciones
+     */
+    public function countPostulaciones(): int
     {
         return $this->postulaciones()->count();
+    }
+
+    /**
+     * Obtener atributo contador de postulantes
+     */
+    public function getPostulantesCountAttribute(): int
+    {
+        return $this->countPostulaciones();
+    }
+
+    /**
+     * Contar etapas totales
+     */
+    public function countEtapas(): int
+    {
+        return $this->etapas()->count();
+    }
+
+    /**
+     * Obtener etapas ordenadas
+     */
+    public function etapasOrdenadas()
+    {
+        return $this->etapas()->orderBy('eta_orden')->get();
+    }
+
+    /**
+     * Verificar si está vencido
+     */
+    public function isVencido(): bool
+    {
+        return now()->isAfter($this->pro_fecha_finalizacion);
+    }
+
+    /**
+     * Obtener días restantes
+     */
+    public function diasRestantes(): int
+    {
+        return max(0, now()->diffInDays($this->pro_fecha_finalizacion, false));
+    }
+
+    /**
+     * Obtener nombre de la empresa
+     */
+    public function getEmpresaNombreAttribute(): string
+    {
+        return $this->empresa?->emp_nombre ?? 'Empresa no asignada';
     }
 }

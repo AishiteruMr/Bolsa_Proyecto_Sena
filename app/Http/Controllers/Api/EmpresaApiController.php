@@ -87,8 +87,7 @@ class EmpresaApiController extends Controller
             Log::error('Error al obtener ubicación de empresa: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener la ubicación de la empresa',
-                'error' => $e->getMessage()
+                'message' => 'Error al obtener la ubicación de la empresa'
             ], 500);
         }
     }
@@ -164,8 +163,7 @@ class EmpresaApiController extends Controller
             Log::error('Error al obtener ubicación de sesión: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener la ubicación',
-                'error' => $e->getMessage()
+                'message' => 'Error al obtener la ubicación'
             ], 500);
         }
     }
@@ -216,8 +214,7 @@ class EmpresaApiController extends Controller
             Log::error('Error al actualizar ubicación: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar la ubicación',
-                'error' => $e->getMessage()
+                'message' => 'Error al actualizar la ubicación'
             ], 500);
         }
     }
@@ -253,8 +250,7 @@ class EmpresaApiController extends Controller
             Log::error('Error al listar empresas: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener las empresas',
-                'error' => $e->getMessage()
+                'message' => 'Error al obtener las empresas'
             ], 500);
         }
     }

@@ -15,6 +15,14 @@ class AuthMiddleware
             $request->session()->regenerateToken();
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para continuar.');
         }
+        
+        // Validar que existe un rol válido
+        $rol = session('rol');
+        if (!in_array($rol, [1, 2, 3, 4], true)) {
+            // Rol inválido - cerrar sesión
+            session()->flush();
+            return redirect()->route('login')->with('error', 'Sesión inválida. Por favor inicia sesión nuevamente.');
+        }
 
         // Verificar si el usuario o empresa sigue activo
         if (session()->has('usr_id')) {

@@ -1,14 +1,13 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Detalle del Proyecto')
-@section('page-title', 'Detalle del Proyecto')
+@section('title', 'Gestión de Proyecto | ' . $proyecto->pro_titulo_proyecto)
+@section('page-title', 'Gestión Técnica')
 
 @section('sidebar-nav')
-    <span class="nav-label">Principal</span>
     <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
         <i class="fas fa-home"></i> Dashboard
     </a>
-    <a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos', 'instructor.proyecto.detalle', 'instructor.evidencias.ver', 'instructor.reporte') ? 'active' : '' }}">
+    <a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos*') ? 'active' : '' }}">
         <i class="fas fa-project-diagram"></i> Mis Proyectos
     </a>
     <a href="{{ route('instructor.historial') }}" class="nav-item {{ request()->routeIs('instructor.historial') ? 'active' : '' }}">
@@ -19,732 +18,220 @@
     </a>
     <span class="nav-label">Cuenta</span>
     <a href="{{ route('instructor.perfil') }}" class="nav-item {{ request()->routeIs('instructor.perfil') ? 'active' : '' }}">
-        <i class="fas fa-user-circle"></i> Perfil
+        <i class="fas fa-user-circle"></i> Mi Perfil
     </a>
 @endsection
 
 @section('content')
-    <link rel="stylesheet" href="{{ asset('css/instructor.css') }}">
-
-    <div class="project-detail">
-        <div class="project-header">
-            <a href="{{ route('instructor.proyectos') }}" class="project-back-link">
-                <i class="fas fa-arrow-left"></i> Volver a proyectos
-            </a>
-            <div class="header-content">
-                <h1 class="project-title">{{ $proyecto->pro_titulo_proyecto }}</h1>
-                <p class="project-subtitle">Detalles del proyecto y gestión de postulaciones</p>
-            </div>
-        </div>
-
-
-        <!-- IMAGEN DEL PROYECTO -->
-        <h2 class="section-title">
-            <i class="fas fa-image" style="margin-right: 8px;"></i>Imagen del Proyecto
-        </h2>
-
-        <div class="card">
-            <div class="card-content image-section">
-                @if($proyecto->pro_imagen_url)
-                    <!-- Si hay imagen: mostrar grande y botón de editar -->
-                    <div class="image-display-container">
-                        <img src="{{ $proyecto->pro_imagen_url }}" alt="{{ $proyecto->pro_titulo_proyecto }}" class="project-image-large">
-                        <div class="image-actions">
-                            <button type="button" class="btn-secondary btn-md" onclick="document.getElementById('editImageForm').style.display = document.getElementById('editImageForm').style.display === 'none' ? 'block' : 'none';">
-                                <i class="fas fa-edit"></i> Cambiar Imagen
-                            </button>
+<div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem; align-items: start;">
+    
+    <!-- Main Management Pillar -->
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+        
+        <!-- Project Hero Card -->
+        <div class="glass-card" style="padding: 0; overflow: hidden; border-radius: 20px;">
+            <div style="width: 100%; height: 300px; position: relative;">
+                <img src="{{ $proyecto->pro_imagen_url ?? asset('assets/default-project.jpg') }}" alt="" style="width:100%; height:100%; object-fit:cover;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 60%);"></div>
+                
+                <div style="position: absolute; bottom: 24px; left: 24px; right: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div>
+                            <span class="badge" style="background: var(--primary); color: white; margin-bottom: 8px; border: none;">{{ $proyecto->pro_categoria }}</span>
+                            <h2 style="color: white; font-size: 2.2rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">{{ $proyecto->pro_titulo_proyecto }}</h2>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 0.95rem; margin-top: 4px;"><i class="fas fa-building" style="margin-right: 8px;"></i>{{ $proyecto->emp_nombre }}</p>
                         </div>
-                    </div>
-
-                    <!-- Formulario de editar imagen (oculto por defecto) -->
-                    <form id="editImageForm" action="{{ route('instructor.proyectos.imagen', $proyecto->pro_id) }}" method="POST" enctype="multipart/form-data" class="image-upload-form" style="display: none; margin-top: 24px; padding-top: 24px; border-top: 1px solid #e0e0e0;">
-                        @csrf
-                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Cambiar imagen del proyecto</h4>
-                        <div class="upload-form-group">
-                            <input type="file" name="imagen" accept="image/*" required class="form-input-file">
-                            <button type="submit" class="btn-primary btn-sm">
-                                <i class="fas fa-upload"></i> Actualizar Imagen
-                            </button>
-                            <button type="button" class="btn-cancel btn-sm" onclick="document.getElementById('editImageForm').style.display = 'none';">
-                                <i class="fas fa-times"></i> Cancelar
-                            </button>
-                        </div>
-                        @error('imagen')
-                            <p class="error-message">{{ $message }}</p>
-                        @enderror
-                    </form>
-                @else
-                    <!-- Si no hay imagen: mostrar opción de subir -->
-                    <div class="no-image-placeholder-large">
-                        <i class="fas fa-image"></i>
-                        <h3>Sin imagen asignada</h3>
-                        <p>Sube una imagen bonita para tu proyecto</p>
-                    </div>
-
-                    <form action="{{ route('instructor.proyectos.imagen', $proyecto->pro_id) }}" method="POST" enctype="multipart/form-data" class="image-upload-form">
-                        @csrf
-                        <div class="upload-form-group-full">
-                            <div class="file-input-wrapper">
-                                <input type="file" name="imagen" accept="image/*" required id="imagenInput" class="form-input-file-large">
-                                <label for="imagenInput" class="file-input-label">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <span>Selecciona una imagen o arrastra aquí</span>
-                                </label>
-                            </div>
-                            <button type="submit" class="btn-primary btn-lg">
-                                <i class="fas fa-upload"></i> Subir Imagen
-                            </button>
-                        </div>
-                        @error('imagen')
-                            <p class="error-message">{{ $message }}</p>
-                        @enderror
-                    </form>
-                @endif
-            </div>
-        </div>
-
-        <!-- INFORMACIÓN DEL PROYECTO -->
-        <div class="card">
-            <div class="card-content">
-                <h3 class="card-subtitle">Información General</h3>
-                <div class="project-info-grid">
-                    <div class="project-info-item">
-                        <span class="project-info-label">Empresa:</span>
-                        <span class="project-info-value">{{ $proyecto->emp_nombre }}</span>
-                    </div>
-                    <div class="project-info-item">
-                        <span class="project-info-label">Categoría:</span>
-                        <span class="project-info-value">{{ $proyecto->pro_categoria }}</span>
-                    </div>
-                    <div class="project-info-item">
-                        <span class="project-info-label">Estado:</span>
-                        <span class="project-info-value">
-                            @if($proyecto->pro_estado === 'Activo')
-                                <span class="badge badge-success">{{ $proyecto->pro_estado }}</span>
-                            @else
-                                <span class="badge badge-danger">{{ $proyecto->pro_estado }}</span>
-                            @endif
-                        </span>
-                    </div>
-                    <div class="project-info-item">
-                        <span class="project-info-label">Fecha Publicación:</span>
-                        <span class="project-info-value">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d/m/Y') }}</span>
-                    </div>
-                    <div class="project-info-item">
-                        <span class="project-info-label">Fecha Finalización:</span>
-                        <span class="project-info-value">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d/m/Y') }}</span>
-                    </div>
-                </div>
-
-                <div class="project-description-section">
-                    <h3 class="card-subtitle">Descripción</h3>
-                    <p>{{ $proyecto->pro_descripcion }}</p>
-
-                    <h3 class="card-subtitle">Requisitos Específicos</h3>
-                    <p>{{ $proyecto->pro_requisitos_especificos }}</p>
-
-                    <h3 class="card-subtitle">Habilidades Requeridas</h3>
-                    <p>{{ $proyecto->pro_habilidades_requerida }}</p>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- POSTULACIONES -->
-        <h2 class="section-title">
-            <i class="fas fa-file-alt" style="margin-right: 8px;"></i>Postulaciones
-        </h2>
-
-        <div class="card">
-            @forelse($postulaciones as $p)
-                <div class="postulation-item">
-                    <div class="postulation-avatar">
-                        <span>{{ strtoupper(substr($p->apr_nombre ?? 'A', 0, 1)) }}</span>
-                    </div>
-                    <div class="postulation-info">
-                        <h4 class="postulation-name">{{ $p->apr_nombre ?? '' }} {{ $p->apr_apellido ?? '' }}</h4>
-                        <p class="postulation-program">
-                            <i class="fas fa-graduation-cap"></i>{{ $p->apr_programa ?? 'Sin programa' }}
-                        </p>
-                        <p class="postulation-email">
-                            <i class="fas fa-envelope"></i>{{ $p->usr_correo ?? 'Sin correo' }}
-                        </p>
-                    </div>
-                    <div class="postulation-actions">
-                        <div class="postulation-status-container">
-                            @switch($p->pos_estado)
-                                @case('Pendiente')
-                                    <span class="badge badge-warning">{{ $p->pos_estado }}</span>
-                                    @break
-                                @case('Aprobada')
-                                    <span class="badge badge-success">{{ $p->pos_estado }}</span>
-                                    @break
-                                @case('Rechazada')
-                                    <span class="badge badge-danger">{{ $p->pos_estado }}</span>
-                                    @break
-                                @default
-                                    <span class="badge badge-info">{{ $p->pos_estado }}</span>
-                            @endswitch
-                            <p class="postulation-date">
-                                <i class="fas fa-calendar"></i>{{ \Carbon\Carbon::parse($p->pos_fecha)->format('d/m/Y') }}
-                            </p>
-                        </div>
-                        @if($p->pos_estado === 'Pendiente')
-                            <div class="postulation-buttons">
-                                <form action="{{ route('instructor.postulaciones.estado', $p->pos_id) }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="estado" value="Aprobada">
-                                    <button type="submit" class="btn-approve btn-sm" title="Aprobar postulación">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                </form>
-                                <form action="{{ route('instructor.postulaciones.estado', $p->pos_id) }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="estado" value="Rechazada">
-                                    <button type="submit" class="btn-reject btn-sm" title="Rechazar postulación">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            @empty
-                <div class="empty-state">
-                    <i class="fas fa-file-alt empty-state-icon"></i>
-                    <h4 class="empty-state-title">No hay postulaciones</h4>
-                    <p class="empty-state-message">Aún no hay aprendices postulados a este proyecto.</p>
-                </div>
-            @endforelse
-        </div>
-
-        <!-- INTEGRANTES APROBADOS -->
-        <h2 class="section-title">
-            <i class="fas fa-users" style="margin-right: 8px;"></i>Integrantes del Proyecto
-        </h2>
-
-        <div class="card">
-            @forelse($integrantes as $integrante)
-                <div class="member-item">
-                    <div class="member-avatar">
-                        <span>{{ strtoupper(substr($integrante->apr_nombre ?? 'A', 0, 1)) }}</span>
-                    </div>
-                    <div class="member-info">
-                        <div class="member-name">{{ $integrante->apr_nombre }} {{ $integrante->apr_apellido }}</div>
-                        <div class="member-program">{{ $integrante->apr_programa ?? 'Sin programa' }}</div>
-                        <div style="font-size: 12px; color: #888; margin-top: 4px;">
-                            <i class="fas fa-envelope"></i> {{ $integrante->usr_correo }}
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="empty-state">
-                    <i class="fas fa-users empty-state-icon"></i>
-                    <h4 class="empty-state-title">Sin integrantes</h4>
-                    <p class="empty-state-message">No hay aprendices aprobados aún para este proyecto.</p>
-                </div>
-            @endforelse
-        </div>
-
-        <!-- ETAPAS DEL PROYECTO -->
-        <h2 class="section-title">
-            <i class="fas fa-tasks" style="margin-right: 8px;"></i>Etapas del Proyecto
-        </h2>
-
-        <!-- FORMULARIO PARA AGREGAR ETAPA -->
-        <div class="card">
-            <div class="card-content">
-                <h3 class="card-subtitle">
-                    <i class="fas fa-plus" style="margin-right: 8px;"></i>Agregar Nueva Etapa
-                </h3>
-                <form action="{{ route('instructor.etapas.crear', $proyecto->pro_id) }}" method="POST" class="stage-form">
-                    @csrf
-                    <div class="stage-form-grid">
-                        <div class="form-group">
-                            <label>Orden</label>
-                            <input type="number" name="orden" required min="1" placeholder="1" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label>Nombre</label>
-                            <input type="text" name="nombre" required placeholder="Ej: Análisis" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label>Descripción</label>
-                            <input type="text" name="descripcion" required placeholder="Descripción de la etapa" class="form-input">
-                        </div>
-                        <button type="submit" class="btn-primary btn-sm align-self-end">
-                            <i class="fas fa-plus"></i> Agregar
+                        <button type="button" onclick="document.getElementById('uploadForm').classList.toggle('active')" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); color: white; padding: 10px 18px; border: 1px solid rgba(255,255,255,0.25); border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                            <i class="fas fa-camera" style="margin-right: 8px;"></i> Editar Visual
                         </button>
                     </div>
-                    @if ($errors->has('orden') || $errors->has('nombre') || $errors->has('descripcion'))
-                        <div class="error-message">
-                            @error('orden'){{ $message }}@enderror
-                            @error('nombre'){{ $message }}@enderror
-                            @error('descripcion'){{ $message }}@enderror
-                        </div>
-                    @endif
+                </div>
+            </div>
+
+            <div id="uploadForm" style="display: none; padding: 1.5rem; background: var(--bg-main); border-bottom: 1px solid var(--border);" class="collapsible">
+                <form action="{{ route('instructor.proyectos.imagen', $proyecto->pro_id) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="file" name="imagen" accept="image/*" required style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: white;">
+                        <button type="submit" class="btn-ver" style="width: auto; padding: 10px 24px;">Actualizar Portada</button>
+                    </div>
                 </form>
+            </div>
+
+            <div style="padding: 2rem;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div style="background: var(--bg-main); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border);">
+                        <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Publicación</p>
+                        <p style="font-weight: 700; color: var(--text-main);">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d M, Y') }}</p>
+                    </div>
+                    <div style="background: var(--bg-main); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border);">
+                        <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Duración</p>
+                        <p style="font-weight: 700; color: var(--text-main);">{{ $proyecto->pro_duracion_estimada }} días</p>
+                    </div>
+                    <div style="background: var(--bg-main); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border);">
+                        <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Ubicación</p>
+                        <p style="font-weight: 700; color: var(--text-main);">{{ $proyecto->pro_ubicacion }}</p>
+                    </div>
+                </div>
+
+                <div style="color: var(--text-muted); line-height: 1.7; font-size: 0.95rem; text-align: justify;">
+                    <h4 style="color: var(--text-main); font-weight: 700; margin-bottom: 0.75rem;">Descripción Técnica</h4>
+                    {!! nl2br(e($proyecto->pro_description ?? $proyecto->pro_descripcion)) !!}
+                </div>
             </div>
         </div>
 
-        <!-- LISTA DE ETAPAS -->
-        <div class="stages-list">
-            @forelse($etapas as $etapa)
-                <div class="stage-item">
-                    <div class="stage-content">
-                        <div class="stage-info">
-                            <div class="stage-name">
-                                <span class="stage-order">{{ $etapa->eta_orden }}</span>
-                                {{ $etapa->eta_nombre }}
-                            </div>
-                            <div class="stage-description">{{ $etapa->eta_descripcion ?? 'Sin descripción' }}</div>
+        <!-- Working Plan (Stages) -->
+        <div class="glass-card" style="padding: 2.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div>
+                    <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--primary-dark);">Mapa de Ruta Académica</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Define las etapas y hitos del proyecto.</p>
+                </div>
+                <button type="button" onclick="document.getElementById('stageForm').classList.toggle('active')" class="btn-ver" style="width: auto; padding: 10px 24px; border-radius: 12px;">
+                    <i class="fas fa-plus" style="margin-right: 8px;"></i> Nueva Etapa
+                </button>
+            </div>
+
+            <div id="stageForm" style="display: none; margin-bottom: 2rem; padding: 2rem; background: var(--bg-main); border-radius: 16px; border: 2px dashed var(--border);" class="collapsible">
+                <form action="{{ route('instructor.etapas.crear', $proyecto->pro_id) }}" method="POST">
+                    @csrf
+                    <div style="display: grid; grid-template-columns: 80px 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <input type="number" name="orden" placeholder="N°" required class="form-control" style="padding: 12px;">
+                        <input type="text" name="nombre" placeholder="Título de la etapa..." required class="form-control" style="padding: 12px;">
+                    </div>
+                    <textarea name="descripcion" placeholder="¿Qué deben entregar los aprendices en esta fase?" required class="form-control" style="padding: 12px; min-height: 100px; margin-bottom: 1.5rem;"></textarea>
+                    <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                        <button type="button" onclick="document.getElementById('stageForm').classList.toggle('active')" style="background: transparent; border: none; font-weight: 700; color: var(--text-muted); cursor: pointer;">Cancelar</button>
+                        <button type="submit" class="btn-ver" style="width: auto; padding: 10px 32px;">Lanzar Etapa</button>
+                    </div>
+                </form>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                @forelse($etapas as $index => $etapa)
+                    <div style="display: flex; gap: 1.5rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: 16px; background: white; transition: all 0.3s ease; position: relative;" class="stage-card">
+                        <div style="width: 44px; height: 44px; background: {{ $index == 0 ? 'var(--primary)' : 'var(--bg-main)' }}; color: {{ $index == 0 ? 'white' : 'var(--text-muted)' }}; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            {{ $etapa->eta_orden }}
                         </div>
-                        <div class="stage-actions">
-                            <form action="{{ route('instructor.etapas.eliminar', $etapa->eta_id) }}" method="POST" style="display: inline;">
+                        <div style="flex: 1;">
+                            <h4 style="font-weight: 700; color: var(--text-main); margin-bottom: 6px; font-size: 1.05rem;">{{ $etapa->eta_nombre }}</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">{{ $etapa->eta_descripcion }}</p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <form action="{{ route('instructor.etapas.eliminar', $etapa->eta_id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn-reject btn-sm" onclick="return confirm('¿Estás seguro?')" title="Eliminar etapa">
-                                    <i class="fas fa-trash"></i>
+                                <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar esta etapa?')" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" class="btn-del-hover">
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </form>
                         </div>
                     </div>
-                </div>
-            @empty
-                <div class="empty-state">
-                    <i class="fas fa-tasks empty-state-icon"></i>
-                    <h4 class="empty-state-title">Sin etapas</h4>
-                    <p class="empty-state-message">No hay etapas definidas para este proyecto. ¡Crea una arriba!</p>
-                </div>
-            @endforelse
-        </div>
-
-
-        <!-- BOTONES DE ACCIONES -->
-        <div class="action-buttons">
-            <a href="{{ route('instructor.reporte', $proyecto->pro_id) }}" class="btn-primary btn-md" title="Ver reporte de seguimiento">
-                <i class="fas fa-chart-bar"></i> Reporte de Seguimiento
-            </a>
-            <a href="{{ route('instructor.evidencias.ver', $proyecto->pro_id) }}" class="btn-secondary btn-md" title="Ver evidencias del proyecto">
-                <i class="fas fa-file-upload"></i> Ver Evidencias
-            </a>
+                @empty
+                    <div style="text-align: center; padding: 3rem; background: var(--bg-main); border-radius: 20px; border: 2px dashed var(--border);">
+                        <i class="fas fa-project-diagram" style="font-size: 3rem; color: var(--border); margin-bottom: 1.5rem;"></i>
+                        <h4 style="color: var(--text-muted); font-weight: 600;">Comienza definiendo el plan de trabajo para que los aprendices puedan entregar evidencias.</h4>
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 
-    <style>
-        .header-content {
-            margin-top: 12px;
-        }
-
-        .card-content {
-            padding: 20px;
-        }
-
-        .card-subtitle {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #333;
-        }
-
-        .project-info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .project-image-container {
-            margin-bottom: 20px;
-        }
-
-        .no-image-placeholder {
-            background: #f5f5f5;
-            padding: 40px;
-            text-align: center;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-
-        .no-image-placeholder i {
-            font-size: 48px;
-            color: #ccc;
-            display: block;
-            margin-bottom: 12px;
-        }
-
-        .no-image-placeholder p {
-            color: #666;
-            margin: 0;
-        }
-
-        .upload-form-group {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .form-input-file {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background: white;
-            font-size: 13px;
-        }
-
-        .error-message {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 8px;
-        }
-
-        .project-description-section {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .project-description-section p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #333;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-
-        .stage-form-grid {
-            display: grid;
-            grid-template-columns: 100px 200px 1fr auto;
-            gap: 12px;
-            align-items: flex-end;
-        }
-
-        .align-self-end {
-            align-self: flex-end;
-        }
-
-        .stages-list {
-            display: grid;
-            gap: 12px;
-        }
-
-        .stage-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-        }
-
-        .stage-info {
-            flex: 1;
-        }
-
-        .stage-actions {
-            flex-shrink: 0;
-        }
-
-        .action-buttons {
-            margin-top: 32px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .btn-sm {
-            padding: 6px 12px !important;
-            font-size: 12px !important;
-        }
-
-        .btn-md {
-            padding: 10px 20px !important;
-            font-size: 13px !important;
-        }
-
-        .btn-secondary {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #0056b3;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background 0.2s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-secondary:hover {
-            background: #004085;
-        }
-
-        .btn-lg {
-            padding: 12px 32px !important;
-            font-size: 14px !important;
-        }
-
-        .btn-cancel {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #6c757d;
-            color: white;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
-        .btn-cancel:hover {
-            background: #5a6268;
-        }
-
-        /* Estilos de imagen mejorados */
-        .image-section {
-            text-align: center;
-        }
-
-        .image-display-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .project-image-large {
-            max-width: 100%;
-            max-height: 500px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-            object-fit: cover;
-        }
-
-        .image-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .no-image-placeholder-large {
-            padding: 60px 40px;
-            background: linear-gradient(135deg, #f5f5f5 0%, #f9f9f9 100%);
-            border-radius: 12px;
-            border: 2px dashed #ddd;
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .no-image-placeholder-large i {
-            font-size: 64px;
-            color: #ccc;
-            display: block;
-            margin-bottom: 16px;
-        }
-
-        .no-image-placeholder-large h3 {
-            color: #666;
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-        }
-
-        .no-image-placeholder-large p {
-            color: #999;
-            font-size: 14px;
-            margin: 0;
-        }
-
-        .upload-form-group-full {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .file-input-wrapper {
-            width: 100%;
-            position: relative;
-        }
-
-        .form-input-file-large {
-            display: none;
-        }
-
-        .file-input-label {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            border: 2px dashed #39a900;
-            border-radius: 12px;
-            background: #f9f9f9;
-            cursor: pointer;
-            transition: all 0.2s;
-            gap: 12px;
-        }
-
-        .file-input-label:hover {
-            background: #f0f8f0;
-            border-color: #2d8500;
-        }
-
-        .file-input-label i {
-            font-size: 48px;
-            color: #39a900;
-        }
-
-        .file-input-label span {
-            color: #666;
-            font-weight: 500;
-            font-size: 16px;
-        }
-
-        .upload-form-group {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        @media (max-width: 1024px) {
-            .project-info-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stage-form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stage-content {
-                flex-direction: column;
-            }
-
-            .stage-actions {
-                align-self: flex-start;
-            }
-
-            .project-image-large {
-                max-height: 350px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .upload-form-group {
-                flex-direction: column;
-            }
-
-            .form-input-file {
-                width: 100%;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .btn-primary, .btn-secondary {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .no-image-placeholder-large {
-                padding: 40px 20px;
-            }
-
-            .no-image-placeholder-large i {
-                font-size: 48px;
-            }
-
-            .file-input-label {
-                padding: 30px 20px;
-            }
-
-            .project-image-large {
-                max-height: 250px;
-            }
-        }
-    </style>
-
-    <script>
-        // Manejo de cambio de archivo
-        document.addEventListener('DOMContentLoaded', function() {
-            const fileInputs = document.querySelectorAll('input[type="file"][accept="image/*"]');
+    <!-- Sidebar Management Pillar -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem; position: sticky; top: 2rem;">
+        
+        <!-- Quick Stats -->
+        <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+            <p style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-muted); margin-bottom: 1rem;">Estado del Proyecto</p>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 1rem; padding: 8px 20px; width: 100%;">
+                 <i class="fas fa-check-circle" style="margin-right: 8px;"></i> {{ $proyecto->pro_estado }}
+            </span>
             
-            fileInputs.forEach(input => {
-                if (input.closest('.file-input-wrapper')) {
-                    const label = input.closest('.file-input-wrapper').querySelector('.file-input-label');
-                    
-                    input.addEventListener('change', function(e) {
-                        if (this.files && this.files[0]) {
-                            const fileName = this.files[0].name;
-                            label.innerHTML = `<i class="fas fa-check-circle"></i><span style="color: #28a745;">Archivo seleccionado: ${fileName}</span>`;
-                        }
-                    });
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                <div>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">{{ $integrantes->count() }}</p>
+                    <p style="font-size: 0.7rem; color: var(--text-muted);">Equipo</p>
+                </div>
+                <div>
+                    <p style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">{{ $etapas->count() }}</p>
+                    <p style="font-size: 0.7rem; color: var(--text-muted);">Etapas</p>
+                </div>
+            </div>
+        </div>
 
-                    // Drag and drop
-                    const wrapper = input.closest('.file-input-wrapper');
-                    
-                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                        wrapper.addEventListener(eventName, preventDefaults, false);
-                    });
+        <!-- Management Suite -->
+        <div class="glass-card" style="padding: 1.5rem;">
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text-main); margin-bottom: 1.25rem;">Suite de Seguimiento</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <a href="{{ route('instructor.reporte', $proyecto->pro_id) }}" class="btn-ver" style="justify-content: center; background: #3b82f6; width: 100%; padding: 12px; border-radius: 12px;">
+                    <i class="fas fa-chart-bar" style="margin-right: 10px;"></i> Dashboard de Métricas
+                </a>
+                <a href="{{ route('instructor.evidencias.ver', $proyecto->pro_id) }}" class="btn-ver" style="justify-content: center; width: 100%; padding: 12px; border-radius: 12px;">
+                    <i class="fas fa-tasks" style="margin-right: 10px;"></i> Calificar Entregas
+                </a>
+            </div>
+        </div>
 
-                    function preventDefaults(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
+        <!-- Postulations Pool -->
+        <div class="glass-card" style="padding: 1.5rem;">
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text-main); margin-bottom: 1.25rem;">Nuevos Postulantes ({{ $postulaciones->where('pos_estado', 'Pendiente')->count() }})</h4>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                @forelse($postulaciones->where('pos_estado', 'Pendiente') as $p)
+                    <div style="padding: 12px; background: var(--bg-main); border-radius: 12px; border: 1px solid var(--border);">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                            <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">
+                                {{ substr($p->apr_nombre, 0, 1) }}
+                            </div>
+                            <div style="overflow: hidden;">
+                                <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $p->apr_nombre }}</p>
+                                <p style="font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $p->apr_programa }}</p>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <form action="{{ route('instructor.postulaciones.estado', $p->pos_id) }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="estado" value="Aprobada">
+                                <button type="submit" style="width: 100%; background: var(--primary); color: white; border: none; padding: 6px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">Aceptar</button>
+                            </form>
+                            <form action="{{ route('instructor.postulaciones.estado', $p->pos_id) }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="estado" value="Rechazada">
+                                <button type="submit" style="width: 100%; background: #ef4444; color: white; border: none; padding: 6px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">Omitir</button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 1rem;">Sin solicitudes pendientes.</p>
+                @endforelse
+            </div>
+        </div>
 
-                    ['dragenter', 'dragover'].forEach(eventName => {
-                        wrapper.addEventListener(eventName, () => {
-                            label.style.borderColor = '#2d8500';
-                            label.style.background = '#f0f8f0';
-                        }, false);
-                    });
+        <!-- Current Team -->
+        <div class="glass-card" style="padding: 1.5rem;">
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text-main); margin-bottom: 1.25rem;">Equipo de Trabajo ({{ $integrantes->count() }})</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                @forelse($integrantes as $i)
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; background: white; border: 1px solid var(--border);">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--bg-main); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem; border: 1px solid var(--primary);">
+                            {{ substr($i->apr_nombre, 0, 1) }}
+                        </div>
+                        <div style="overflow: hidden;">
+                            <p style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $i->apr_nombre }} {{ $i->apr_apellido }}</p>
+                            <p style="font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $i->usr_correo }}</p>
+                        </div>
+                    </div>
+                @empty
+                    <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Equipo vacío.</p>
+                @endforelse
+            </div>
+        </div>
+    </div>
+</div>
 
-                    ['dragleave', 'drop'].forEach(eventName => {
-                        wrapper.addEventListener(eventName, () => {
-                            label.style.borderColor = '#39a900';
-                            label.style.background = '#f9f9f9';
-                        }, false);
-                    });
-
-                    wrapper.addEventListener('drop', (e) => {
-                        const dt = e.dataTransfer;
-                        const files = dt.files;
-                        input.files = files;
-                        
-                        if (files && files[0]) {
-                            const fileName = files[0].name;
-                            label.innerHTML = `<i class="fas fa-check-circle"></i><span style="color: #28a745;">Archivo seleccionado: ${fileName}</span>`;
-                        }
-                    }, false);
-                }
-            });
-        });
-    </script>
+<style>
+    .collapsible.active { display: block !important; }
+    .stage-card:hover { transform: translateX(8px); border-color: var(--primary); }
+    .btn-del-hover:hover { transform: scale(1.1); background: #ef4444 !important; color: white !important; }
+</style>
 @endsection

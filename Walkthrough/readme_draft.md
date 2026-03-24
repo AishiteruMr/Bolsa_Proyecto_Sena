@@ -23,7 +23,7 @@ Este proyecto representa la migración completa de una solución robusta desarro
 ### 1. Preparar el Entorno
 Clona el repositorio y accede a la carpeta del proyecto:
 ```bash
-git clone (https://github.com/AishiteruMr/Bolsa_Proyecto_Sena.git)
+git clone [url-del-repositorio]
 cd Bolsa_Proyecto_Sena
 ```
 
@@ -41,7 +41,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 > [!IMPORTANT]
-> Configura las credenciales de tu base de datos y servidor de correo en el archivo `.env`.
+> Configura las credenciales de tu base de datos y servidor de correo en el archivo [.env](file:///c:/laragon/www/Bolsa_Proyecto_Sena/.env).
 
 ### 4. Base de Datos
 Crea la base de datos y ejecuta las migraciones con los datos iniciales (Seeders):
@@ -106,10 +106,3 @@ npm run build # O npm run dev para desarrollo
 - [x] Notificaciones por correo electrónico (PHPMailer/Laravel Mail).
 - [x] Interfaz responsiva y amigable.
 - [x] Paginación y filtrado de datos.
-- [x] Gestión de postulaciones (Empresa)
-- [x] Panel de administración (usuarios, empresas, proyectos)
-- [x] Envío de correo de bienvenida (Mailable + Blade)
-- [x] Migraciones completas de base de datos
-- [x] Seeder con datos iniciales
-- [x] Upload de imágenes (proyectos)
-- [x] Paginación de resultados

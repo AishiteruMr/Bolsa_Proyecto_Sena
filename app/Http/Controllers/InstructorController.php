@@ -3,60 +3,70 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Mail\PostulacionEstadoCambiado;
+use App\Models\Instructor;
+use App\Models\Proyecto;
+use App\Models\Postulacion;
+use App\Models\Aprendiz;
+use App\Models\Etapa;
+use App\Models\Evidencia;
+use App\Models\User;
 
 class InstructorController extends Controller
 {
     public function dashboard()
     {
         $usrId = session('usr_id');
-        $instructor = DB::table('instructor')->where('usr_id', $usrId)->first();
+        $usrDocumento = session('documento');
+        
+        $instructor = Instructor::where('usr_id', $usrId)->firstOrFail();
 
-        $proyectosAsignados = DB::table('proyecto')
-            ->where('ins_usr_documento', session('documento'))
+        // Proyectos asignados activos
+        $proyectosAsignados = Proyecto::where('ins_usr_documento', $usrDocumento)
             ->where('pro_estado', 'Activo')
             ->count();
 
-        $proyectosActivos = DB::table('proyecto')
-            ->where('ins_usr_documento', session('documento'))
+        // Proyectos recientes con relación a empresa
+        $proyectos = Proyecto::where('ins_usr_documento', $usrDocumento)
             ->where('pro_estado', 'Activo')
-            ->count();
-
-        $proyectos = DB::table('proyecto')
-            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->where('proyecto.ins_usr_documento', session('documento'))
-            ->where('proyecto.pro_estado', 'Activo')
-            ->select('proyecto.*', 'empresa.emp_nombre')
-            ->orderByDesc('proyecto.pro_id')
+            ->with('empresa')
+            ->orderByDesc('pro_id')
             ->limit(5)
             ->get();
 
-        $totalAprendices = DB::table('postulacion')
-            ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
-            ->where('proyecto.ins_usr_documento', session('documento'))
-            ->where('proyecto.pro_estado', 'Activo')
-            ->where('postulacion.pos_estado', 'Aprobada')
-            ->distinct()
-            ->count('postulacion.apr_id');
+        // Contar aprendices aprobados en proyectos del instructor
+        $totalAprendices = Postulacion::whereIn('pro_id',
+            Proyecto::where('ins_usr_documento', $usrDocumento)
+                ->where('pro_estado', 'Activo')
+                ->pluck('pro_id')
+        )->where('pos_estado', 'Aprobada')
+            ->distinct('apr_id')
+            ->count();
+
+        // Evidencias pendientes por calificar
+        $evidenciasPendientes = Evidencia::whereIn('evid_pro_id',
+            Proyecto::where('ins_usr_documento', $usrDocumento)
+                ->pluck('pro_id')
+        )->where('evid_estado', 'Pendiente')
+            ->count();
 
         return view('instructor.dashboard', compact(
-            'instructor', 'proyectosAsignados', 'proyectosActivos',
-            'proyectos', 'totalAprendices'
+            'instructor', 'proyectosAsignados',
+            'proyectos', 'totalAprendices', 'evidenciasPendientes'
         ));
     }
 
     public function proyectos()
     {
-        $proyectos = DB::table('proyecto')
-            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->where('proyecto.ins_usr_documento', session('documento'))
-            ->where('proyecto.pro_estado', 'Activo')
-            ->select('proyecto.*', 'empresa.emp_nombre')
-            ->orderByDesc('proyecto.pro_id')
+        $usrDocumento = session('documento');
+        
+        $proyectos = Proyecto::where('ins_usr_documento', $usrDocumento)
+            ->where('pro_estado', 'Activo')
+            ->with('empresa')
+            ->orderByDesc('pro_id')
             ->get();
 
         return view('instructor.proyectos', compact('proyectos'));
@@ -64,16 +74,20 @@ class InstructorController extends Controller
 
     public function aprendices()
     {
-        $aprendices = DB::table('postulacion')
-            ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
-            ->join('aprendiz', 'postulacion.apr_id', '=', 'aprendiz.apr_id')
-            ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
-            ->where('proyecto.ins_usr_documento', session('documento'))
-            ->where('proyecto.pro_estado', 'Activo')
-            ->where('postulacion.pos_estado', 'Aprobada')
-            ->select('aprendiz.*', 'usuario.usr_correo', 'proyecto.pro_titulo_proyecto',
-                     'postulacion.pos_estado', 'postulacion.pos_fecha')
-            ->get();
+        $usrDocumento = session('documento');
+        
+        $aprendices = Aprendiz::whereHas('postulaciones', function($query) use ($usrDocumento) {
+            $query->where('pos_estado', 'Aprobada')
+                ->whereHas('proyecto', function($subQuery) use ($usrDocumento) {
+                    $subQuery->where('ins_usr_documento', $usrDocumento)
+                        ->where('pro_estado', 'Activo');
+                });
+        })->with(['usuario', 'postulaciones' => function($q) use ($usrDocumento) {
+            $q->where('pos_estado', 'Aprobada')
+                ->whereHas('proyecto', function($sq) use ($usrDocumento) {
+                    $sq->where('ins_usr_documento', $usrDocumento);
+                });
+        }])->get();
 
         return view('instructor.aprendices', compact('aprendices'));
     }
@@ -81,14 +95,17 @@ class InstructorController extends Controller
     public function perfil()
     {
         $usrId = session('usr_id');
-        $instructor = DB::table('instructor')->where('usr_id', $usrId)->first();
-        $usuario = DB::table('usuario')->where('usr_id', $usrId)->first();
+        $instructor = Instructor::where('usr_id', $usrId)->firstOrFail();
+        $usuario = User::findOrFail($usrId);
         return view('instructor.perfil', compact('instructor', 'usuario'));
     }
 
     public function actualizarPerfil(Request $request)
     {
         $usrId = session('usr_id');
+        $instructor = Instructor::where('usr_id', $usrId)->firstOrFail();
+        $usuario = User::findOrFail($usrId);
+
         $request->validate([
             'nombre'       => 'required|string|max:50',
             'apellido'     => 'required|string|max:50',
@@ -96,14 +113,14 @@ class InstructorController extends Controller
             'password'     => 'nullable|string|min:6',
         ]);
 
-        DB::table('instructor')->where('usr_id', $usrId)->update([
+        $instructor->update([
             'ins_nombre'      => $request->nombre,
             'ins_apellido'    => $request->apellido,
             'ins_especialidad'=> $request->especialidad,
         ]);
 
         if ($request->filled('password')) {
-            DB::table('usuario')->where('usr_id', $usrId)->update([
+            $usuario->update([
                 'usr_contrasena' => Hash::make($request->password),
             ]);
         }
@@ -118,27 +135,28 @@ class InstructorController extends Controller
         $usrDocumento = session('documento');
         
         // El historial muestra proyectos asignados, sin importar si están activos o inactivos
-        $proyectos = DB::table('proyecto')
-            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->leftJoin('postulacion', 'proyecto.pro_id', '=', 'postulacion.pro_id')
-            ->leftJoin('aprendiz', 'postulacion.apr_id', '=', 'aprendiz.apr_id')
-            ->where('proyecto.ins_usr_documento', $usrDocumento)
-            ->select(
-                'proyecto.pro_id',
-                'proyecto.pro_titulo_proyecto',
-                'proyecto.pro_categoria',
-                'proyecto.pro_estado',
-                'proyecto.pro_fecha_publi',
-                'proyecto.pro_fecha_finalizacion',
-                'empresa.emp_nombre',
-                DB::raw('COUNT(DISTINCT postulacion.apr_id) as total_aprendices'),
-                DB::raw('COUNT(CASE WHEN postulacion.pos_estado = "Aprobada" THEN 1 END) as aprendices_aprobados')
-            )
-            ->groupBy('proyecto.pro_id', 'proyecto.pro_titulo_proyecto', 'proyecto.pro_categoria', 
-                      'proyecto.pro_estado', 'proyecto.pro_fecha_publi', 'proyecto.pro_fecha_finalizacion',
-                      'empresa.emp_nombre')
-            ->orderByDesc('proyecto.pro_fecha_publi')
-            ->get();
+        $proyectos = Proyecto::where('ins_usr_documento', $usrDocumento)
+            ->with(['empresa', 'postulaciones'])
+            ->orderByDesc('pro_fecha_publi')
+            ->get()
+            ->map(function($proyecto) {
+                $totalAprendices = $proyecto->postulaciones()->count();
+                $aprendicesAprobados = $proyecto->postulaciones()
+                    ->where('pos_estado', 'Aprobada')
+                    ->count();
+                
+                return (object)[
+                    'pro_id' => $proyecto->pro_id,
+                    'pro_titulo_proyecto' => $proyecto->pro_titulo_proyecto,
+                    'pro_categoria' => $proyecto->pro_categoria,
+                    'pro_estado' => $proyecto->pro_estado,
+                    'pro_fecha_publi' => $proyecto->pro_fecha_publi,
+                    'pro_fecha_finalizacion' => $proyecto->pro_fecha_finalizacion,
+                    'emp_nombre' => $proyecto->empresa->emp_nombre,
+                    'total_aprendices' => $totalAprendices,
+                    'aprendices_aprobados' => $aprendicesAprobados,
+                ];
+            });
 
         return view('instructor.historial', compact('proyectos'));
     }
@@ -149,114 +167,64 @@ class InstructorController extends Controller
         $usrDocumento = session('documento');
         
         // Verificar que el proyecto pertenece al instructor
-        $proyecto = DB::table('proyecto')
-            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->where('proyecto.pro_id', $proId)
-            ->where('proyecto.ins_usr_documento', $usrDocumento)
-            ->select('proyecto.*', 'empresa.emp_nombre')
-            ->first();
-
-        if (!$proyecto) {
-            abort(403, 'No tienes acceso a este proyecto.');
-        }
+        $proyecto = Proyecto::where('pro_id', $proId)
+            ->where('ins_usr_documento', $usrDocumento)
+            ->with('empresa')
+            ->firstOrFail();
 
         // Obtener etapas del proyecto
-        $etapas = DB::table('etapa')
-            ->where('eta_pro_id', $proId)
+        $etapas = Etapa::where('eta_pro_id', $proId)
             ->orderBy('eta_orden')
             ->get();
 
         // Obtener aprendices aprobados
-        $aprendices = DB::table('aprendiz')
-            ->join('postulacion', 'aprendiz.apr_id', '=', 'postulacion.apr_id')
-            ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
-            ->where('postulacion.pro_id', $proId)
-            ->where('postulacion.pos_estado', 'Aprobada')
-            ->select('aprendiz.apr_id', 'aprendiz.apr_nombre', 'aprendiz.apr_apellido', 'usuario.usr_correo')
-            ->get();
-
-        // Obtener entregas y evidencias
-        $entregas = DB::table('entrega_etapa')
-            ->join('etapa', 'entrega_etapa.ene_eta_id', '=', 'etapa.eta_id')
-            ->join('aprendiz', 'entrega_etapa.ene_apr_id', '=', 'aprendiz.apr_id')
-            ->where('entrega_etapa.ene_pro_id', $proId)
-            ->select(
-                'entrega_etapa.*',
-                'etapa.eta_nombre',
-                'etapa.eta_orden',
-                'aprendiz.apr_nombre',
-                'aprendiz.apr_apellido'
-            )
-            ->orderBy('etapa.eta_orden')
-            ->orderBy('entrega_etapa.ene_fecha', 'desc')
-            ->get();
+        $aprendices = Aprendiz::whereHas('postulaciones', function($query) use ($proId) {
+            $query->where('pro_id', $proId)
+                ->where('pos_estado', 'Aprobada');
+        })->with('usuario')->get();
 
         // Obtener evidencias
-        $evidencias = DB::table('evidencia')
-            ->join('etapa', 'evidencia.evid_eta_id', '=', 'etapa.eta_id')
-            ->join('aprendiz', 'evidencia.evid_apr_id', '=', 'aprendiz.apr_id')
-            ->where('evidencia.evid_pro_id', $proId)
-            ->select(
-                'evidencia.*',
-                'etapa.eta_nombre',
-                'etapa.eta_orden',
-                'aprendiz.apr_nombre',
-                'aprendiz.apr_apellido'
-            )
-            ->orderBy('etapa.eta_orden')
-            ->orderBy('evidencia.evid_fecha', 'desc')
+        $evidencias = Evidencia::where('evid_pro_id', $proId)
+            ->with(['etapa', 'aprendiz'])
+            ->orderBy('eta_orden', 'asc')
+            ->orderByDesc('evid_fecha')
             ->get();
 
         return view('instructor.reporte-seguimiento', compact(
-    'proyecto', 'etapas', 'aprendices', 'entregas', 'evidencias'
-));
-}
-
-// ✅ MÉTODO SEPARADO (FUERA del anterior)
-public function detalleProyecto($id)
-{
-    $usrDocumento = session('documento');
-
-    $proyecto = DB::table('proyecto')
-        ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-        ->where('proyecto.pro_id', $id)
-        ->where('proyecto.ins_usr_documento', $usrDocumento)
-        ->select('proyecto.*', 'empresa.emp_nombre')
-        ->first();
-
-    if (!$proyecto) {
-        abort(403, 'No tienes acceso a este proyecto');
+            'proyecto', 'etapas', 'aprendices', 'evidencias'
+        ));
     }
 
-    // Obtener etapas del proyecto
-    $etapas = DB::table('etapa')
-        ->where('eta_pro_id', $id)
-        ->orderBy('eta_orden')
-        ->get();
+    public function detalleProyecto($id)
+    {
+        $usrDocumento = session('documento');
 
-    // Obtener postulaciones con estado
-    $postulaciones = DB::table('postulacion')
-        ->join('aprendiz', 'postulacion.apr_id', '=', 'aprendiz.apr_id')
-        ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
-        ->where('postulacion.pro_id', $id)
-        ->select('postulacion.*', 'aprendiz.apr_nombre', 'aprendiz.apr_apellido',
-                 'aprendiz.apr_programa', 'usuario.usr_correo')
-        ->orderByDesc('postulacion.pos_fecha')
-        ->get();
+        $proyecto = Proyecto::where('pro_id', $id)
+            ->where('ins_usr_documento', $usrDocumento)
+            ->with('empresa')
+            ->firstOrFail();
 
-    // Obtener integrantes aprobados
-    $integrantes = DB::table('postulacion')
-        ->join('aprendiz', 'postulacion.apr_id', '=', 'aprendiz.apr_id')
-        ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
-        ->where('postulacion.pro_id', $id)
-        ->where('postulacion.pos_estado', 'Aprobada')
-        ->select('aprendiz.*', 'usuario.usr_correo', 'postulacion.pos_fecha')
-        ->get();
+        // Obtener etapas del proyecto
+        $etapas = Etapa::where('eta_pro_id', $id)
+            ->orderBy('eta_orden')
+            ->get();
 
-    return view('instructor.detalle_proyecto', compact('proyecto', 'etapas', 'postulaciones', 'integrantes'));
-}
+        // Obtener postulaciones con aprendices
+        $postulaciones = Postulacion::where('pro_id', $id)
+            ->with(['aprendiz.usuario'])
+            ->orderByDesc('pos_fecha')
+            ->get();
 
-     // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN (SOLO EL INSTRUCTOR)
+        // Obtener integrantes aprobados
+        $integrantes = Postulacion::where('pro_id', $id)
+            ->where('pos_estado', 'Aprobada')
+            ->with(['aprendiz.usuario'])
+            ->get();
+
+        return view('instructor.detalle_proyecto', compact('proyecto', 'etapas', 'postulaciones', 'integrantes'));
+    }
+
+    // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN (SOLO EL INSTRUCTOR)
     public function cambiarEstadoPostulacion(Request $request, int $id)
     {
         $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
@@ -264,34 +232,24 @@ public function detalleProyecto($id)
         $usrDocumento = session('documento');
 
         // Verificar que la postulación pertenece a un proyecto del instructor
-        $postulacion = DB::table('postulacion')
-            ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
-            ->where('postulacion.pos_id', $id)
-            ->where('proyecto.ins_usr_documento', $usrDocumento)
-            ->first();
+        $postulacion = Postulacion::where('pos_id', $id)
+            ->whereHas('proyecto', function($query) use ($usrDocumento) {
+                $query->where('ins_usr_documento', $usrDocumento);
+            })->firstOrFail();
 
-        if (!$postulacion) {
-            abort(403, 'No tienes permiso para cambiar el estado de esta postulación.');
-        }
-
-        DB::table('postulacion')->where('pos_id', $id)->update(['pos_estado' => $request->estado]);
+        $postulacion->update(['pos_estado' => $request->estado]);
 
         // Enviar correo al aprendiz si se aprueba o rechaza
         if (in_array($request->estado, ['Aprobada', 'Rechazada'])) {
             try {
-                $postulacionCompleta = DB::table('postulacion')
-                    ->join('aprendiz', 'postulacion.apr_id', '=', 'aprendiz.apr_id')
-                    ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
-                    ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
-                    ->where('postulacion.pos_id', $id)
-                    ->select('aprendiz.apr_nombre', 'usuario.usr_correo', 'proyecto.pro_titulo_proyecto')
-                    ->first();
-
-                if ($postulacionCompleta) {
-                    Mail::to($postulacionCompleta->usr_correo)
+                $aprendiz = $postulacion->aprendiz()->with('usuario')->first();
+                $proyecto = $postulacion->proyecto;
+                
+                if ($aprendiz && $proyecto) {
+                    Mail::to($aprendiz->usuario->usr_correo)
                         ->send(new PostulacionEstadoCambiado(
-                            $postulacionCompleta->apr_nombre,
-                            $postulacionCompleta->pro_titulo_proyecto,
+                            $aprendiz->apr_nombre,
+                            $proyecto->pro_titulo_proyecto,
                             $request->estado
                         ));
                 }
@@ -309,14 +267,9 @@ public function detalleProyecto($id)
         $usrDocumento = session('documento');
 
         // Verificar que el proyecto pertenece al instructor
-        $proyecto = DB::table('proyecto')
-            ->where('pro_id', $proId)
+        $proyecto = Proyecto::where('pro_id', $proId)
             ->where('ins_usr_documento', $usrDocumento)
-            ->first();
-
-        if (!$proyecto) {
-            abort(403, 'No tienes permiso para agregar etapas a este proyecto.');
-        }
+            ->firstOrFail();
 
         $request->validate([
             'nombre'       => 'required|string|max:200',
@@ -324,7 +277,7 @@ public function detalleProyecto($id)
             'orden'        => 'required|integer|min:1',
         ]);
 
-        DB::table('etapa')->insert([
+        Etapa::create([
             'eta_pro_id'      => $proId,
             'eta_orden'       => $request->orden,
             'eta_nombre'      => $request->nombre,
@@ -340,15 +293,10 @@ public function detalleProyecto($id)
         $usrDocumento = session('documento');
 
         // Verificar que la etapa pertenece a un proyecto del instructor
-        $etapa = DB::table('etapa')
-            ->join('proyecto', 'etapa.eta_pro_id', '=', 'proyecto.pro_id')
-            ->where('etapa.eta_id', $etaId)
-            ->where('proyecto.ins_usr_documento', $usrDocumento)
-            ->first();
-
-        if (!$etapa) {
-            abort(403, 'No tienes permiso para editar esta etapa.');
-        }
+        $etapa = Etapa::where('eta_id', $etaId)
+            ->whereHas('proyecto', function($query) use ($usrDocumento) {
+                $query->where('ins_usr_documento', $usrDocumento);
+            })->firstOrFail();
 
         $request->validate([
             'nombre'       => 'required|string|max:200',
@@ -356,7 +304,7 @@ public function detalleProyecto($id)
             'orden'        => 'required|integer|min:1',
         ]);
 
-        DB::table('etapa')->where('eta_id', $etaId)->update([
+        $etapa->update([
             'eta_orden'       => $request->orden,
             'eta_nombre'      => $request->nombre,
             'eta_descripcion' => $request->descripcion,
@@ -371,17 +319,12 @@ public function detalleProyecto($id)
         $usrDocumento = session('documento');
 
         // Verificar que la etapa pertenece a un proyecto del instructor
-        $etapa = DB::table('etapa')
-            ->join('proyecto', 'etapa.eta_pro_id', '=', 'proyecto.pro_id')
-            ->where('etapa.eta_id', $etaId)
-            ->where('proyecto.ins_usr_documento', $usrDocumento)
-            ->first();
+        $etapa = Etapa::where('eta_id', $etaId)
+            ->whereHas('proyecto', function($query) use ($usrDocumento) {
+                $query->where('ins_usr_documento', $usrDocumento);
+            })->firstOrFail();
 
-        if (!$etapa) {
-            abort(403, 'No tienes permiso para eliminar esta etapa.');
-        }
-
-        DB::table('etapa')->where('eta_id', $etaId)->delete();
+        $etapa->delete();
 
         return back()->with('success', 'Etapa eliminada correctamente.');
     }
@@ -392,14 +335,9 @@ public function detalleProyecto($id)
         $usrDocumento = session('documento');
 
         // Verificar que el proyecto pertenece al instructor
-        $proyecto = DB::table('proyecto')
-            ->where('pro_id', $proId)
+        $proyecto = Proyecto::where('pro_id', $proId)
             ->where('ins_usr_documento', $usrDocumento)
-            ->first();
-
-        if (!$proyecto) {
-            abort(403, 'No tienes permiso para editar este proyecto.');
-        }
+            ->firstOrFail();
 
         $request->validate([
             'imagen' => 'required|image|mimes:jpg,jpeg,png|max:2048',
@@ -409,9 +347,7 @@ public function detalleProyecto($id)
             $path = $request->file('imagen')->store('proyectos', 'public');
             $imagenUrl = '/storage/' . $path;
 
-            DB::table('proyecto')->where('pro_id', $proId)->update([
-                'pro_imagen_url' => $imagenUrl,
-            ]);
+            $proyecto->update(['pro_imagen_url' => $imagenUrl]);
 
             return back()->with('success', 'Imagen del proyecto actualizada correctamente.');
         }
@@ -425,33 +361,16 @@ public function detalleProyecto($id)
         $usrDocumento = session('documento');
 
         // Verificar que el proyecto pertenece al instructor
-        $proyecto = DB::table('proyecto')
-            ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->where('proyecto.pro_id', $proId)
-            ->where('proyecto.ins_usr_documento', $usrDocumento)
-            ->select('proyecto.*', 'empresa.emp_nombre')
-            ->first();
-
-        if (!$proyecto) {
-            abort(403, 'No tienes acceso a este proyecto.');
-        }
+        $proyecto = Proyecto::where('pro_id', $proId)
+            ->where('ins_usr_documento', $usrDocumento)
+            ->with('empresa')
+            ->firstOrFail();
 
         // Obtener evidencias del proyecto con detalles del aprendiz y etapa
-        $evidencias = DB::table('evidencia')
-            ->join('aprendiz', 'evidencia.evid_apr_id', '=', 'aprendiz.apr_id')
-            ->join('usuario', 'aprendiz.usr_id', '=', 'usuario.usr_id')
-            ->join('etapa', 'evidencia.evid_eta_id', '=', 'etapa.eta_id')
-            ->where('evidencia.evid_pro_id', $proId)
-            ->select(
-                'evidencia.*',
-                'aprendiz.apr_nombre',
-                'aprendiz.apr_apellido',
-                'usuario.usr_correo',
-                'etapa.eta_nombre',
-                'etapa.eta_orden'
-            )
-            ->orderBy('etapa.eta_orden')
-            ->orderByDesc('evidencia.evid_fecha')
+        $evidencias = Evidencia::where('evid_pro_id', $proId)
+            ->with(['aprendiz.usuario', 'etapa'])
+            ->orderBy('eta_orden')
+            ->orderByDesc('evid_fecha')
             ->get();
 
         return view('instructor.evidencias', compact('proyecto', 'evidencias'));
@@ -463,29 +382,21 @@ public function detalleProyecto($id)
         $usrDocumento = session('documento');
 
         // Verificar que la evidencia pertenece a un proyecto del instructor
-        $evidencia = DB::table('evidencia')
-            ->join('proyecto', 'evidencia.evid_pro_id', '=', 'proyecto.pro_id')
-            ->where('evidencia.evid_id', $evidId)
-            ->where('proyecto.ins_usr_documento', $usrDocumento)
-            ->first();
-
-        if (!$evidencia) {
-            abort(403, 'No tienes permiso para calificar esta evidencia.');
-        }
+        $evidencia = Evidencia::where('evid_id', $evidId)
+            ->whereHas('proyecto', function($query) use ($usrDocumento) {
+                $query->where('ins_usr_documento', $usrDocumento);
+            })->firstOrFail();
 
         $request->validate([
             'estado'      => 'required|in:Aprobada,Rechazada,Pendiente',
             'comentario'  => 'nullable|string|max:1000',
         ]);
 
-        DB::table('evidencia')->where('evid_id', $evidId)->update([
+        $evidencia->update([
             'evid_estado'     => $request->estado,
             'evid_comentario' => $request->comentario,
         ]);
 
         return back()->with('success', 'Evidencia calificada correctamente.');
     }
-
-        
-    
 }

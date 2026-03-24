@@ -1,39 +1,24 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Proyectos')
-@section('page-title', 'Gestión de Proyectos')
+@section('title', 'Gestión Global de Proyectos')
+@section('page-title', 'Centro de Control de Proyectos')
 
 @section('sidebar-nav')
-<span class="nav-label">Administración</span>
-<a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-    <i class="fas fa-home"></i> Dashboard
-</a>
-<a href="{{ route('admin.usuarios') }}" class="nav-item {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
-    <i class="fas fa-users"></i> Usuarios
-</a>
-<a href="{{ route('admin.empresas') }}" class="nav-item {{ request()->routeIs('admin.empresas') ? 'active' : '' }}">
-    <i class="fas fa-building"></i> Empresas
-</a>
-<a href="{{ route('admin.proyectos') }}" class="nav-item {{ request()->routeIs('admin.proyectos') ? 'active' : '' }}">
-    <i class="fas fa-project-diagram"></i> Proyectos
-</a>
+    <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+        <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+    <a href="{{ route('admin.usuarios') }}" class="nav-item {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
+        <i class="fas fa-users-cog"></i> Usuarios
+    </a>
+    <a href="{{ route('admin.proyectos') }}" class="nav-item {{ request()->routeIs('admin.proyectos') ? 'active' : '' }}">
+        <i class="fas fa-project-diagram"></i> Proyectos
+    </a>
+    <a href="{{ route('admin.configuracion') }}" class="nav-item {{ request()->routeIs('admin.configuracion') ? 'active' : '' }}">
+        <i class="fas fa-cogs"></i> Configuración
+    </a>
 @endsection
 
 @section('content')
-<div style="margin-bottom: 24px;">
-    <h2 style="font-size:22px; font-weight:700;">Gestión de Proyectos</h2>
-    <p style="color:#666; font-size:14px; margin-top:4px;">Administra todos los proyectos del sistema.</p>
-</div>
-
-<div class="card">
-    @forelse($proyectos as $p)
-    <div style="display:flex; align-items:center; gap:20px; padding:20px; border-bottom:1px solid #f0f0f0; transition:background .2s;" onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='transparent'">
-
-        {{-- Imagen --}}
-        <div style="width:60px; height:60px; border-radius:12px; overflow:hidden; flex-shrink:0; background:linear-gradient(135deg, #39a900, #2d8500); display:flex; align-items:center; justify-content:center;">
-            @if($p->pro_imagen_url)
-                <img src="{{ $p->pro_imagen_url }}" style="width:100%; height:100%; object-fit:cover;">
-            @else
                 <i class="fas fa-project-diagram" style="color:#fff; font-size:20px;"></i>
             @endif
         </div>
