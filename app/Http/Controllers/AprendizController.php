@@ -16,9 +16,9 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
 
         $aprendiz = DB::table('aprendiz')->where('usr_id', $usrId)->first();
-        $totalPostulaciones = DB::table('postulacion')->where('apr_id', $aprendiz->apr_id ?? 0)->count();
+        $totalPostulaciones = DB::table('postulacion')->where('apr_id', $aprendiz?->apr_id ?? 0)->count();
         $postulacionesAprobadas = DB::table('postulacion')
-            ->where('apr_id', $aprendiz->apr_id ?? 0)
+            ->where('apr_id', $aprendiz?->apr_id ?? 0)
             ->where('pos_estado', 'Aprobada')
             ->count();
         $proyectosDisponibles = DB::table('proyecto')->where('pro_estado', 'Activo')->count();
@@ -33,7 +33,7 @@ class AprendizController extends Controller
 
         // Obtener IDs de proyectos con postulación aprobada
         $proyectosAprobados = DB::table('postulacion')
-            ->where('apr_id', $aprendiz->apr_id ?? 0)
+            ->where('apr_id', $aprendiz?->apr_id ?? 0)
             ->where('pos_estado', 'Aprobada')
             ->pluck('pro_id')
             ->toArray();
@@ -68,7 +68,7 @@ class AprendizController extends Controller
         $postulados = [];
         if ($aprendiz) {
             $postulados = DB::table('postulacion')
-                ->where('apr_id', $aprendiz->apr_id)
+                ->where('apr_id', $aprendiz?->apr_id)
                 ->pluck('pro_id')
                 ->toArray();
         }
@@ -88,7 +88,7 @@ class AprendizController extends Controller
         }
 
         $yaPostulado = DB::table('postulacion')
-            ->where('apr_id', $aprendiz->apr_id)
+            ->where('apr_id', $aprendiz?->apr_id)
             ->where('pro_id', $id)
             ->exists();
 
@@ -97,7 +97,7 @@ class AprendizController extends Controller
         }
 
         DB::table('postulacion')->insert([
-            'apr_id'     => $aprendiz->apr_id,
+            'apr_id'     => $aprendiz?->apr_id,
             'pro_id'     => $id,
             'pos_fecha'  => now(),
             'pos_estado' => 'Pendiente',
@@ -132,7 +132,7 @@ class AprendizController extends Controller
         $postulaciones = DB::table('postulacion')
             ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->where('postulacion.apr_id', $aprendiz->apr_id ?? 0)
+            ->where('postulacion.apr_id', $aprendiz?->apr_id ?? 0)
             ->select('postulacion.*', 'proyecto.pro_titulo_proyecto', 'proyecto.pro_categoria',
                      'proyecto.pro_imagen_url', 'proyecto.pro_id', 'empresa.emp_nombre')
             ->orderByDesc('postulacion.pos_fecha')
@@ -193,7 +193,7 @@ class AprendizController extends Controller
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
             ->leftJoin('usuario', 'proyecto.ins_usr_documento', '=', 'usuario.usr_documento')
             ->leftJoin('instructor', 'usuario.usr_id', '=', 'instructor.usr_id')
-            ->where('postulacion.apr_id', $aprendiz->apr_id)
+            ->where('postulacion.apr_id', $aprendiz?->apr_id)
             ->select(
                 'postulacion.pos_id',
                 'postulacion.pos_estado',
@@ -228,7 +228,7 @@ class AprendizController extends Controller
         $proyectos = DB::table('postulacion')
             ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
             ->join('empresa', 'proyecto.emp_nit', '=', 'empresa.emp_nit')
-            ->where('postulacion.apr_id', $aprendiz->apr_id)
+            ->where('postulacion.apr_id', $aprendiz?->apr_id)
             ->where('postulacion.pos_estado', 'Aprobada')
             ->select('proyecto.*', 'empresa.emp_nombre')
             ->get();
@@ -237,7 +237,7 @@ class AprendizController extends Controller
         $entregas = DB::table('entrega_etapa')
             ->join('etapa', 'entrega_etapa.ene_eta_id', '=', 'etapa.eta_id')
             ->join('proyecto', 'entrega_etapa.ene_pro_id', '=', 'proyecto.pro_id')
-            ->where('entrega_etapa.ene_apr_id', $aprendiz->apr_id)
+            ->where('entrega_etapa.ene_apr_id', $aprendiz?->apr_id)
             ->select(
                 'entrega_etapa.*',
                 'etapa.eta_nombre',
@@ -254,7 +254,7 @@ class AprendizController extends Controller
         $evidencias = DB::table('evidencia')
             ->join('etapa', 'evidencia.evid_eta_id', '=', 'etapa.eta_id')
             ->join('proyecto', 'evidencia.evid_pro_id', '=', 'proyecto.pro_id')
-            ->where('evidencia.evid_apr_id', $aprendiz->apr_id)
+            ->where('evidencia.evid_apr_id', $aprendiz?->apr_id)
             ->select(
                 'evidencia.*',
                 'etapa.eta_nombre',
@@ -282,7 +282,7 @@ class AprendizController extends Controller
 
         // Verificar que el aprendiz está aprobado en este proyecto
         $postulacion = DB::table('postulacion')
-            ->where('apr_id', $aprendiz->apr_id)
+            ->where('apr_id', $aprendiz?->apr_id)
             ->where('pro_id', $proId)
             ->where('pos_estado', 'Aprobada')
             ->first();
@@ -318,7 +318,7 @@ class AprendizController extends Controller
         $evidencias = DB::table('evidencia')
             ->join('etapa', 'evidencia.evid_eta_id', '=', 'etapa.eta_id')
             ->where('evidencia.evid_pro_id', $proId)
-            ->where('evidencia.evid_apr_id', $aprendiz->apr_id)
+            ->where('evidencia.evid_apr_id', $aprendiz?->apr_id)
             ->select(
                 'evidencia.*',
                 'etapa.eta_nombre',
@@ -343,7 +343,7 @@ class AprendizController extends Controller
 
         // Verificar que está aprobado en el proyecto
         $postulacion = DB::table('postulacion')
-            ->where('apr_id', $aprendiz->apr_id)
+            ->where('apr_id', $aprendiz?->apr_id)
             ->where('pro_id', $proId)
             ->where('pos_estado', 'Aprobada')
             ->first();
@@ -375,7 +375,7 @@ class AprendizController extends Controller
         }
 
         DB::table('evidencia')->insert([
-            'evid_apr_id'    => $aprendiz->apr_id,
+            'evid_apr_id'    => $aprendiz?->apr_id,
             'evid_eta_id'    => $etaId,
             'evid_pro_id'    => $proId,
             'evid_archivo'   => $archivoUrl,
