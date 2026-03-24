@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\Blade::directive('rol', function ($rol) {
+            return "<?php if(session('rol') == {$rol}): ?>";
+        });
+
+        \Illuminate\Support\Facades\Blade::directive('endrol', function () {
+            return "<?php endif; ?>";
+        });
     }
 }

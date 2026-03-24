@@ -92,8 +92,10 @@ class Proyecto extends Model
 
     public function scopeBusqueda(Builder $query, $termino): Builder
     {
-        return $query->where('pro_titulo_proyecto', 'like', "%{$termino}%")
-                     ->orWhere('pro_descripcion', 'like', "%{$termino}%");
+        return $query->where(function($q) use ($termino) {
+            $q->where('pro_titulo_proyecto', 'like', "%{$termino}%")
+              ->orWhere('pro_descripcion', 'like', "%{$termino}%");
+        });
     }
 
     public function scopeRecientes(Builder $query): Builder

@@ -39,7 +39,27 @@
                     <span style="color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500;">NIT: {{ $empresa->emp_nit }}</span>
                 </div>
                 <h2 style="font-size: 36px; font-weight: 800; letter-spacing: -1px;">{{ $empresa->emp_nombre }}</h2>
-                <div style="display: flex; align-items: center; gap: 20px; margin-top: 16px; color: rgba(255,255,255,0.8);">
+                
+                <!-- Perfil Integrity Bar -->
+                <div style="margin-top: 16px; max-width: 400px;">
+                    @php
+                        $camposCompletos = 0;
+                        if(!empty($empresa->emp_nombre)) $camposCompletos++;
+                        if(!empty($empresa->emp_representante)) $camposCompletos++;
+                        if(!empty($empresa->emp_nit)) $camposCompletos++;
+                        if(!empty($empresa->emp_correo)) $camposCompletos++;
+                        $progresoPerfil = ($camposCompletos / 4) * 100;
+                    @endphp
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <span style="font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7);">Integridad Corporativa</span>
+                        <span style="font-size: 11px; font-weight: 800; color: var(--primary);">{{ $progresoPerfil }}%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
+                        <div style="width: {{ $progresoPerfil }}%; height: 100%; background: var(--primary); border-radius: 10px; transition: width 1s ease;"></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 20px; margin-top: 20px; color: rgba(255,255,255,0.8);">
                     <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
                         <i class="fas fa-user-tie" style="color: var(--primary);"></i>
                         {{ $empresa->emp_representante }}

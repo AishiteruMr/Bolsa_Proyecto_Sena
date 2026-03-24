@@ -98,9 +98,9 @@ La plataforma ha sido blindada contra amenazas comunes mediante:
 | Perfil | Correo | Contraseña |
 | :--- | :--- | :--- |
 | **Administrador** | `admin@gmail.com` | `admin123` |
-| **Instructor** | `instructor@gmail.com` | `admin123` |
-| **Aprendiz** | `aprendiz@gmail.com` | `admin123` |
-| **Empresa** | `empresa@gmail.com` | `admin123` |
+| **Instructor** | `instructor@gmail.com` | `instructor123` |
+| **Aprendiz** | `aprendiz@gmail.com` | `aprendiz123` |
+| **Empresa** | `empresa@gmail.com` | `empresa123` |
 
 ---
 

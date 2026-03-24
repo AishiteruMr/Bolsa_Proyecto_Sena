@@ -20,22 +20,19 @@ class InstructorController extends Controller
 {
     public function dashboard()
     {
-        $usrId = session('usr_id');
-        $usrDocumento = session('documento');
-        
-        $instructor = Instructor::where('usr_id', $usrId)->first();
+        $instructor = Instructor::where('usr_id', cuser_id())->first();
 
         if (!$instructor) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de instructor.');
         }
 
         // Proyectos asignados activos
-        $proyectosAsignados = Proyecto::where('ins_usr_documento', $usrDocumento)
+        $proyectosAsignados = Proyecto::where('ins_usr_documento', cuser_id())
             ->where('pro_estado', 'Activo')
             ->count();
 
         // Proyectos recientes con relación a empresa (eager loading)
-        $proyectos = Proyecto::where('ins_usr_documento', $usrDocumento)
+        $proyectos = Proyecto::where('ins_usr_documento', cuser_id())
             ->where('pro_estado', 'Activo')
             ->with(['empresa', 'postulaciones'])
             ->orderByDesc('pro_id')
@@ -44,7 +41,7 @@ class InstructorController extends Controller
 
         // Contar aprendices aprobados en proyectos del instructor
         $totalAprendices = Postulacion::whereIn('pro_id',
-            Proyecto::where('ins_usr_documento', $usrDocumento)
+            Proyecto::where('ins_usr_documento', cuser_id())
                 ->where('pro_estado', 'Activo')
                 ->pluck('pro_id')
         )->where('pos_estado', 'Aprobada')
@@ -53,22 +50,33 @@ class InstructorController extends Controller
 
         // Evidencias pendientes por calificar
         $evidenciasPendientes = Evidencia::whereIn('evid_pro_id',
-            Proyecto::where('ins_usr_documento', $usrDocumento)
+            Proyecto::where('ins_usr_documento', cuser_id())
                 ->pluck('pro_id')
         )->where('evid_estado', 'Pendiente')
             ->count();
 
+        // 🆕 Nuevas postulaciones (últimas 48 horas)
+        $nuevasPostulaciones = Postulacion::whereIn('pro_id',
+            Proyecto::where('ins_usr_documento', cuser_id())->pluck('pro_id')
+        )->where('pos_fecha', '>=', now()->subHours(48))->count();
+
+        // 🆕 Próximo cierre de proyecto
+        $proximoCierre = Proyecto::where('ins_usr_documento', cuser_id())
+            ->where('pro_estado', 'Activo')
+            ->where('pro_fecha_finalizacion', '>=', now())
+            ->orderBy('pro_fecha_finalizacion')
+            ->first();
+
         return view('instructor.dashboard', compact(
             'instructor', 'proyectosAsignados',
-            'proyectos', 'totalAprendices', 'evidenciasPendientes'
+            'proyectos', 'totalAprendices', 'evidenciasPendientes',
+            'nuevasPostulaciones', 'proximoCierre'
         ));
     }
 
     public function proyectos()
     {
-        $usrDocumento = session('documento');
-        
-        $proyectos = Proyecto::where('ins_usr_documento', $usrDocumento)
+        $proyectos = Proyecto::where('ins_usr_documento', cuser_id())
             ->where('pro_estado', 'Activo')
             ->with('empresa')
             ->orderByDesc('pro_id')
@@ -79,18 +87,16 @@ class InstructorController extends Controller
 
     public function aprendices()
     {
-        $usrDocumento = session('documento');
-        
-        $aprendices = Aprendiz::whereHas('postulaciones', function($query) use ($usrDocumento) {
+        $aprendices = Aprendiz::whereHas('postulaciones', function($query) {
             $query->where('pos_estado', 'Aprobada')
-                ->whereHas('proyecto', function($subQuery) use ($usrDocumento) {
-                    $subQuery->where('ins_usr_documento', $usrDocumento)
+                ->whereHas('proyecto', function($subQuery) {
+                    $subQuery->where('ins_usr_documento', cuser_id())
                         ->where('pro_estado', 'Activo');
                 });
-        })->with(['usuario', 'postulaciones' => function($q) use ($usrDocumento) {
+        })->with(['usuario', 'postulaciones' => function($q) {
             $q->where('pos_estado', 'Aprobada')
-                ->whereHas('proyecto', function($sq) use ($usrDocumento) {
-                    $sq->where('ins_usr_documento', $usrDocumento);
+                ->whereHas('proyecto', function($sq) {
+                    $sq->where('ins_usr_documento', cuser_id());
                 });
         }])->get();
 
@@ -99,28 +105,44 @@ class InstructorController extends Controller
 
     public function perfil()
     {
-        $usrId = session('usr_id');
-        $instructor = Instructor::where('usr_id', $usrId)->first();
+        $instructor = Instructor::where('usr_id', cuser_id())->first();
 
         if (!$instructor) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de instructor.');
         }
 
-        $usuario = User::findOrFail($usrId);
-        return view('instructor.perfil', compact('instructor', 'usuario'));
+        $usuario = User::findOrFail(cuser_id());
+
+        // 🆕 Estadísticas reales para el perfil
+        $proyectosCount = Proyecto::where('ins_usr_documento', cuser_id())->count();
+        
+        $aprendicesCount = Postulacion::whereIn('pro_id',
+            Proyecto::where('ins_usr_documento', cuser_id())->pluck('pro_id')
+        )->where('pos_estado', 'Aprobada')
+            ->distinct('apr_id')
+            ->count();
+
+        $evidenciasPendientesCount = Evidencia::whereIn('evid_pro_id',
+            Proyecto::where('ins_usr_documento', cuser_id())->pluck('pro_id')
+        )->where('evid_estado', 'Pendiente')
+            ->count();
+
+        return view('instructor.perfil', compact(
+            'instructor', 'usuario', 'proyectosCount', 
+            'aprendicesCount', 'evidenciasPendientesCount'
+        ));
     }
 
     public function actualizarPerfil(Request $request)
     {
-        $usrId = session('usr_id');
-        $instructor = Instructor::where('usr_id', $usrId)->firstOrFail();
-        $usuario = User::findOrFail($usrId);
+        $instructor = Instructor::where('usr_id', cuser_id())->firstOrFail();
+        $usuario = User::findOrFail(cuser_id());
 
         $request->validate([
             'nombre'       => 'required|string|max:50',
             'apellido'     => 'required|string|max:50',
             'especialidad' => 'required|string|max:100',
-            'password'     => 'nullable|string|min:6',
+            'password'     => 'nullable|string|min:6|confirmed',
         ]);
 
         $instructor->update([
@@ -142,31 +164,11 @@ class InstructorController extends Controller
     // ── HISTORIAL DE PROYECTOS ──
     public function historial()
     {
-        $usrDocumento = session('documento');
-        
         // El historial muestra proyectos asignados, sin importar si están activos o inactivos
-        $proyectos = Proyecto::where('ins_usr_documento', $usrDocumento)
+        $proyectos = Proyecto::where('ins_usr_documento', cuser_id())
             ->with(['empresa', 'postulaciones'])
             ->orderByDesc('pro_fecha_publi')
-            ->get()
-            ->map(function($proyecto) {
-                $totalAprendices = $proyecto->postulaciones->count();
-                $aprendicesAprobados = $proyecto->postulaciones
-                    ->where('pos_estado', 'Aprobada')
-                    ->count();
-                
-                return (object)[
-                    'pro_id' => $proyecto->pro_id,
-                    'pro_titulo_proyecto' => $proyecto->pro_titulo_proyecto,
-                    'pro_categoria' => $proyecto->pro_categoria,
-                    'pro_estado' => $proyecto->pro_estado,
-                    'pro_fecha_publi' => $proyecto->pro_fecha_publi,
-                    'pro_fecha_finalizacion' => $proyecto->pro_fecha_finalizacion,
-                    'emp_nombre' => $proyecto->empresa->emp_nombre,
-                    'total_aprendices' => $totalAprendices,
-                    'aprendices_aprobados' => $aprendicesAprobados,
-                ];
-            });
+            ->get();
 
         return view('instructor.historial', compact('proyectos'));
     }
@@ -174,11 +176,9 @@ class InstructorController extends Controller
     // ── REPORTE DE SEGUIMIENTO POR PROYECTO ──
     public function reporteSeguimiento($proId)
     {
-        $usrDocumento = session('documento');
-        
         // Verificar que el proyecto pertenece al instructor
         $proyecto = Proyecto::where('pro_id', $proId)
-            ->where('ins_usr_documento', $usrDocumento)
+            ->where('ins_usr_documento', cuser_id())
             ->with('empresa')
             ->firstOrFail();
 
@@ -207,10 +207,8 @@ class InstructorController extends Controller
 
     public function detalleProyecto($id)
     {
-        $usrDocumento = session('documento');
-
         $proyecto = Proyecto::where('pro_id', $id)
-            ->where('ins_usr_documento', $usrDocumento)
+            ->where('ins_usr_documento', cuser_id())
             ->with('empresa')
             ->firstOrFail();
 
@@ -239,12 +237,10 @@ class InstructorController extends Controller
     {
         $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
 
-        $usrDocumento = session('documento');
-
         // Verificar que la postulación pertenece a un proyecto del instructor
         $postulacion = Postulacion::where('pos_id', $id)
-            ->whereHas('proyecto', function($query) use ($usrDocumento) {
-                $query->where('ins_usr_documento', $usrDocumento);
+            ->whereHas('proyecto', function($query) {
+                $query->where('ins_usr_documento', cuser_id());
             })->firstOrFail();
 
         $postulacion->update(['pos_estado' => $request->estado]);
@@ -268,17 +264,16 @@ class InstructorController extends Controller
             }
         }
 
+        Log::info('Estado de postulación cambiado por instructor', ['pos_id' => $id, 'estado' => $request->estado, 'instructor_id' => cuser_id()]);
         return back()->with('success', 'Estado de postulación actualizado correctamente.');
     }
 
     // ✅ MÉTODO PARA CREAR ETAPA
     public function crearEtapa(Request $request, int $proId)
     {
-        $usrDocumento = session('documento');
-
         // Verificar que el proyecto pertenece al instructor
         $proyecto = Proyecto::where('pro_id', $proId)
-            ->where('ins_usr_documento', $usrDocumento)
+            ->where('ins_usr_documento', cuser_id())
             ->firstOrFail();
 
         $request->validate([
@@ -300,12 +295,10 @@ class InstructorController extends Controller
     // ✅ MÉTODO PARA EDITAR ETAPA
     public function editarEtapa(Request $request, int $etaId)
     {
-        $usrDocumento = session('documento');
-
         // Verificar que la etapa pertenece a un proyecto del instructor
         $etapa = Etapa::where('eta_id', $etaId)
-            ->whereHas('proyecto', function($query) use ($usrDocumento) {
-                $query->where('ins_usr_documento', $usrDocumento);
+            ->whereHas('proyecto', function($query) {
+                $query->where('ins_usr_documento', cuser_id());
             })->firstOrFail();
 
         $request->validate([
@@ -326,12 +319,10 @@ class InstructorController extends Controller
     // ✅ MÉTODO PARA ELIMINAR ETAPA
     public function eliminarEtapa(int $etaId)
     {
-        $usrDocumento = session('documento');
-
         // Verificar que la etapa pertenece a un proyecto del instructor
         $etapa = Etapa::where('eta_id', $etaId)
-            ->whereHas('proyecto', function($query) use ($usrDocumento) {
-                $query->where('ins_usr_documento', $usrDocumento);
+            ->whereHas('proyecto', function($query) {
+                $query->where('ins_usr_documento', cuser_id());
             })->firstOrFail();
 
         $etapa->delete();
@@ -342,11 +333,9 @@ class InstructorController extends Controller
     // ✅ MÉTODO PARA SUBIR IMAGEN AL PROYECTO
     public function subirImagenProyecto(Request $request, int $proId)
     {
-        $usrDocumento = session('documento');
-
         // Verificar que el proyecto pertenece al instructor
         $proyecto = Proyecto::where('pro_id', $proId)
-            ->where('ins_usr_documento', $usrDocumento)
+            ->where('ins_usr_documento', cuser_id())
             ->firstOrFail();
 
         $request->validate([
@@ -354,6 +343,14 @@ class InstructorController extends Controller
         ]);
 
         if ($request->hasFile('imagen')) {
+            // Eliminar imagen anterior si existe
+            if ($proyecto->pro_imagen_url) {
+                $oldPath = str_replace('/storage/', '', $proyecto->pro_imagen_url);
+                if (\Illuminate\Support\Facades\Storage::disk('public')->exists($oldPath)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
+                }
+            }
+
             $path = $request->file('imagen')->store('proyectos', 'public');
             $imagenUrl = '/storage/' . $path;
 
@@ -368,11 +365,9 @@ class InstructorController extends Controller
     // ✅ MÉTODO PARA VER EVIDENCIAS DE UN PROYECTO
     public function verEvidencias(int $proId)
     {
-        $usrDocumento = session('documento');
-
         // Verificar que el proyecto pertenece al instructor
         $proyecto = Proyecto::where('pro_id', $proId)
-            ->where('ins_usr_documento', $usrDocumento)
+            ->where('ins_usr_documento', cuser_id())
             ->with('empresa')
             ->firstOrFail();
 
@@ -389,12 +384,10 @@ class InstructorController extends Controller
     // ✅ MÉTODO PARA CALIFICAR EVIDENCIA
     public function calificarEvidencia(Request $request, int $evidId)
     {
-        $usrDocumento = session('documento');
-
         // Verificar que la evidencia pertenece a un proyecto del instructor
         $evidencia = Evidencia::where('evid_id', $evidId)
-            ->whereHas('proyecto', function($query) use ($usrDocumento) {
-                $query->where('ins_usr_documento', $usrDocumento);
+            ->whereHas('proyecto', function($query) {
+                $query->where('ins_usr_documento', cuser_id());
             })->firstOrFail();
 
         $request->validate([

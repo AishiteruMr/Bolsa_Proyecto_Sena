@@ -23,8 +23,9 @@ class AdminController extends Controller
             'instructores'  => Instructor::count(),
             'empresas'      => Empresa::count(),
             'proyectos'     => Proyecto::count(),
-            'postulaciones' => Postulacion::count(),
-            'aprobadas'     => Postulacion::where('pos_estado', 'Aprobada')->count(),
+            'pendientes'    => Proyecto::where('pro_estado', 'Inactivo')->count(),
+            'usuarios'      => User::count(),
+            'activos'       => User::where('usr_estado', 1)->count(), // Suponiendo que usr_estado existe
         ];
 
         $proyectosRecientes = Proyecto::with('empresa')
@@ -62,6 +63,13 @@ class AdminController extends Controller
             $instructor->update(['ins_estado' => $request->estado]);
         }
 
+        Log::info('Estado de usuario actualizado por admin', [
+            'admin_id' => cuser_id(),
+            'tipo'     => $request->tipo,
+            'id'       => $id,
+            'nuevo_id' => $request->estado
+        ]);
+
         return back()->with('success', 'Estado del usuario actualizado.');
     }
 
@@ -78,6 +86,12 @@ class AdminController extends Controller
         $empresa = Empresa::findOrFail($id);
         $empresa->update(['emp_estado' => $request->estado]);
 
+        Log::info('Estado de empresa actualizado por admin', [
+            'admin_id' => cuser_id(),
+            'emp_id'   => $id,
+            'estado'   => $request->estado
+        ]);
+
         return back()->with('success', 'Estado de la empresa actualizado.');
     }
 
@@ -85,27 +99,10 @@ class AdminController extends Controller
     {
         $proyectos = Proyecto::with(['empresa', 'instructor.usuario'])
             ->orderByDesc('pro_id')
-            ->get()
-            ->map(function($proyecto) {
-                return (object)[
-                    'pro_id' => $proyecto->pro_id,
-                    'pro_titulo_proyecto' => $proyecto->pro_titulo_proyecto,
-                    'emp_nit' => $proyecto->emp_nit,
-                    'ins_usr_documento' => $proyecto->ins_usr_documento,
-                    'pro_estado' => $proyecto->pro_estado,
-                    'emp_nombre' => $proyecto->empresa->emp_nombre,
-                    'ins_nombre' => $proyecto->instructor ? $proyecto->instructor->ins_nombre : null,
-                ];
-            });
+            ->get();
 
         $instructores = Instructor::with('usuario')
-            ->get()
-            ->map(function($instructor) {
-                return (object)[
-                    'ins_nombre' => $instructor->ins_nombre,
-                    'usr_documento' => $instructor->usuario->usr_documento,
-                ];
-            });
+            ->get();
 
         return view('admin.proyectos', compact('proyectos', 'instructores'));
     }
@@ -151,6 +148,12 @@ class AdminController extends Controller
             $proyecto->update(['pro_estado' => $request->estado]);
         }
 
+        Log::info('Estado de proyecto actualizado por admin', [
+            'admin_id' => cuser_id(),
+            'pro_id'   => $id,
+            'estado'   => $request->estado
+        ]);
+
         return back()->with('success', 'Estado del proyecto actualizado.');
     }
 
@@ -186,6 +189,12 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             Log::error('Error al enviar correo de asignación de instructor: ' . $e->getMessage());
         }
+
+        Log::info('Instructor asignado a proyecto por admin', [
+            'admin_id'  => cuser_id(),
+            'pro_id'    => $id,
+            'ins_doc'   => $request->ins_usr_documento
+        ]);
 
         return back()->with('success', 'Instructor asignado correctamente');
     }
