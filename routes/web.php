@@ -14,9 +14,7 @@ use App\Http\Controllers\ProyectoController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/debug-session', function() {
-    return response()->json(session()->all());
-});
+
 
 Route::get('/', function () {
     return view('index');
