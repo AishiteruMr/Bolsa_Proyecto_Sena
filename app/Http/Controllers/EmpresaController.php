@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use App\Models\Proyecto;
 use App\Models\Postulacion;
 use App\Models\Empresa;
@@ -16,7 +17,11 @@ class EmpresaController extends Controller
     public function dashboard()
     {
         $nit = session('nit');
-        $empresa = Empresa::where('emp_nit', $nit)->firstOrFail();
+        $empresa = Empresa::where('emp_nit', $nit)->first();
+
+        if (!$empresa) {
+            return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
+        }
 
         // Obtener proyectos de la empresa
         $proyectos = $empresa->proyectos();
@@ -24,7 +29,13 @@ class EmpresaController extends Controller
         $totalProyectos = $proyectos->count();
         $proyectosActivos = $proyectos->where('pro_estado', 'Activo')->count();
         
-        // Contar postulaciones totales (a través de proyectos)
+        // Proyectos recientes con eager loading
+        $proyectosRecientes = $empresa->proyectos()
+            ->with(['postulaciones', 'instructor'])
+            ->orderByDesc('pro_id')
+            ->limit(5)
+            ->get();
+        
         $totalPostulaciones = Postulacion::whereIn('pro_id', 
             $empresa->proyectos()->pluck('pro_id')
         )->count();
@@ -32,12 +43,6 @@ class EmpresaController extends Controller
         $postulacionesPendientes = Postulacion::whereIn('pro_id', 
             $empresa->proyectos()->pluck('pro_id')
         )->where('pos_estado', 'Pendiente')->count();
-
-        // Proyectos recientes
-        $proyectosRecientes = $empresa->proyectos()
-            ->orderByDesc('pro_id')
-            ->limit(5)
-            ->get();
 
         return view('empresa.dashboard', compact(
             'totalProyectos', 'proyectosActivos', 'totalPostulaciones',
@@ -48,7 +53,11 @@ class EmpresaController extends Controller
     public function proyectos()
     {
         $nit = session('nit');
-        $empresa = Empresa::where('emp_nit', $nit)->firstOrFail();
+        $empresa = Empresa::where('emp_nit', $nit)->first();
+
+        if (!$empresa) {
+            return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
+        }
         
         $proyectos = $empresa->proyectos()
             ->orderByDesc('pro_id')
@@ -215,19 +224,6 @@ class EmpresaController extends Controller
     {
         $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
         
-        $nit = session('nit');
-
-        // Verificar que la postulación pertenece a un proyecto de la empresa actual
-        $postulacion = DB::table('postulacion')
-            ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
-            ->where('postulacion.pos_id', $id)
-            ->where('proyecto.emp_nit', $nit)
-            ->first();
-
-        if (!$postulacion) {
-            abort(403, 'No tienes permiso para cambiar el estado de esta postulación.');
-        }
-
         $nit = session('nit');
         
         // SEGURIDAD: Validar que la postulación pertenece a un proyecto de esta empresa

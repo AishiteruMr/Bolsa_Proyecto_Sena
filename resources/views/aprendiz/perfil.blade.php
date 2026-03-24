@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Mi Perfil')
+@section('title', 'Mi Perfil - Inspírate SENA')
 @section('page-title', 'Mi Perfil')
 
 @section('sidebar-nav')
@@ -21,82 +21,240 @@
 @endsection
 
 @section('content')
-    <div style="margin-bottom: 24px;">
-        <h2 style="font-size:22px; font-weight:700;">Mi Perfil</h2>
-        <p style="color:#666; font-size:14px; margin-top:4px;">Actualiza tu información personal y contraseña.</p>
-    </div>
-
-    <div style="display:grid; grid-template-columns: 1fr 2fr; gap:24px;">
-        <!-- Info Card -->
-        <div class="card" style="text-align:center;">
-            <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg, #39a900, #2d8500); margin:0 auto 16px; display:flex; align-items:center; justify-content:center;">
-                <span style="color:#fff; font-size:36px; font-weight:700;">{{ strtoupper(substr($aprendiz->apr_nombre ?? 'A', 0, 1)) }}</span>
+<div class="profile-container" style="max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
+    
+    <!-- HEADER BENTO -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+        
+        <!-- Welcome Card -->
+        <div class="glass-card" style="grid-column: span 2; display: flex; align-items: center; gap: 32px; padding: 32px; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,253,244,0.95));">
+            <div class="profile-avatar-wrapper" style="position: relative;">
+                <div style="width: 120px; height: 120px; border-radius: 30px; background: linear-gradient(135deg, var(--primary), #2d8500); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px; font-weight: 800; transform: rotate(-3deg); box-shadow: 0 15px 35px rgba(57, 169, 0, 0.25);">
+                    {{ strtoupper(substr($aprendiz->apr_nombre ?? 'A', 0, 1)) }}
+                </div>
+                <div style="position: absolute; bottom: -5px; right: -5px; width: 32px; height: 32px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #f0fdf4; color: var(--primary); font-size: 14px; box-shadow: var(--shadow-sm);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
             </div>
-            <h3 style="font-size:18px; font-weight:600; margin-bottom:4px;">{{ $aprendiz->apr_nombre ?? '' }} {{ $aprendiz->apr_apellido ?? '' }}</h3>
-            <p style="color:#666; font-size:14px; margin-bottom:16px;">{{ $usuario->usr_correo ?? '' }}</p>
-            <span class="badge badge-success" style="font-size:12px; padding:6px 14px;">
-                <i class="fas fa-graduation-cap" style="margin-right:6px;"></i>{{ $aprendiz->apr_programa ?? 'Sin programa' }}
-            </span>
+            <div>
+                <span style="font-size: 14px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">Aprendiz SENA</span>
+                <h2 style="font-size: 32px; font-weight: 800; color: #1e293b; margin-top: 4px;">Hola, {{ $aprendiz->apr_nombre }}!</h2>
+                <p style="color: #64748b; font-size: 15px; margin-top: 8px;">Gestiona tu información académica y las credenciales de tu cuenta desde aquí.</p>
+            </div>
         </div>
 
-        <!-- Form -->
-        <div class="card">
-            <h3 style="font-size:16px; font-weight:600; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid #f0f0f0;">
-                <i class="fas fa-edit" style="color:#39a900; margin-right:8px;"></i>Editar Información
-            </h3>
+        <!-- Training Program Card -->
+        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between; padding: 32px; background: #fff; border-left: 6px solid var(--primary);">
+            <div>
+                <i class="fas fa-graduation-cap" style="font-size: 24px; color: var(--primary); margin-bottom: 16px;"></i>
+                <h4 style="font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase;">Programa</h4>
+                <p style="font-size: 20px; font-weight: 700; color: #1e293b; margin-top: 4px; line-height: 1.3;">{{ $aprendiz->apr_programa }}</p>
+            </div>
+            <div style="margin-top: 16px;">
+                <span class="badge badge-success">En Formación</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+        
+        <!-- Editable Info -->
+        <div class="glass-card" style="padding: 40px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+                <h3 style="font-size: 20px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-user-edit" style="color: var(--primary);"></i> Datos Personales
+                </h3>
+            </div>
 
             <form action="{{ route('aprendiz.perfil.update') }}" method="POST">
                 @csrf
                 @method('PUT')
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nombre</label>
-                        <input type="text" name="nombre" class="form-control" value="{{ old('nombre', $aprendiz->apr_nombre ?? '') }}" required>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                    <div class="form-group-modern">
+                        <label>Nombres</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="nombre" value="{{ old('nombre', $aprendiz->apr_nombre) }}" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Apellido</label>
-                        <input type="text" name="apellido" class="form-control" value="{{ old('apellido', $aprendiz->apr_apellido ?? '') }}" required>
+                    <div class="form-group-modern">
+                        <label>Apellidos</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="apellido" value="{{ old('apellido', $aprendiz->apr_apellido) }}" required>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group-modern" style="margin-bottom: 24px;">
                     <label>Programa de Formación</label>
-                    <input type="text" name="programa" class="form-control" value="{{ old('programa', $aprendiz->apr_programa ?? '') }}" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Correo Electrónico</label>
-                    <input type="email" class="form-control" value="{{ $usuario->usr_correo ?? '' }}" disabled style="background:#f8f9fa;">
-                    <small style="color:#888; font-size:12px;">El correo no se puede cambiar.</small>
-                </div>
-
-                <div style="background:#f8fff4; padding:16px; border-radius:10px; margin-top:20px;">
-                    <h4 style="font-size:14px; font-weight:600; margin-bottom:12px; color:#1a5c00;">
-                        <i class="fas fa-lock" style="margin-right:8px;"></i>Cambiar Contraseña
-                    </h4>
-                    <div class="form-group" style="margin-bottom:12px;">
-                        <label>Nueva Contraseña</label>
-                        <input type="password" name="password" class="form-control" placeholder="Mínimo 6 caracteres">
+                    <div class="input-with-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                        <input type="text" name="programa" value="{{ old('programa', $aprendiz->apr_programa) }}" required>
                     </div>
                 </div>
 
-                <div style="margin-top:24px; display:flex; gap:12px; justify-content:flex-end;">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Guardar Cambios
+                <div class="form-group-modern" style="margin-bottom: 40px;">
+                    <label>Correo Institucional (No editable)</label>
+                    <div class="input-with-icon disabled">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" value="{{ $usuario->usr_correo }}" disabled>
+                    </div>
+                </div>
+
+                <!-- Security Section -->
+                <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 24px;">
+                    <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-shield-alt" style="color: #64748b;"></i> Seguridad
+                    </h4>
+                    <div class="form-group-modern">
+                        <label>Nueva Contraseña (Opcional)</label>
+                        <div class="input-with-icon password">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password" placeholder="Mínimo 6 caracteres (deja vacío si no deseas cambiar)">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn btn-primary" style="padding: 14px 40px; font-size: 16px; border-radius: 12px; height: auto;">
+                        <i class="fas fa-sync-alt" style="margin-right: 10px;"></i> Actualizar Mi Perfil
                     </button>
                 </div>
             </form>
         </div>
-    </div>
-@endsection
 
-@section('styles')
+        <!-- Sidebar Bento -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            
+            <!-- Quick Stats -->
+            <div class="glass-card" style="padding: 24px;">
+                <h4 style="font-size: 15px; font-weight: 700; color: #64748b; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">Tu Actividad</h4>
+                
+                <div style="display: grid; gap: 16px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg); border-radius: 16px; border: 1px solid var(--border);">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(57, 169, 0, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <span style="font-size: 14px; font-weight: 600; color: #64748b;">Postulaciones</span>
+                        </div>
+                        <span style="font-size: 20px; font-weight: 800; color: #1e293b;">{{ $aprendiz->postulaciones()->count() }}</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg); border-radius: 16px; border: 1px solid var(--border);">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <span style="font-size: 14px; font-weight: 600; color: #64748b;">Proyectos OK</span>
+                        </div>
+                        <span style="font-size: 20px; font-weight: 800; color: #1e293b;">{{ $aprendiz->postulacionesAprobadas()->count() }}</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg); border-radius: 16px; border: 1px solid var(--border);">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <span style="font-size: 14px; font-weight: 600; color: #64748b;">Evidencias</span>
+                        </div>
+                        <span style="font-size: 20px; font-weight: 800; color: #1e293b;">{{ $aprendiz->evidencias()->count() }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="glass-card" style="padding: 32px; background: var(--primary); color: white; border: none; overflow: hidden; position: relative;">
+                <div style="position: absolute; top: -20px; right: -20px; font-size: 120px; color: rgba(255,255,255,0.1); transform: rotate(15deg);">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 12px; position: relative; z-index: 1;">¿Necesitas ayuda?</h4>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 24px; line-height: 1.5; position: relative; z-index: 1;">Si tienes problemas con tu información institucional, contacta a la coordinación de tu programa.</p>
+                <a href="#" style="background: white; color: var(--primary); padding: 12px 24px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 800; display: inline-block; position: relative; z-index: 1;">
+                    Contactar Soporte
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
-    .pagination { display:flex; gap:6px; }
-    .pagination a, .pagination span { padding:8px 14px; border-radius:8px; font-size:13px; }
-    .pagination a { background:#fff; color:#2c3e50; border:1px solid #e8edf0; }
-    .pagination a:hover { background:#39a900; color:#fff; border-color:#39a900; }
-    .pagination span { background:#39a900; color:#fff; }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        transition: transform 0.3s ease;
+    }
+
+    .form-group-modern {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group-modern label {
+        font-size: 14px;
+        font-weight: 700;
+        color: #64748b;
+        margin-left: 4px;
+    }
+
+    .input-with-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-with-icon i {
+        position: absolute;
+        left: 16px;
+        color: #94a3b8;
+        font-size: 16px;
+        transition: color 0.3s ease;
+    }
+
+    .input-with-icon input {
+        width: 100%;
+        padding: 14px 16px 14px 48px;
+        border-radius: 14px;
+        border: 2px solid #e2e8f0;
+        background: #fff;
+        font-size: 15px;
+        font-weight: 500;
+        color: #1e293b;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .input-with-icon input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(57, 169, 0, 0.1);
+    }
+
+    .input-with-icon input:focus + i {
+        color: var(--primary);
+    }
+
+    .input-with-icon.disabled input {
+        background: #f1f5f9;
+        color: #94a3b8;
+        cursor: not-allowed;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        border: none;
+        box-shadow: 0 4px 12px rgba(57, 169, 0, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(57, 169, 0, 0.4);
+    }
 </style>
 @endsection

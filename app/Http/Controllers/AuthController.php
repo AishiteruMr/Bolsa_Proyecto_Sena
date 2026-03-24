@@ -72,46 +72,60 @@ class AuthController extends Controller
 
             cache()->forget($rateLimitKey);
 
-            session([
+            $sessionData = [
                 'usr_id'   => $usuario->usr_id,
                 'documento'=> $usuario->usr_documento,
                 'correo'   => $correo,
                 'rol'      => $usuario->rol_id,
                 'nombre'   => $perfil->nombre ?? '',
                 'apellido' => $perfil->apellido ?? '',
-            ]);
+            ];
 
+            // Poblar IDs específicos según el rol
+            switch ($usuario->rol_id) {
+                case 1: // Aprendiz
+                    $sessionData['apr_id'] = $perfil->id;
+                    break;
+                case 2: // Instructor
+                    $sessionData['ins_id'] = $perfil->id;
+                    break;
+                case 3: // Empresa
+                    $sessionData['emp_id'] = $perfil->id;
+                    $sessionData['nit']    = $perfil->nit;
+                    $sessionData['documento'] = $perfil->nit; // Sobrescribir documento con NIT
+                    break;
+                case 4: // Admin
+                    $sessionData['adm_id'] = $perfil->id;
+                    break;
+            }
+
+            session($sessionData);
             $request->session()->regenerate();
 
             return $this->redirectByRol($usuario->rol_id);
         }
 
+        // Fallback para empresas que no están en la tabla 'usuario' (opcional, por robustez)
         $empresa = DB::table('empresa')->where('emp_correo', $correo)->first();
-
         if ($empresa) {
             if ($empresa->emp_estado == 0) {
                 return back()->with('error', 'Esta empresa está desactivada.')->withInput(['correo' => $correo]);
             }
-
             if (!Hash::check($password, $empresa->emp_contrasena)) {
                 cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
                 return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
             }
-
             cache()->forget($rateLimitKey);
-
             session([
                 'emp_id'   => $empresa->emp_id,
                 'nit'      => $empresa->emp_nit,
-                'documento'=> $empresa->emp_nit, // Forzar campo documento general
+                'documento'=> $empresa->emp_nit,
                 'rol'      => 3,
                 'correo'   => $correo,
                 'nombre'   => $empresa->emp_nombre,
                 'apellido' => '',
             ]);
-
             $request->session()->regenerate();
-
             return redirect()->route('empresa.dashboard');
         }
 
@@ -237,19 +251,19 @@ class AuthController extends Controller
         return match ($rol) {
             1 => DB::table('aprendiz')
                     ->where('usr_id', $usrId)
-                    ->select('apr_nombre as nombre', 'apr_apellido as apellido', 'apr_estado as estado')
+                    ->select('apr_id as id', 'apr_nombre as nombre', 'apr_apellido as apellido', 'apr_estado as estado')
                     ->first(),
             2 => DB::table('instructor')
                     ->where('usr_id', $usrId)
-                    ->select('ins_nombre as nombre', 'ins_apellido as apellido', 'ins_estado as estado')
+                    ->select('usr_id as id', 'ins_nombre as nombre', 'ins_apellido as apellido', 'ins_estado as estado')
                     ->first(),
             3 => DB::table('empresa')
                     ->where('usr_id', $usrId)
-                    ->select('emp_nombre as nombre', DB::raw("'' as apellido"), 'emp_estado as estado')
+                    ->select('emp_id as id', 'emp_nit as nit', 'emp_nombre as nombre', DB::raw("'' as apellido"), 'emp_estado as estado')
                     ->first(),
             4 => DB::table('administrador')
                     ->where('usr_id', $usrId)
-                    ->select('adm_nombre as nombre', 'adm_apellido as apellido', DB::raw('1 as estado'))
+                    ->select('adm_id as id', 'adm_nombre as nombre', 'adm_apellido as apellido', DB::raw('1 as estado'))
                     ->first(),
             default => null
         };

@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Mail\PostulacionExitosa;
 
 class AprendizController extends Controller
@@ -23,10 +24,16 @@ class AprendizController extends Controller
     public function dashboard()
     {
         $usrId = session('usr_id');
-        $aprendiz = Aprendiz::where('usr_id', $usrId)->firstOrFail();
+        $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        $totalPostulaciones = $aprendiz->countPostulaciones();
-        $postulacionesAprobadas = $aprendiz->countPostulacionesAprobadas();
+        if (!$aprendiz) {
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
+
+        $totalPostulaciones = $aprendiz->postulaciones()->count();
+        $postulacionesAprobadas = $aprendiz->postulaciones()
+            ->where('pos_estado', 'Aprobada')
+            ->count();
         $proyectosDisponibles = Proyecto::activos()->count();
 
         $proyectosRecientes = Proyecto::with('empresa')
@@ -35,7 +42,10 @@ class AprendizController extends Controller
             ->limit(6)
             ->get();
 
-        $proyectosAprobados = $aprendiz->postulacionesAprobadas()
+        // Obtener IDs de proyectos con postulación aprobada
+        $proyectosAprobados = DB::table('postulacion')
+            ->where('apr_id', $aprendiz?->apr_id ?? 0)
+            ->where('pos_estado', 'Aprobada')
             ->pluck('pro_id')
             ->toArray();
 
@@ -56,7 +66,11 @@ class AprendizController extends Controller
     public function proyectos(Request $request)
     {
         $usrId = session('usr_id');
-        $aprendiz = Aprendiz::where('usr_id', $usrId)->firstOrFail();
+        $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
+
+        if (!$aprendiz) {
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
 
         $query = Proyecto::with('empresa')
             ->activos();
@@ -74,9 +88,13 @@ class AprendizController extends Controller
         $proyectos = $query->recientes()->paginate(9);
 
         // IDs de proyectos donde ya postuló
-        $postulados = $aprendiz->postulaciones()
-            ->pluck('pro_id')
-            ->toArray();
+        $postulados = [];
+        if ($aprendiz) {
+            $postulados = DB::table('postulacion')
+                ->where('apr_id', $aprendiz->apr_id)
+                ->pluck('pro_id')
+                ->toArray();
+        }
 
         // Obtener categorías disponibles
         $categorias = Proyecto::distinct()->pluck('pro_categoria');
@@ -91,18 +109,23 @@ class AprendizController extends Controller
     public function postular(Request $request, int $id)
     {
         $usrId = session('usr_id');
-        $aprendiz = Aprendiz::where('usr_id', $usrId)->firstOrFail();
+        $aprendiz = DB::table('aprendiz')->where('usr_id', $usrId)->first();
 
-        // Validar que pueda postularse
-        [$esValido, $mensaje] = Postulacion::validarPostulacion($aprendiz->apr_id, $id);
-
-        if (!$esValido) {
-            return back()->with('warning', $mensaje);
+        if (!$aprendiz) {
+            return back()->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
-        // Crear postulación
-        Postulacion::create([
-            'apr_id'     => $aprendiz->apr_id,
+        $yaPostulado = DB::table('postulacion')
+            ->where('apr_id', $aprendiz?->apr_id)
+            ->where('pro_id', $id)
+            ->exists();
+
+        if ($yaPostulado) {
+            return back()->with('warning', 'Ya te postulaste a este proyecto.');
+        }
+
+        DB::table('postulacion')->insert([
+            'apr_id'     => $aprendiz?->apr_id,
             'pro_id'     => $id,
             'pos_fecha'  => now(),
             'pos_estado' => 'Pendiente',
@@ -118,13 +141,15 @@ class AprendizController extends Controller
     public function misPostulaciones()
     {
         $usrId = session('usr_id');
-        $aprendiz = Aprendiz::where('usr_id', $usrId)->firstOrFail();
+        $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        $postulaciones = $aprendiz->postulaciones()
-            ->with(['proyecto' => function ($query) {
-                $query->with('empresa');
-            }])
-            ->recientes()
+        if (!$aprendiz) {
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
+
+        $postulaciones = Postulacion::where('apr_id', $aprendiz->apr_id)
+            ->with(['proyecto.empresa'])
+            ->orderByDesc('pos_fecha')
             ->paginate(10);
 
         return view('aprendiz.postulaciones', compact('postulaciones'));
@@ -137,20 +162,34 @@ class AprendizController extends Controller
     public function historial()
     {
         $usrId = session('usr_id');
-        $aprendiz = Aprendiz::where('usr_id', $usrId)->firstOrFail();
+        $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        $proyectos = $aprendiz->postulaciones()
-            ->with(['proyecto' => function ($query) {
-                $query->with('empresa');
-            }])
-            ->recientes()
+        if (!$aprendiz) {
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
+
+        $proyectos = Postulacion::where('apr_id', $aprendiz->apr_id)
+            ->with(['proyecto.empresa', 'proyecto.instructor'])
+            ->orderByDesc('pos_fecha')
             ->get()
-            ->map(function ($postulacion) {
+            ->map(function($postulacion) {
                 $proyecto = $postulacion->proyecto;
-                $proyecto->pos_estado = $postulacion->pos_estado;
-                $proyecto->pos_fecha = $postulacion->pos_fecha;
-                $proyecto->instructor_nombre = $proyecto->instructor?->getFullNameAttribute() ?? 'No asignado';
-                return $proyecto;
+                return (object)[
+                    'pos_id' => $postulacion->pos_id,
+                    'pos_estado' => $postulacion->pos_estado,
+                    'pos_fecha' => $postulacion->pos_fecha,
+                    'pro_id' => $proyecto->pro_id,
+                    'pro_titulo_proyecto' => $proyecto->pro_titulo_proyecto,
+                    'pro_categoria' => $proyecto->pro_categoria,
+                    'pro_estado' => $proyecto->pro_estado,
+                    'pro_fecha_publi' => $proyecto->pro_fecha_publi,
+                    'pro_fecha_finalizacion' => $proyecto->pro_fecha_finalizacion,
+                    'pro_imagen_url' => $proyecto->pro_imagen_url,
+                    'emp_nombre' => $proyecto->empresa->emp_nombre,
+                    'instructor_nombre' => $proyecto->instructor 
+                        ? $proyecto->instructor->ins_nombre . " " . $proyecto->instructor->ins_apellido 
+                        : "No asignado"
+                ];
             });
 
         return view('aprendiz.historial', compact('proyectos'));
@@ -163,20 +202,34 @@ class AprendizController extends Controller
     public function misEntregas()
     {
         $usrId = session('usr_id');
-        $aprendiz = Aprendiz::where('usr_id', $usrId)->firstOrFail();
+        $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        // Proyectos aprobados del aprendiz
-        $proyectos = $aprendiz->proyectosAprobados()
-            ->map(fn($postulacion) => $postulacion->proyecto->load('empresa'));
+        if (!$aprendiz) {
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
 
-        // Evidencias del aprendiz
+        // Proyectos aprobados con empresa
+        $proyectos = Proyecto::whereHas('postulaciones', function($q) use ($aprendiz) {
+            $q->where('apr_id', $aprendiz->apr_id)->where('pos_estado', 'Aprobada');
+        })->with('empresa')->get()
+          ->map(function($p) {
+              $p->emp_nombre = $p->empresa->emp_nombre;
+              return $p;
+          });
+
+        // Entregas por proyecto
+        $entregas = $aprendiz->entregas()
+            ->with(['etapa', 'proyecto'])
+            ->orderBy('ene_pro_id')
+            ->get();
+
+        // Evidencias
         $evidencias = $aprendiz->evidencias()
             ->with(['etapa', 'proyecto'])
             ->orderBy('evid_pro_id')
-            ->orderBy('evid_fecha', 'desc')
             ->get();
 
-        return view('aprendiz.mis-entregas', compact('proyectos', 'evidencias'));
+        return view('aprendiz.mis-entregas', compact('proyectos', 'entregas', 'evidencias'));
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -186,12 +239,20 @@ class AprendizController extends Controller
     public function verDetalleProyecto(int $proId)
     {
         $usrId = session('usr_id');
-        $aprendiz = Aprendiz::where('usr_id', $usrId)->firstOrFail();
+        $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
+
+        if (!$aprendiz) {
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
 
         // Verificar que el aprendiz está aprobado en este proyecto
-        $postulacion = $aprendiz->postulacionesAprobadas()
+        $postulacion = Postulacion::where('apr_id', $aprendiz->apr_id)
             ->where('pro_id', $proId)
-            ->firstOrFail();
+            ->first();
+
+        if (!$postulacion) {
+            return back()->with('error', 'No tienes acceso a este proyecto o no has sido aprobado.');
+        }
 
         // Obtener el proyecto con sus relaciones
         $proyecto = Proyecto::with(['empresa', 'instructor'])
@@ -205,6 +266,13 @@ class AprendizController extends Controller
             ->where('evid_pro_id', $proId)
             ->with('etapa')
             ->join('etapa', 'evidencia.evid_eta_id', '=', 'etapa.eta_id')
+            ->where('evidencia.evid_pro_id', $proId)
+            ->where('evidencia.evid_apr_id', $aprendiz->apr_id)
+            ->select(
+                'evidencia.*',
+                'etapa.eta_nombre',
+                'etapa.eta_orden'
+            )
             ->orderBy('etapa.eta_orden')
             ->orderByDesc('evid_fecha')
             ->select('evidencia.*')
@@ -222,8 +290,9 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usr_id', $usrId)->firstOrFail();
 
-        // Validar que está aprobado en el proyecto
-        $postulacion = $aprendiz->postulacionesAprobadas()
+        // Verificar que está aprobado en el proyecto
+        $postulacion = DB::table('postulacion')
+            ->where('apr_id', $aprendiz->apr_id)
             ->where('pro_id', $proId)
             ->firstOrFail();
 
@@ -245,18 +314,18 @@ class AprendizController extends Controller
         // Guardar archivo si existe
         $archivoUrl = null;
         if ($request->hasFile('archivo')) {
-            $archivoUrl = $request->file('archivo')->store('evidencias', 'public');
+            $path = $request->file('archivo')->store('evidencias', 'public');
+            $archivoUrl = $path;
         }
 
-        // Crear evidencia
-        Evidencia::create([
-            'evid_apr_id'     => $aprendiz->apr_id,
-            'evid_eta_id'     => $etaId,
-            'evid_pro_id'     => $proId,
-            'evid_archivo'    => $archivoUrl,
-            'evid_fecha'      => now(),
-            'evid_estado'     => 'Pendiente',
-            'evid_comentario' => null,
+        DB::table('evidencia')->insert([
+            'evid_apr_id'    => $aprendiz->apr_id,
+            'evid_eta_id'    => $etaId,
+            'evid_pro_id'    => $proId,
+            'evid_archivo'   => $archivoUrl,
+            'evid_fecha'     => now(),
+            'evid_estado'    => 'Pendiente',
+            'evid_comentario'=> null,
         ]);
 
         return back()->with('success', '✅ Evidencia enviada correctamente. El instructor la revisará.');
@@ -269,7 +338,12 @@ class AprendizController extends Controller
     public function perfil()
     {
         $usrId = session('usr_id');
-        $aprendiz = Aprendiz::where('usr_id', $usrId)->firstOrFail();
+        $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
+
+        if (!$aprendiz) {
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
+
         $usuario = User::findOrFail($usrId);
 
         return view('aprendiz.perfil', compact('aprendiz', 'usuario'));

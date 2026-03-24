@@ -62,11 +62,7 @@
         <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:16px;">
             @forelse($proyectosRecientes as $p)
                 <div style="border:1px solid #f0f0f0; border-radius:10px; overflow:hidden;">
-                    @if($p->pro_imagen_url)
-                        <img src="{{ $p->pro_imagen_url }}" alt="" style="width:100%; height:140px; object-fit:cover;">
-                    @else
-                        <div style="width:100%; height:140px; background:linear-gradient(135deg,#39a900,#2d8500); display:flex; align-items:center; justify-content:center; color:#fff; font-size:32px;">💼</div>
-                    @endif
+                    <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:140px; object-fit:cover;">
                     <div style="padding:14px;">
                         <span class="badge badge-info" style="margin-bottom:8px;">{{ $p->pro_categoria }}</span>
                         <h4 style="font-size:14px; font-weight:600; margin-bottom:6px;">{{ $p->pro_titulo_proyecto }}</h4>

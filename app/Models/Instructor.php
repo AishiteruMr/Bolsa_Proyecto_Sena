@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Instructor extends Model
 {
     protected $table = 'instructor';
-    protected $primaryKey = 'ins_id';
+    protected $primaryKey = 'usr_id';
+    public $incrementing = false;
     public $timestamps = false;
 
     protected $fillable = [

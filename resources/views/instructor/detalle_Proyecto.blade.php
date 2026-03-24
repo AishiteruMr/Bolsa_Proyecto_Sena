@@ -31,7 +31,7 @@
         <!-- Project Hero Card -->
         <div class="glass-card" style="padding: 0; overflow: hidden; border-radius: 20px;">
             <div style="width: 100%; height: 300px; position: relative;">
-                <img src="{{ $proyecto->pro_imagen_url ?? asset('assets/default-project.jpg') }}" alt="" style="width:100%; height:100%; object-fit:cover;">
+                <img src="{{ $proyecto->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
                 <div style="position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 60%);"></div>
                 
                 <div style="position: absolute; bottom: 24px; left: 24px; right: 24px;">
