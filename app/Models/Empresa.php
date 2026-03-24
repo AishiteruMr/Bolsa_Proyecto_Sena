@@ -13,6 +13,7 @@ class Empresa extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'usr_id',
         'emp_nit',
         'emp_nombre',
         'emp_representante',

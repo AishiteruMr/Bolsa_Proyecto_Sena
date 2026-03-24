@@ -1,3 +1,9 @@
+:root {
+    --verde: #3eb489;
+    --verde-dark: #298564;
+    --verde-void: #1b6b5f ;
+}
+
 body {
     margin: 0;
     background: #f8f9fa;
@@ -14,36 +20,6 @@ body {
     gap: 80px;
     position: relative;
     overflow: hidden;
-}
-
-.hero::before {
-    content: "";
-    position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(
-        circle,
-        rgba(27, 107, 95, 0.08) 0%,
-        transparent 70%
-    );
-    border-radius: 50%;
-}
-
-.hero::after {
-    content: "";
-    position: absolute;
-    bottom: -50px;
-    left: -50px;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(
-        circle,
-        rgba(27, 107, 95, 0.05) 0%,
-        transparent 70%
-    );
-    border-radius: 50%;
 }
 
 .hero-text {
@@ -73,7 +49,7 @@ body {
 }
 
 .hero-text h1 span {
-    background: linear-gradient(135deg, #1b6b5f 0%, #4a9b8d 100%);
+    background: linear-gradient(135deg, var(--verde-dark) 0%, var(--verde) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -111,7 +87,7 @@ body {
 }
 
 .btn.primary {
-    background: linear-gradient(135deg, #1b6b5f 0%, #0f4a41 100%);
+    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-dark) 100%);
     color: #fff;
     box-shadow: 0 8px 25px rgba(27, 107, 95, 0.3);
 }
@@ -263,7 +239,7 @@ body {
 .btn-card {
     display: inline-block;
     padding: 11px 28px;
-    background: linear-gradient(135deg, #1b6b5f 0%, #0f4a41 100%);
+    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-dark) 100%);
     color: #fff;
     border-radius: 8px;
     font-size: 14px;
@@ -280,7 +256,7 @@ body {
 
 /* STATS SECTION */
 .stats {
-    background: linear-gradient(135deg, #1b6b5f 0%, #0f4a41 50%, #1b6b5f 100%);
+    background: linear-gradient(135deg, var(--verde-dark) 0%, var(--verde-void) 50%, var(--verde-dark) 100%);
     padding: 100px 80px;
     display: flex;
     justify-content: space-around;

@@ -60,12 +60,19 @@ return new class extends Migration
         // ── EMPRESA ───────────────────────────────────────────────────────────────
         Schema::create('empresa', function (Blueprint $table) {
             $table->increments('emp_id');
+            $table->unsignedInteger('usr_id')->unique();
             $table->bigInteger('emp_nit')->unique();
             $table->string('emp_nombre', 150);
             $table->string('emp_representante', 100);
             $table->string('emp_correo', 100)->unique();
             $table->string('emp_contrasena', 255);
             $table->boolean('emp_estado')->default(true);
+
+            $table->foreign('usr_id')
+                  ->references('usr_id')
+                  ->on('usuario')
+                  ->onDelete('cascade')
+                  ->onUpdate('cascade');
         });
     }
 

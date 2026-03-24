@@ -1,10 +1,11 @@
 :root {
-    --verde: #dc3545;
+    --verde: #3eb489;
+    --verde-dark: #298564;
 }
 
 /* ── HERO ── */
 .hero-nosotros {
-    background: linear-gradient(135deg, #1a5c00 0%, var(--verde) 100%);
+    background: linear-gradient(135deg, var(--verde-dark) 0%, var(--verde) 100%);
     padding: 80px 80px;
     color: var(--blanco);
 }
