@@ -68,7 +68,8 @@
         }
         .topbar-title { font-size: 18px; font-weight: 600; }
         .topbar-right { display: flex; align-items: center; gap: 16px; }
-        .page-content { flex: 1; padding: 28px; }
+        .page-content { flex: 1; padding: 28px; scroll-behavior: smooth; }
+        .page-content h1, .page-content h2, .page-content h3, .page-content section { scroll-margin-top: 80px; }
 
         /* ── CARDS ── */
         .card { background: var(--blanco); border-radius: var(--radio); box-shadow: var(--sombra); padding: 24px; }
