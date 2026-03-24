@@ -11,6 +11,8 @@ class AuthMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (!session()->has('usr_id') && !session()->has('emp_id')) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para continuar.');
         }
 
