@@ -129,6 +129,25 @@
             </div>
             <a href="{{ route('admin.usuarios') }}" class="btn btn-primary" style="margin-top: 32px; width: 100%; justify-content: center; padding: 12px; border-radius: 12px; background: #1e293b;">Administrar Usuarios</a>
         </div>
+
+        <!-- Quick Actions -->
+        <div class="glass-card" style="padding: 32px; grid-column: 1 / -1;">
+            <h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 24px;">Acciones Rápidas</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+                <a href="{{ route('admin.proyectos.exportar') }}" class="btn btn-outline" style="text-align: center; justify-content: center; padding: 20px;">
+                    <i class="fas fa-file-csv" style="margin-right: 8px;"></i> Exportar Proyectos
+                </a>
+                <a href="{{ route('admin.usuarios') }}" class="btn btn-outline" style="text-align: center; justify-content: center; padding: 20px;">
+                    <i class="fas fa-user-plus" style="margin-right: 8px;"></i> Revisar Usuarios
+                </a>
+                <a href="{{ route('admin.empresas') }}" class="btn btn-outline" style="text-align: center; justify-content: center; padding: 20px;">
+                    <i class="fas fa-building" style="margin-right: 8px;"></i> Gestionar Empresas
+                </a>
+                <a href="{{ route('notificaciones.index') }}" class="btn btn-outline" style="text-align: center; justify-content: center; padding: 20px;">
+                    <i class="fas fa-bell" style="margin-right: 8px;"></i> Ver Mis Alertas
+                </a>
+            </div>
+        </div>
     </div>
 
     <style>

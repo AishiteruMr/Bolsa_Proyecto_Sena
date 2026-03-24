@@ -159,6 +159,8 @@ class AdminController extends Controller
 
     public function asignarInstructor(Request $request, $id)
     {
+        // ... (existing code for asignarInstructor)
+        // (I'll keep it as is, just adding the new method after it)
         $request->validate([
             'ins_usr_documento' => 'required|exists:usuario,usr_documento'
         ]);
@@ -180,7 +182,7 @@ class AdminController extends Controller
                     ->count();
 
                 Mail::to($instructorUsuario->usr_correo)
-                    ->send(new InstructorAsignado(
+                    ->send(new \App\Mail\InstructorAsignado(
                         $instructorUsuario->instructor->ins_nombre,
                         $proyecto,
                         $totalPostulaciones
@@ -197,5 +199,42 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Instructor asignado correctamente');
+    }
+
+    public function exportarProyectos()
+    {
+        $proyectos = Proyecto::with(['empresa', 'instructor'])
+            ->orderByDesc('pro_id')
+            ->get();
+
+        $filename = "reporte_proyectos_" . date('Y-m-d') . ".csv";
+        $handle = fopen('php://output', 'w');
+
+        // UTF-8 BOM for Excel
+        fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        // Header
+        fputcsv($handle, [
+            'ID', 'Título', 'Empresa', 'NIT', 'Categoría', 'Estado', 'Instructor', 'Fecha Publicación'
+        ], ';');
+
+        foreach ($proyectos as $p) {
+            fputcsv($handle, [
+                $p->pro_id,
+                $p->pro_titulo_proyecto,
+                $p->empresa->emp_nombre,
+                $p->emp_nit,
+                $p->pro_categoria,
+                $p->pro_estado,
+                $p->instructor ? $p->instructor->ins_nombre . ' ' . $p->instructor->ins_apellido : 'No asignado',
+                $p->pro_fecha_publi ? $p->pro_fecha_publi->format('Y-m-d') : 'N/A'
+            ], ';');
+        }
+
+        fclose($handle);
+        exit;
     }
 }
