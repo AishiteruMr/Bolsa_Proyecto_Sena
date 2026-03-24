@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Proyecto;
 use App\Models\Postulacion;
 use App\Models\Empresa;
@@ -16,8 +17,7 @@ class EmpresaController extends Controller
 {
     public function dashboard()
     {
-        $nit = session('nit');
-        $empresa = Empresa::where('emp_nit', $nit)->first();
+        $empresa = Empresa::where('emp_nit', cnit())->first();
 
         if (!$empresa) {
             return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
@@ -53,8 +53,7 @@ class EmpresaController extends Controller
 
     public function proyectos()
     {
-        $nit = session('nit');
-        $empresa = Empresa::where('emp_nit', $nit)->first();
+        $empresa = Empresa::where('emp_nit', cnit())->first();
 
         if (!$empresa) {
             return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
@@ -84,7 +83,6 @@ class EmpresaController extends Controller
             'imagen'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $nit = session('nit');
         $imagenUrl = null;
 
         if ($request->hasFile('imagen')) {
@@ -97,7 +95,7 @@ class EmpresaController extends Controller
         $fechaFinalizacion = $fechaPubli->addMonths(6);
 
         Proyecto::create([
-            'emp_nit'                    => $nit,
+            'emp_nit'                    => cnit(),
             'pro_titulo_proyecto'        => $request->titulo,
             'pro_categoria'              => $request->categoria,
             'pro_descripcion'            => $request->descripcion,
@@ -110,14 +108,15 @@ class EmpresaController extends Controller
             'pro_imagen_url'             => $imagenUrl,
         ]);
 
-        return redirect()->route('empresa.proyectos')->with('success', '✅ Proyecto publicado correctamente.');
+        Log::info('Proyecto creado por empresa', ['nit' => cnit(), 'titulo' => $request->titulo]);
+
+        return redirect()->route('empresa.proyectos')->with('success', 'Proyecto publicado correctamente.');
     }
 
     public function editarProyecto(int $id)
     {
-        $nit = session('nit');
         $proyecto = Proyecto::where('pro_id', $id)
-            ->where('emp_nit', $nit)
+            ->where('emp_nit', cnit())
             ->firstOrFail();
 
         return view('empresa.editar-proyecto', compact('proyecto'));
@@ -135,9 +134,8 @@ class EmpresaController extends Controller
             'imagen'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $nit = session('nit');
         $proyecto = Proyecto::where('pro_id', $id)
-            ->where('emp_nit', $nit)
+            ->where('emp_nit', cnit())
             ->firstOrFail();
 
         // Calcular fecha de finalización (6 meses desde la fecha de publicación)
@@ -167,11 +165,9 @@ class EmpresaController extends Controller
 
     public function eliminarProyecto(int $id)
     {
-        $nit = session('nit');
-        
         // Verificar que el proyecto pertenece a la empresa
         $proyecto = Proyecto::where('pro_id', $id)
-            ->where('emp_nit', $nit)
+            ->where('emp_nit', cnit())
             ->first();
         
         if (!$proyecto) {
@@ -192,31 +188,17 @@ class EmpresaController extends Controller
         
         return redirect()->route('empresa.proyectos')->with('success', 'Proyecto eliminado correctamente.');
     }
-
     public function verPostulantes(int $id)
     {
-        $nit = session('nit');
-
         $proyecto = Proyecto::where('pro_id', $id)
-            ->where('emp_nit', $nit)
+            ->where('emp_nit', cnit())
             ->firstOrFail();
 
         // Obtener postulantes con relaciones eager loaded
         $postulantes = $proyecto->postulaciones()
             ->with(['aprendiz.usuario'])
             ->orderByDesc('pos_fecha')
-            ->get()
-            ->map(function($postulacion) {
-                return (object)[
-                    'pos_id' => $postulacion->pos_id,
-                    'pos_estado' => $postulacion->pos_estado,
-                    'pos_fecha' => $postulacion->pos_fecha,
-                    'apr_nombre' => $postulacion->aprendiz->apr_nombre,
-                    'apr_apellido' => $postulacion->aprendiz->apr_apellido,
-                    'apr_programa' => $postulacion->aprendiz->apr_programa,
-                    'usr_correo' => $postulacion->aprendiz->usuario->usr_correo,
-                ];
-            });
+            ->get();
 
         return view('empresa.postulantes', compact('proyecto', 'postulantes'));
     }
@@ -225,13 +207,11 @@ class EmpresaController extends Controller
     {
         $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
         
-        $nit = session('nit');
-        
         // SEGURIDAD: Validar que la postulación pertenece a un proyecto de esta empresa
         $postulacion = Postulacion::with('proyecto')
             ->where('pos_id', $id)
-            ->whereHas('proyecto', function($query) use ($nit) {
-                $query->where('emp_nit', $nit);
+            ->whereHas('proyecto', function($query) {
+                $query->where('emp_nit', cnit());
             })
             ->firstOrFail();
 
@@ -242,15 +222,13 @@ class EmpresaController extends Controller
 
     public function perfil()
     {
-        $empId = session('emp_id');
-        $empresa = Empresa::findOrFail($empId);
+        $empresa = Empresa::findOrFail(cemp_id());
         return view('empresa.perfil', compact('empresa'));
     }
 
     public function actualizarPerfil(Request $request)
     {
-        $empId = session('emp_id');
-        $empresa = Empresa::findOrFail($empId);
+        $empresa = Empresa::findOrFail(cemp_id());
 
         $request->validate([
             'nombre_empresa' => 'required|string|max:150',
