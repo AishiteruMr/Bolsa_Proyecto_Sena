@@ -39,7 +39,25 @@
             <div>
                 <span style="font-size: 14px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">Aprendiz SENA</span>
                 <h2 style="font-size: 32px; font-weight: 800; color: #1e293b; margin-top: 4px;">Hola, {{ $aprendiz->apr_nombre }}!</h2>
-                <p style="color: #64748b; font-size: 15px; margin-top: 8px;">Gestiona tu información académica y las credenciales de tu cuenta desde aquí.</p>
+                
+                <!-- Perfil Integrity Bar -->
+                <div style="margin-top: 20px; max-width: 400px;">
+                    @php
+                        $camposCompletos = 0;
+                        if(!empty($aprendiz->apr_nombre)) $camposCompletos++;
+                        if(!empty($aprendiz->apr_apellido)) $camposCompletos++;
+                        if(!empty($aprendiz->apr_programa)) $camposCompletos++;
+                        if(!empty($usuario->usr_correo)) $camposCompletos++;
+                        $progresoPerfil = ($camposCompletos / 4) * 100;
+                    @endphp
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 12px; font-weight: 700; color: #64748b;">Integridad del Perfil</span>
+                        <span style="font-size: 12px; font-weight: 800; color: var(--primary);">{{ $progresoPerfil }}%</span>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
+                        <div style="width: {{ $progresoPerfil }}%; height: 100%; background: linear-gradient(90deg, var(--primary), #2d8500); border-radius: 10px; transition: width 1s ease;"></div>
+                    </div>
+                </div>
             </div>
         </div>
 

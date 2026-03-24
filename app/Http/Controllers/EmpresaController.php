@@ -29,9 +29,10 @@ class EmpresaController extends Controller
         $totalProyectos = $proyectos->count();
         $proyectosActivos = $proyectos->where('pro_estado', 'Activo')->count();
         
-        // Proyectos recientes con eager loading
+        // Proyectos recientes con eager loading y conteo de postulaciones
         $proyectosRecientes = $empresa->proyectos()
-            ->with(['postulaciones', 'instructor'])
+            ->with(['instructor'])
+            ->withCount('postulaciones')
             ->orderByDesc('pro_id')
             ->limit(5)
             ->get();
