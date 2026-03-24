@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Dashboard Instructor')
-@section('page-title', 'Mi Dashboard')
+@section('page-title', 'Dashboard de Instructor')
 
 @section('sidebar-nav')
     <span class="nav-label">Principal</span>
@@ -27,13 +27,41 @@
 
     <!-- BIENVENIDA -->
     <section class="welcome">
-        <h1>Bienvenido de nuevo, 
-            <span>{{ session('nombre') }}</span>
-        </h1>
+        <h1>¡Hola, <span>{{ session('nombre') }}!</span> 👋</h1>
+        <p style="color:var(--text-muted)">Bienvenido a tu panel de gestión académica.</p>
     </section>
 
+    <!-- STATS (Bento Grid) -->
+    <div class="stats-container">
+        <div class="stat-card glass-card">
+            <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+            <div class="stat-info">
+                <h3>{{ count($proyectos) }}</h3>
+                <p>Proyectos Asignados</p>
+            </div>
+        </div>
+        <div class="stat-card glass-card" style="border-top: none;">
+            <div class="stat-icon" style="background: #3b82f6"><i class="fas fa-user-graduate"></i></div>
+            <div class="stat-info">
+                <h3>{{ $totalAprendices ?? '0' }}</h3>
+                <p>Aprendices Activos</p>
+            </div>
+        </div>
+        <div class="stat-card glass-card">
+            <div class="stat-icon" style="background: #f59e0b"><i class="fas fa-file-upload"></i></div>
+            <div class="stat-info">
+                <h3>{{ $evidenciasPendientes ?? '0' }}</h3>
+                <p>Evidencias por Calificar</p>
+            </div>
+        </div>
+    </div>
+
     <!-- PROYECTOS -->
-    <h2 class="section-title" style="text-align:center;">Proyectos Asignados</h2>
+    <div class="section-header">
+        <h2 class="section-title">
+            <i class="fas fa-rocket" style="color:var(--primary)"></i> Proyectos en Curso
+        </h2>
+    </div>
 
     <div class="cards-container">
 
@@ -42,46 +70,42 @@
 
                 <!-- Imagen -->
                 <div class="project-image">
-                    <img src="{{ $p->pro_imagen_url ?? asset('assets/') }}" 
-                         alt="Imagen del Proyecto">
+                    <img src="{{ $p->pro_imagen_url ?? asset('assets/default-project.jpg') }}" 
+                         alt="Imagen del Proyecto" style="width:100%; object-fit:cover;">
+                    <div class="status-badge">{{ $p->pro_estado }}</div>
                 </div>
 
                 <!-- Info -->
                 <div class="project-info">
-
-                    <h3 class="project-title">
-                        {{ $p->pro_titulo_proyecto }}
-                    </h3>
-
-                    <p><strong>Empresa:</strong> {{ $p->emp_nombre }}</p>
-                    <p><strong>Categoría:</strong> {{ $p->pro_categoria }}</p>
+                    <h3 class="project-title">{{ $p->pro_titulo_proyecto }}</h3>
+                    
+                    <div class="info-meta">
+                        <span><i class="fas fa-building"></i> {{ $p->emp_nombre }}</span>
+                        <span><i class="fas fa-tag"></i> {{ $p->pro_categoria }}</span>
+                    </div>
 
                     <p class="project-description">
-                        <strong>Descripción:</strong>
                         {{ $p->pro_descripcion }}
                     </p>
 
-                    <p><strong>Requisitos:</strong> {{ $p->pro_requisitos_especificos }}</p>
-                    <p><strong>Habilidades:</strong> {{ $p->pro_habilidades_requerida }}</p>
-
-                    <p><strong>Duración:</strong> {{ $p->pro_duracion_estimada }} días</p>
-                    <p><strong>Fecha publicación:</strong> {{ $p->pro_fecha_publi }}</p>
-
-                    <p>
-                        <strong>Estado:</strong> 
-                        <span class="status">{{ $p->pro_estado }}</span>
-                    </p>
+                    <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap">
+                        <span class="badge badge-info" style="font-size:10px"><i class="fas fa-clock"></i> {{ $p->pro_duracion_estimada }} días</span>
+                        <span class="badge badge-success" style="font-size:10px"><i class="fas fa-calendar"></i> {{ $p->pro_fecha_publi }}</span>
+                    </div>
 
                     <!-- BOTÓN -->
                     <a href="{{ route('instructor.proyecto.detalle', $p->pro_id) }}" class="btn-ver">
-                        <i class="fa-solid fa-eye"></i> Ver más información
+                        Gestionar Proyecto <i class="fa-solid fa-arrow-right" style="margin-left:8px; font-size:14px"></i>
                     </a>
 
                 </div>
             </div>
 
         @empty
-            <p class="no-projects">No tienes proyectos asignados aún.</p>
+            <div class="glass-card" style="padding: 4rem; text-align: center; grid-column: 1/-1">
+                <i class="fas fa-folder-open" style="font-size: 3rem; color: var(--border); margin-bottom: 1rem"></i>
+                <p style="color: var(--text-muted)">No tienes proyectos asignados aún.</p>
+            </div>
         @endforelse
 
     </div>

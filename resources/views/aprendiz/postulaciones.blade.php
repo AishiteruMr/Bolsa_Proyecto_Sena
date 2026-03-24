@@ -16,77 +16,93 @@
     </a>
     <span class="nav-label">Cuenta</span>
     <a href="{{ route('aprendiz.perfil') }}" class="nav-item {{ request()->routeIs('aprendiz.perfil') ? 'active' : '' }}">
-        <i class="fas fa-user"></i> Mi Perfil
+        <i class="fas fa-user-circle"></i> Mi Perfil
     </a>
 @endsection
 
 @section('content')
-    <div style="margin-bottom: 24px;">
-        <h2 style="font-size:22px; font-weight:700;">Mis Postulaciones</h2>
-        <p style="color:#666; font-size:14px; margin-top:4px;">Aquí puedes ver el estado de tus postulaciones a proyectos.</p>
-    </div>
+<div style="margin-bottom: 32px;">
+    <h2 style="font-size:26px; font-weight:700; color:var(--primary-dark)">Mis Postulaciones</h2>
+    <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Sigue el estado de tus aplicaciones a los diferentes proyectos de la plataforma.</p>
+</div>
 
-    <div class="card">
-        @forelse($postulaciones as $post)
-            <div style="display:flex; align-items:center; gap:20px; padding:20px; border-bottom:1px solid #f0f0f0; transition:background .2s;" onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='transparent'">
-                <div style="width:60px; height:60px; border-radius:12px; overflow:hidden; flex-shrink:0; background:linear-gradient(135deg, #39a900, #2d8500); display:flex; align-items:center; justify-content:center;">
+<div style="display: grid; gap: 1.5rem;">
+    @forelse($postulaciones as $post)
+        <div class="glass-card" style="padding: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; transition: transform 0.2s ease;">
+            <div style="display: flex; align-items: center; gap: 1.5rem; flex: 1; min-width: 300px;">
+                <div style="width: 70px; height: 70px; border-radius: 12px; overflow: hidden; position: relative;">
                     @if($post->pro_imagen_url)
-                        <img src="{{ $post->pro_imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
+                        <img src="{{ $post->pro_imagen_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
-                        <i class="fas fa-briefcase" style="color:#fff; font-size:20px;"></i>
+                        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                            <i class="fas fa-rocket"></i>
+                        </div>
                     @endif
                 </div>
-                <div style="flex:1; min-width:0;">
-                    <h4 style="font-size:15px; font-weight:600; margin-bottom:4px;">{{ $post->pro_titulo_proyecto }}</h4>
-                    <p style="font-size:13px; color:#666; margin-bottom:6px;">
-                        <i class="fas fa-building" style="color:#39a900; margin-right:6px;"></i>{{ $post->emp_nombre }}
-                        <span style="margin:0 8px;">|</span>
-                        <i class="fas fa-tag" style="color:#666; margin-right:6px;"></i>{{ $post->pro_categoria }}
-                    </p>
-                    <p style="font-size:12px; color:#888;">
-                        <i class="fas fa-calendar-alt" style="margin-right:6px;"></i>Postulado: {{ \Carbon\Carbon::parse($post->pos_fecha)->format('d/m/Y') }}
-                    </p>
+
+                <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                        <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">{{ $post->pro_titulo_proyecto }}</h4>
+                        <span class="badge badge-info" style="font-size: 9px; padding: 2px 10px; border-radius: 4px;">{{ $post->pro_categoria }}</span>
+                    </div>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 1.25rem; font-size: 0.85rem; color: var(--text-muted);">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-building" style="color: var(--primary);"></i>
+                            <span style="font-weight: 500; color: var(--text-main);">{{ $post->emp_nombre }}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Postulado: {{ \Carbon\Carbon::parse($post->pos_fecha)->format('d M, Y') }}</span>
+                        </div>
+                    </div>
                 </div>
-                <div style="flex-shrink:0; display: flex; align-items: center; gap: 12px;">
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div style="text-align: right;">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">Estado</p>
                     @switch($post->pos_estado)
                         @case('Pendiente')
-                            <span class="badge badge-warning">
-                                <i class="fas fa-clock" style="margin-right:4px;"></i>Pendiente
+                            <span class="badge" style="background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2); font-size: 11px; padding: 4px 12px;">
+                                <i class="fas fa-hourglass-half" style="margin-right: 6px;"></i> Pendiente
                             </span>
                             @break
                         @case('Aprobada')
-                            <span class="badge badge-success">
-                                <i class="fas fa-check-circle" style="margin-right:4px;"></i>Aprobada
+                            <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 11px; padding: 4px 12px;">
+                                <i class="fas fa-check-circle" style="margin-right: 6px;"></i> Aprobada
                             </span>
-                            <a href="{{ route('aprendiz.proyecto.detalle', $post->pro_id) }}" class="btn-action" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #0056b3; color: white; border: none; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#004085'" onmouseout="this.style.background='#0056b3'">
-                                <i class="fas fa-eye"></i> Ver Detalle
-                            </a>
                             @break
                         @case('Rechazada')
-                            <span class="badge badge-danger">
-                                <i class="fas fa-times-circle" style="margin-right:4px;"></i>Rechazada
+                            <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.2); font-size: 11px; padding: 4px 12px;">
+                                <i class="fas fa-times-circle" style="margin-right: 6px;"></i> Rechazada
                             </span>
                             @break
-                        @default
-                            <span class="badge badge-info">{{ $post->pos_estado }}</span>
                     @endswitch
                 </div>
-            </div>
-        @empty
-            <div style="text-align:center; padding:60px 20px;">
-                <i class="fas fa-paper-plane" style="font-size:48px; color:#ddd; margin-bottom:16px;"></i>
-                <h4 style="color:#666; margin-bottom:8px;">No tienes postulaciones</h4>
-                <p style="color:#999; font-size:14px; margin-bottom:20px;">Explora proyectos y postula a los que te interesen</p>
-                <a href="{{ route('aprendiz.proyectos') }}" class="btn btn-primary">
-                    <i class="fas fa-search"></i> Explorar Proyectos
-                </a>
-            </div>
-        @endforelse
-    </div>
 
-    @if($postulaciones->hasPages())
-        <div style="margin-top:24px; display:flex; justify-content:center;">
-            {{ $postulaciones->links() }}
+                @if($post->pos_estado === 'Aprobada')
+                    <a href="{{ route('aprendiz.proyecto.detalle', $post->pro_id) }}" class="btn-ver" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; border-radius: 8px;">
+                        Gestionar <i class="fas fa-chevron-right" style="margin-left:8px; font-size:11px;"></i>
+                    </a>
+                @endif
+            </div>
         </div>
-    @endif
+    @empty
+        <div class="glass-card" style="text-align:center; padding: 5rem 2rem;">
+            <i class="fas fa-paper-plane" style="font-size: 4rem; color: var(--border); margin-bottom: 1.5rem;"></i>
+            <h4 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 8px;">No tienes postulaciones</h4>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Aún no te has postulado a ningún proyecto. ¡Explora el banco de proyectos y comienza tu viaje!</p>
+            <a href="{{ route('aprendiz.proyectos') }}" class="btn-ver" style="display: inline-flex; align-items: center; gap: 8px; padding: 0.8rem 2rem; border-radius: 30px;">
+                <i class="fas fa-search"></i> Explorar Proyectos Disponibles
+            </a>
+        </div>
+    @endforelse
+</div>
+
+@if($postulaciones->hasPages())
+    <div style="margin-top: 40px; display:flex; justify-content:center;">
+        {{ $postulaciones->links() }}
+    </div>
+@endif
 @endsection

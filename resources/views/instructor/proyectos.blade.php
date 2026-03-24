@@ -8,7 +8,7 @@
 <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
     <i class="fas fa-home"></i> Dashboard
 </a>
-<a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos', 'instructor.proyectos.detalle') ? 'active' : '' }}">
+<a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos', 'instructor.proyecto.detalle') ? 'active' : '' }}">
     <i class="fas fa-project-diagram"></i> Mis Proyectos
 </a>
 <a href="{{ route('instructor.historial') }}" class="nav-item {{ request()->routeIs('instructor.historial') ? 'active' : '' }}">
@@ -24,64 +24,50 @@
 @endsection
 
 @section('content')
-<div style="margin-bottom: 24px;">
-    <h2 style="font-size:22px; font-weight:700;">Mis Proyectos</h2>
-    <p style="color:#666; font-size:14px; margin-top:4px;">Proyectos en los que estás participando como instructor.</p>
+<div style="margin-bottom: 32px;">
+    <h2 style="font-size:26px; font-weight:700; color:var(--primary-dark)">Mis Proyectos Asignados</h2>
+    <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Gestiona y supervisa los proyectos activos bajo tu tutoría.</p>
 </div>
 
-<div class="card">
+<div class="projects-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
     @forelse($proyectos as $p)
-    <div style="display:flex; align-items:center; gap:20px; padding:20px; border-bottom:1px solid #f0f0f0; transition:background .2s;" onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='transparent'">
-        <div style="width:60px; height:60px; border-radius:12px; overflow:hidden; flex-shrink:0; background:linear-gradient(135deg, #2980b9, #1a6090); display:flex; align-items:center; justify-content:center;">
-            @if($p->pro_imagen_url)
-            <img src="{{ $p->pro_imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
-            @else
-            <i class="fas fa-project-diagram" style="color:#fff; font-size:20px;"></i>
-            @endif
+    <div class="project-card glass-card" style="display: flex; flex-direction: column; height: 100%;">
+        <div class="project-image" style="height: 180px;">
+            <img src="{{ $p->pro_imagen_url ?? asset('assets/default-project.jpg') }}" alt="" style="width:100%; height:100%; object-fit:cover;">
+            <div class="status-badge" style="background: var(--primary); font-size: 10px;">{{ $p->pro_estado }}</div>
         </div>
-        <div style="flex:1; min-width:0;">
-            <h4 style="font-size:15px; font-weight:600; margin-bottom:4px;">{{ $p->pro_titulo_proyecto }}</h4>
-            <p style="font-size:13px; color:#666; margin-bottom:6px;">
-                <i class="fas fa-building" style="color:#2980b9; margin-right:6px;"></i>{{ $p->emp_nombre }}
-            </p>
-            <p style="font-size:12px; color:#888;">
-                <i class="fas fa-tag" style="margin-right:6px;"></i>{{ $p->pro_categoria }}
-                <span style="margin:0 8px;">|</span>
-                <i class="fas fa-calendar" style="margin-right:6px;"></i>
-                {{ $p->pro_fecha_publi ? \Carbon\Carbon::parse($p->pro_fecha_publi)->format('d/m/Y') : 'Sin fecha' }}
-                -
-                {{ $p->pro_fecha_finalizacion ? \Carbon\Carbon::parse($p->pro_fecha_finalizacion)->format('d/m/Y') : 'Sin fecha' }}
-            </p>
-        </div>
-        <div style="flex-shrink:0; text-align:right;">
-            @switch($p->pro_estado)
-            @case('Activo')
-            <span class="badge badge-success">Activo</span>
-            @break
-            @case('Inactivo')
-            <span class="badge badge-warning">Inactivo</span>
-            @break
-            @case('Aprobado')
-            <span class="badge badge-success">Aprobado</span>
-            @break
-            @case('Rechazado')
-            <span class="badge badge-danger">Rechazado</span>
-            @break
-            @default
-            <span class="badge badge-info">{{ $p->pro_estado }}</span>
-            @endswitch
-            <div style="margin-top:8px;">
-                <span style="font-size:12px; color:#666;">
-                    <i class="fas fa-users" style="margin-right:4px;"></i>{{ $p->pro_num_postulantes ?? 0 }} postulantes
-                </span>
+        
+        <div class="project-info" style="flex: 1; display: flex; flex-direction: column; padding: 1.5rem;">
+            <h4 style="font-size:1.2rem; font-weight:600; margin-bottom:0.75rem; color: var(--text-main)">{{ $p->pro_titulo_proyecto }}</h4>
+            
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                    <i class="fas fa-building" style="color:var(--primary); width: 16px;"></i>
+                    <span>{{ $p->emp_nombre }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-tag" style="color:var(--primary); width: 16px;"></i>
+                    <span>{{ $p->pro_categoria }}</span>
+                </div>
+            </div>
+
+            <div style="margin-top: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--text-muted);">
+                    <span><i class="fas fa-calendar-alt"></i> Publicado: {{ $p->pro_fecha_publi }}</span>
+                    <span class="badge badge-info" style="font-size: 11px; padding: 4px 10px;">{{ $p->pro_num_postulantes ?? 0 }} Aprendices</span>
+                </div>
+                
+                <a href="{{ route('instructor.proyecto.detalle', $p->pro_id) }}" class="btn-ver" style="padding: 0.8rem;">
+                    Abrir Gestión <i class="fas fa-chevron-right" style="margin-left: 8px; font-size: 12px;"></i>
+                </a>
             </div>
         </div>
     </div>
     @empty
-    <div style="text-align:center; padding:60px 20px;">
-        <i class="fas fa-project-diagram" style="font-size:48px; color:#ddd; margin-bottom:16px;"></i>
-        <h4 style="color:#666; margin-bottom:8px;">No hay proyectos asignados</h4>
-        <p style="color:#999; font-size:14px;">No tienes proyectos como instructor aún.</p>
+    <div class="glass-card" style="text-align:center; padding:5rem 2rem; grid-column: 1 / -1;">
+        <i class="fas fa-project-diagram" style="font-size:4rem; color:var(--border); margin-bottom:1.5rem;"></i>
+        <h4 style="color:var(--text-main); font-size: 1.5rem; margin-bottom:8px;">No hay proyectos asignados</h4>
+        <p style="color:var(--text-muted);">Actualmente no tienes proyectos bajo tu supervisión.</p>
     </div>
     @endforelse
 </div>
