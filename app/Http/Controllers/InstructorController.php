@@ -150,7 +150,7 @@ class InstructorController extends Controller
             'nombre'       => 'required|string|max:50',
             'apellido'     => 'required|string|max:50',
             'especialidad' => 'required|string|max:100',
-            'password'     => 'nullable|string|min:6',
+            'password'     => 'nullable|string|min:6|confirmed',
         ]);
 
         $instructor->update([
@@ -178,25 +178,7 @@ class InstructorController extends Controller
         $proyectos = Proyecto::where('ins_usr_documento', $usrId)
             ->with(['empresa', 'postulaciones'])
             ->orderByDesc('pro_fecha_publi')
-            ->get()
-            ->map(function($proyecto) {
-                $totalAprendices = $proyecto->postulaciones->count();
-                $aprendicesAprobados = $proyecto->postulaciones
-                    ->where('pos_estado', 'Aprobada')
-                    ->count();
-                
-                return (object)[
-                    'pro_id' => $proyecto->pro_id,
-                    'pro_titulo_proyecto' => $proyecto->pro_titulo_proyecto,
-                    'pro_categoria' => $proyecto->pro_categoria,
-                    'pro_estado' => $proyecto->pro_estado,
-                    'pro_fecha_publi' => $proyecto->pro_fecha_publi,
-                    'pro_fecha_finalizacion' => $proyecto->pro_fecha_finalizacion,
-                    'emp_nombre' => $proyecto->empresa->emp_nombre,
-                    'total_aprendices' => $totalAprendices,
-                    'aprendices_aprobados' => $aprendicesAprobados,
-                ];
-            });
+            ->get();
 
         return view('instructor.historial', compact('proyectos'));
     }
@@ -384,6 +366,14 @@ class InstructorController extends Controller
         ]);
 
         if ($request->hasFile('imagen')) {
+            // Eliminar imagen anterior si existe
+            if ($proyecto->pro_imagen_url) {
+                $oldPath = str_replace('/storage/', '', $proyecto->pro_imagen_url);
+                if (\Illuminate\Support\Facades\Storage::disk('public')->exists($oldPath)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
+                }
+            }
+
             $path = $request->file('imagen')->store('proyectos', 'public');
             $imagenUrl = '/storage/' . $path;
 
