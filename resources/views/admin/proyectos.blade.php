@@ -29,15 +29,6 @@
     @forelse($proyectos as $p)
     <div style="display:flex; align-items:center; gap:20px; padding:20px; border-bottom:1px solid #f0f0f0; transition:background .2s;" onmouseover="this.style.background='#fafafa'" onmouseout="this.style.background='transparent'">
 
-        {{-- Imagen --}}
-        <div style="width:60px; height:60px; border-radius:12px; overflow:hidden; flex-shrink:0; background:linear-gradient(135deg, #39a900, #2d8500); display:flex; align-items:center; justify-content:center;">
-            @if($p->pro_imagen_url)
-                <img src="{{ $p->pro_imagen_url }}" style="width:100%; height:100%; object-fit:cover;">
-            @else
-                <i class="fas fa-project-diagram" style="color:#fff; font-size:20px;"></i>
-            @endif
-        </div>
-
         {{-- Info --}}
         <div style="flex:1;">
             <h4 style="font-size:15px; font-weight:600;">{{ $p->pro_titulo_proyecto }}</h4>

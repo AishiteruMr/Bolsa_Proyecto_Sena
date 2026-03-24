@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 use App\Mail\InstructorAsignado;
 use App\Mail\InstructorDesasignado;
 use App\Models\Aprendiz;
-use App\Models\Instructor;
 use App\Models\Empresa;
+use App\Models\Instructor;
+use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
-use App\Models\Postulacion;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
         $stats = [
-            'aprendices'    => Aprendiz::count(),
-            'instructores'  => Instructor::count(),
-            'empresas'      => Empresa::count(),
-            'proyectos'     => Proyecto::count(),
+            'aprendices' => Aprendiz::count(),
+            'instructores' => Instructor::count(),
+            'empresas' => Empresa::count(),
+            'proyectos' => Proyecto::count(),
             'postulaciones' => Postulacion::count(),
-            'aprobadas'     => Postulacion::where('pos_estado', 'Aprobada')->count(),
+            'aprobadas' => Postulacion::where('pos_estado', 'Aprobada')->count(),
         ];
 
         $proyectosRecientes = Proyecto::with('empresa')
@@ -51,7 +51,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'tipo' => 'required|in:aprendiz,instructor',
-            'estado' => 'required|in:0,1'
+            'estado' => 'required|in:0,1',
         ]);
 
         if ($request->tipo === 'aprendiz') {
@@ -68,6 +68,7 @@ class AdminController extends Controller
     public function empresas()
     {
         $empresas = Empresa::orderByDesc('emp_id')->get();
+
         return view('admin.empresas', compact('empresas'));
     }
 
@@ -86,10 +87,11 @@ class AdminController extends Controller
         $proyectos = Proyecto::with(['empresa', 'instructor.usuario'])
             ->orderByDesc('pro_id')
             ->get()
-            ->map(function($proyecto) {
-                return (object)[
+            ->map(function ($proyecto) {
+                return (object) [
                     'pro_id' => $proyecto->pro_id,
                     'pro_titulo_proyecto' => $proyecto->pro_titulo_proyecto,
+                    'pro_categoria' => $proyecto->pro_categoria,
                     'emp_nit' => $proyecto->emp_nit,
                     'ins_usr_documento' => $proyecto->ins_usr_documento,
                     'pro_estado' => $proyecto->pro_estado,
@@ -100,8 +102,8 @@ class AdminController extends Controller
 
         $instructores = Instructor::with('usuario')
             ->get()
-            ->map(function($instructor) {
-                return (object)[
+            ->map(function ($instructor) {
+                return (object) [
                     'ins_nombre' => $instructor->ins_nombre,
                     'usr_documento' => $instructor->usuario->usr_documento,
                 ];
@@ -113,7 +115,7 @@ class AdminController extends Controller
     public function cambiarEstadoProyecto(Request $request, int $id)
     {
         $request->validate([
-            'estado' => 'required|in:Activo,Inactivo,Aprobado,Rechazado'
+            'estado' => 'required|in:Activo,Inactivo,Aprobado,Rechazado',
         ]);
 
         $proyecto = Proyecto::findOrFail($id);
@@ -125,7 +127,7 @@ class AdminController extends Controller
 
             $proyecto->update([
                 'pro_estado' => $request->estado,
-                'ins_usr_documento' => null
+                'ins_usr_documento' => null,
             ]);
 
             // Notificar al instructor que fue desasignado
@@ -144,7 +146,7 @@ class AdminController extends Controller
                             ));
                     }
                 } catch (\Exception $e) {
-                    Log::error('Error al enviar correo de desasignación: ' . $e->getMessage());
+                    Log::error('Error al enviar correo de desasignación: '.$e->getMessage());
                 }
             }
         } else {
@@ -157,7 +159,7 @@ class AdminController extends Controller
     public function asignarInstructor(Request $request, $id)
     {
         $request->validate([
-            'ins_usr_documento' => 'required|exists:usuario,usr_documento'
+            'ins_usr_documento' => 'required|exists:usuario,usr_documento',
         ]);
 
         $proyecto = Proyecto::findOrFail($id);
@@ -166,7 +168,7 @@ class AdminController extends Controller
         // Enviar correo de notificación al instructor asignado
         try {
             $proyecto->load('empresa');
-            
+
             $instructorUsuario = User::where('usr_documento', $request->ins_usr_documento)
                 ->with('instructor')
                 ->first();
@@ -184,7 +186,7 @@ class AdminController extends Controller
                     ));
             }
         } catch (\Exception $e) {
-            Log::error('Error al enviar correo de asignación de instructor: ' . $e->getMessage());
+            Log::error('Error al enviar correo de asignación de instructor: '.$e->getMessage());
         }
 
         return back()->with('success', 'Instructor asignado correctamente');

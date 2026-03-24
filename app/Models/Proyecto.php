@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
 
 class Proyecto extends Model
 {
     protected $table = 'proyecto';
+
     protected $primaryKey = 'pro_id';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -93,7 +95,7 @@ class Proyecto extends Model
     public function scopeBusqueda(Builder $query, $termino): Builder
     {
         return $query->where('pro_titulo_proyecto', 'like', "%{$termino}%")
-                     ->orWhere('pro_descripcion', 'like', "%{$termino}%");
+            ->orWhere('pro_descripcion', 'like', "%{$termino}%");
     }
 
     public function scopeRecientes(Builder $query): Builder
@@ -206,5 +208,13 @@ class Proyecto extends Model
     public function getEmpresaNombreAttribute(): string
     {
         return $this->empresa?->emp_nombre ?? 'Empresa no asignada';
+    }
+
+    /**
+     * Obtener categoría con valor por defecto
+     */
+    public function getProCategoriaAttribute(): string
+    {
+        return $this->attributes['pro_categoria'] ?? 'Sin categoría';
     }
 }
