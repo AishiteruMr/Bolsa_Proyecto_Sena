@@ -161,4 +161,3 @@
         }
     </style>
 @endsection
-@endsection
