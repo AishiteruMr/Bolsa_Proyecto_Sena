@@ -43,11 +43,17 @@ class AprendizController extends Controller
             ->get();
 
         // Obtener IDs de proyectos con postulación aprobada
-        $proyectosAprobados = DB::table('postulacion')
+        $proyectosAprobadosQuery = DB::table('postulacion')
             ->where('apr_id', $aprendiz?->apr_id ?? 0)
-            ->where('pos_estado', 'Aprobada')
-            ->pluck('pro_id')
-            ->toArray();
+            ->where('pos_estado', 'Aprobada');
+        
+        $proyectosAprobados = (clone $proyectosAprobadosQuery)->pluck('pro_id')->toArray();
+
+        // Próxima fecha de cierre de sus proyectos
+        $proximoCierre = Proyecto::whereIn('pro_id', $proyectosAprobados)
+            ->where('pro_fecha_finalizacion', '>', now())
+            ->orderBy('pro_fecha_finalizacion')
+            ->first();
 
         return view('aprendiz.dashboard', compact(
             'aprendiz',
@@ -55,7 +61,8 @@ class AprendizController extends Controller
             'postulacionesAprobadas',
             'proyectosDisponibles',
             'proyectosRecientes',
-            'proyectosAprobados'
+            'proyectosAprobados',
+            'proximoCierre'
         ));
     }
 

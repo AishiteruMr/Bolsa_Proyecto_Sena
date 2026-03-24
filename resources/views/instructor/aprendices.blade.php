@@ -31,7 +31,7 @@
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
         @forelse($aprendices as $a)
-            <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform .3s ease;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 20px;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 15px 30px rgba(0,0,0,0.05)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                 <div style="width:80px; height:80px; border-radius:50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display:flex; align-items:center; justify-content:center; margin-bottom: 1.25rem; box-shadow: 0 8px 16px rgba(41, 133, 100, 0.2);">
                     <span style="color:#fff; font-size:28px; font-weight:700;">{{ strtoupper(substr($a->apr_nombre ?? 'A', 0, 1)) }}</span>
                 </div>

@@ -23,8 +23,9 @@ class AdminController extends Controller
             'instructores'  => Instructor::count(),
             'empresas'      => Empresa::count(),
             'proyectos'     => Proyecto::count(),
-            'postulaciones' => Postulacion::count(),
-            'aprobadas'     => Postulacion::where('pos_estado', 'Aprobada')->count(),
+            'pendientes'    => Proyecto::where('pro_estado', 'Inactivo')->count(),
+            'usuarios'      => User::count(),
+            'activos'       => User::where('usr_estado', 1)->count(), // Suponiendo que usr_estado existe
         ];
 
         $proyectosRecientes = Proyecto::with('empresa')

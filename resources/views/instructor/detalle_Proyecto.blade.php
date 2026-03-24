@@ -181,11 +181,11 @@
                     <div style="padding: 12px; background: var(--bg-main); border-radius: 12px; border: 1px solid var(--border);">
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
                             <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">
-                                {{ substr($p->apr_nombre, 0, 1) }}
+                                {{ substr($p->aprendiz->apr_nombre ?? 'A', 0, 1) }}
                             </div>
                             <div style="overflow: hidden;">
-                                <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $p->apr_nombre }}</p>
-                                <p style="font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $p->apr_programa }}</p>
+                                <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $p->aprendiz->apr_nombre }}</p>
+                                <p style="font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $p->aprendiz->apr_programa }}</p>
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -217,8 +217,8 @@
                             {{ substr($i->apr_nombre, 0, 1) }}
                         </div>
                         <div style="overflow: hidden;">
-                            <p style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $i->apr_nombre }} {{ $i->apr_apellido }}</p>
-                            <p style="font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $i->usr_correo }}</p>
+                            <p style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $i->aprendiz->apr_nombre }} {{ $i->aprendiz->apr_apellido }}</p>
+                            <p style="font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $i->aprendiz->usuario->usr_correo }}</p>
                         </div>
                     </div>
                 @empty
