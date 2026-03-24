@@ -45,24 +45,24 @@
     <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 24px; margin-bottom: 40px;">
         
         <!-- Main Stats -->
-        <div class="glass-card" style="grid-column: span 1; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+        <div class="glass-card stat-card-main" style="grid-column: span 1; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
             <div style="padding: 24px; background: rgba(57, 169, 0, 0.1); border-bottom: 1px solid rgba(57, 169, 0, 0.1);">
                 <h4 style="font-size: 13px; font-weight: 800; color: #1a5c00; text-transform: uppercase; letter-spacing: 1px;">Estado del Programa</h4>
             </div>
             <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border);">
                 <div style="background: white; padding: 24px; display: flex; flex-direction: column; justify-content: center;">
-                    <span style="font-size: 36px; font-weight: 800; color: #1e293b;">{{ count($proyectos) }}</span>
+                    <span style="font-size: 36px; font-weight: 800; color: #1e293b;">{{ $proyectosAsignados }}</span>
                     <span style="font-size: 14px; font-weight: 600; color: #64748b;">Proyectos Activos</span>
                 </div>
                 <div style="background: white; padding: 24px; display: flex; flex-direction: column; justify-content: center;">
-                    <span style="font-size: 36px; font-weight: 800; color: #1e293b;">{{ $totalAprendices ?? '0' }}</span>
+                    <span style="font-size: 36px; font-weight: 800; color: #1e293b;">{{ $totalAprendices }}</span>
                     <span style="font-size: 14px; font-weight: 600; color: #64748b;">Aprendices A cargo</span>
                 </div>
             </div>
         </div>
 
         <!-- Evidencias Pending Card -->
-        <div class="glass-card" style="padding: 32px; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none;">
+        <div class="glass-card stat-card-pending" style="padding: 32px; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; transition: transform 0.3s ease, box-shadow 0.3s ease;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div style="width: 50px; height: 50px; border-radius: 14px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px;">
                     <i class="fas fa-file-signature"></i>
@@ -70,7 +70,7 @@
                 <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase;">Por Calificar</span>
             </div>
             <div>
-                <h3 style="font-size: 40px; font-weight: 800; margin-bottom: 4px;">{{ $evidenciasPendientes ?? '0' }}</h3>
+                <h3 style="font-size: 40px; font-weight: 800; margin-bottom: 4px;">{{ $evidenciasPendientes }}</h3>
                 <p style="font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.9);">Revisiones pendientes</p>
             </div>
             <a href="{{ route('instructor.proyectos') }}" style="margin-top: 20px; color: white; text-decoration: none; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
@@ -89,11 +89,15 @@
             <div style="display: flex; flex-direction: column; gap: 16px;">
                 <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
                     <span style="font-size: 14px; color: #64748b; font-weight: 500;">Nuevas Postulaciones</span>
-                    <span style="font-size: 14px; font-weight: 700; color: var(--primary);">+3</span>
+                    <span style="font-size: 14px; font-weight: 700; color: var(--primary);">
+                        {{ $nuevasPostulaciones > 0 ? '+' . $nuevasPostulaciones : '0' }}
+                    </span>
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                     <span style="font-size: 14px; color: #64748b; font-weight: 500;">Siguientes Cierres</span>
-                    <span style="font-size: 14px; font-weight: 700; color: #64748b;">Esta semana</span>
+                    <span style="font-size: 14px; font-weight: 700; color: #64748b;">
+                        {{ $proximoCierre ? $proximoCierre->pro_fecha_finalizacion->diffForHumans() : 'Sin pendientes' }}
+                    </span>
                 </div>
             </div>
         </div>
@@ -168,6 +172,20 @@
         transform: translateY(-8px);
         box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.03);
         border-color: var(--primary-light);
+    }
+
+    .stat-card-main, .stat-card-pending {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .stat-card-main:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+    }
+
+    .stat-card-pending:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(245, 158, 11, 0.3);
     }
 
     .project-card-premium:hover .btn-primary {

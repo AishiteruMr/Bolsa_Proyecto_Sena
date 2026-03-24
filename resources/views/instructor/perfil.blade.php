@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Mi Perfil - Inspírate SENA')
-@section('page-title', 'Perfil de Instructor')
+@section('title', 'Mi Perfil - ' . ($instructor->ins_nombre ?? 'Instructor'))
+@section('page-title', 'Perfil de ' . ($instructor->ins_nombre ?? 'Instructor'))
 
 @section('sidebar-nav')
     <span class="nav-label">Principal</span>
@@ -148,7 +148,7 @@
                             <div class="stat-icon" style="background: rgba(15, 118, 110, 0.1); color: #0f766e;"><i class="fas fa-project-diagram"></i></div>
                             <span style="font-size: 14px; font-weight: 600; color: #475569;">Proyectos Liderados</span>
                         </div>
-                        <span class="stat-number">{{ \App\Models\Proyecto::where('ins_id', $instructor->usr_id)->count() }}</span>
+                        <span class="stat-number">{{ $proyectosCount }}</span>
                     </div>
 
                     <div class="stat-row">
@@ -156,7 +156,7 @@
                             <div class="stat-icon" style="background: rgba(57, 169, 0, 0.1); color: var(--primary);"><i class="fas fa-user-graduate"></i></div>
                             <span style="font-size: 14px; font-weight: 600; color: #475569;">Aprendices a Cargo</span>
                         </div>
-                        <span class="stat-number">{{ \App\Models\Aprendiz::count() }}</span>
+                        <span class="stat-number">{{ $aprendicesCount }}</span>
                     </div>
 
                     <div class="stat-row">
@@ -164,21 +164,29 @@
                             <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;"><i class="fas fa-clipboard-check"></i></div>
                             <span style="font-size: 14px; font-weight: 600; color: #475569;">Revisiones Pendientes</span>
                         </div>
-                        <span class="stat-number">3</span>
+                        <span class="stat-number">{{ $evidenciasPendientesCount }}</span>
                     </div>
                 </div>
             </div>
 
             <!-- Profile Completion -->
+            @php
+                $camposCompletos = 0;
+                if(!empty($instructor->ins_nombre)) $camposCompletos++;
+                if(!empty($instructor->ins_apellido)) $camposCompletos++;
+                if(!empty($instructor->ins_especialidad)) $camposCompletos++;
+                if(!empty($usuario->usr_correo)) $camposCompletos++;
+                $progresoPerfil = ($camposCompletos / 4) * 100;
+            @endphp
             <div class="glass-card" style="padding: 32px; background: #fff; border: 1.5px solid var(--border);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <span style="font-size: 14px; font-weight: 700; color: #1e293b;">Integridad de Perfil</span>
-                    <span style="font-size: 14px; font-weight: 800; color: var(--primary);">100%</span>
+                    <span style="font-size: 14px; font-weight: 800; color: var(--primary);">{{ round($progresoPerfil) }}%</span>
                 </div>
                 <div style="height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; margin-bottom: 20px;">
-                    <div style="width: 100%; height: 100%; background: var(--primary); border-radius: 5px;"></div>
+                    <div style="width: {{ $progresoPerfil }}%; height: 100%; background: var(--primary); border-radius: 5px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
                 </div>
-                <p style="font-size: 13px; color: #64748b; line-height: 1.4;">Tu perfil profesional está al día. Esto garantiza que los aprendices y empresas puedan identificar tu área de competencia rápidamente.</p>
+                <p style="font-size: 13px; color: #64748b; line-height: 1.4;">{{ $progresoPerfil == 100 ? 'Tu perfil profesional está al día. Esto garantiza que los aprendices y empresas puedan identificar tu área de competencia rápidamente.' : 'Completa todos tus datos para mejorar tu visibilidad en la plataforma.' }}</p>
             </div>
         </div>
     </div>

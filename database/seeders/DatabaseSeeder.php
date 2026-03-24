@@ -113,6 +113,8 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        $this->call(ProyectoSeeder::class);
+
         $this->command->info('    Datos iniciales insertados correctamente.');
         $this->command->info('   Credenciales admin: admin@gmail.com / admin123');
         $this->command->info('   Credenciales empresa: empresa@gmail.com / empresa123');
