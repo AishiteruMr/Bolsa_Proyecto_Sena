@@ -214,6 +214,19 @@ class EmpresaController extends Controller
     public function cambiarEstadoPostulacion(Request $request, int $id)
     {
         $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
+        
+        $nit = session('nit');
+
+        // Verificar que la postulación pertenece a un proyecto de la empresa actual
+        $postulacion = DB::table('postulacion')
+            ->join('proyecto', 'postulacion.pro_id', '=', 'proyecto.pro_id')
+            ->where('postulacion.pos_id', $id)
+            ->where('proyecto.emp_nit', $nit)
+            ->first();
+
+        if (!$postulacion) {
+            abort(403, 'No tienes permiso para cambiar el estado de esta postulación.');
+        }
 
         $nit = session('nit');
         

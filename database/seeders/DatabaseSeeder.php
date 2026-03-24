@@ -44,27 +44,28 @@ class DatabaseSeeder extends Seeder
         // =============================
         // EMPRESA
         // =============================
-        $empresa = DB::table('empresa')->where('emp_correo', 'empresa@gmail.com')->first();
-        if (!$empresa) {
-            $empresaId = DB::table('empresa')->insertGetId([
-
-                'usr_documento'      => 3012366765,
+        $usuarioEmpresa = DB::table('usuario')->where('usr_correo', 'empresa@gmail.com')->first();
+        if (!$usuarioEmpresa) {
+            $empresaId = DB::table('usuario')->insertGetId([
+                'usr_documento'      => 12345475784,
                 'usr_correo'         => 'empresa@gmail.com',
                 'usr_contrasena'     => Hash::make('empresa123'),
                 'rol_id'             => 3,
                 'usr_fecha_creacion' => now(),
             ]);
-
-            DB::table('empresa')->insertOrIgnore([
-                'usr_id'        => $empresaId,
-                'emp_nit'       => 12345475784,
-                'emp_nombre'    => 'Empresa',
-                'emp_representante' => 'Representante',
-                'emp_correo'    => 'empresa@gmail.com',
-                'emp_contrasena' => Hash::make('empresa123'),
-                'emp_estado'    => 1,
-            ]);
+        } else {
+            $empresaId = $usuarioEmpresa->usr_id;
         }
+
+        DB::table('empresa')->insertOrIgnore([
+            'usr_id'            => $empresaId,
+            'emp_nit'           => 12345475784,
+            'emp_nombre'        => 'Empresa',
+            'emp_representante' => 'Representante',
+            'emp_correo'        => 'empresa@gmail.com',
+            'emp_contrasena'    => Hash::make('empresa123'),
+            'emp_estado'        => 1,
+        ]);
 
         // =============================
         // INSTRUCTOR

@@ -10,13 +10,9 @@ class AuthMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Validar que el usuario o empresa está autenticado
-        $usuarioId = session('usr_id');
-        $empresaId = session('emp_id');
-        $instructorId = session('inst_id');
-        
-        // Verificar que al menos uno existe y es válido
-        if (empty($usuarioId) && empty($empresaId) && empty($instructorId)) {
+        if (!session()->has('usr_id') && !session()->has('emp_id')) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para continuar.');
         }
         
