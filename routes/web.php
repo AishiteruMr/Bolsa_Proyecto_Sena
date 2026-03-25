@@ -18,7 +18,6 @@ use App\Http\Controllers\ProyectoController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-=======
 
 Route::get('/', function () {
     return view('index');
