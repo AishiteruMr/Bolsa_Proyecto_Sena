@@ -1,227 +1,319 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Detalle del Proyecto')
-@section('page-title', 'Gestión de Proyecto')
+@section('title', 'Expediente de Misión | ' . ($proyecto->pro_titulo_proyecto ?? 'Detalle'))
 
 @section('sidebar-nav')
-    <span class="nav-label">Principal</span>
-    <a href="{{ route('aprendiz.dashboard') }}" class="nav-item {{ request()->routeIs('aprendiz.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Dashboard
+    <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-2 block italic text-slate-400">OPERACIÓN ACADÉMICA</span>
+    <a href="{{ route('aprendiz.dashboard') }}" class="nav-item group {{ request()->routeIs('aprendiz.dashboard') ? 'active' : '' }}">
+        <i class="fas fa-chart-line group-hover:scale-110 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Panel de Control</span>
     </a>
-    <a href="{{ route('aprendiz.proyectos') }}" class="nav-item {{ request()->routeIs('aprendiz.proyectos*') ? 'active' : '' }}">
-        <i class="fas fa-briefcase"></i> Explorar Proyectos
+    <a href="{{ route('aprendiz.proyectos') }}" class="nav-item group {{ request()->routeIs('aprendiz.proyectos*') ? 'active' : '' }}">
+        <i class="fas fa-briefcase group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Explorar Misiones</span>
     </a>
-    <a href="{{ route('aprendiz.postulaciones') }}" class="nav-item {{ request()->routeIs('aprendiz.postulaciones') ? 'active' : '' }}">
-        <i class="fas fa-paper-plane"></i> Mis Postulaciones
+    <a href="{{ route('aprendiz.postulaciones') }}" class="nav-item group {{ request()->routeIs('aprendiz.postulaciones') ? 'active' : '' }}">
+        <i class="fas fa-paper-plane group-hover:scale-110 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Mis Candidaturas</span>
     </a>
-    <span class="nav-label">Cuenta</span>
-    <a href="{{ route('aprendiz.perfil') }}" class="nav-item {{ request()->routeIs('aprendiz.perfil') ? 'active' : '' }}">
-        <i class="fas fa-user-circle"></i> Mi Perfil
+    <a href="{{ route('aprendiz.historial') }}" class="nav-item group {{ request()->routeIs('aprendiz.historial') ? 'active' : '' }}">
+        <i class="fas fa-history group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Archivo de Misión</span>
+    </a>
+    <a href="{{ route('aprendiz.entregas') }}" class="nav-item group {{ request()->routeIs('aprendiz.entregas') ? 'active' : '' }}">
+        <i class="fas fa-tasks group-hover:scale-110 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Bitácora de Entregas</span>
+    </a>
+    
+    <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mt-6 mb-2 block italic text-slate-400">CONFIGURACIÓN</span>
+    <a href="{{ route('aprendiz.perfil') }}" class="nav-item group {{ request()->routeIs('aprendiz.perfil') ? 'active' : '' }}">
+        <i class="fas fa-user group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Identidad Digital</span>
     </a>
 @endsection
 
 @section('content')
-<div style="margin-bottom: 32px;">
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-        <a href="{{ route('aprendiz.postulaciones') }}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 500;">
-            <i class="fas fa-arrow-left"></i> Volver a mis postulaciones
-        </a>
-    </div>
-    <h2 style="font-size:26px; font-weight:700; color:var(--primary-dark)">{{ $proyecto->pro_titulo_proyecto }}</h2>
-    <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Panel de seguimiento y entrega de productos del proyecto.</p>
-</div>
-
-<!-- Bento Grid Stats -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-    <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid var(--primary);">
-        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">Estado del Proyecto</p>
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <h3 style="font-size: 1.4rem; font-weight: 700; color: var(--text-main);">{{ $proyecto->pro_estado }}</h3>
-            <i class="fas fa-circle-check" style="font-size: 1.5rem; color: var(--primary);"></i>
-        </div>
-    </div>
+<div class="max-w-7xl mx-auto space-y-12 pb-24 italic font-bold">
     
-    <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid #3b82f6;">
-        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">Empresa Aliada</p>
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">{{ $proyecto->emp_nombre }}</h3>
-            <i class="fas fa-building" style="font-size: 1.5rem; color: #3b82f6;"></i>
+    <!-- HEADER SECTION -->
+    <div class="space-y-8 px-4 italic">
+        <div class="flex items-center gap-4 italic">
+            <x-button variant="secondary" :href="route('aprendiz.postulaciones')" class="rounded-[1.5rem] px-8 py-4 border-4 border-slate-50 bg-white text-slate-400 font-black text-[10px] uppercase tracking-widest flex items-center gap-4 group shadow-xl italic active:scale-95 transition-all">
+                <i class="fas fa-arrow-left group-hover:-translate-x-2 transition-transform italic text-emerald-500"></i>
+                RETORNO AL PANEL
+            </x-button>
         </div>
-    </div>
-
-    <div class="glass-card" style="padding: 1.5rem; border-top: 4px solid #f59e0b;">
-        <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">Instructor Tutor</p>
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">{{ $proyecto->instructor_nombre }}</h3>
-            <i class="fas fa-user-tie" style="font-size: 1.5rem; color: #f59e0b;"></i>
-        </div>
-    </div>
-</div>
-
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
-    <!-- Main Info & Stages -->
-    <div style="display: grid; gap: 2rem;">
         
-        <!-- Descripción y Detalles -->
-        <div class="glass-card" style="padding: 2rem;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
-                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Sobre el Proyecto</h3>
-                <span class="badge badge-info" style="font-size: 10px; padding: 4px 12px;">{{ $proyecto->pro_categoria }}</span>
+        <div class="space-y-4 italic">
+            <div class="flex items-center gap-4 italic">
+                <x-badge class="bg-emerald-500 text-white border-none px-6 py-1.5 rounded-full font-black tracking-[0.2em] text-[9px] uppercase italic italic shadow-lg shadow-emerald-500/20 italic">
+                    EXPEDIENTE OPERATIVO
+                </x-badge>
+                <div class="h-1 w-12 bg-slate-100 rounded-full italic"></div>
+                <span class="text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] italic">MODO: AUDITORÍA TÉCNICA</span>
             </div>
-            
-            <p style="color: #4b5563; line-height: 1.7; margin-bottom: 2rem;">
-                {{ $proyecto->pro_descripcion }}
+            <h2 class="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase italic leading-none italic">
+                {{ $proyecto->pro_titulo_proyecto }}
+            </h2>
+            <p class="text-slate-400 font-black text-sm uppercase tracking-[0.3em] flex items-center gap-4 italic opacity-70 italic">
+                Centro de Operaciones y Control de Entregas Estratégicas
             </p>
+        </div>
+    </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                <div>
-                    <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px;">Requisitos</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">{{ $proyecto->pro_requisitos_especificos }}</p>
-                </div>
-                <div>
-                    <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px;">Habilidades</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">{{ $proyecto->pro_habilidades_requerida }}</p>
+    <!-- BENTO GRID STATS -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 px-4 italic">
+        <x-card class="p-10 border-none shadow-2xl relative overflow-hidden group bg-white rounded-[3rem] italic" shadow="none">
+            <div class="absolute top-0 left-0 w-3 h-full bg-emerald-500 italic"></div>
+            <div class="space-y-6 italic">
+                <span class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] italic leading-none">ESTATUS DE MISIÓN</span>
+                <div class="flex items-center justify-between italic">
+                    <h3 class="text-3xl font-black text-slate-900 uppercase italic tracking-tighter italic leading-none">{{ $proyecto->pro_estado }}</h3>
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl italic shadow-inner italic rotate-12 group-hover:rotate-0 transition-transform italic">
+                        <i class="fas fa-satellite italic font-bold"></i>
+                    </div>
                 </div>
             </div>
-        </div>
+        </x-card>
+        
+        <x-card class="p-10 border-none shadow-2xl relative overflow-hidden group bg-white rounded-[3rem] italic" shadow="none">
+            <div class="absolute top-0 left-0 w-3 h-full bg-slate-900 italic"></div>
+            <div class="space-y-6 italic">
+                <span class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] italic leading-none">CORPORACIÓN ALIADA</span>
+                <div class="flex items-center justify-between italic">
+                    <h3 class="text-2xl font-black text-slate-700 uppercase italic tracking-tighter italic leading-none truncate pr-4">{{ $proyecto->emp_nombre }}</h3>
+                    <div class="w-14 h-14 rounded-2xl bg-slate-50 text-slate-900 flex items-center justify-center text-xl italic shadow-inner italic -rotate-12 group-hover:rotate-0 transition-transform italic">
+                        <i class="fas fa-building-columns italic font-bold"></i>
+                    </div>
+                </div>
+            </div>
+        </x-card>
 
-        <!-- Etapas y Seguimiento -->
-        <div style="margin-top: 1rem;">
-            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem;">
-                <i class="fas fa-list-check" style="color: var(--primary); margin-right: 10px;"></i> Plan de Trabajo y Entregas
-            </h3>
+        <x-card class="p-10 border-none shadow-2xl relative overflow-hidden group bg-white rounded-[3rem] italic" shadow="none">
+            <div class="absolute top-0 left-0 w-3 h-full bg-amber-500 italic"></div>
+            <div class="space-y-6 italic">
+                <span class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] italic leading-none">SUPERVISOR TÉCNICO</span>
+                <div class="flex items-center justify-between italic">
+                    <h3 class="text-2xl font-black text-slate-700 uppercase italic tracking-tighter italic leading-none truncate pr-4 italic">{{ $proyecto->instructor_nombre }}</h3>
+                    <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-xl italic shadow-inner italic rotate-3 group-hover:rotate-0 transition-transform italic">
+                        <i class="fas fa-user-shield italic font-bold"></i>
+                    </div>
+                </div>
+            </div>
+        </x-card>
+    </div>
 
-            <div style="display: grid; gap: 2rem;">
-                @forelse($etapas as $etapa)
-                    <div class="glass-card" style="padding: 2rem; position: relative; overflow: hidden;">
-                        <div style="position: absolute; top: -10px; right: -10px; font-size: 5rem; font-weight: 900; color: rgba(41, 133, 100, 0.05); pointer-events: none;">
-                            {{ $etapa->eta_orden }}
-                        </div>
-
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <span style="width: 32px; height: 32px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
-                                    {{ $etapa->eta_orden }}
-                                </span>
-                                <h4 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">{{ $etapa->eta_nombre }}</h4>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 px-4 italic">
+        <!-- Main Info & Stages -->
+        <div class="lg:col-span-2 space-y-16 italic">
+            
+            <!-- BRIEFING DOSSIER -->
+            <x-card class="p-12 md:p-16 border-none shadow-2xl relative overflow-hidden bg-white rounded-[4rem] italic" shadow="none">
+                <div class="absolute -right-20 -top-20 w-96 h-96 bg-slate-50 rounded-full blur-[100px] opacity-60 italic"></div>
+                
+                <div class="relative space-y-12 italic">
+                    <div class="flex items-center justify-between border-b border-slate-50 pb-10 italic">
+                        <div class="flex items-center gap-6 italic">
+                            <div class="w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-2xl italic rotate-6">
+                                <i class="fas fa-compass text-xl font-bold italic"></i>
+                            </div>
+                            <div class="italic">
+                                <h3 class="text-3xl font-black text-slate-900 uppercase italic tracking-tighter italic leading-none">Briefing de Misión</h3>
+                                <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-3 italic opacity-60 italic">ESPECIFICACIONES DEL OBJETIVO</p>
                             </div>
                         </div>
+                        <x-badge class="bg-emerald-50 text-emerald-600 border-none px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest italic shadow-sm italic ring-1 ring-emerald-100 italic">
+                            {{ strtoupper($proyecto->pro_categoria) }}
+                        </x-badge>
+                    </div>
+                    
+                    <p class="text-slate-500 font-bold text-xl leading-relaxed text-justify uppercase italic italic opacity-80 italic">
+                        {{ $proyecto->pro_descripcion }}
+                    </p>
 
-                        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem;">{{ $etapa->eta_descripcion }}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-slate-50 italic">
+                        <div class="space-y-4 italic">
+                            <h4 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] flex items-center gap-3 italic">
+                                <i class="fas fa-list-check text-emerald-500 italic"></i> ESPECIFICACIONES
+                            </h4>
+                            <div class="bg-slate-50 p-6 rounded-[2rem] border-4 border-white shadow-xl italic">
+                                <p class="text-sm font-black text-slate-700 uppercase italic tracking-tight italic">{{ $proyecto->pro_requisitos_especificos }}</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4 italic">
+                            <h4 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] flex items-center gap-3 italic">
+                                <i class="fas fa-brain-circuit text-blue-500 italic"></i> DOMINIOS TÉCNICOS
+                            </h4>
+                            <div class="bg-slate-50 p-6 rounded-[2rem] border-4 border-white shadow-xl italic">
+                                <p class="text-sm font-black text-slate-700 uppercase italic tracking-tight italic">{{ $proyecto->pro_habilidades_requerida }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </x-card>
 
-                        <!-- Evidencias Existentes -->
-                        @php $evidenciasEtapa = $evidencias->where('eta_id', $etapa->eta_id); @endphp
-                        
-                        @if($evidenciasEtapa->count())
-                            <div style="background: var(--bg-main); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; border: 1px dashed var(--border);">
-                                <h5 style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Tus Entregas Recientes</h5>
-                                <div style="display: grid; gap: 1rem;">
-                                    @foreach($evidenciasEtapa as $evid)
-                                        <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 1rem; border-radius: 8px; border: 1px solid var(--border);">
-                                            <div style="display: flex; align-items: center; gap: 12px;">
-                                                <div style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-                                                    <i class="fas fa-file-lines"></i>
-                                                </div>
-                                                <div>
-                                                    <p style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">{{ \Carbon\Carbon::parse($evid->evid_fecha)->format('d M, Y - h:i A') }}</p>
-                                                    @if($evid->evid_comentario)
-                                                        <p style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;"><i class="fas fa-comment"></i> {{ $evid->evid_comentario }}</p>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                            <div style="display: flex; align-items: center; gap: 12px;">
-                                                @switch($evid->evid_estado)
-                                                    @case('Aprobada') <span class="badge badge-success" style="font-size:10px">Aprobada</span> @break
-                                                    @case('Pendiente') <span class="badge badge-warning" style="font-size:10px">Pendiente</span> @break
-                                                    @case('Rechazada') <span class="badge badge-danger" style="font-size:10px">Rechazada</span> @break
-                                                @endswitch
-                                                @if($evid->evid_archivo)
-                                                    <a href="{{ asset('storage/' . $evid->evid_archivo) }}" target="_blank" style="color: var(--primary); font-size: 1.1rem;" title="Ver archivo">
-                                                        <i class="fas fa-download"></i>
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    @endforeach
+            <!-- ROADMAP OPERATIVO -->
+            <div class="space-y-12 italic">
+                <div class="flex items-center gap-8 italic">
+                    <h3 class="text-4xl font-black text-slate-900 tracking-tighter uppercase italic leading-none italic">HOJA DE RUTA OPERATIVA</h3>
+                    <div class="h-2 flex-1 bg-slate-50 rounded-full italic shadow-inner"></div>
+                </div>
+
+                <div class="space-y-12 relative before:absolute before:left-12 before:top-4 before:bottom-4 before:w-1.5 before:bg-slate-50 before:rounded-full italic px-2 italic">
+                    @forelse($etapas as $index => $etapa)
+                        <x-card class="ml-6 p-10 md:p-14 border-none shadow-2xl relative group hover:shadow-emerald-500/5 transition-all bg-white rounded-[3.5rem] italic" shadow="none">
+                            <div class="absolute -left-[3.75rem] top-6 w-14 h-14 rounded-2xl {{ $index == 0 ? 'bg-emerald-600 shadow-2xl shadow-emerald-500/30 text-white' : 'bg-white border-4 border-slate-50 shadow-xl text-slate-300' }} flex items-center justify-center text-xl font-black italic z-10 italic group-hover:rotate-12 transition-transform italic">
+                                {{ str_pad($etapa->eta_orden, 2, '0', STR_PAD_LEFT) }}
+                            </div>
+
+                            <div class="space-y-10 italic">
+                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 italic">
+                                    <h4 class="text-2xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors uppercase italic tracking-tighter italic leading-none">{{ $etapa->eta_nombre }}</h4>
+                                    <x-badge class="bg-slate-900 text-white border-none px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] italic shadow-2xl italic">FASE ACTIVA</x-badge>
                                 </div>
+
+                                <p class="text-slate-400 font-bold text-base leading-relaxed uppercase italic italic opacity-70 italic">{{ $etapa->eta_descripcion }}</p>
+
+                                <!-- EVOLUTION HISTORY -->
+                                @php $evidenciasEtapa = $evidencias->where('eta_id', $etapa->eta_id); @endphp
+                                
+                                @if($evidenciasEtapa->count())
+                                    <div class="space-y-6 pt-10 border-t border-slate-50 italic">
+                                        <h5 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic mb-6">HISTORIAL de TRANSMISIONES</h5>
+                                        <div class="grid gap-4 italic font-bold">
+                                            @foreach($evidenciasEtapa as $evid)
+                                                <div class="flex items-center justify-between bg-white p-6 rounded-[2.5rem] border-4 border-slate-50 hover:bg-slate-50 transition-all shadow-xl group/evid italic italic">
+                                                    <div class="flex items-center gap-6 italic">
+                                                        <div class="w-14 h-14 rounded-2xl bg-slate-900 text-white shadow-2xl flex items-center justify-center italic border-4 border-white italic">
+                                                            <i class="fas fa-file-export italic font-bold"></i>
+                                                        </div>
+                                                        <div class="italic">
+                                                            <p class="text-[10px] font-black text-slate-900 uppercase tracking-widest italic leading-none">{{ \Carbon\Carbon::parse($evid->evid_fecha)->format('D, d M Y | H:i') }}</p>
+                                                            @if($evid->evid_comentario)
+                                                                <p class="text-[10px] font-black text-emerald-500 uppercase italic mt-3 opacity-60 italic truncate max-w-[200px]"><i class="fas fa-terminal text-[8px] mr-2 italic"></i> {{ $evid->evid_comentario }}</p>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-6 italic">
+                                                        @switch($evid->evid_estado)
+                                                            @case('Aprobada') <x-badge class="bg-emerald-500 text-white border-none py-2 px-5 rounded-xl text-[9px] font-black uppercase tracking-widest italic shadow-lg shadow-emerald-500/20 italic">VALIDADO</x-badge> @break
+                                                            @case('Pendiente') <x-badge class="bg-slate-300 text-white border-none py-2 px-5 rounded-xl text-[9px] font-black uppercase tracking-widest italic italic">EN ESCANEO</x-badge> @break
+                                                            @case('Rechazada') <x-badge class="bg-red-500 text-white border-none py-2 px-5 rounded-xl text-[9px] font-black uppercase tracking-widest italic shadow-lg shadow-red-500/20 italic">RECHAZADO</x-badge> @break
+                                                        @endswitch
+                                                        @if($evid->evid_archivo)
+                                                            <a href="{{ asset('storage/' . $evid->evid_archivo) }}" target="_blank" class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-emerald-500 transition-all shadow-2xl active:scale-95 italic">
+                                                                <i class="fas fa-download text-sm italic"></i>
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- CONSOLA de ENTREGA -->
+                                <div class="pt-10 mt-10 border-t border-slate-50 italic">
+                                    <form action="{{ route('aprendiz.evidencia.enviar', [$proyecto->pro_id, $etapa->eta_id]) }}" method="POST" enctype="multipart/form-data" class="space-y-8 italic">
+                                        @csrf
+                                        <div class="space-y-6 italic">
+                                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] block pl-4 italic">CONSOLA DE ACTIVACIÓN</label>
+                                            <textarea name="descripcion" required placeholder="DESCRIBE LOS LOGROS TÉCNICOS ALCANZADOS EN ESTE HITO OPERATIVO..." 
+                                                      class="w-full bg-slate-50 border-4 border-transparent rounded-[2.5rem] p-10 text-base font-black text-slate-900 placeholder:text-slate-200 focus:border-emerald-500/20 focus:bg-white transition-all outline-none min-h-[160px] shadow-inner uppercase italic tracking-tight italic"></textarea>
+                                        </div>
+                                        
+                                        <div class="flex flex-col md:flex-row gap-6 italic">
+                                            <div class="flex-1 relative group/file italic">
+                                                <input type="file" name="archivo" required class="absolute inset-0 w-full h-full opacity-0 z-20 cursor-pointer italic">
+                                                <div class="bg-slate-50 border-4 border-dashed border-slate-200 rounded-[2rem] p-6 flex items-center justify-center gap-6 group-hover/file:border-emerald-500/40 group-hover/file:bg-emerald-50 transition-all italic">
+                                                    <i class="fas fa-cloud-upload-alt text-slate-300 group-hover/file:text-emerald-500 text-2xl transition-colors italic"></i>
+                                                    <span class="text-[10px] font-black text-slate-400 group-hover/file:text-emerald-600 uppercase tracking-[0.3em] italic">CARGAR EXPEDIENTE (ZIP/PDF)</span>
+                                                </div>
+                                            </div>
+                                            <x-button type="submit" variant="primary" shadow="emerald" class="py-6 px-12 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-4 active:scale-95 transition-all italic italic shadow-2xl">
+                                                EJECUTAR TRANSMISIÓN <i class="fas fa-paper-plane italic font-bold"></i>
+                                            </x-button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </x-card>
+                    @empty
+                        <div class="bg-slate-50 rounded-[4rem] border-8 border-white p-24 text-center space-y-10 shadow-inner italic">
+                            <div class="w-32 h-32 rounded-[3.5rem] bg-white shadow-2xl flex items-center justify-center mx-auto text-slate-200 text-5xl italic rotate-12 italic">
+                                <i class="fas fa-satellite-dish animate-pulse italic"></i>
+                            </div>
+                            <div class="space-y-4 italic">
+                                <h4 class="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">Ruta en Construcción</h4>
+                                <p class="text-slate-400 font-bold uppercase italic text-sm tracking-widest max-w-sm mx-auto leading-relaxed italic opacity-70">El líder técnico está puliendo los hitos de esta misión. Vuelve pronto para iniciar operaciones.</p>
+                            </div>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR: CRONOGRAMA & VISUAL -->
+        <div class="space-y-12 sticky top-12 italic">
+            
+            <x-card class="p-10 border-none shadow-2xl relative overflow-hidden group bg-slate-900 rounded-[3.5rem] italic" shadow="none">
+                <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900/20 italic opacity-80"></div>
+                <div class="relative space-y-8 italic">
+                    <h4 class="text-[10px] font-black text-emerald-400/60 uppercase tracking-[0.4em] flex items-center gap-4 italic">
+                        <i class="fas fa-eye italic text-emerald-500"></i> TRANSMISIÓN VISUAL
+                    </h4>
+                    <div class="relative rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white/5 group-hover:border-emerald-500/20 transition-all duration-700 italic">
+                        @if($proyecto->pro_imagen_url)
+                            <img src="{{ $proyecto->pro_imagen_url }}" class="w-full object-cover aspect-video group-hover:scale-110 transition-transform duration-[2000ms] italic">
+                        @else
+                            <div class="aspect-video bg-white/5 flex flex-col items-center justify-center text-white/10 p-12 space-y-6 italic">
+                                <i class="fas fa-image-slash text-6xl italic"></i>
+                                <p class="text-[9px] font-black uppercase tracking-[0.4em] italic text-center italic">SIN SEÑAL VISUAL</p>
                             </div>
                         @endif
+                    </div>
+                </div>
+            </x-card>
 
-                        <!-- Formulario de Entrega -->
-                        <div style="border-top: 1px solid var(--border); padding-top: 1.5rem;">
-                            <h5 style="font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.25rem;">Enviar Nueva Evidencia</h5>
-                            <form action="{{ route('aprendiz.evidencia.enviar', [$proyecto->pro_id, $etapa->eta_id]) }}" method="POST" enctype="multipart/form-data" style="display: grid; gap: 1rem;">
-                                @csrf
-                                <textarea name="descripcion" required placeholder="Escribe un breve comentario sobre tu entrega..." style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.85rem; min-height: 80px; outline: none;" onfocus="this.style.borderColor='var(--primary)'"></textarea>
-                                
-                                <div style="display: flex; gap: 1rem; align-items: center;">
-                                    <div style="flex: 1; border: 1px dashed var(--border); padding: 0.8rem; border-radius: 8px; background: var(--bg-main); text-align: center; color: var(--text-muted); cursor: pointer; font-size: 0.8rem; position: relative;">
-                                        <i class="fas fa-cloud-arrow-up" style="margin-right: 8px;"></i> Seleccionar archivo (ZIP, PDF, etc.)
-                                        <input type="file" name="archivo" required style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
-                                    </div>
-                                    <button type="submit" class="btn-ver" style="padding: 0.8rem 1.5rem; border-radius: 8px;">
-                                        Entregar <i class="fas fa-paper-plane" style="margin-left: 8px; font-size: 0.8rem;"></i>
-                                    </button>
-                                </div>
-                            </form>
+            <x-card class="p-12 border-none shadow-2xl space-y-12 bg-white relative overflow-hidden rounded-[3.5rem] italic" shadow="none">
+                <div class="absolute top-0 right-0 w-3 h-full bg-slate-900 italic"></div>
+                
+                <h4 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic flex items-center gap-4 italic leading-none">
+                    <i class="fas fa-tower-broadcast text-emerald-500 italic"></i> CRONOGRAMA MAESTRO
+                </h4>
+                
+                <div class="space-y-10 italic">
+                    <div class="space-y-3 group/date italic">
+                        <p class="text-[9px] text-slate-300 uppercase tracking-[0.3em] italic ml-2 italic">FECHA de LANZAMIENTO</p>
+                        <div class="flex items-center gap-6 bg-slate-50 p-6 rounded-[2rem] border-4 border-white group-hover/date:border-emerald-500/10 transition-all shadow-xl italic italic">
+                            <i class="fas fa-calendar-alt text-emerald-500 text-2xl italic font-bold"></i>
+                            <span class="text-lg font-black text-slate-900 italic tracking-tighter italic">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d M, Y') }}</span>
                         </div>
                     </div>
-                @empty
-                    <div class="glass-card" style="padding: 3rem; text-align: center;">
-                        <i class="fas fa-hourglass-start" style="font-size: 3rem; color: var(--border); margin-bottom: 1.5rem;"></i>
-                        <h4 style="color: var(--text-main); font-size: 1.2rem; margin-bottom: 8px;">Planificación en Progreso</h4>
-                        <p style="color: var(--text-muted);">El instructor aún no ha definido las etapas para este proyecto.</p>
+                    
+                    <div class="space-y-3 group/date italic">
+                        <p class="text-[9px] text-red-400 uppercase tracking-[0.3em] italic ml-2 italic">CIERRE de EXPEDIENTE</p>
+                        <div class="flex items-center gap-6 bg-red-50 p-6 rounded-[2rem] border-4 border-white group-hover/date:border-red-500/10 transition-all shadow-xl italic italic">
+                            <i class="fas fa-calendar-check text-red-500 text-2xl italic font-bold"></i>
+                            <span class="text-lg font-black text-red-600 italic tracking-tighter italic">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d M, Y') }}</span>
+                        </div>
                     </div>
-                @endforelse
-            </div>
-        </div>
-    </div>
+                </div>
 
-    <!-- Sidebar: Cronograma e Imagen -->
-    <div style="display: grid; align-content: flex-start; gap: 2rem;">
-        
-        <div class="glass-card" style="padding: 1.5rem;">
-            <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem;">Visualización</h4>
-            @if($proyecto->pro_imagen_url)
-                <img src="{{ $proyecto->pro_imagen_url }}" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            @else
-                <div style="width: 100%; aspect-ratio: 16/10; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;">
-                    <i class="fas fa-image" style="font-size: 2.5rem; margin-bottom: 10px;"></i>
-                    <p style="font-size: 0.8rem; font-weight: 600;">Proyecto SIN EXPO</p>
-                </div>
-            @endif
-        </div>
-
-        <div class="glass-card" style="padding: 1.5rem;">
-            <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem;">Cronograma</h4>
-            <div style="display: grid; gap: 1.25rem;">
-                <div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase;">Lanzamiento</p>
-                    <p style="font-weight: 600; color: var(--text-main); font-size: 0.95rem;">
-                        <i class="fas fa-calendar-day" style="color: var(--primary); margin-right: 8px;"></i>
-                        {{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d M, Y') }}
+                <div class="bg-slate-900 p-8 rounded-[2.5rem] space-y-6 shadow-2xl relative overflow-hidden group italic">
+                    <div class="absolute -right-10 -bottom-10 text-white/5 text-9xl italic rotate-12 group-hover:scale-125 transition-all duration-1000 italic">
+                        <i class="fas fa-triangle-exclamation italic"></i>
+                    </div>
+                    <div class="flex items-center gap-4 italic relative">
+                        <i class="fas fa-shield-halved text-amber-500 italic font-bold"></i>
+                        <span class="text-[9px] font-black text-white uppercase tracking-[0.3em] italic">Protocolo de Integridad</span>
+                    </div>
+                    <p class="text-[11px] font-bold text-slate-400 leading-relaxed uppercase italic italic relative opacity-80 italic">
+                        Debe garantizar la integridad técnica de cada transmisión. Los plazos son improrrogables según el cronograma maestro radicado.
                     </p>
                 </div>
-                <div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase;">Fecha Límite</p>
-                    <p style="font-weight: 600; color: var(--text-main); font-size: 0.95rem;">
-                        <i class="fas fa-calendar-check" style="color: #ef4444; margin-right: 8px;"></i>
-                        {{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d M, Y') }}
-                    </p>
-                </div>
-                <div style="padding-top: 1rem; border-top: 1px solid var(--border);">
-                    <p style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">
-                        <i class="fas fa-circle-info"></i> Asegúrate de cumplir con los plazos establecidos para cada etapa.
-                    </p>
-                </div>
-            </div>
+            </x-card>
         </div>
     </div>
 </div>
-
-<style>
-    .glass-card { transition: all 0.3s ease; }
-    .glass-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
-</style>
 @endsection
-ection
