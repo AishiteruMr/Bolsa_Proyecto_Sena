@@ -29,6 +29,8 @@ class Proyecto extends Model
         'pro_fecha_publi',
         'pro_fecha_finalizacion',
         'ins_usr_documento',
+        'pro_latitud',
+        'pro_longitud',
     ];
 
     protected $casts = [
