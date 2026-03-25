@@ -18,11 +18,7 @@ return new class extends Migration
             $table->string('pro_requisitos_especificos', 200);
             $table->string('pro_habilidades_requerida', 200);
             $table->date('pro_fecha_publi');
-            $table->dateTime('pro_fecha_inicio')->nullable();
-            $table->dateTime('pro_fecha_fin')->nullable();
-            $table->dateTime('pro_fecha_finalizacion')->nullable();
             $table->integer('pro_duracion_estimada');
-            $table->integer('pro_num_postulantes')->default(0);
             $table->string('pro_estado', 50)->default('Activo');
             $table->string('pro_imagen_url', 255)->nullable();
             $table->bigInteger('ins_usr_documento')->nullable();
