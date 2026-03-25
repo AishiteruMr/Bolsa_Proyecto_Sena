@@ -1,7 +1,7 @@
 :root {
-    --verde: #3EB489;
     --verde-dark: #298564;
-    --verde-void: #264653;
+    --verde-void: #1b6b5f;
+    --verde-light: #3eb489;
 }
 
 body {
@@ -49,7 +49,7 @@ body {
 }
 
 .hero-text h1 span {
-    background: linear-gradient(135deg, var(--verde-dark) 0%, var(--verde) 100%);
+    background: linear-gradient(135deg, var(--verde-void) 0%, var(--verde-dark) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -87,7 +87,7 @@ body {
 }
 
 .btn.primary {
-    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-dark) 100%);
+    background: linear-gradient(135deg, var(--verde-light) 0%, var(--verde-void) 100%);
     color: #fff;
     box-shadow: 0 8px 25px rgba(27, 107, 95, 0.3);
 }
@@ -239,7 +239,7 @@ body {
 .btn-card {
     display: inline-block;
     padding: 11px 28px;
-    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-dark) 100%);
+    background: linear-gradient(135deg, var(--verde-dark) 0%, var(--verde-void) 100%);
     color: #fff;
     border-radius: 8px;
     font-size: 14px;
