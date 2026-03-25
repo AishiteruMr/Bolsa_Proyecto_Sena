@@ -14,6 +14,8 @@ use App\Http\Requests\ValidarLoginRequest;
 use App\Http\Requests\RegistroAprendizRequest;
 use App\Http\Requests\RegistroInstructorRequest;
 use App\Http\Requests\RegistroEmpresaRequest;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -29,117 +31,86 @@ class AuthController extends Controller
 
     // ─── PROCESO DE LOGIN ────────────────────────────────────────────────────────
 
-    public function login(ValidarLoginRequest $request)
+    public function login(\App\Http\Requests\ValidarLoginRequest $request)
     {
-        $correo   = strip_tags(trim($request->correo));
-        $password = $request->password;
+        $credentials = [
+            'usr_correo' => strip_tags(trim($request->correo)),
+            'password'   => $request->password,
+        ];
 
-        $rateLimitKey = 'login_attempts:' . $request->ip();
-        $attempts = cache()->get($rateLimitKey, 0);
-        
-        if ($attempts >= 5) {
-            return back()->with('error', 'Demasiados intentos. Intenta de nuevo en 15 minutos.')->withInput(['correo' => $correo]);
+        // 1. Intentar login estándar
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            return $this->handleSuccessfulLogin($request);
         }
 
-        $usuario = DB::table('usuario')->where('usr_correo', $correo)->first();
-
-        if ($usuario) {
-            $loginOk = false;
-
-            if (!empty($usuario->usr_contrasena) && Hash::check($password, $usuario->usr_contrasena)) {
-                $loginOk = true;
-            } elseif ($usuario->usr_contrasena === $password) {
-                DB::table('usuario')
-                    ->where('usr_id', $usuario->usr_id)
-                    ->update(['usr_contrasena' => Hash::make($password)]);
-                $loginOk = true;
+        // 2. Fallback para empresas legado (que no están en la tabla usuario)
+        if ($this->syncLegacyEmpresa($credentials)) {
+            if (Auth::attempt($credentials)) {
+                return $this->handleSuccessfulLogin($request);
             }
-
-            if (!$loginOk) {
-                cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
-                return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
-            }
-
-            $perfil = $this->getPerfilUsuario($usuario->usr_id, $usuario->rol_id);
-
-            if (!$perfil) {
-                return back()->with('error', 'Perfil de usuario no encontrado.')->withInput(['correo' => $correo]);
-            }
-
-            if (isset($perfil->estado) && $perfil->estado == 0) {
-                return back()->with('error', 'Tu cuenta está desactivada. Contacta al administrador.');
-            }
-
-            cache()->forget($rateLimitKey);
-
-            $sessionData = [
-                'usr_id'   => $usuario->usr_id,
-                'documento'=> $usuario->usr_documento,
-                'correo'   => $correo,
-                'rol'      => $usuario->rol_id,
-                'nombre'   => $perfil->nombre ?? '',
-                'apellido' => $perfil->apellido ?? '',
-            ];
-
-            // Poblar IDs específicos según el rol
-            switch ($usuario->rol_id) {
-                case 1: // Aprendiz
-                    $sessionData['apr_id'] = $perfil->id;
-                    break;
-                case 2: // Instructor
-                    $sessionData['ins_id'] = $perfil->id;
-                    break;
-                case 3: // Empresa
-                    $sessionData['emp_id'] = $perfil->id;
-                    $sessionData['nit']    = $perfil->nit;
-                    $sessionData['documento'] = $perfil->nit; // Sobrescribir documento con NIT
-                    break;
-                case 4: // Admin
-                    $sessionData['adm_id'] = $perfil->id;
-                    break;
-            }
-
-            session($sessionData);
-            $request->session()->regenerate();
-
-            return $this->redirectByRol($usuario->rol_id);
         }
 
-        // Fallback para empresas que no están en la tabla 'usuario' (opcional, por robustez)
-        $empresa = DB::table('empresa')->where('emp_correo', $correo)->first();
-        if ($empresa) {
-            if ($empresa->emp_estado == 0) {
-                return back()->with('error', 'Esta empresa está desactivada.')->withInput(['correo' => $correo]);
-            }
-            if (!Hash::check($password, $empresa->emp_contrasena)) {
-                cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
-                return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
-            }
-            cache()->forget($rateLimitKey);
-            session([
-                'emp_id'   => $empresa->emp_id,
-                'nit'      => $empresa->emp_nit,
-                'documento'=> $empresa->emp_nit,
-                'rol'      => 3,
-                'correo'   => $correo,
-                'nombre'   => $empresa->emp_nombre,
-                'apellido' => '',
-            ]);
-            $request->session()->regenerate();
-            return redirect()->route('empresa.dashboard');
-        }
-
-        cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
-        return back()->with('error', 'Usuario no registrado.')->withInput(['correo' => $correo]);
+        return back()->with('error', 'Credenciales incorrectas o usuario no registrado.')->withInput($request->only('correo'));
     }
 
-    // ─── LOGOUT ─────────────────────────────────────────────────────────────────
+    protected function handleSuccessfulLogin(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user->isActivo()) {
+            Auth::logout();
+            return back()->with('error', 'Tu cuenta está desactivada.');
+        }
+
+        // Poblar sesión para compatibilidad (Legacy Support)
+        $perfil = $this->getPerfilUsuario($user->usr_id, $user->rol_id);
+        
+        session([
+            'usr_id'    => $user->usr_id,
+            'rol'       => $user->rol_id,
+            'documento' => $user->usr_documento,
+            'nombre'    => $perfil->nombre ?? '',
+            'apellido'  => $perfil->apellido ?? '',
+        ]);
+
+        if ($user->rol_id === 3) { // Empresa
+            session(['emp_id' => $perfil->id, 'nit' => $perfil->nit, 'documento' => $perfil->nit]);
+        }
+
+        $request->session()->regenerate();
+        Log::info('Usuario inició sesión', ['id' => $user->usr_id, 'rol' => $user->rol_id]);
+
+        return $this->redirectByRol($user->rol_id);
+    }
+
+    protected function syncLegacyEmpresa(array $credentials): bool
+    {
+        $empresa = DB::table('empresa')->where('emp_correo', $credentials['usr_correo'])->first();
+        
+        if ($empresa && !$empresa->usr_id) {
+            if (Hash::check($credentials['password'], $empresa->emp_contrasena)) {
+                // Crear el registro en 'usuario' para esta empresa legacy
+                $usrId = DB::table('usuario')->insertGetId([
+                    'usr_documento'  => $empresa->emp_nit,
+                    'usr_correo'     => $empresa->emp_correo,
+                    'usr_contrasena' => $empresa->emp_contrasena,
+                    'rol_id'         => 3,
+                    'usr_fecha_creacion' => now(),
+                ]);
+                
+                DB::table('empresa')->where('emp_id', $empresa->emp_id)->update(['usr_id' => $usrId]);
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public function logout(Request $request)
     {
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        $request->session()->flush();
         return redirect()->route('login')->with('success', 'Sesión cerrada correctamente.');
     }
 

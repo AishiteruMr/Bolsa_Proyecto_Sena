@@ -9,8 +9,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
+        [x-cloak] { display: none !important; }
         :root {
             --primary: #3EB489;
             --primary-light: #52c89a;
@@ -322,22 +324,21 @@
             </div>
         </header>
 
-        <div class="page-content">
+            <x-toast-container />
+
             @if(session('success'))
-                <div class="alert alert-success">✅ {{ session('success') }}</div>
+                <div x-init="$nextTick(() => { $dispatch('notify', { message: '{{ session('success') }}', type: 'success' }) })"></div>
             @endif
             @if(session('error'))
-                <div class="alert alert-error">❌ {{ session('error') }}</div>
+                <div x-init="$nextTick(() => { $dispatch('notify', { message: '{{ session('error') }}', type: 'error' }) })"></div>
             @endif
             @if(session('warning'))
-                <div class="alert alert-warning">⚠️ {{ session('warning') }}</div>
+                <div x-init="$nextTick(() => { $dispatch('notify', { message: '{{ session('warning') }}', type: 'warning' }) })"></div>
             @endif
             @if($errors->any())
-                <div class="alert alert-error">
-                    @foreach($errors->all() as $error)
-                        <div>{{ $error }}</div>
-                    @endforeach
-                </div>
+                @foreach($errors->all() as $error)
+                    <div x-init="$nextTick(() => { $dispatch('notify', { message: '{{ $error }}', type: 'error' }) })"></div>
+                @endforeach
             @endif
 
             @yield('content')

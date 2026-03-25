@@ -1,210 +1,201 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Panel de Control - Inspírate SENA')
-@section('page-title', 'Centro de Mando del Instructor')
+@section('title', 'Centro de Mando | ' . (session('nombre') ?? 'Instructor'))
 
 @section('sidebar-nav')
-    <span class="nav-label">Principal</span>
-    <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Dashboard
+    <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-2 block italic text-slate-400">OPERACIÓN TÉCNICA</span>
+    <a href="{{ route('instructor.dashboard') }}" class="nav-item group {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
+        <i class="fas fa-chart-line group-hover:scale-110 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Centro de Mando</span>
     </a>
-    <a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos') ? 'active' : '' }}">
-        <i class="fas fa-project-diagram"></i> Mis Proyectos
+    <a href="{{ route('instructor.proyectos') }}" class="nav-item group {{ request()->routeIs('instructor.proyectos') ? 'active' : '' }}">
+        <i class="fas fa-project-diagram group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Mis Proyectos</span>
     </a>
-    <a href="{{ route('instructor.historial') }}" class="nav-item {{ request()->routeIs('instructor.historial') ? 'active' : '' }}">
-        <i class="fas fa-history"></i> Historial
+    <a href="{{ route('instructor.aprendices') }}" class="nav-item group {{ request()->routeIs('instructor.aprendices') ? 'active' : '' }}">
+        <i class="fas fa-users group-hover:-translate-y-1 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Mis Aprendices</span>
     </a>
-    <a href="{{ route('instructor.aprendices') }}" class="nav-item {{ request()->routeIs('instructor.aprendices') ? 'active' : '' }}">
-        <i class="fas fa-users"></i> Aprendices
+    <a href="{{ route('instructor.historial') }}" class="nav-item group {{ request()->routeIs('instructor.historial') ? 'active' : '' }}">
+        <i class="fas fa-history group-hover:scale-110 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Archivo Histórico</span>
     </a>
-    <span class="nav-label">Cuenta</span>
-    <a href="{{ route('instructor.perfil') }}" class="nav-item {{ request()->routeIs('instructor.perfil') ? 'active' : '' }}">
-        <i class="fas fa-user-circle"></i> Perfil
+    
+    <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mt-6 mb-2 block italic text-slate-400">CONFIGURACIÓN</span>
+    <a href="{{ route('instructor.perfil') }}" class="nav-item group {{ request()->routeIs('instructor.perfil') ? 'active' : '' }}">
+        <i class="fas fa-user-circle group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Perfil Técnico</span>
     </a>
 @endsection
 
 @section('content')
-<div class="dashboard-wrapper" style="padding-bottom: 50px;">
+<div class="max-w-7xl mx-auto space-y-12 pb-24 italic font-bold">
     
-    <!-- HEADER DINÁMICO -->
-    <div style="background: linear-gradient(135deg, #0f766e, #115e59); padding: 48px; border-radius: 32px; margin-bottom: 32px; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(15, 118, 110, 0.15);">
-        <div style="position: absolute; right: -20px; bottom: -20px; font-size: 200px; color: rgba(255,255,255,0.05); transform: rotate(-15deg);">
-            <i class="fas fa-chalkboard-teacher"></i>
-        </div>
-        <div style="position: relative; z-index: 1;">
-            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
-                <span style="background: rgba(255,255,255,0.1); color: white; padding: 6px 16px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">SENA Colombia</span>
-                <span id="current-time" style="color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 500;"></span>
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-10 px-4 italic">
+        <div class="space-y-6 italic">
+            <div class="flex items-center gap-4 italic">
+                <x-badge class="bg-emerald-500 text-white border-none px-6 py-2 rounded-full font-black tracking-[0.2em] text-[10px] uppercase italic shadow-2xl shadow-emerald-500/20 italic">
+                    INSTRUCTOR ESTRATÉGICO SENA
+                </x-badge>
+                <div class="h-1 w-12 bg-slate-100 rounded-full italic"></div>
+                <span class="text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] italic">{{ now()->translatedFormat('l, d F Y') }}</span>
             </div>
-            <h1 style="font-size: 42px; font-weight: 800; color: white; margin-bottom: 12px; letter-spacing: -1px;">¡Hola, Instructor <span style="color: var(--primary-light);">{{ session('nombre') }}</span>! 👋</h1>
-            <p style="color: rgba(255,255,255,0.8); font-size: 17px; max-width: 600px; line-height: 1.5;">Monitoriza el progreso de tus aprendices, gestiona los proyectos vinculados y califica evidencias en un solo lugar.</p>
-        </div>
-    </div>
-
-    <!-- STATS BENTO GRID -->
-    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 24px; margin-bottom: 40px;">
-        
-        <!-- Main Stats -->
-        <div class="glass-card stat-card-main" style="grid-column: span 1; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
-            <div style="padding: 24px; background: rgba(57, 169, 0, 0.1); border-bottom: 1px solid rgba(57, 169, 0, 0.1);">
-                <h4 style="font-size: 13px; font-weight: 800; color: #1a5c00; text-transform: uppercase; letter-spacing: 1px;">Estado del Programa</h4>
-            </div>
-            <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border);">
-                <div style="background: white; padding: 24px; display: flex; flex-direction: column; justify-content: center;">
-                    <span style="font-size: 36px; font-weight: 800; color: #1e293b;">{{ $proyectosAsignados }}</span>
-                    <span style="font-size: 14px; font-weight: 600; color: #64748b;">Proyectos Activos</span>
-                </div>
-                <div style="background: white; padding: 24px; display: flex; flex-direction: column; justify-content: center;">
-                    <span style="font-size: 36px; font-weight: 800; color: #1e293b;">{{ $totalAprendices }}</span>
-                    <span style="font-size: 14px; font-weight: 600; color: #64748b;">Aprendices A cargo</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Evidencias Pending Card -->
-        <div class="glass-card stat-card-pending" style="padding: 32px; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; transition: transform 0.3s ease, box-shadow 0.3s ease;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div style="width: 50px; height: 50px; border-radius: 14px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px;">
-                    <i class="fas fa-file-signature"></i>
-                </div>
-                <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase;">Por Calificar</span>
-            </div>
-            <div>
-                <h3 style="font-size: 40px; font-weight: 800; margin-bottom: 4px;">{{ $evidenciasPendientes }}</h3>
-                <p style="font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.9);">Revisiones pendientes</p>
-            </div>
-            <a href="{{ route('instructor.proyectos') }}" style="margin-top: 20px; color: white; text-decoration: none; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                Ver todas <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-
-        <!-- Quick Info -->
-        <div class="glass-card" style="padding: 32px; background: #fff;">
-            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
-                <div style="width: 48px; height: 48px; border-radius: 50%; background: #eff6ff; color: #1d4ed8; display: flex; align-items: center; justify-content: center; font-size: 20px;">
-                    <i class="fas fa-info-circle"></i>
-                </div>
-                <h4 style="font-size: 16px; font-weight: 700; color: #1e293b;">Resumen Diario</h4>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                    <span style="font-size: 14px; color: #64748b; font-weight: 500;">Nuevas Postulaciones</span>
-                    <span style="font-size: 14px; font-weight: 700; color: var(--primary);">
-                        {{ $nuevasPostulaciones > 0 ? '+' . $nuevasPostulaciones : '0' }}
-                    </span>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span style="font-size: 14px; color: #64748b; font-weight: 500;">Siguientes Cierres</span>
-                    <span style="font-size: 14px; font-weight: 700; color: #64748b;">
-                        {{ $proximoCierre ? $proximoCierre->pro_fecha_finalizacion->diffForHumans() : 'Sin pendientes' }}
-                    </span>
-                </div>
-            </div>
+            <h2 class="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase italic leading-none italic">
+                PANEL DE <span class="text-emerald-500 block mt-2 text-6xl md:text-7xl">CONTROL</span>
+            </h2>
+            <p class="text-slate-400 font-bold text-lg max-w-2xl leading-relaxed uppercase italic italic opacity-70">
+                Sincronización táctica de talento humano e industria tecnológica.
+            </p>
         </div>
     </div>
 
-    <!-- PROYECTOS RECIENTES -->
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
-        <h2 style="font-size: 24px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 12px;">
-            <i class="fas fa-rocket" style="color: var(--primary);"></i> Gestión de Proyectos en Curso
-        </h2>
-        <a href="{{ route('instructor.proyectos') }}" class="btn" style="background: #fff; border: 1.5px solid var(--border); color: #64748b; font-weight: 700; font-size: 13px; border-radius: 12px;">
-            Ver todos los proyectos
-        </a>
-    </div>
+    <!-- Stats Bento Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 px-4 italic">
+        <!-- Projects Stat -->
+        <x-card class="group bg-slate-900 border-none shadow-2xl p-10 relative overflow-hidden transition-all hover:shadow-emerald-500/10 rounded-[3.5rem] italic" shadow="none">
+            <div class="absolute -right-12 -bottom-12 text-[12rem] text-white/5 transform -rotate-12 group-hover:rotate-0 transition-transform duration-1000 pointer-events-none italic">
+                <i class="fas fa-project-diagram italic"></i>
+            </div>
+            <div class="relative z-10 space-y-8 italic">
+                <div class="w-16 h-16 rounded-[1.5rem] bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-2xl italic shadow-inner border border-emerald-500/10 italic">
+                    <i class="fas fa-rocket italic font-bold"></i>
+                </div>
+                <div class="italic">
+                    <h3 class="text-6xl font-black text-white italic tracking-tighter leading-none italic">{{ str_pad($proyectosAsignados, 2, '0', STR_PAD_LEFT) }}</h3>
+                    <p class="text-emerald-500 font-black text-[10px] uppercase tracking-[0.4em] italic mt-4 italic opacity-80 italic">PROYECTOS VINCULADOS</p>
+                </div>
+            </div>
+        </x-card>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px;">
-        @forelse($proyectos as $p)
-            <div class="project-card-premium" style="background: white; border-radius: 28px; overflow: hidden; border: 1px solid #e2e8f0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column;">
-                <div style="height: 180px; position: relative;">
-                    <img src="{{ $p->imagen_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
-                    <div style="position: absolute; top: 16px; left: 16px; background: rgba(15, 118, 110, 0.9); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: 30px; color: white; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                        {{ $p->pro_categoria }}
+        <!-- Aprendices Stat -->
+        <x-card class="group border-none shadow-2xl p-10 relative overflow-hidden transition-all bg-white rounded-[3.5rem] italic" shadow="none">
+            <div class="absolute -right-12 -bottom-12 text-[12rem] text-slate-50 transform -rotate-12 group-hover:rotate-0 transition-transform duration-1000 pointer-events-none italic opacity-50">
+                <i class="fas fa-user-graduate italic"></i>
+            </div>
+            <div class="relative z-10 space-y-8 italic">
+                <div class="w-16 h-16 rounded-[1.5rem] bg-slate-50 flex items-center justify-center text-slate-900 text-2xl italic shadow-sm border-4 border-white italic">
+                    <i class="fas fa-users italic font-bold"></i>
+                </div>
+                <div class="italic">
+                    <h3 class="text-6xl font-black text-slate-900 italic tracking-tighter leading-none italic">{{ str_pad($totalAprendices, 2, '0', STR_PAD_LEFT) }}</h3>
+                    <p class="text-slate-400 font-black text-[10px] uppercase tracking-[0.4em] italic mt-4 italic opacity-60 italic">APRENDICES A CARGO</p>
+                </div>
+            </div>
+        </x-card>
+
+        <!-- Evidencias Stat -->
+        <x-card class="group bg-emerald-600 border-none shadow-2xl shadow-emerald-500/20 p-10 relative overflow-hidden transition-all hover:bg-emerald-700 rounded-[3.5rem] italic" shadow="none">
+            <div class="absolute -right-12 -bottom-12 text-[12rem] text-white/10 transform rotate-12 group-hover:rotate-6 transition-transform duration-1000 pointer-events-none italic">
+                <i class="fas fa-file-signature italic"></i>
+            </div>
+            <div class="relative z-10 h-full flex flex-col justify-between italic">
+                <div class="space-y-8 italic">
+                    <div class="w-16 h-16 rounded-[1.5rem] bg-white/20 flex items-center justify-center text-white text-2xl shadow-inner backdrop-blur-md border border-white/10 italic">
+                        <i class="fas fa-check-double italic font-bold"></i>
+                    </div>
+                    <div class="italic">
+                        <h3 class="text-6xl font-black text-white italic tracking-tighter leading-none italic">{{ str_pad($evidenciasPendientes, 2, '0', STR_PAD_LEFT) }}</h3>
+                        <p class="text-white/80 text-[10px] font-black uppercase tracking-[0.4em] italic mt-4 italic">EVIDENCIAS PENDIENTES</p>
                     </div>
                 </div>
-                
-                <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-                        <i class="fas fa-building" style="color: #64748b; font-size: 13px;"></i>
-                        <span style="font-size: 13px; font-weight: 700; color: #64748b;">{{ $p->empresa_nombre }}</span>
-                    </div>
-                    <h3 style="font-size: 19px; font-weight: 800; color: #1e293b; line-height: 1.4; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                        {{ $p->pro_titulo_proyecto }}
-                    </h3>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
-                        <div style="background: #f8fafc; padding: 12px; border-radius: 14px; text-align: center;">
-                            <span style="display: block; font-size: 18px; font-weight: 800; color: #1e293b;">{{ $p->postulaciones->where('pos_estado', 'Aprobada')->count() }}</span>
-                            <span style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase;">Aprobados</span>
-                        </div>
-                        <div style="background: #f8fafc; padding: 12px; border-radius: 14px; text-align: center;">
-                            <span style="display: block; font-size: 18px; font-weight: 800; color: #1e293b;">{{ $p->postulaciones->where('pos_estado', 'Pendiente')->count() }}</span>
-                            <span style="font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase;">Pendientes</span>
-                        </div>
-                    </div>
-
-                    <a href="{{ route('instructor.proyecto.detalle', $p->pro_id) }}" class="btn-primary" style="margin-top: auto; justify-content: center; padding: 14px; border-radius: 14px; background: #0f766e; text-decoration: none; display: flex; align-items: center; gap: 10px; color: white; font-weight: 700; transition: all 0.3s ease;">
-                        Gestionar <i class="fas fa-arrow-right" style="font-size: 13px;"></i>
+                <div class="pt-8 border-t border-white/10 mt-6 italic">
+                    <a href="{{ route('instructor.proyectos') }}" class="text-[9px] font-black text-white uppercase tracking-[0.3em] flex items-center gap-4 group/link italic italic">
+                        ACCIÓN REQUERIDA <i class="fas fa-arrow-right group-hover/link:translate-x-2 transition-transform italic"></i>
                     </a>
                 </div>
             </div>
-        @empty
-            <div class="glass-card" style="padding: 80px; text-align: center; grid-column: 1/-1;">
-                <div style="width: 100px; height: 100px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #cbd5e1; margin: 0 auto 24px;">
-                    <i class="fas fa-layer-group"></i>
+        </x-card>
+
+        <!-- Active Stat -->
+        <x-card class="group border-none shadow-2xl p-10 relative overflow-hidden transition-all bg-white rounded-[3.5rem] italic" shadow="none">
+            <div class="relative z-10 space-y-10 italic">
+                <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] italic border-b border-slate-100 pb-4 italic">RESUMEN DE RADAR</p>
+                <div class="space-y-6 italic">
+                    <div class="flex justify-between items-center italic">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">NUEVOS HOY</span>
+                        <x-badge class="bg-emerald-50 text-emerald-600 border-none text-[10px] font-black rounded-lg px-3 py-1 italic italic">
+                            +{{ str_pad($nuevasPostulaciones, 2, '0', STR_PAD_LEFT) }}
+                        </x-badge>
+                    </div>
+                    <div class="flex justify-between items-center italic">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">PRÓXIMO CIERRE</span>
+                        <span class="text-[10px] font-black text-slate-900 uppercase italic opacity-80 italic">
+                            {{ $proximoCierre ? $proximoCierre->pro_fecha_finalizacion->diffForHumans() : 'NINGUNO' }}
+                        </span>
+                    </div>
                 </div>
-                <h3 style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">Sin proyectos vigentes</h3>
-                <p style="color: #64748b; max-width: 400px; margin: 0 auto;">Actualmente no tienes proyectos asignados en fase de ejecución. Los nuevos proyectos aparecerán aquí.</p>
+                <div class="pt-6 mt-auto italic">
+                    <div class="w-full bg-slate-50 h-3 rounded-full overflow-hidden p-1 shadow-inner italic">
+                        <div class="bg-emerald-500 h-full w-2/3 rounded-full shadow-lg shadow-emerald-500/20 italic"></div>
+                    </div>
+                </div>
             </div>
-        @endforelse
+        </x-card>
+    </div>
+
+    <!-- Active Projects Section -->
+    <div class="space-y-12 px-4 italic">
+        <div class="flex items-center justify-between italic border-b border-slate-100 pb-10 italic">
+            <div class="flex items-center gap-6 italic">
+                <div class="w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-2xl italic rotate-6">
+                    <i class="fas fa-project-diagram text-xl font-bold italic"></i>
+                </div>
+                <div class="italic">
+                    <h3 class="text-3xl font-black text-slate-900 uppercase italic tracking-tighter italic leading-none">Frente de Operaciones</h3>
+                    <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-3 italic opacity-60 italic">GESTIÓN DE PROYECTOS BAJO SUPERVISIÓN TÉCNICA</p>
+                </div>
+            </div>
+            <a href="{{ route('instructor.proyectos') }}" class="group px-8 py-4 rounded-[1.5rem] bg-white border-4 border-slate-50 text-slate-400 font-black text-[10px] uppercase tracking-widest flex items-center gap-4 transition-all hover:bg-slate-900 hover:text-white shadow-xl italic italic">
+                VER EL NEXO COMPLETO <i class="fas fa-external-link group-hover:rotate-12 transition-transform italic text-emerald-500"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 italic">
+            @forelse($proyectos as $p)
+                <x-card class="group border-none shadow-xl hover:shadow-2xl transition-all duration-700 p-0 overflow-hidden bg-white rounded-[3.5rem] italic" shadow="none">
+                    <div class="p-10 space-y-10 italic">
+                        <div class="flex justify-between items-start gap-6 italic">
+                            <span class="bg-slate-900 text-white px-5 py-2 rounded-xl text-[9px] font-black tracking-widest uppercase italic shadow-2xl italic">PRO-{{ $p->pro_id }}</span>
+                            <x-badge class="bg-emerald-50 text-emerald-600 border-none py-2 px-5 text-[9px] font-black uppercase tracking-widest italic shadow-sm italic ring-1 ring-emerald-100 italic">{{ strtoupper($p->pro_categoria) }}</x-badge>
+                        </div>
+                        
+                        <div class="italic">
+                            <h4 class="text-2xl font-black text-slate-900 uppercase tracking-tighter italic leading-none group-hover:text-emerald-600 transition-colors italic">{{ $p->pro_titulo_proyecto }}</h4>
+                            <div class="flex items-center gap-4 mt-6 italic opacity-60 italic">
+                                <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-emerald-500 italic shadow-sm italic">
+                                    <i class="fas fa-building text-xs italic font-bold"></i>
+                                </div>
+                                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-black italic truncate italic">
+                                    {{ $p->empresa?->emp_nombre ?? 'ASOCIACIÓN TÉCNICA' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Technical Specs Bento -->
+                        <div class="grid grid-cols-2 gap-6 italic">
+                            <div class="bg-slate-50 p-6 rounded-[2rem] border-4 border-white shadow-xl text-center italic transition-colors group-hover:bg-emerald-50/30 italic">
+                                <span class="block text-3xl font-black text-slate-900 italic leading-none italic">{{ str_pad($p->postulaciones->where('pos_estado', 'Aprobada')->count(), 2, '0', STR_PAD_LEFT) }}</span>
+                                <span class="text-[9px] text-slate-300 font-black uppercase tracking-widest mt-3 block italic opacity-60 italic">ADMITIDOS</span>
+                            </div>
+                            <div class="bg-slate-50 p-6 rounded-[2rem] border-4 border-white shadow-xl text-center italic transition-colors group-hover:bg-blue-50/30 italic">
+                                <span class="block text-3xl font-black text-slate-900 italic leading-none italic">{{ str_pad($p->postulaciones->where('pos_estado', 'Pendiente')->count(), 2, '0', STR_PAD_LEFT) }}</span>
+                                <span class="text-[9px] text-slate-300 font-black uppercase tracking-widest mt-3 block italic opacity-60 italic">EN RADAR</span>
+                            </div>
+                        </div>
+
+                        <x-button href="{{ route('instructor.proyecto.detalle', $p->pro_id) }}" variant="secondary" class="w-full py-6 rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl border-4 border-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white hover:border-slate-800 transition-all italic active:scale-95 italic italic">
+                            COORDENADAS TÉCNICAS
+                        </x-button>
+                    </div>
+                </x-card>
+            @empty
+                <div class="col-span-full py-40 italic text-center text-slate-200 font-black uppercase tracking-[0.4em] text-lg opacity-40 italic border-8 border-dashed border-slate-50 rounded-[4rem] bg-slate-50/50 italic">
+                    <i class="fas fa-ghost text-8xl mb-8 block italic animate-pulse italic"></i>
+                    Sin Misiones Bajo Supervisión
+                </div>
+            @endforelse
+        </div>
     </div>
 </div>
-
-<style>
-    .glass-card {
-        background: #ffffff;
-        border: 1.5px solid #f1f5f9;
-        border-radius: 28px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.01);
-    }
-
-    .project-card-premium:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.03);
-        border-color: var(--primary-light);
-    }
-
-    .stat-card-main, .stat-card-pending {
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .stat-card-main:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.05);
-    }
-
-    .stat-card-pending:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 20px 40px rgba(245, 158, 11, 0.3);
-    }
-
-    .project-card-premium:hover .btn-primary {
-        background: var(--primary) !important;
-        transform: scale(1.02);
-    }
-
-    #current-time {
-        font-family: 'Outfit', sans-serif;
-    }
-</style>
-
-<script>
-    function updateDateTime() {
-        const now = new Date();
-        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        const dateStr = now.toLocaleDateString('es-ES', options);
-        document.getElementById('current-time').textContent = dateStr;
-    }
-    updateDateTime();
-</script>
 @endsection

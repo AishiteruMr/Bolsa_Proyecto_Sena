@@ -11,9 +11,18 @@ use App\Models\Postulacion;
 use App\Models\Empresa;
 use App\Models\Evidencia;
 use App\Models\Etapa;
+use App\Http\Requests\StoreProyectoRequest;
+use App\Http\Requests\UpdateProyectoRequest;
+use App\Services\PostulacionService;
 
 class EmpresaController extends Controller
 {
+    protected $postulacionService;
+
+    public function __construct(PostulacionService $postulacionService)
+    {
+        $this->postulacionService = $postulacionService;
+    }
     public function dashboard()
     {
         $nit = session('nit');
@@ -72,17 +81,8 @@ class EmpresaController extends Controller
         return view('empresa.crear-proyecto');
     }
 
-    public function guardarProyecto(Request $request)
+    public function guardarProyecto(StoreProyectoRequest $request)
     {
-        $request->validate([
-            'titulo'       => 'required|string|max:200',
-            'categoria'    => 'required|string|max:100',
-            'descripcion'  => 'required|string|max:500',
-            'requisitos'   => 'required|string|max:200',
-            'habilidades'  => 'required|string|max:200',
-            'fecha_publi'  => 'required|date',
-            'imagen'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
 
         $nit = session('nit');
         $imagenUrl = null;
@@ -125,17 +125,8 @@ class EmpresaController extends Controller
         return view('empresa.editar-proyecto', compact('proyecto'));
     }
 
-    public function actualizarProyecto(Request $request, int $id)
+    public function actualizarProyecto(UpdateProyectoRequest $request, int $id)
     {
-        $request->validate([
-            'titulo'      => 'required|string|max:200',
-            'categoria'   => 'required|string|max:100',
-            'descripcion' => 'required|string|max:500',
-            'requisitos'  => 'required|string|max:200',
-            'habilidades' => 'required|string|max:200',
-            'fecha_publi' => 'required|date',
-            'imagen'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
 
         $nit = session('nit');
         $proyecto = Proyecto::where('pro_id', $id)
@@ -239,7 +230,7 @@ class EmpresaController extends Controller
             })
             ->firstOrFail();
 
-        $postulacion->update(['pos_estado' => $request->estado]);
+        $this->postulacionService->updateStatus($id, $request->estado);
 
         return back()->with('success', 'Estado de postulación actualizado.');
     }

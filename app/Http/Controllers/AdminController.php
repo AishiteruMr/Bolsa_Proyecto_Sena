@@ -85,24 +85,14 @@ class AdminController extends Controller
     {
         $proyectos = Proyecto::with(['empresa', 'instructor.usuario'])
             ->orderByDesc('pro_id')
-            ->get()
-            ->map(function($proyecto) {
-                return (object)[
-                    'pro_id' => $proyecto->pro_id,
-                    'pro_titulo_proyecto' => $proyecto->pro_titulo_proyecto,
-                    'emp_nit' => $proyecto->emp_nit,
-                    'ins_usr_documento' => $proyecto->ins_usr_documento,
-                    'pro_estado' => $proyecto->pro_estado,
-                    'emp_nombre' => $proyecto->empresa->emp_nombre,
-                    'ins_nombre' => $proyecto->instructor ? $proyecto->instructor->ins_nombre : null,
-                ];
-            });
+            ->get();
 
         $instructores = Instructor::with('usuario')
             ->get()
             ->map(function($instructor) {
                 return (object)[
                     'ins_nombre' => $instructor->ins_nombre,
+                    'ins_apellido' => $instructor->ins_apellido,
                     'usr_documento' => $instructor->usuario->usr_documento,
                 ];
             });
