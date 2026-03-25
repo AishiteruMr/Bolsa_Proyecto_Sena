@@ -7,20 +7,16 @@ use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProyectoController;
-
+use App\Http\Controllers\HomeController;
 /*
 |--------------------------------------------------------------------------
 | Rutas públicas
 |--------------------------------------------------------------------------
 */
 
-Route::get('/debug-session', function() {
-    return response()->json(session()->all());
-});
 
-Route::get('/', function () {
-    return view('index');
-})->name('home');
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/nosotros', function () {
     return view('nosotros');
