@@ -105,13 +105,31 @@
 
             <section>
                 <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Ubicación del Proyecto (Opcional)
+                </h3>
+                
+                <div class="form-group">
+                    <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; display: block;">Arrastra el marcador para seleccionar la ubicación en el mapa</label>
+                    <div id="map" style="width: 100%; height: 350px; border-radius: 12px; border: 1px solid var(--border); overflow: hidden;"></div>
+                </div>
+
+                <!-- Campos ocultos para latitud y longitud -->
+                <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud') }}">
+                <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud') }}">
+            </section>
+
+            <section>
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-image" style="color: var(--primary);"></i> Media del Proyecto
                 </h3>
-                <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 2rem; text-align: center; background: var(--bg-main); position: relative; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
-                    <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
-                    <p style="font-size: 0.9rem; color: var(--text-main); font-weight: 600;">Haz clic o arrastra una imagen aquí</p>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Formatos soportados: JPG, PNG (Max 2MB)</p>
-                    <input type="file" name="imagen" class="form-control" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                <div id="image-upload-container" style="border: 2px dashed var(--border); border-radius: 12px; padding: 2rem; text-align: center; background: var(--bg-main); position: relative; transition: all 0.3s ease; overflow: hidden;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+                    <div id="image-upload-content">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                        <p style="font-size: 0.9rem; color: var(--text-main); font-weight: 600;">Haz clic o arrastra una imagen aquí</p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Formatos soportados: JPG, PNG (Max 2MB)</p>
+                    </div>
+                    <img id="image-preview" src="" style="display: none; max-width: 100%; max-height: 250px; border-radius: 8px; margin: 0 auto; position: relative; z-index: 10;">
+                    <input type="file" name="imagen" id="imagen-input" class="form-control" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 20;">
                 </div>
             </section>
 
@@ -146,6 +164,83 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     fechaPubliInput.addEventListener('change', calcularFechas);
     calcularFechas();
+});
+</script>
+
+<!-- Scripts de Leaflet (Gratis y sin API Keys) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ---- Lógica de Leaflet (OpenStreetMap) ----
+    try {
+        let defaultLat = 4.6097;
+        let defaultLng = -74.0817;
+
+        const latInput = document.getElementById('latitud');
+        const lngInput = document.getElementById('longitud');
+
+        if(latInput.value && lngInput.value) {
+            defaultLat = parseFloat(latInput.value);
+            defaultLng = parseFloat(lngInput.value);
+        }
+
+        const map = L.map('map').setView([defaultLat, defaultLng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        const marker = L.marker([defaultLat, defaultLng], {
+            draggable: true
+        }).addTo(map);
+
+        function actualizarInputs(lat, lng) {
+            latInput.value = lat;
+            lngInput.value = lng;
+        }
+
+        marker.on('dragend', function(e) {
+            const position = marker.getLatLng();
+            actualizarInputs(position.lat, position.lng);
+        });
+
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            actualizarInputs(e.latlng.lat, e.latlng.lng);
+        });
+
+        // Asegurar que el mapa tome el tamaño correcto
+        setTimeout(() => { map.invalidateSize(); }, 500);
+        
+    } catch (error) {
+        console.error('Leaflet init error:', error);
+    }
+
+    // ---- Lógica para vista previa de imagen ----
+    const imagenInput = document.getElementById('imagen-input');
+    const imagePreview = document.getElementById('image-preview');
+    const uploadContent = document.getElementById('image-upload-content');
+
+    if(imagenInput) {
+        imagenInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    uploadContent.style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+                uploadContent.style.display = 'block';
+                imagePreview.src = '';
+            }
+        });
+    }
 });
 </script>
 @endsection

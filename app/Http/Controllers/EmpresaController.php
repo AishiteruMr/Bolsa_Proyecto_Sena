@@ -106,6 +106,8 @@ class EmpresaController extends Controller
             'pro_duracion_estimada'      => $fechaPubli->diffInDays($fechaFinalizacion),
             'pro_estado'                 => 'Activo',
             'pro_imagen_url'             => $imagenUrl,
+            'pro_latitud'                => $request->latitud,
+            'pro_longitud'               => $request->longitud,
         ]);
 
         Log::info('Proyecto creado por empresa', ['nit' => cnit(), 'titulo' => $request->titulo]);
@@ -151,6 +153,8 @@ class EmpresaController extends Controller
             'pro_fecha_publi'            => $request->fecha_publi,
             'pro_fecha_finalizacion'     => $fechaFinalizacion,
             'pro_duracion_estimada'      => $fechaPubli->diffInDays($fechaFinalizacion),
+            'pro_latitud'                => $request->latitud,
+            'pro_longitud'               => $request->longitud,
         ];
 
         if ($request->hasFile('imagen')) {
