@@ -151,3 +151,4 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::post('/notificaciones/{id}/leer', [NotificacionController::class, 'leer'])->name('notificaciones.leer');
     Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'leerTodas'])->name('notificaciones.leer_todas');
 });
+?>
