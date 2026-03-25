@@ -25,7 +25,6 @@ class AdminController extends Controller
             'proyectos'     => Proyecto::count(),
             'pendientes'    => Proyecto::where('pro_estado', 'Inactivo')->count(),
             'usuarios'      => User::count(),
-            'activos'       => User::where('usr_estado', 1)->count(), // Suponiendo que usr_estado existe
         ];
 
         $proyectosRecientes = Proyecto::with('empresa')

@@ -65,8 +65,8 @@
                             <select name="ins_usr_documento" class="form-control" style="font-size:13px; flex:1; padding: 8px 12px; background: #fff;" required>
                                 <option value="" disabled selected>Elegir Instructor...</option>
                                 @foreach($instructores as $ins)
-                                    <option value="{{ $ins->usr_documento }}" {{ $p->ins_usr_documento == $ins->usr_documento ? 'selected' : '' }}>
-                                        {{ $ins->ins_nombre }}
+                                    <option value="{{ $ins->usuario->usr_documento ?? '' }}" {{ $p->ins_usr_documento == ($ins->usuario->usr_documento ?? '') ? 'selected' : '' }}>
+                                        {{ $ins->ins_nombre }} {{ $ins->ins_apellido }}
                                     </option>
                                 @endforeach
                             </select>
