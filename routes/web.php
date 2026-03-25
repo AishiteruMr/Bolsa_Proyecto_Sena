@@ -17,7 +17,6 @@ use App\Http\Controllers\ProyectoController;
 */
 
 
-feature-miguel
 Route::get('/', [HomeController::class, 'index'])->name('home');
 =======
 
