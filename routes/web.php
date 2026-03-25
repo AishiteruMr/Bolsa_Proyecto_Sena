@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\AuthController;
@@ -16,10 +17,14 @@ use App\Http\Controllers\ProyectoController;
 */
 
 
+feature-miguel
+Route::get('/', [HomeController::class, 'index'])->name('home');
+=======
 
 Route::get('/', function () {
     return view('index');
 })->name('home');
+
 
 Route::get('/nosotros', function () {
     return view('nosotros');
