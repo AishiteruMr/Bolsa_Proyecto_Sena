@@ -12,17 +12,18 @@
 
     <style>
         :root {
-            --primary: #39a900;
-            --primary-light: #4cc115;
-            --primary-soft: rgba(57, 169, 0, 0.1);
-            --secondary: #2c3e50;
-            --bg: #f8fafc;
+            --primary: #3EB489;
+            --primary-light: #52c89a;
+            --primary-dark: #298564;
+            --primary-soft: rgba(62, 180, 137, 0.12);
+            --secondary: #264653;
+            --bg: #E0F2F1;
             --surface: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-            --shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --text: #000000;
+            --text-light: #4a6572;
+            --border: #b2dfdb;
+            --shadow-sm: 0 1px 3px rgba(38,70,83,0.08);
+            --shadow: 0 10px 15px -3px rgba(38,70,83,0.12), 0 4px 6px -2px rgba(38,70,83,0.06);
             --radius-sm: 8px;
             --radius: 16px;
             --sidebar-w: 280px;
@@ -39,78 +40,83 @@
             overflow-x: hidden;
         }
 
-        /* ── SIDEBAR (Modern Glassmorphism) ── */
+        /* ── SIDEBAR ── */
         .sidebar {
             width: var(--sidebar-w);
-            background: var(--secondary);
+            background: linear-gradient(180deg, #264653 0%, #1a323d 100%);
             color: #fff;
             position: fixed; top: 0; left: 0; height: 100vh;
             display: flex; flex-direction: column;
             z-index: 100;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 10px 0 30px rgba(0,0,0,0.05);
+            box-shadow: 10px 0 40px rgba(38,70,83,0.25);
         }
 
         .sidebar-logo {
             padding: 32px 24px;
             display: flex; align-items: center; gap: 14px;
+            border-bottom: 1px solid rgba(62,180,137,0.2);
         }
         .sidebar-logo img { 
             width: 44px; height: 44px; 
             background: #fff; padding: 6px; 
             border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .sidebar-logo span { 
             font-size: 18px; font-weight: 700; 
             line-height: 1.1; letter-spacing: -0.5px;
+            color: #fff;
         }
 
         .sidebar-nav { flex: 1; padding: 20px 16px; overflow-y: auto; }
         
         .nav-label { 
             display: block;
-            font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.4); 
-            text-transform: uppercase; letter-spacing: 1.5px; 
-            margin: 24px 12px 12px;
+            font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.35); 
+            text-transform: uppercase; letter-spacing: 2px; 
+            margin: 24px 12px 10px;
         }
 
         .nav-item {
             display: flex; align-items: center; gap: 14px;
-            padding: 14px 16px; 
-            color: rgba(255,255,255,0.6); 
-            font-size: 15px; font-weight: 500;
+            padding: 13px 16px; 
+            color: rgba(255,255,255,0.65); 
+            font-size: 14.5px; font-weight: 500;
             border-radius: 12px;
             transition: all 0.3s ease;
             margin-bottom: 4px;
+            text-decoration: none;
         }
-        .nav-item i { font-size: 18px; width: 24px; text-align: center; }
+        .nav-item i { font-size: 17px; width: 22px; text-align: center; }
         .nav-item:hover { 
-            background: rgba(255,255,255,0.05); 
-            color: #fff; 
+            background: rgba(62,180,137,0.15); 
+            color: #3EB489; 
             transform: translateX(4px);
         }
         .nav-item.active { 
-            background: var(--primary); 
+            background: linear-gradient(135deg, #3EB489 0%, #298564 100%);
             color: #fff; 
-            box-shadow: 0 8px 16px rgba(57, 169, 0, 0.3);
+            box-shadow: 0 6px 20px rgba(62,180,137,0.35);
         }
 
         .sidebar-footer { 
-            padding: 24px; 
-            background: rgba(0,0,0,0.1);
-            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 20px 24px; 
+            background: rgba(0,0,0,0.15);
+            border-top: 1px solid rgba(62,180,137,0.15);
         }
         .user-info { display: flex; align-items: center; gap: 12px; }
         .user-avatar { 
             width: 40px; height: 40px; 
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            background: linear-gradient(135deg, #3EB489 0%, #298564 100%);
             border-radius: 10px; 
             display: flex; align-items: center; justify-content: center;
             color: #fff; font-weight: 700; font-size: 16px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(62,180,137,0.3);
         }
         .user-name { font-size: 14px; font-weight: 600; color: #fff; }
-        .user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+        .user-role { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; }
 
         /* ── MAIN CONTENT ── */
         .main { 
@@ -121,14 +127,20 @@
         }
 
         .topbar {
-            height: 80px; background: rgba(248, 250, 252, 0.8);
-            backdrop-filter: blur(12px);
+            height: 76px; 
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(38,70,83,0.08);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 40px; position: sticky; top: 0; z-index: 10;
+            box-shadow: 0 2px 12px rgba(38,70,83,0.06);
         }
-        .topbar-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+        .topbar-title { 
+            font-size: 20px; font-weight: 700; letter-spacing: -0.5px;
+            color: #000;
+        }
 
-        .page-content { padding: 0 40px 40px; overflow-y: auto; }
+        .page-content { padding: 32px 40px 48px; overflow-y: auto; }
 
         /* ── MODERN CARDS ── */
         .card {
@@ -139,7 +151,22 @@
             border: 1px solid var(--border);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .card:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(0,0,0,0.06); }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 16px 32px rgba(38,70,83,0.1); }
+
+        /* ── FORM CONTROLS ── */
+        .form-control {
+            width: 100%; padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px; font-size: 14px;
+            font-family: 'Outfit', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            color: var(--text);
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(62,180,137,0.15);
+        }
 
         /* ── STATS BENTO ── */
         .stat-grid {
@@ -155,33 +182,35 @@
             text-align: left;
             position: relative; overflow: hidden;
             box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease;
         }
+        .stat-card:hover { transform: translateY(-3px); }
         .stat-card::after {
             content: ''; position: absolute; top:0; right:0;
             width: 80px; height: 80px;
             background: var(--primary-soft);
-            border-radius: 0 0 0 100%;
+            border-radius: 0 var(--radius) 0 100%;
             z-index: 0;
         }
-        .stat-card h3 { font-size: 32px; font-weight: 800; color: var(--text); position: relative; z-index: 1; }
-        .stat-card p { font-size: 14px; font-weight: 500; color: var(--text-light); margin-top: 4px; }
+        .stat-card h3 { font-size: 34px; font-weight: 800; color: var(--primary-dark); position: relative; z-index: 1; }
+        .stat-card p { font-size: 13px; font-weight: 500; color: var(--text-light); margin-top: 6px; }
 
         /* ── TABLES ── */
         .table-container { 
             width: 100%; overflow-x: auto; 
-            border-radius: 12px; border: 1px solid var(--border);
+            border-radius: 14px; border: 1px solid var(--border);
             background: #fff;
         }
         table { width: 100%; border-collapse: collapse; }
         th { 
-            background: #f1f5f9; padding: 16px 20px;
-            text-align: left; font-size: 12px; font-weight: 600;
-            color: var(--text-light); text-transform: uppercase;
-            letter-spacing: 0.5px;
+            background: #E0F2F1; padding: 14px 20px;
+            text-align: left; font-size: 11px; font-weight: 700;
+            color: #264653; text-transform: uppercase;
+            letter-spacing: 0.8px;
         }
-        td { padding: 16px 20px; font-size: 14px; border-bottom: 1px solid var(--border); }
+        td { padding: 15px 20px; font-size: 14px; border-bottom: 1px solid var(--border); color: var(--text); }
         tr:last-child td { border-bottom: none; }
-        tr:hover td { background: var(--bg); }
+        tr:hover td { background: rgba(62,180,137,0.04); }
 
         /* ── BUTTONS ── */
         .btn {
@@ -189,30 +218,55 @@
             font-size: 14px; font-weight: 600;
             cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none; display: inline-flex; align-items: center; gap: 8px;
+            font-family: 'Outfit', sans-serif;
+            text-decoration: none;
         }
-        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(57, 169, 0, 0.2); }
-        .btn-primary:hover { background: var(--primary-light); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(57, 169, 0, 0.3); }
+        .btn-primary { 
+            background: linear-gradient(135deg, #3EB489 0%, #298564 100%); 
+            color: #fff; 
+            box-shadow: 0 4px 14px rgba(62,180,137,0.3); 
+        }
+        .btn-primary:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 24px rgba(62,180,137,0.45); 
+            filter: brightness(1.05);
+        }
         
-        .btn-outline { background: #fff; border: 2px solid var(--primary); color: var(--primary); }
-        .btn-outline:hover { background: var(--primary); color: #fff; }
+        .btn-outline { 
+            background: #fff; 
+            border: 2px solid #3EB489; 
+            color: #298564; 
+        }
+        .btn-outline:hover { 
+            background: #3EB489; 
+            color: #fff; 
+            border-color: #3EB489;
+        }
+
+        .btn-sm { padding: 7px 16px; font-size: 13px; border-radius: 8px; }
 
         /* ── BADGES ── */
         .badge {
-            padding: 6px 14px; border-radius: 8px;
-            font-size: 12px; font-weight: 600;
+            padding: 5px 12px; border-radius: 20px;
+            font-size: 11.5px; font-weight: 700;
+            display: inline-block; letter-spacing: 0.3px;
         }
-        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-success { background: rgba(62,180,137,0.15); color: #298564; border: 1px solid rgba(62,180,137,0.3); }
         .badge-warning { background: #fef9c3; color: #854d0e; }
         .badge-danger { background: #fee2e2; color: #991b1b; }
-        .badge-info { background: #e0f2fe; color: #075985; }
+        .badge-info { background: #E0F2F1; color: #264653; border: 1px solid #b2dfdb; }
 
         /* ── ALERTS ── */
         .alert { 
-            padding: 16px 24px; border-radius: 12px; margin-bottom: 24px;
-            font-size: 15px; font-weight: 500;
-            animation: slideIn 0.5s ease;
+            padding: 14px 20px; border-radius: 12px; margin-bottom: 20px;
+            font-size: 14px; font-weight: 500;
+            animation: slideIn 0.4s ease;
+            display: flex; align-items: center; gap: 10px;
         }
-        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .alert-success { background: rgba(62,180,137,0.12); color: #298564; border: 1px solid rgba(62,180,137,0.25); }
+        .alert-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .alert-warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+        @keyframes slideIn { from { transform: translateY(-16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         .notification-bell:hover { color: var(--primary) !important; transform: scale(1.1); }
 
@@ -263,34 +317,20 @@
     <div class="main">
         <header class="topbar">
             <span class="topbar-title">@yield('page-title', 'Dashboard')</span>
-            <div class="topbar-right" style="display: flex; align-items: center; gap: 20px;">
-                @if(session('usr_id'))
-                    @php
-                        $user = \App\Models\User::find(session('usr_id'));
-                        $unreadCount = $user ? $user->unreadNotifications->count() : 0;
-                    @endphp
-                    <a href="{{ route('notificaciones.index') }}" class="notification-bell" style="position: relative; color: var(--text-light); font-size: 20px; transition: all 0.3s ease;">
-                        <i class="far fa-bell"></i>
-                        @if($unreadCount > 0)
-                            <span style="position: absolute; top: -5px; right: -5px; background: #e74c3c; color: #fff; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg);">
-                                {{ $unreadCount > 9 ? '9+' : $unreadCount }}
-                            </span>
-                        @endif
-                    </a>
-                @endif
+            <div class="topbar-right">
                 <span style="font-size:13px; color:#666;">{{ now()->format('d/m/Y') }}</span>
             </div>
         </header>
 
         <div class="page-content">
             @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
+                <div class="alert alert-success">✅ {{ session('success') }}</div>
             @endif
             @if(session('error'))
-                <div class="alert alert-error">{{ session('error') }}</div>
+                <div class="alert alert-error">❌ {{ session('error') }}</div>
             @endif
             @if(session('warning'))
-                <div class="alert alert-warning">{{ session('warning') }}</div>
+                <div class="alert alert-warning">⚠️ {{ session('warning') }}</div>
             @endif
             @if($errors->any())
                 <div class="alert alert-error">

@@ -24,9 +24,6 @@
             <h2 style="font-size:28px; font-weight:800; letter-spacing: -1px;">Gestión de Proyectos</h2>
             <p style="color:var(--text-light); font-size:15px; margin-top:4px;">Supervisa y asigna instructores a los proyectos publicados.</p>
         </div>
-        <a href="{{ route('admin.proyectos.exportar') }}" class="btn btn-primary" style="display: flex; align-items: center; gap: 8px; padding: 12px 24px;">
-            <i class="fas fa-file-csv"></i> Descargar Reporte CSV
-        </a>
     </div>
 
     <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:24px;">
@@ -68,8 +65,8 @@
                             <select name="ins_usr_documento" class="form-control" style="font-size:13px; flex:1; padding: 8px 12px; background: #fff;" required>
                                 <option value="" disabled selected>Elegir Instructor...</option>
                                 @foreach($instructores as $ins)
-                                    <option value="{{ $ins->usr_documento }}" {{ $p->ins_usr_documento == $ins->usr_documento ? 'selected' : '' }}>
-                                        {{ $ins->ins_nombre }}
+                                    <option value="{{ $ins->usuario->usr_documento ?? '' }}" {{ $p->ins_usr_documento == ($ins->usuario->usr_documento ?? '') ? 'selected' : '' }}>
+                                        {{ $ins->ins_nombre }} {{ $ins->ins_apellido }}
                                     </option>
                                 @endforeach
                             </select>

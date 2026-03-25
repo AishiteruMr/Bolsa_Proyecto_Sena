@@ -173,25 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
 
-        #btn-cargar-ubicacion {
-            padding: 10px 16px;
-            min-width: 44px;
-            white-space: nowrap;
-        }
-
-        #btn-cargar-ubicacion:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-    `;
-    document.head.appendChild(style);
 </script>
 
 <style>
@@ -207,4 +189,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 </style>
-@endsection
+

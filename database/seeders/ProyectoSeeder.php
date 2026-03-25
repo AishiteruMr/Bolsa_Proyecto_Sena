@@ -11,14 +11,14 @@ class ProyectoSeeder extends Seeder
     public function run(): void
     {
         $emp_nit = 12345475784;
-        $ins_doc = 20123;
+        $ins_doc = 3;
 
         $proyectos = [
             [
                 'pro_titulo_proyecto' => 'Sistema de Gestión de Inventarios Inteligente',
                 'pro_descripcion' => 'Desarrollo de una plataforma web para el control de stock en tiempo real utilizando Laravel y Vue.js. El sistema debe incluir alertas de bajo inventario y reportes predictivos.',
                 'pro_categoria' => 'Software',
-                'pro_estado' => 'Inactivo',
+                'pro_estado' => 'Activo',
                 'pro_duracion_estimada' => 90,
                 'pro_requisitos_especificos' => 'Conocimientos en PHP, Laravel, y bases de datos relacionales.',
                 'pro_habilidades_requerida' => 'Programación Web, SQL, Trabajo en equipo',
@@ -28,7 +28,7 @@ class ProyectoSeeder extends Seeder
                 'pro_titulo_proyecto' => 'Rediseño de Identidad Visual Corp',
                 'pro_descripcion' => 'Creación de un manual de identidad corporativa completo, incluyendo logo, paleta de colores, tipografía y aplicaciones en papelería para una empresa de tecnología.',
                 'pro_categoria' => 'Diseño',
-                'pro_estado' => 'Inactivo',
+                'pro_estado' => 'Activo',
                 'pro_duracion_estimada' => 45,
                 'pro_requisitos_especificos' => 'Manejo avanzado de Adobe Illustrator y Photoshop.',
                 'pro_habilidades_requerida' => 'Diseño Gráfico, Branding, Creatividad',
@@ -38,7 +38,7 @@ class ProyectoSeeder extends Seeder
                 'pro_titulo_proyecto' => 'Campaña de Marketing Digital "SENA 2026"',
                 'pro_descripcion' => 'Diseño y ejecución de una estrategia de redes sociales para aumentar el engagement en Instagram y LinkedIn. Incluye pauta digital y creación de contenido.',
                 'pro_categoria' => 'Marketing',
-                'pro_estado' => 'Inactivo',
+                'pro_estado' => 'Activo',
                 'pro_duracion_estimada' => 60,
                 'pro_requisitos_especificos' => 'Certificación en Google Ads o Meta Blueprint preferible.',
                 'pro_habilidades_requerida' => 'Copywriting, Analytics, Estrategia Digital',
@@ -48,7 +48,7 @@ class ProyectoSeeder extends Seeder
                 'pro_titulo_proyecto' => 'App Móvil para Control de Asistencia',
                 'pro_descripcion' => 'Creación de una aplicación móvil híbrida (Flutter/React Native) para que el personal pueda registrar su entrada y salida mediante geolocalización.',
                 'pro_categoria' => 'Software',
-                'pro_estado' => 'Inactivo',
+                'pro_estado' => 'Activo',
                 'pro_duracion_estimada' => 120,
                 'pro_requisitos_especificos' => 'Experiencia previa con frameworks móviles.',
                 'pro_habilidades_requerida' => 'Mobile Development, APIs REST, Firebase',
@@ -58,7 +58,7 @@ class ProyectoSeeder extends Seeder
                 'pro_titulo_proyecto' => 'Documental Institucional "Talento de Oro"',
                 'pro_descripcion' => 'Producción audiovisual de 15 minutos capturando las historias de éxito de los aprendices SENA en la industria. Requiere pre-producción, rodaje y edición.',
                 'pro_categoria' => 'Media',
-                'pro_estado' => 'Inactivo',
+                'pro_estado' => 'Activo',
                 'pro_duracion_estimada' => 75,
                 'pro_requisitos_especificos' => 'Conocimientos en edición de video (Premiere/DaVinci Resolve).',
                 'pro_habilidades_requerida' => 'Edición de Video, Fotografía, Narrativa Audiovisual',
@@ -68,7 +68,7 @@ class ProyectoSeeder extends Seeder
                 'pro_titulo_proyecto' => 'Plataforma E-commerce para Artesanos',
                 'pro_descripcion' => 'Desarrollo de una tienda en línea para que artesanos locales puedan vender sus productos a nivel nacional. Implementación de pasarelas de pago.',
                 'pro_categoria' => 'Software',
-                'pro_estado' => 'Inactivo',
+                'pro_estado' => 'Activo',
                 'pro_duracion_estimada' => 100,
                 'pro_requisitos_especificos' => 'Entendimiento de flujos de pago y seguridad web.',
                 'pro_habilidades_requerida' => 'Web Development, UX/UI, Pasarelas de Pago',
@@ -78,7 +78,7 @@ class ProyectoSeeder extends Seeder
                 'pro_titulo_proyecto' => 'Automatización de Procesos con Python',
                 'pro_descripcion' => 'Creación de scripts para automatizar la extracción de datos de reportes Excel y su carga en CRM corporativo.',
                 'pro_categoria' => 'Software',
-                'pro_estado' => 'Inactivo',
+                'pro_estado' => 'Activo',
                 'pro_duracion_estimada' => 30,
                 'pro_requisitos_especificos' => 'Dominio de Python (Pandas, Openpyxl).',
                 'pro_habilidades_requerida' => 'Python, Automatización, Ciencia de Datos',
@@ -88,7 +88,7 @@ class ProyectoSeeder extends Seeder
                 'pro_titulo_proyecto' => 'Modelado 3D para Planta Industrial',
                 'pro_descripcion' => 'Modelado tridimensional de la nueva ala de producción para simulaciones de seguridad y eficiencia logística.',
                 'pro_categoria' => 'Diseño',
-                'pro_estado' => 'Inactivo',
+                'pro_estado' => 'Activo',
                 'pro_duracion_estimada' => 80,
                 'pro_requisitos_especificos' => 'Conocimiento en AutoCAD o Blender.',
                 'pro_habilidades_requerida' => 'Modelado 3D, Planimetría, Renderizado',

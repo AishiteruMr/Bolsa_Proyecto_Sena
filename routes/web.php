@@ -1,15 +1,13 @@
 <?php
 
-use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AprendizController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProyectoController;
-
+use App\Http\Controllers\HomeController;
 /*
 |--------------------------------------------------------------------------
 | Rutas públicas
@@ -19,6 +17,7 @@ use App\Http\Controllers\ProyectoController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/nosotros', function () {
     return view('nosotros');
@@ -135,13 +134,5 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::post('/proyectos/{id}/estado', [AdminController::class, 'cambiarEstadoProyecto'])->name('proyectos.estado');
     Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])
     ->name('proyectos.asignar');
-    Route::get('/exportar/proyectos', [AdminController::class, 'exportarProyectos'])->name('proyectos.exportar');
     
-});
-
-// Rutas compartidas para todos los usuarios autenticados
-Route::middleware(['auth.custom'])->group(function () {
-    Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
-    Route::post('/notificaciones/{id}/leer', [NotificacionController::class, 'leer'])->name('notificaciones.leer');
-    Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'leerTodas'])->name('notificaciones.leer_todas');
 });
