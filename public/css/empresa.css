@@ -52,7 +52,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #34d399, #10b981);
+    background: linear-gradient(135deg, #3EB489, #298564);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -83,7 +83,7 @@
 }
 
 .postulante-program i {
-    color: #34d399;
+    color: #3EB489;
     margin-right: 6px;
 }
 
