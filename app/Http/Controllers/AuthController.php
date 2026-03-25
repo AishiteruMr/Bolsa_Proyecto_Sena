@@ -184,7 +184,7 @@ class AuthController extends Controller
             $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
         });
 
-        return redirect()->route('login')->with('success', 'Registro exitoso. Ya puedes iniciar sesión.');
+        return redirect()->route('login')->with('success', '✅ Registro exitoso. Ya puedes iniciar sesión.');
     }
 
     // ─── REGISTRO INSTRUCTOR ─────────────────────────────────────────────────────
@@ -241,7 +241,7 @@ class AuthController extends Controller
             $this->enviarCorreoBienvenida($request->correo, $request->nombre_empresa, '');
         });
 
-        return redirect()->route('login')->with('success', 'Empresa registrada exitosamente. Ya puedes iniciar sesión.');
+        return redirect()->route('login')->with('success', '✅ Empresa registrada exitosamente. Ya puedes iniciar sesión.');
     }
 
     // ─── HELPERS PRIVADOS ────────────────────────────────────────────────────────
@@ -348,7 +348,7 @@ class AuthController extends Controller
         // Enviar correo
         try {
             Mail::to($correo)->send(new RecuperarContraseña($nombre, $token, $correo));
-            return back()->with('success', 'Se envió un enlace de recuperación a tu correo. Revisa tu bandeja de entrada.');
+            return back()->with('success', '✅ Se envió un enlace de recuperación a tu correo. Revisa tu bandeja de entrada.');
         } catch (\Exception $e) {
             Log::error('Error al enviar correo de recuperación: ' . $e->getMessage());
             return back()->with('error', 'Error al enviar el correo. Intenta más tarde.');
@@ -442,6 +442,6 @@ class AuthController extends Controller
         // Eliminar token usado
         DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
-        return redirect()->route('login')->with('success', 'Contraseña actualizada correctamente. Ya puedes iniciar sesión.');
+        return redirect()->route('login')->with('success', '✅ Contraseña actualizada correctamente. Ya puedes iniciar sesión.');
     }
 }
