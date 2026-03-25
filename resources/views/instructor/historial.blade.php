@@ -51,7 +51,7 @@
                         <div style="display: grid; gap: 8px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <i class="fas fa-building" style="color: var(--primary); width: 14px;"></i>
-                                <span>{{ $proyecto->emp_nombre }}</span>
+                                <span>{{ $proyecto->empresa_nombre }}</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <i class="fas fa-tag" style="color: var(--primary); width: 14px;"></i>
@@ -61,11 +61,11 @@
 
                         <div style="background: var(--bg-main); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: center;">
                             <div>
-                                <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin: 0;">{{ $proyecto->total_aprendices }}</p>
+                                <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin: 0;">{{ $proyecto->countPostulaciones() }}</p>
                                 <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Postulaciones</p>
                             </div>
                             <div style="border-left: 1px solid var(--border);">
-                                <p style="font-size: 1.1rem; font-weight: 700; color: #10b981; margin: 0;">{{ $proyecto->aprendices_aprobados }}</p>
+                                <p style="font-size: 1.1rem; font-weight: 700; color: #10b981; margin: 0;">{{ $proyecto->countPostulantesAprobados() }}</p>
                                 <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Aprobadas</p>
                             </div>
                         </div>

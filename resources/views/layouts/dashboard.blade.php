@@ -9,7 +9,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <link rel="stylesheet" href="{{ asset('css/Layts.dashboard.css') }}">
+
     @yield('styles')
 </head>
 <body>
@@ -51,20 +53,34 @@
     <div class="main">
         <header class="topbar">
             <span class="topbar-title">@yield('page-title', 'Dashboard')</span>
-            <div class="topbar-right">
+            <div class="topbar-right" style="display: flex; align-items: center; gap: 20px;">
+                @if(session('usr_id'))
+                    @php
+                        $user = \App\Models\User::find(session('usr_id'));
+                        $unreadCount = $user ? $user->unreadNotifications->count() : 0;
+                    @endphp
+                    <a href="{{ route('notificaciones.index') }}" class="notification-bell" style="position: relative; color: var(--text-light); font-size: 20px; transition: all 0.3s ease;">
+                        <i class="far fa-bell"></i>
+                        @if($unreadCount > 0)
+                            <span style="position: absolute; top: -5px; right: -5px; background: #e74c3c; color: #fff; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg);">
+                                {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                            </span>
+                        @endif
+                    </a>
+                @endif
                 <span style="font-size:13px; color:#666;">{{ now()->format('d/m/Y') }}</span>
             </div>
         </header>
 
         <div class="page-content">
             @if(session('success'))
-                <div class="alert alert-success">✅ {{ session('success') }}</div>
+                <div class="alert alert-success">{{ session('success') }}</div>
             @endif
             @if(session('error'))
-                <div class="alert alert-error">❌ {{ session('error') }}</div>
+                <div class="alert alert-error">{{ session('error') }}</div>
             @endif
             @if(session('warning'))
-                <div class="alert alert-warning">⚠️ {{ session('warning') }}</div>
+                <div class="alert alert-warning">{{ session('warning') }}</div>
             @endif
             @if($errors->any())
                 <div class="alert alert-error">

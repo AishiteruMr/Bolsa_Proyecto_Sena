@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('proyecto', function (Blueprint $table) {
-            $table->string('pro_ubicacion', 255)->nullable()->after('pro_categoria');
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -21,8 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('proyecto', function (Blueprint $table) {
-            $table->dropColumn(['pro_ubicacion', 'pro_fecha_finalizacion']);
-        });
+        Schema::dropIfExists('notifications');
     }
 };
