@@ -15,6 +15,8 @@ use App\Models\Aprendiz;
 use App\Models\Etapa;
 use App\Models\Evidencia;
 use App\Models\User;
+use App\Notifications\PostulacionActualizada;
+use App\Notifications\EvidenciaCalificada;
 
 class InstructorController extends Controller
 {
@@ -245,22 +247,28 @@ class InstructorController extends Controller
 
         $postulacion->update(['pos_estado' => $request->estado]);
 
-        // Enviar correo al aprendiz si se aprueba o rechaza
         if (in_array($request->estado, ['Aprobada', 'Rechazada'])) {
             try {
                 $aprendiz = $postulacion->aprendiz()->with('usuario')->first();
                 $proyecto = $postulacion->proyecto;
                 
                 if ($aprendiz && $proyecto) {
+                    // Notificación por Correo
                     Mail::to($aprendiz->usuario->usr_correo)
                         ->send(new PostulacionEstadoCambiado(
                             $aprendiz->apr_nombre,
                             $proyecto->pro_titulo_proyecto,
                             $request->estado
                         ));
+
+                    // Notificación interna (DB)
+                    $aprendiz->usuario->notify(new PostulacionActualizada(
+                        $proyecto->pro_titulo_proyecto,
+                        $request->estado
+                    ));
                 }
             } catch (\Exception $e) {
-                Log::error('Error al enviar correo de estado de postulación: ' . $e->getMessage());
+                Log::error('Error al enviar notificación de estado de postulación: ' . $e->getMessage());
             }
         }
 
@@ -399,6 +407,20 @@ class InstructorController extends Controller
             'evid_estado'     => $request->estado,
             'evid_comentario' => $request->comentario,
         ]);
+
+        // Notificación interna (DB)
+        try {
+            $aprendiz = $evidencia->aprendiz()->with('usuario')->first();
+            if ($aprendiz && $request->estado !== 'Pendiente') {
+                $aprendiz->usuario->notify(new EvidenciaCalificada(
+                    $evidencia->proyecto->pro_titulo_proyecto,
+                    $evidencia->etapa->eta_nombre,
+                    $request->estado
+                ));
+            }
+        } catch (\Exception $e) {
+            Log::error('Error al enviar notificación de evidencia: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Evidencia calificada correctamente.');
     }
