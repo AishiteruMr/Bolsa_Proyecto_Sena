@@ -1,175 +1,208 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Mi Perfil - ' . ($instructor->ins_nombre ?? 'Instructor'))
-@section('page-title', 'Perfil de ' . ($instructor->ins_nombre ?? 'Instructor'))
+@section('title', 'Perfil Profesional | ' . ($instructor->ins_nombre ?? 'Instructor'))
 
 @section('sidebar-nav')
-    <span class="nav-label">Principal</span>
-    <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Dashboard
+    <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-2 block italic text-slate-400">OPERACIÓN TÉCNICA</span>
+    <a href="{{ route('instructor.dashboard') }}" class="nav-item group {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
+        <i class="fas fa-chart-line group-hover:scale-110 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Centro de Mando</span>
     </a>
-    <a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos*') ? 'active' : '' }}">
-        <i class="fas fa-project-diagram"></i> Mis Proyectos
+    <a href="{{ route('instructor.proyectos') }}" class="nav-item group {{ request()->routeIs('instructor.proyectos*') ? 'active' : '' }}">
+        <i class="fas fa-project-diagram group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Mis Proyectos</span>
     </a>
-    <a href="{{ route('instructor.historial') }}" class="nav-item {{ request()->routeIs('instructor.historial') ? 'active' : '' }}">
-        <i class="fas fa-history"></i> Historial
+    <a href="{{ route('instructor.aprendices') }}" class="nav-item group {{ request()->routeIs('instructor.aprendices') ? 'active' : '' }}">
+        <i class="fas fa-users group-hover:-translate-y-1 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Mis Aprendices</span>
     </a>
-    <a href="{{ route('instructor.aprendices') }}" class="nav-item {{ request()->routeIs('instructor.aprendices') ? 'active' : '' }}">
-        <i class="fas fa-users"></i> Aprendices
+    <a href="{{ route('instructor.historial') }}" class="nav-item group {{ request()->routeIs('instructor.historial') ? 'active' : '' }}">
+        <i class="fas fa-history group-hover:scale-110 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Archivo Histórico</span>
     </a>
-    <span class="nav-label">Cuenta</span>
-    <a href="{{ route('instructor.perfil') }}" class="nav-item {{ request()->routeIs('instructor.perfil') ? 'active' : '' }}">
-        <i class="fas fa-user-circle"></i> Mi Perfil
+    
+    <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mt-6 mb-2 block italic text-slate-400">CONFIGURACIÓN</span>
+    <a href="{{ route('instructor.perfil') }}" class="nav-item group {{ request()->routeIs('instructor.perfil') ? 'active' : '' }}">
+        <i class="fas fa-user-circle group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Perfil Técnico</span>
     </a>
 @endsection
 
 @section('content')
-<div class="profile-container" style="max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
+<div class="max-w-7xl mx-auto space-y-12 pb-24 italic font-bold">
     
     <!-- HEADER BENTO -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px;">
-        
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 px-4 italic">
         <!-- Mentor Profile Card -->
-        <div class="glass-card" style="grid-column: span 2; display: flex; align-items: center; gap: 40px; padding: 40px; background: linear-gradient(135deg, #0f766e, #115e59); color: white; border: none;">
-            <div class="profile-image-wrapper">
-                <div style="width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 4px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 800; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
-                    {{ strtoupper(substr($instructor->ins_nombre ?? 'I', 0, 1)) }}
-                </div>
+        <div class="lg:col-span-2 relative overflow-hidden rounded-[4rem] bg-slate-900 p-12 md:p-16 shadow-2xl shadow-emerald-500/10 text-white italic group italic">
+            <div class="absolute -right-20 -bottom-20 rotate-[-15deg] text-[300px] text-emerald-500/5 opacity-40 pointer-events-none group-hover:rotate-0 transition-all duration-1000 italic font-bold">
+                <i class="fas fa-user-astronaut italic"></i>
             </div>
-            <div style="flex: 1;">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                    <span style="background: var(--primary); color: white; padding: 4px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Instructor Líder</span>
-                    <span style="color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500;"><i class="fas fa-envelope" style="margin-right: 6px;"></i>{{ $usuario->usr_correo }}</span>
+
+            <div class="relative z-10 flex flex-col md:flex-row items-center gap-12 md:gap-16 italic font-bold">
+                <div class="relative italic">
+                    <div class="w-40 h-40 md:w-56 md:h-56 rounded-[3.5rem] bg-emerald-500 flex items-center justify-center text-8xl font-black shadow-2xl shadow-emerald-500/40 border-8 border-white/10 italic group-hover:scale-110 transition-transform italic leading-none italic">
+                        {{ strtoupper(substr($instructor->ins_nombre ?? 'I', 0, 1)) }}
+                    </div>
                 </div>
-                <h2 style="font-size: 34px; font-weight: 800; letter-spacing: -0.5px;">{{ $instructor->ins_nombre }} {{ $instructor->ins_apellido }}</h2>
-                <div style="margin-top: 16px; display: flex; align-items: center; gap: 12px; font-size: 15px; background: rgba(255,255,255,0.1); width: fit-content; padding: 8px 16px; border-radius: 12px;">
-                    <i class="fas fa-award" style="color: var(--primary-light);"></i>
-                    <span style="font-weight: 600;">Especialidad: {{ $instructor->ins_especialidad }}</span>
+
+                <div class="flex-1 text-center md:text-left space-y-8 italic font-bold">
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-6 italic">
+                        <x-badge class="bg-emerald-500 text-white border-none px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] italic shadow-2xl shadow-emerald-500/20 italic">INSTRUCTOR LÍDER</x-badge>
+                        <span class="text-white/40 text-[11px] uppercase font-black tracking-[0.4em] flex items-center gap-4 italic leading-none italic">
+                            <i class="fas fa-at text-emerald-500 italic font-bold"></i> {{ $usuario->usr_correo }}
+                        </span>
+                    </div>
+                    <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-[0.9] italic">{{ $instructor->ins_nombre }} <br> {{ $instructor->ins_apellido }}</h2>
+                    <div class="inline-flex items-center gap-5 px-8 py-4 rounded-[2rem] bg-white/5 border-2 border-white/5 text-emerald-400 italic shadow-xl italic font-bold">
+                        <i class="fas fa-microchip text-2xl italic font-bold"></i>
+                        <span class="text-[11px] font-black uppercase tracking-[0.3em] italic leading-none italic">ESPECIALIDAD: {{ strtoupper($instructor->ins_especialidad) }}</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Role Breakdown -->
-        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: center; padding: 32px; gap: 24px; background: #fff;">
-            <div>
-                <h4 style="font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Disponibilidad</h4>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 12px; height: 12px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);"></div>
-                    <span style="font-size: 16px; font-weight: 700; color: #1e293b;">Activo en Plataforma</span>
+        <!-- System Status Card -->
+        <x-card class="bg-white border-none shadow-2xl rounded-[4rem] p-12 flex flex-col justify-center space-y-12 group italic font-bold" shadow="none">
+            <div class="space-y-6 italic">
+                <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic opacity-80 italic leading-none italic">ESTADO OPERATIVO</p>
+                <div class="flex items-center gap-6 italic">
+                    <div class="w-5 h-5 rounded-full bg-emerald-500 shadow-[0_0_25px_rgba(16,185,129,0.7)] animate-pulse italic"></div>
+                    <span class="text-3xl font-black text-slate-900 uppercase italic tracking-tighter italic leading-none italic">SISTEMA NOMINAL</span>
                 </div>
             </div>
-            <div style="padding-top: 16px; border-top: 1px solid var(--border);">
-                <span style="font-size: 13px; color: #64748b; font-weight: 500;">Rol Administrativo</span>
-                <p style="font-size: 15px; font-weight: 700; color: #0f766e; margin-top: 4px;">Gestión de Proyectos & Aprendices</p>
+            <div class="pt-10 border-t-4 border-slate-50 italic font-bold">
+                <p class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.4em] mb-6 italic leading-none italic">JERARQUÍA ESTRATÉGICA</p>
+                <p class="text-xs font-black text-slate-400 leading-relaxed uppercase italic opacity-80 italic tracking-tight italic">GESTOR DE PROYECTOS TÉCNICOS & ORQUESTADOR DE TALENTO DE ALTO RENDIMIENTO SENA</p>
             </div>
-        </div>
+        </x-card>
     </div>
 
     <!-- CONTENT GRID -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 px-4 italic font-bold">
         
         <!-- Main Management Form -->
-        <div class="glass-card" style="padding: 40px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
-                <h3 style="font-size: 20px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 12px;">
-                    <i class="fas fa-id-badge" style="color: var(--primary);"></i> Perfil Profesional
-                </h3>
-            </div>
-
-            <form action="{{ route('instructor.perfil.update') }}" method="POST">
-                @csrf
-                @method('PUT')
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-                    <div class="form-group-modern">
-                        <label>Nombres</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-user-tag"></i>
-                            <input type="text" name="nombre" value="{{ old('nombre', $instructor->ins_nombre) }}" required>
+        <div class="lg:col-span-2 italic font-bold">
+            <x-card class="p-12 md:p-16 border-none shadow-2xl rounded-[4rem] bg-white relative overflow-hidden group italic font-bold border-4 border-transparent hover:border-emerald-500/5 transition-all italic" shadow="none">
+                <div class="absolute top-0 right-0 w-80 h-80 bg-slate-50 rounded-bl-[12rem] -z-10 group-hover:scale-125 transition-transform duration-1000 italic rotate-6 italic"></div>
+                
+                <div class="flex items-center justify-between mb-16 italic border-b-4 border-slate-50 pb-10 italic font-bold">
+                    <div class="flex items-center gap-6 italic">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-2xl italic rotate-6 italic">
+                            <i class="fas fa-fingerprint text-2xl italic text-emerald-500 font-bold"></i>
                         </div>
-                    </div>
-                    <div class="form-group-modern">
-                        <label>Apellidos</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-user-tag"></i>
-                            <input type="text" name="apellido" value="{{ old('apellido', $instructor->ins_apellido) }}" required>
+                        <div class="italic">
+                            <h3 class="text-3xl font-black text-slate-900 uppercase italic tracking-tighter italic leading-none italic">Identidad de Mando</h3>
+                            <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-3 italic opacity-60 italic leading-none italic">CONFIGURACIÓN DE CREDENCIALES TÉCNICAS</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group-modern" style="margin-bottom: 24px;">
-                    <label>Especialidad / Área de Influencia</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                        <input type="text" name="especialidad" value="{{ old('especialidad', $instructor->ins_especialidad) }}" required>
-                    </div>
-                </div>
+                <form action="{{ route('instructor.perfil.update') }}" method="POST" class="space-y-12 italic font-bold">
+                    @csrf
+                    @method('PUT')
 
-                <div class="form-group-modern" style="margin-bottom: 40px;">
-                    <label>Correo Electrónico (Solo Lectura)</label>
-                    <div class="input-with-icon disabled">
-                        <i class="fas fa-envelope-open"></i>
-                        <input type="email" value="{{ $usuario->usr_correo }}" disabled>
-                    </div>
-                </div>
-
-                <!-- Account Security -->
-                <div style="padding: 32px; background: #f0fdfa; border: 1.5px solid #ccfbf1; border-radius: 24px;">
-                    <h4 style="font-size: 16px; font-weight: 800; color: #115e59; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
-                        <i class="fas fa-key"></i> Parámetros de Seguridad
-                    </h4>
-                    <div class="form-group-modern">
-                        <label>Actualizar Contraseña</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-shield-alt"></i>
-                            <input type="password" name="password" placeholder="Define una nueva contraseña segura">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 italic">
+                        <div class="space-y-4 italic">
+                            <label class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] block ml-6 italic opacity-80 italic leading-none italic">NOMBRES DE PILA</label>
+                            <div class="relative group italic">
+                                <i class="fas fa-signature absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-all italic font-bold"></i>
+                                <input type="text" name="nombre" value="{{ old('nombre', $instructor->ins_nombre) }}" required
+                                    class="w-full pl-20 pr-10 py-7 rounded-[2.5rem] bg-slate-50 border-none focus:ring-8 focus:ring-emerald-500/10 focus:bg-white focus:outline-none font-black text-base text-slate-900 transition-all shadow-inner uppercase italic tracking-tight italic">
+                            </div>
                         </div>
-                        <p style="font-size: 13px; color: #64748b; margin-top: 8px;">Mantén este campo vacío para conservar tu contraseña actual.</p>
+                        <div class="space-y-4 italic">
+                            <label class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] block ml-6 italic opacity-80 italic leading-none italic">APELLIDOS REGISTRADOS</label>
+                            <div class="relative group italic">
+                                <i class="fas fa-signature absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-all italic font-bold"></i>
+                                <input type="text" name="apellido" value="{{ old('apellido', $instructor->ins_apellido) }}" required
+                                    class="w-full pl-20 pr-10 py-7 rounded-[2.5rem] bg-slate-50 border-none focus:ring-8 focus:ring-emerald-500/10 focus:bg-white focus:outline-none font-black text-base text-slate-900 transition-all shadow-inner uppercase italic tracking-tight italic">
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
-                    <button type="submit" class="btn btn-primary" style="padding: 16px 48px; font-size: 16px; border-radius: 14px; background: #0f766e; height: auto;">
-                        <i class="fas fa-check-circle" style="margin-right: 12px;"></i> Actualizar Información
-                    </button>
-                </div>
-            </form>
+                    <div class="space-y-4 italic">
+                        <label class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] block ml-6 italic opacity-80 italic leading-none italic">DIMENSIÓN DE ESPECIALIDAD</label>
+                        <div class="relative group italic">
+                            <i class="fas fa-atom absolute left-8 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-emerald-500 transition-all italic font-bold animate-spin-slow italic"></i>
+                            <input type="text" name="especialidad" value="{{ old('especialidad', $instructor->ins_especialidad) }}" required
+                                class="w-full pl-20 pr-10 py-7 rounded-[2.5rem] bg-slate-50 border-none focus:ring-8 focus:ring-emerald-500/10 focus:bg-white focus:outline-none font-black text-base text-slate-900 transition-all shadow-inner uppercase italic tracking-tight italic">
+                        </div>
+                    </div>
+
+                    <div class="p-12 rounded-[3.5rem] bg-slate-900 border-none space-y-12 group-hover:shadow-2xl group-hover:shadow-emerald-500/10 transition-all duration-700 italic font-bold border-4 border-white/5 italic">
+                        <h4 class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.4em] flex items-center gap-5 italic font-bold leading-none italic">
+                            <i class="fas fa-shield-halved text-2xl italic font-bold"></i> PROTOCOLOS DE SEGURIDAD CRÍTICA
+                        </h4>
+                        <div class="space-y-6 italic">
+                            <label class="text-[9px] font-black text-white/30 uppercase tracking-[0.4em] block ml-6 italic leading-none italic">ACTUALIZAR LLAVE DE ACCESO</label>
+                            <div class="relative group italic font-bold">
+                                <i class="fas fa-key absolute left-8 top-1/2 -translate-y-1/2 text-white/10 group-focus-within:text-emerald-500 transition-all italic font-bold"></i>
+                                <input type="password" name="password" placeholder="MINIMO 8 CARACTERES ALFANUMÉRICOS"
+                                    class="w-full pl-20 pr-10 py-8 rounded-[2.5rem] bg-white/5 border-none focus:ring-8 focus:ring-emerald-500/20 focus:outline-none font-black text-base text-white transition-all shadow-inner uppercase italic placeholder:text-white/5 tracking-widest italic italic">
+                            </div>
+                            <div class="p-6 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 italic">
+                                <p class="text-[9px] font-black text-emerald-500 uppercase tracking-[0.2em] italic leading-relaxed italic text-center italic">
+                                    ÚNICAMENTE MODIFIQUE ESTE REGISTRO PARA SOBREESCRIBIR LA LLAVE MAESTRA ACTUAL DEL SISTEMA.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-10 italic font-bold">
+                        <x-button variant="primary" shadow="emerald" class="w-full md:w-auto px-16 py-7 rounded-[2rem] text-[11px] font-black uppercase italic shadow-2xl hover:scale-105 transition-all active:scale-95 italic tracking-widest leading-none italic" type="submit">
+                            <i class="fas fa-sync-alt mr-4 italic text-xl font-bold"></i> CONSOLIDAR IDENTIDAD
+                        </x-button>
+                    </div>
+                </form>
+            </x-card>
         </div>
 
-        <!-- Performance Stats -->
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-            
-            <div class="glass-card" style="padding: 24px;">
-                <h4 style="font-size: 14px; font-weight: 700; color: #64748b; margin-bottom: 24px; text-transform: uppercase;">Métricas de Seguimiento</h4>
+        <!-- Side Stats & Info -->
+        <div class="space-y-12 italic font-bold">
+            <x-card class="bg-slate-900 p-12 border-none shadow-2xl rounded-[4rem] text-white italic font-bold border-2 border-white/5 italic" shadow="none">
+                <h4 class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.4em] mb-14 border-b-2 border-white/5 pb-8 italic text-center leading-none italic font-bold">MÉTRICAS DE IMPACTO</h4>
                 
-                <div style="display: grid; gap: 20px;">
-                    <div class="stat-row">
-                        <div class="stat-info">
-                            <div class="stat-icon" style="background: rgba(15, 118, 110, 0.1); color: #0f766e;"><i class="fas fa-project-diagram"></i></div>
-                            <span style="font-size: 14px; font-weight: 600; color: #475569;">Proyectos Liderados</span>
+                <div class="space-y-10 italic">
+                    <div class="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/5 hover:bg-white/10 transition-all group italic font-bold border-2 border-transparent hover:border-emerald-500/10 italic">
+                        <div class="flex items-center gap-6 italic">
+                            <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-2xl shadow-emerald-500/30 group-hover:rotate-12 transition-transform italic border-4 border-white/10 italic">
+                                <i class="fas fa-project-diagram italic font-bold"></i>
+                            </div>
+                            <div class="italic">
+                                <span class="block text-[9px] font-black uppercase tracking-[0.3em] text-emerald-100/40 italic leading-none italic">MISIONES</span>
+                                <span class="block text-4xl font-black italic tracking-tighter mt-2 italic leading-none italic">{{ str_pad($proyectosCount, 2, '0', STR_PAD_LEFT) }}</span>
+                            </div>
                         </div>
-                        <span class="stat-number">{{ $proyectosCount }}</span>
                     </div>
 
-                    <div class="stat-row">
-                        <div class="stat-info">
-                            <div class="stat-icon" style="background: rgba(57, 169, 0, 0.1); color: var(--primary);"><i class="fas fa-user-graduate"></i></div>
-                            <span style="font-size: 14px; font-weight: 600; color: #475569;">Aprendices a Cargo</span>
+                    <div class="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/5 hover:bg-white/10 transition-all group italic font-bold border-2 border-transparent hover:border-blue-500/10 italic">
+                        <div class="flex items-center gap-6 italic">
+                            <div class="w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-2xl shadow-blue-500/30 group-hover:-rotate-12 transition-transform italic border-4 border-white/10 italic">
+                                <i class="fas fa-user-graduate italic font-bold"></i>
+                            </div>
+                            <div class="italic">
+                                <span class="block text-[9px] font-black uppercase tracking-[0.3em] text-blue-100/40 italic leading-none italic">TALENTOS</span>
+                                <span class="block text-4xl font-black italic tracking-tighter mt-2 italic leading-none italic">{{ str_pad($aprendicesCount, 2, '0', STR_PAD_LEFT) }}</span>
+                            </div>
                         </div>
-                        <span class="stat-number">{{ $aprendicesCount }}</span>
                     </div>
 
-                    <div class="stat-row">
-                        <div class="stat-info">
-                            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;"><i class="fas fa-clipboard-check"></i></div>
-                            <span style="font-size: 14px; font-weight: 600; color: #475569;">Revisiones Pendientes</span>
+                    <div class="flex items-center justify-between p-8 rounded-[2.5rem] bg-white/5 border-2 border-dashed border-amber-500/20 hover:bg-amber-500/5 transition-all group italic font-bold">
+                        <div class="flex items-center gap-6 italic">
+                            <div class="w-16 h-16 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-2xl shadow-amber-500/30 group-hover:scale-110 transition-transform italic border-4 border-white/10 italic">
+                                <i class="fas fa-radiation animate-pulse italic font-bold"></i>
+                            </div>
+                            <div class="italic">
+                                <span class="block text-[9px] font-black uppercase tracking-[0.3em] text-amber-100/40 italic leading-none italic">ALERTAS</span>
+                                <span class="block text-4xl font-black italic tracking-tighter mt-2 italic leading-none italic">{{ str_pad($evidenciasPendientesCount, 2, '0', STR_PAD_LEFT) }}</span>
+                            </div>
                         </div>
-                        <span class="stat-number">{{ $evidenciasPendientesCount }}</span>
                     </div>
                 </div>
-            </div>
+            </x-card>
 
-            <!-- Profile Completion -->
+            <!-- Profile Progress -->
             @php
                 $camposCompletos = 0;
                 if(!empty($instructor->ins_nombre)) $camposCompletos++;
@@ -178,123 +211,21 @@
                 if(!empty($usuario->usr_correo)) $camposCompletos++;
                 $progresoPerfil = ($camposCompletos / 4) * 100;
             @endphp
-            <div class="glass-card" style="padding: 32px; background: #fff; border: 1.5px solid var(--border);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <span style="font-size: 14px; font-weight: 700; color: #1e293b;">Integridad de Perfil</span>
-                    <span style="font-size: 14px; font-weight: 800; color: var(--primary);">{{ round($progresoPerfil) }}%</span>
+            <x-card class="p-12 bg-white border-none shadow-2xl rounded-[4rem] group italic font-bold italic" shadow="none">
+                <div class="flex justify-between items-center mb-10 italic">
+                    <span class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 italic opacity-80 italic leading-none">OPTIMIZACIÓN DE PERFIL</span>
+                    <span class="text-5xl font-black text-slate-900 italic tracking-tighter italic leading-none italic">{{ round($progresoPerfil) }}%</span>
                 </div>
-                <div style="height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; margin-bottom: 20px;">
-                    <div style="width: {{ $progresoPerfil }}%; height: 100%; background: var(--primary); border-radius: 5px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                <div class="h-5 w-full bg-slate-50 rounded-full overflow-hidden mb-10 shadow-inner p-1.5 italic border-2 border-slate-100">
+                    <div class="h-full bg-emerald-500 rounded-full transition-all duration-1000 shadow-[0_0_20px_rgba(16,185,129,0.5)] italic" style="width: {{ $progresoPerfil }}%"></div>
                 </div>
-                <p style="font-size: 13px; color: #64748b; line-height: 1.4;">{{ $progresoPerfil == 100 ? 'Tu perfil profesional está al día. Esto garantiza que los aprendices y empresas puedan identificar tu área de competencia rápidamente.' : 'Completa todos tus datos para mejorar tu visibilidad en la plataforma.' }}</p>
-            </div>
+                <div class="p-8 rounded-[2rem] bg-slate-50 border-4 border-white shadow-xl italic font-bold">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] leading-relaxed italic opacity-80 text-center italic">
+                        {{ $progresoPerfil == 100 ? 'IDENTIDAD ESTRATÉGICA COMPLETAMENTE SINCRONIZADA CON LOS PROTOCOLO INSTITUCIONALES SENA.' : 'SISTEMA EN OPTIMIZACIÓN. SE REQUIERE CONSOLIDAR TODOS LOS CAMPOS PARA UNA VISIBILIDAD DE MANDO ÓPTIMA.' }}
+                    </p>
+                </div>
+            </x-card>
         </div>
     </div>
 </div>
-
-<style>
-    .glass-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 32px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.01);
-    }
-
-    .form-group-modern {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .form-group-modern label {
-        font-size: 14px;
-        font-weight: 700;
-        color: #475569;
-        padding-left: 4px;
-    }
-
-    .input-with-icon {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-
-    .input-with-icon i {
-        position: absolute;
-        left: 20px;
-        color: #94a3b8;
-        font-size: 18px;
-        transition: color 0.3s;
-    }
-
-    .input-with-icon input {
-        width: 100%;
-        padding: 16px 20px 16px 56px;
-        border-radius: 18px;
-        border: 2px solid #f1f5f9;
-        background: #f8fafc;
-        font-size: 15px;
-        font-weight: 600;
-        color: #1e293b;
-        transition: all 0.3s ease;
-        outline: none;
-    }
-
-    .input-with-icon input:focus {
-        border-color: #0f766e;
-        background: #fff;
-        box-shadow: 0 0 0 5px rgba(15, 118, 110, 0.1);
-    }
-
-    .input-with-icon input:focus + i {
-        color: #0f766e;
-    }
-
-    .input-with-icon.disabled input {
-        background: #f1f5f9;
-        color: #94a3b8;
-        cursor: not-allowed;
-        border-style: dashed;
-    }
-
-    .stat-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px;
-        border-radius: 16px;
-        transition: background 0.3s;
-    }
-
-    .stat-row:hover {
-        background: #f8fafc;
-    }
-
-    .stat-info {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-
-    .stat-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-    }
-
-    .stat-number {
-        font-size: 22px;
-        font-weight: 800;
-        color: #1e293b;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(15, 118, 110, 0.25);
-    }
-</style>
 @endsection

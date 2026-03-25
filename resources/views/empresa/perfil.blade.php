@@ -1,278 +1,244 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Perfil Empresa - Inspírate SENA')
-@section('page-title', 'Perfil Corporativo')
+@section('title', 'Santuario de Identidad | ' . (session('nombre') ?? 'Empresa'))
 
 @section('sidebar-nav')
-    <span class="nav-label">Principal</span>
-    <a href="{{ route('empresa.dashboard') }}" class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Dashboard
+    <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-2 block italic text-slate-400">OPERACIÓN TÉCNICA</span>
+    <a href="{{ route('empresa.dashboard') }}" class="nav-item group {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}">
+        <i class="fas fa-chart-line group-hover:scale-110 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Centro de Mando</span>
     </a>
-    <a href="{{ route('empresa.proyectos') }}" class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}">
-        <i class="fas fa-project-diagram"></i> Mis Proyectos
+    <a href="{{ route('empresa.proyectos') }}" class="nav-item group {{ request()->routeIs('empresa.proyectos*') ? 'active' : '' }}">
+        <i class="fas fa-project-diagram group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Mis Proyectos</span>
     </a>
-    <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}">
-        <i class="fas fa-plus-circle"></i> Publicar Proyecto
+    <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item group {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}">
+        <i class="fas fa-plus-circle group-hover:scale-110 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Lanzar Misión</span>
     </a>
-    <span class="nav-label">Cuenta</span>
-    <a href="{{ route('empresa.perfil') }}" class="nav-item {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}">
-        <i class="fas fa-building"></i> Perfil Empresa
+    
+    <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mt-6 mb-2 block italic text-slate-400">CONFIGURACIÓN</span>
+    <a href="{{ route('empresa.perfil') }}" class="nav-item group {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}">
+        <i class="fas fa-building group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Perfil Corporativo</span>
     </a>
 @endsection
 
 @section('content')
-<div class="profile-container" style="max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
+<div class="max-w-7xl mx-auto space-y-12 pb-24 italic font-bold">
     
     <!-- HEADER BENTO -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 32px;">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 px-4 italic">
         
         <!-- Company Info Card -->
-        <div class="glass-card" style="display: flex; align-items: center; gap: 32px; padding: 40px; background: linear-gradient(135deg, #2c3e50, #1a252f); color: white; border: none;">
-            <div class="company-logo-wrapper">
-                <div style="width: 140px; height: 140px; border-radius: 24px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
-                    <i class="fas fa-building" style="font-size: 64px; color: #fff;"></i>
-                </div>
-            </div>
-            <div style="flex: 1;">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                    <span style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase;">Aliado SENA</span>
-                    <span style="color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500;">NIT: {{ $empresa->emp_nit }}</span>
-                </div>
-                <h2 style="font-size: 36px; font-weight: 800; letter-spacing: -1px;">{{ $empresa->emp_nombre }}</h2>
-                
-                <!-- Perfil Integrity Bar -->
-                <div style="margin-top: 16px; max-width: 400px;">
-                    @php
-                        $camposCompletos = 0;
-                        if(!empty($empresa->emp_nombre)) $camposCompletos++;
-                        if(!empty($empresa->emp_representante)) $camposCompletos++;
-                        if(!empty($empresa->emp_nit)) $camposCompletos++;
-                        if(!empty($empresa->emp_correo)) $camposCompletos++;
-                        $progresoPerfil = ($camposCompletos / 4) * 100;
-                    @endphp
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7);">Integridad Corporativa</span>
-                        <span style="font-size: 11px; font-weight: 800; color: var(--primary);">{{ $progresoPerfil }}%</span>
+        <x-card class="lg:col-span-2 overflow-hidden border-none shadow-2xl relative group rounded-[4rem] bg-slate-900 italic" shadow="none">
+            <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900/50 opacity-90 italic"></div>
+            <div class="relative p-12 flex flex-col md:flex-row items-center gap-12 italic">
+                <div class="relative shrink-0 italic">
+                    <div class="w-40 h-40 md:w-48 md:h-48 rounded-[3.5rem] bg-white/5 backdrop-blur-3xl border-4 border-white/10 shadow-2xl flex items-center justify-center group-hover:rotate-6 transition-transform duration-700 italic">
+                        <i class="fas fa-building text-7xl text-white drop-shadow-[0_20px_20px_rgba(0,0,0,0.4)] italic"></i>
                     </div>
-                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
-                        <div style="width: {{ $progresoPerfil }}%; height: 100%; background: var(--primary); border-radius: 10px; transition: width 1s ease;"></div>
+                    <div class="absolute -bottom-4 -right-4 w-16 h-16 bg-emerald-500 rounded-[2rem] flex items-center justify-center border-8 border-slate-900 shadow-2xl text-white italic rotate-12">
+                        <i class="fas fa-shield-check text-xl font-bold italic"></i>
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 20px; margin-top: 20px; color: rgba(255,255,255,0.8);">
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
-                        <i class="fas fa-user-tie" style="color: var(--primary);"></i>
-                        {{ $empresa->emp_representante }}
+                <div class="flex-1 text-center md:text-left space-y-6 italic">
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 italic">
+                        <x-badge class="bg-emerald-500 text-white border-none px-6 py-2 rounded-full font-black tracking-[0.2em] text-[10px] uppercase italic italic shadow-lg shadow-emerald-500/20 italic">
+                            ALIADO ESTRATÉGICO SENA
+                        </x-badge>
+                        <span class="text-white/40 font-black text-[10px] uppercase tracking-[0.3em] italic">IDENTIT_NIT: {{ $empresa->emp_nit }}</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
-                        <i class="fas fa-envelope" style="color: var(--primary);"></i>
-                        {{ $empresa->emp_correo }}
+                    <h2 class="text-5xl md:text-6xl font-black text-white tracking-tighter uppercase italic leading-none truncate italic">
+                        {{ $empresa->emp_nombre }}
+                    </h2>
+                    
+                    <div class="flex flex-col md:flex-row gap-8 pt-4 text-emerald-400/80 font-black text-[11px] uppercase tracking-widest italic italic">
+                        <div class="flex items-center gap-3 italic">
+                            <i class="fas fa-user-tie text-emerald-500 italic"></i>
+                            {{ $empresa->emp_representante }}
+                        </div>
+                        <div class="flex items-center gap-3 italic">
+                            <i class="fas fa-envelope text-emerald-500 italic"></i>
+                            {{ $empresa->emp_correo }}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </x-card>
 
-        <!-- Quick Actions Card -->
-        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px; text-align: center; gap: 20px;">
-            <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(57, 169, 0, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 24px;">
-                <i class="fas fa-rocket"></i>
+        <!-- Quick Integration Progress -->
+        <x-card class="flex flex-col justify-between p-10 border-none shadow-2xl bg-white relative overflow-hidden group rounded-[3.5rem] italic" shadow="none">
+            <div class="absolute top-0 right-0 w-48 h-48 bg-emerald-50 rounded-full -mr-24 -mt-24 transition-transform group-hover:scale-150 duration-1000 italic opacity-50"></div>
+            
+            <div class="relative space-y-8 italic">
+                <div class="w-16 h-16 rounded-3xl bg-slate-900 text-white shadow-2xl flex items-center justify-center text-2xl rotate-12 group-hover:rotate-0 transition-transform italic">
+                    <i class="fas fa-shield-bolt italic text-white font-bold flex items-center justify-center"></i>
+                </div>
+                <div class="italic">
+                    <h4 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter italic">Integridad Corporativa</h4>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-2 italic opacity-60 italic">NIVEL DE SINCRONIZACIÓN DE PERFIL</p>
+                </div>
+
+                <div class="space-y-6 italic">
+                    <div class="flex justify-between items-end italic">
+                        <span class="text-4xl font-black text-slate-900 italic">100<span class="text-lg text-emerald-500">%</span></span>
+                        <x-badge class="bg-emerald-50 text-emerald-600 border-none px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest italic italic italic">OPTIMIZADO</x-badge>
+                    </div>
+                    <div class="h-4 w-full bg-slate-100 rounded-full overflow-hidden p-1 shadow-inner italic">
+                        <div class="h-full bg-emerald-500 rounded-full shadow-lg transition-all duration-1000 relative italic" style="width: 100%">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer italic"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h4 style="font-size: 18px; font-weight: 700; color: #1e293b;">Impulsa tu Talento</h4>
-                <p style="font-size: 13px; color: #64748b; margin-top: 4px;">Publica nuevas vacantes y encuentra el mejor talento SENA.</p>
-            </div>
-            <a href="{{ route('empresa.proyectos.crear') }}" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
-                <i class="fas fa-plus"></i> Nueva Convocatoria
-            </a>
-        </div>
+
+            <x-button :href="route('empresa.proyectos.crear')" variant="primary" shadow="emerald" class="w-full py-6 mt-8 rounded-[2rem] flex items-center justify-center gap-4 font-black uppercase tracking-[0.2em] text-[10px] active:scale-95 transition-all italic italic shadow-2xl">
+                <i class="fas fa-plus-circle text-lg italic text-white flex items-center justify-center font-bold"></i> NUEVA CONVOCATORIA
+            </x-button>
+        </x-card>
     </div>
 
     <!-- MAIN FORM GRID -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-10 px-4 italic">
         
         <!-- Editable Content -->
-        <div class="glass-card" style="padding: 40px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
-                <h3 style="font-size: 20px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 12px;">
-                    <i class="fas fa-edit" style="color: var(--primary);"></i> Gestión de Información
-                </h3>
+        <x-card class="lg:col-span-3 p-12 md:p-16 border-none shadow-2xl space-y-16 bg-white rounded-[4rem] italic" shadow="none">
+            <div class="flex items-center gap-6 border-b border-slate-50 pb-10 italic">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-2xl shadow-emerald-500/20 italic rotate-6">
+                    <i class="fas fa-sliders-h text-xl font-bold italic"></i>
+                </div>
+                <div class="italic">
+                    <h3 class="text-3xl font-black text-slate-900 uppercase italic tracking-tighter italic">Parámetros del Sistema</h3>
+                    <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] italic opacity-60 italic">SINCRONIZACIÓN DE METADATOS COOPERATIVOS</p>
+                </div>
             </div>
 
-            <form action="{{ route('empresa.perfil.update') }}" method="POST">
+            <form action="{{ route('empresa.perfil.update') }}" method="POST" class="space-y-12 italic">
                 @csrf
                 @method('PUT')
 
-                <div style="display: grid; gap: 24px; margin-bottom: 32px;">
-                    <div class="form-group-modern">
-                        <label>Nombre de la Razón Social</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-building"></i>
-                            <input type="text" name="nombre_empresa" value="{{ old('nombre_empresa', $empresa->emp_nombre) }}" required>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 italic">
+                    <div class="space-y-4 italic">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] pl-2 italic">RAZÓN SOCIAL</label>
+                        <div class="relative group italic">
+                            <div class="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 group-focus-within:bg-emerald-50 group-focus-within:text-emerald-500 transition-all italic">
+                                <i class="fas fa-building text-xs italic"></i>
+                            </div>
+                            <input type="text" name="nombre_empresa" value="{{ old('nombre_empresa', $empresa->emp_nombre) }}" required 
+                                class="w-full pl-20 pr-8 py-6 rounded-[2rem] bg-slate-50 border-4 border-transparent focus:border-emerald-500/10 focus:bg-white focus:ring-0 transition-all font-black text-slate-700 uppercase italic tracking-tight placeholder:text-slate-200">
                         </div>
                     </div>
 
-                    <div class="form-group-modern">
-                        <label>Representante Legal</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-user-tie"></i>
-                            <input type="text" name="representante" value="{{ old('representante', $empresa->emp_representante) }}" required>
+                    <div class="space-y-4 italic">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] pl-2 italic">REPRESENTANTE LEGAL</label>
+                        <div class="relative group italic">
+                            <div class="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 group-focus-within:bg-emerald-50 group-focus-within:text-emerald-500 transition-all italic">
+                                <i class="fas fa-user-tie text-xs italic"></i>
+                            </div>
+                            <input type="text" name="representante" value="{{ old('representante', $empresa->emp_representante) }}" required 
+                                class="w-full pl-20 pr-8 py-6 rounded-[2rem] bg-slate-50 border-4 border-transparent focus:border-emerald-500/10 focus:bg-white focus:ring-0 transition-all font-black text-slate-700 uppercase italic tracking-tight placeholder:text-slate-200">
                         </div>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                        <div class="form-group-modern">
-                            <label>NIT (No editable)</label>
-                            <div class="input-with-icon disabled">
-                                <i class="fas fa-id-card"></i>
-                                <input type="text" value="{{ $empresa->emp_nit }}" disabled>
+                    <div class="space-y-4 opacity-50 italic">
+                        <label class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] pl-2 italic">NIT (COORDENADA INMUTABLE)</label>
+                        <div class="relative italic">
+                            <div class="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-300 italic">
+                                <i class="fas fa-id-card text-xs italic"></i>
                             </div>
+                            <input type="text" value="{{ $empresa->emp_nit }}" disabled 
+                                class="w-full pl-20 pr-8 py-6 rounded-[2rem] bg-slate-100 border-4 border-transparent font-black text-slate-400 uppercase italic tracking-tight cursor-not-allowed italic">
                         </div>
-                        <div class="form-group-modern">
-                            <label>Correo Corporativo (No editable)</label>
-                            <div class="input-with-icon disabled">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" value="{{ $empresa->emp_correo }}" disabled>
+                    </div>
+
+                    <div class="space-y-4 opacity-50 italic">
+                        <label class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] pl-2 italic">E-MAIL CORPORATIVO</label>
+                        <div class="relative italic">
+                            <div class="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-300 italic">
+                                <i class="fas fa-envelope text-xs italic"></i>
                             </div>
+                            <input type="email" value="{{ $empresa->emp_correo }}" disabled 
+                                class="w-full pl-20 pr-8 py-6 rounded-[2rem] bg-slate-100 border-4 border-transparent font-black text-slate-400 uppercase italic tracking-tight cursor-not-allowed italic">
                         </div>
                     </div>
                 </div>
 
                 <!-- Password Reset -->
-                <div style="background: rgba(44, 62, 80, 0.03); border: 1px dashed #cbd5e1; border-radius: 20px; padding: 24px;">
-                    <h4 style="font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-lock" style="color: #64748b;"></i> Seguridad de Acceso
-                    </h4>
-                    <div class="form-group-modern">
-                        <label>Cambiar Contraseña</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-key"></i>
-                            <input type="password" name="password" placeholder="Ingresa una nueva contraseña para actualizar">
+                <div class="p-10 bg-slate-900 rounded-[3rem] border-4 border-white shadow-2xl relative overflow-hidden group italic">
+                    <!-- Tech Background Element -->
+                    <div class="absolute top-0 right-0 p-12 text-white/5 pointer-events-none group-hover:scale-125 transition-transform duration-1000 italic rotate-12">
+                        <i class="fas fa-key text-9xl italic"></i>
+                    </div>
+                    <div class="relative space-y-8 italic">
+                        <div class="flex items-center gap-4 italic">
+                            <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-emerald-500 italic">
+                                <i class="fas fa-lock text-sm italic font-bold"></i>
+                            </div>
+                            <div class="italic">
+                                <h4 class="text-sm font-black text-white tracking-[0.2em] uppercase italic">Protocolos de Seguridad</h4>
+                                <p class="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] italic">CIFRADO DE ACCESO AL CENTRO DE MANDO</p>
+                            </div>
                         </div>
-                        <p style="font-size: 12px; color: #94a3b8; margin-top: 6px;">Mínimo 6 caracteres. Deja en blanco si no deseas cambiarla.</p>
+                        <div class="space-y-4 italic">
+                            <label class="text-[10px] font-black text-emerald-500/60 uppercase tracking-[0.4em] pl-2 italic">ACTUALIZAR LLAVE DE ACCESO</label>
+                            <input type="password" name="password" placeholder="INGRESA NUEVA CREDENCIAL SOLO SI DESEAS RE-SINCRONIZAR" 
+                                class="w-full px-8 py-6 rounded-[2rem] bg-white/5 border-4 border-transparent focus:border-emerald-500/20 focus:bg-white/10 focus:ring-0 transition-all font-black text-white uppercase italic tracking-widest placeholder:text-white/20 italic">
+                        </div>
                     </div>
                 </div>
 
-                <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
-                    <button type="submit" class="btn btn-primary" style="padding: 14px 40px; font-size: 16px; border-radius: 12px; height: auto;">
-                        <i class="fas fa-save" style="margin-right: 10px;"></i> Guardar Cambios
-                    </button>
+                <div class="flex justify-end pt-8 italic">
+                    <x-button type="submit" variant="primary" shadow="emerald" class="px-16 py-6 rounded-[2rem] group flex items-center justify-center gap-6 font-black uppercase tracking-[0.2em] text-[11px] active:scale-95 transition-all italic italic shadow-2xl">
+                        <i class="fas fa-sync group-hover:rotate-180 transition-transform duration-1000 italic text-white flex items-center justify-center font-bold"></i>
+                        SINCRONIZAR ACTUALIZACIONES
+                    </x-button>
                 </div>
             </form>
-        </div>
+        </x-card>
 
         <!-- Sidebar Activity -->
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-            
-            <!-- Statistics Bento -->
-            <div class="glass-card" style="padding: 24px;">
-                <h4 style="font-size: 14px; font-weight: 700; color: #64748b; margin-bottom: 20px; text-transform: uppercase;">Impacto en Cifras</h4>
-                
-                <div style="display: grid; gap: 16px;">
-                    <div style="padding: 24px; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0;">
-                        <span style="font-size: 13px; font-weight: 600; color: #64748b; display: block; margin-bottom: 8px;">Proyectos Publicados</span>
-                        <div style="display: flex; align-items: baseline; gap: 8px;">
-                            <span style="font-size: 32px; font-weight: 800; color: #1e293b;">{{ $empresa->proyectos()->count() }}</span>
-                            <span style="font-size: 13px; font-weight: 600; color: var(--primary);">+Vigentes</span>
+        <div class="space-y-10 sticky top-12 italic">
+            <!-- Stats -->
+            <x-card class="p-10 border-none shadow-2xl rounded-[3rem] bg-white space-y-10 relative overflow-hidden italic" shadow="none">
+                <div class="absolute top-0 left-0 w-3 h-full bg-emerald-500 italic"></div>
+                <h4 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic mb-2">Impacto Corporativo</h4>
+                <div class="space-y-6 italic">
+                    <div class="p-8 bg-slate-50 rounded-[2.5rem] border-2 border-white shadow-inner italic">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] block mb-4 italic">CONVOCATORIAS ACTIVAS</span>
+                        <div class="flex items-baseline gap-4 italic">
+                            <span class="text-5xl font-black text-slate-900 italic">{{ str_pad($empresa->proyectos()->count(), 2, '0', STR_PAD_LEFT) }}</span>
+                            <x-badge class="bg-emerald-50 text-emerald-600 border-none px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest italic italic shadow-sm italic ring-1 ring-emerald-100">MISIÓN OK</x-badge>
                         </div>
                     </div>
-
-                    <div style="padding: 20px; background: linear-gradient(135deg, rgba(57, 169, 0, 0.05), rgba(57, 169, 0, 0.1)); border-radius: 16px; border: 1px solid rgba(57, 169, 0, 0.1);">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <div>
-                                <span style="font-size: 13px; font-weight: 600; color: #1a5c00;">Estado de Cuenta</span>
-                                <h5 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-top: 2px;">Verificada</h5>
-                            </div>
-                            <i class="fas fa-check-shield" style="font-size: 24px; color: var(--primary);"></i>
+                    <div class="p-8 bg-emerald-600 rounded-[2.5rem] shadow-2xl shadow-emerald-500/30 text-white relative overflow-hidden group italic">
+                        <div class="relative z-10 italic">
+                            <span class="text-[9px] font-black text-white/50 uppercase tracking-[0.4em] block mb-2 italic">STATUS_CORPORATIVO</span>
+                            <h5 class="text-2xl font-black uppercase italic tracking-tighter italic">ALIADO VERIFICADO</h5>
                         </div>
+                        <i class="fas fa-shield-check absolute top-1/2 -translate-y-1/2 -right-8 text-white/10 text-8xl group-hover:scale-110 transition-transform duration-1000 italic"></i>
                     </div>
                 </div>
-            </div>
+            </x-card>
 
-            <!-- Promotion Card -->
-            <div class="glass-card" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: none; padding: 32px; color: white;">
-                <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Reporte de Impacto</h4>
-                <p style="font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.5; margin-bottom: 24px;">Descarga el reporte detallado de tus convocatorias y el talento SENA vinculado.</p>
-                <button class="btn" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); color: white; width: 100%; justify-content: center; backdrop-filter: blur(5px);">
-                    <i class="fas fa-file-download"></i> Próximamente
-                </button>
-            </div>
+            <!-- Help -->
+            <x-card class="p-10 border-none bg-slate-900 text-white shadow-2xl rounded-[3rem] space-y-8 relative overflow-hidden group italic" shadow="none">
+                <div class="absolute -right-8 -bottom-8 w-48 h-48 bg-emerald-500/10 rounded-full blur-[80px] italic"></div>
+                <div class="relative space-y-6 italic">
+                    <div class="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-emerald-400 shadow-2xl italic">
+                        <i class="fas fa-headset text-xl italic font-bold"></i>
+                    </div>
+                    <div class="italic">
+                        <h4 class="text-xl font-black uppercase italic tracking-tight italic">Protocolo de Asistencia</h4>
+                        <p class="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] leading-relaxed mt-3 italic">CONTACTA CON NUESTROS LÍDERES TÉCNICOS PARA ASESORÍA ESTRATÉGICA.</p>
+                    </div>
+                    <x-button class="w-full bg-white/5 hover:bg-white/10 border-4 border-white/5 py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-[9px] active:scale-95 transition-all text-white italic italic">
+                        DESPLEGAR AYUDA
+                    </x-button>
+                </div>
+            </x-card>
         </div>
     </div>
 </div>
-
-<style>
-    .glass-card {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        border-radius: 32px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.02);
-    }
-
-    .form-group-modern {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .form-group-modern label {
-        font-size: 13px;
-        font-weight: 700;
-        color: #475569;
-        margin-left: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .input-with-icon {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-
-    .input-with-icon i {
-        position: absolute;
-        left: 20px;
-        color: #94a3b8;
-        font-size: 18px;
-        transition: color 0.3s;
-    }
-
-    .input-with-icon input {
-        width: 100%;
-        padding: 16px 20px 16px 56px;
-        border-radius: 18px;
-        border: 1.5px solid #e2e8f0;
-        background: #fff;
-        font-size: 15px;
-        font-weight: 600;
-        color: #1e293b;
-        transition: all 0.3s ease;
-        outline: none;
-    }
-
-    .input-with-icon input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 5px rgba(57, 169, 0, 0.1);
-    }
-
-    .input-with-icon input:focus + i {
-        color: var(--primary);
-    }
-
-    .input-with-icon.disabled input {
-        background: #f8fafc;
-        color: #94a3b8;
-        cursor: not-allowed;
-        border-style: dashed;
-    }
-
-    .btn-primary {
-        background: var(--primary);
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        box-shadow: 0 10px 20px rgba(57, 169, 0, 0.2);
-    }
-</style>
 @endsection

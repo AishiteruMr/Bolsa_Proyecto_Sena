@@ -1,134 +1,236 @@
 @extends('layouts.dashboard')
-@section('title', 'Publicar Proyecto')
-@section('page-title', 'Publicar Proyecto')
+
+@section('title', 'Lanzar Nueva Misión | ' . (session('nombre') ?? 'Empresa'))
 
 @section('sidebar-nav')
-    <a href="{{ route('empresa.dashboard') }}" class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Dashboard
+    <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-2 block italic text-slate-400">OPERACIÓN TÉCNICA</span>
+    <a href="{{ route('empresa.dashboard') }}" class="nav-item group {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}">
+        <i class="fas fa-chart-line group-hover:scale-110 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Centro de Mando</span>
     </a>
-    <a href="{{ route('empresa.proyectos') }}" class="nav-item {{ request()->routeIs('empresa.proyectos*') ? 'active' : '' }}">
-        <i class="fas fa-project-diagram"></i> Mis Proyectos
+    <a href="{{ route('empresa.proyectos') }}" class="nav-item group {{ request()->routeIs('empresa.proyectos*') ? 'active' : '' }}">
+        <i class="fas fa-project-diagram group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Mis Proyectos</span>
     </a>
-    <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}">
-        <i class="fas fa-plus-circle"></i> Publicar Proyecto
+    <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item group {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}">
+        <i class="fas fa-plus-circle group-hover:scale-110 transition-transform italic text-emerald-500"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Lanzar Misión</span>
     </a>
-    <span class="nav-label">Cuenta</span>
-    <a href="{{ route('empresa.perfil') }}" class="nav-item {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}">
-        <i class="fas fa-building"></i> Perfil Empresa
+    
+    <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mt-6 mb-2 block italic text-slate-400">CONFIGURACIÓN</span>
+    <a href="{{ route('empresa.perfil') }}" class="nav-item group {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}">
+        <i class="fas fa-building group-hover:rotate-12 transition-transform italic text-slate-400"></i> 
+        <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Perfil Corporativo</span>
     </a>
 @endsection
 
 @section('content')
-<div style="max-width: 900px; margin: 0 auto;">
-    <div style="margin-bottom: 32px;">
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <a href="{{ route('empresa.proyectos') }}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 500;">
-                <i class="fas fa-arrow-left"></i> Volver a mis proyectos
-            </a>
+<div class="max-w-5xl mx-auto space-y-12 pb-24 font-bold italic">
+    
+    <!-- Header Section -->
+    <div class="space-y-8 px-4">
+        <a href="{{ route('empresa.proyectos') }}" class="inline-flex items-center text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] hover:text-emerald-700 transition-all group italic">
+            <i class="fas fa-chevron-left mr-3 group-hover:-translate-x-1 transition-transform italic text-emerald-500"></i> 
+            RETORNAR AL PUERTO DE PROYECTOS
+        </a>
+        <div class="space-y-4 italic">
+            <h2 class="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">
+                Lanzar <span class="text-emerald-500 underline decoration-emerald-500/10 decoration-8 underline-offset-8">Nueva Misión</span>
+            </h2>
+            <p class="text-slate-400 text-lg uppercase italic font-bold">
+                DEFINE LOS PARÁMETROS DE TU DESAFÍO TÉCNICO PARA ATRAER AL TALENTO DE ÉLITE SENA.
+            </p>
         </div>
-        <h2 style="font-size:26px; font-weight:700; color:var(--primary-dark)">Publicar Nueva Convocatoria</h2>
-        <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Define los requerimientos de tu proyecto para atraer al mejor talento SENA.</p>
     </div>
 
-    <form action="{{ route('empresa.proyectos.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('empresa.proyectos.store') }}" method="POST" enctype="multipart/form-data" class="space-y-12 px-4 italic font-bold text-slate-900">
         @csrf
         
-        <div class="glass-card" style="padding: 2.5rem; display: grid; gap: 2rem;">
+        <x-card class="p-10 md:p-16 border-none shadow-2xl rounded-[4rem] bg-white space-y-16 italic" shadow="none">
             
-            <section>
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-info-circle" style="color: var(--primary);"></i> Información General
-                </h3>
+            <!-- Identidad Logic -->
+            <section class="space-y-10 italic">
+                <div class="flex items-center gap-6 border-b border-slate-100 pb-8 italic">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center italic shadow-2xl shadow-emerald-500/20 rotate-3">
+                        <i class="fas fa-fingerprint text-xl italic font-bold text-white"></i>
+                    </div>
+                    <div class="italic">
+                        <h3 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Identidad de Misión</h3>
+                        <p class="text-slate-400 text-[9px] font-black uppercase tracking-[0.3em] italic opacity-60 italic">METADATOS BÁSICOS DEL PROYECTO</p>
+                    </div>
+                </div>
                 
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
-                    <div class="form-group">
-                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; display: block;">Título del Proyecto *</label>
-                        <input type="text" name="titulo" value="{{ old('titulo') }}" required class="form-control" placeholder="Ej: Rediseño de Plataforma E-commerce" style="padding: 12px; border-radius: 8px;">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 italic">
+                    <div class="md:col-span-2 space-y-3 italic">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-1 block">TÍTULO DE LA PROPUESTA CORPORATIVA *</label>
+                        <input type="text" name="titulo" value="{{ old('titulo') }}" required maxlength="200"
+                            class="w-full px-8 py-5 rounded-[1.5rem] bg-slate-50 border-2 {{ $errors->has('titulo') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-emerald-500 focus:bg-white focus:ring-8 focus:ring-emerald-500/5 transition-all font-black text-slate-900 uppercase italic placeholder:text-slate-300 placeholder:italic italic" 
+                            placeholder="EJ: OPTIMIZACIÓN DE ARQUITECTURA CLOUD">
+                        @error('titulo')
+                            <p class="text-[9px] font-black text-red-500 uppercase tracking-widest mt-2 ml-4 italic animate-pulse">!! {{ $message }}</p>
+                        @enderror
                     </div>
-                    <div class="form-group">
-                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; display: block;">Categoría *</label>
-                        <select name="categoria" required class="form-control" style="padding: 12px; border-radius: 8px; height: 46px;">
-                            <option value="">Seleccionar...</option>
-                            <option value="Tecnología">Tecnología</option>
-                            <option value="Agrícola">Agrícola</option>
-                            <option value="Industrial">Industrial</option>
-                            <option value="Salud">Salud</option>
-                            <option value="Ambiental">Ambiental</option>
-                            <option value="Otro">Otro</option>
-                        </select>
+                    <div class="space-y-3 italic">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-1 block">DIVISIÓN / CATEGORÍA *</label>
+                        <div class="relative italic">
+                            <select name="categoria" required 
+                                class="w-full px-8 py-5 rounded-[1.5rem] bg-slate-50 border-2 {{ $errors->has('categoria') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-emerald-500 focus:bg-white transition-all font-black text-slate-900 uppercase italic appearance-none cursor-pointer italic">
+                                <option value="">SELECCIONAR ÁREA...</option>
+                                @foreach(['Tecnología', 'Agrícola', 'Industrial', 'Salud', 'Ambiental', 'Otro'] as $cat)
+                                    <option value="{{ $cat }}" {{ old('categoria') == $cat ? 'selected' : '' }}>{{ strtoupper($cat) }}</option>
+                                @endforeach
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-6 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none italic text-xs"></i>
+                        </div>
+                        @error('categoria')
+                            <p class="text-[9px] font-black text-red-500 uppercase tracking-widest mt-2 ml-4 italic animate-pulse">!! {{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </section>
 
-            <section>
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-align-left" style="color: var(--primary);"></i> Alcance y Requisitos
-                </h3>
+            <!-- Metas y Alcance -->
+            <section class="space-y-10 italic">
+                <div class="flex items-center gap-6 border-b border-slate-100 pb-8 italic">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center italic shadow-2xl shadow-blue-500/20 -rotate-3">
+                        <i class="fas fa-bullseye text-xl italic font-bold"></i>
+                    </div>
+                    <div class="italic">
+                        <h3 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Alcance y Objetivos</h3>
+                        <p class="text-slate-400 text-[9px] font-black uppercase tracking-[0.3em] italic opacity-60 italic">DEFINICIÓN DEL DESAFÍO TÉCNICO</p>
+                    </div>
+                </div>
                 
-                <div class="form-group">
-                    <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; display: block;">Descripción Detallada *</label>
-                    <textarea name="descripcion" required class="form-control" rows="5" placeholder="Explica el objetivo y metas del proyecto..." style="padding: 12px; border-radius: 8px;">{{ old('descripcion') }}</textarea>
+                <div class="space-y-4 italic">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-1 block">MANIFIESTO DEL DESAFÍO *</label>
+                    <textarea name="descripcion" required rows="5" maxlength="500"
+                        class="w-full px-8 py-6 rounded-[2rem] bg-slate-50 border-2 {{ $errors->has('descripcion') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-blue-500 focus:bg-white focus:ring-8 focus:ring-blue-500/5 transition-all font-black text-slate-900 uppercase italic placeholder:text-slate-300 placeholder:italic italic min-h-[180px]" 
+                        placeholder="DESCRIBE EL PROBLEMA A RESOLVER Y LOS HITOS ESPERADOS PARA LA MISIÓN...">{{ old('descripcion') }}</textarea>
+                    @error('descripcion')
+                        <p class="text-[9px] font-black text-red-500 uppercase tracking-widest mt-2 ml-4 italic animate-pulse">!! {{ $message }}</p>
+                    @enderror
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
-                    <div class="form-group">
-                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; display: block;">Requisitos Específicos *</label>
-                        <textarea name="requisitos" required class="form-control" rows="3" placeholder="Herramientas, tecnologías o conocimientos previos..." style="padding: 12px; border-radius: 8px;">{{ old('requisitos') }}</textarea>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 italic">
+                    <div class="space-y-4 italic">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-1 block">REQ. TÉCNICOS / HARD SKILLS *</label>
+                        <textarea name="requisitos" required rows="4" maxlength="200"
+                            class="w-full px-8 py-6 rounded-[2rem] bg-slate-50 border-2 {{ $errors->has('requisitos') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-emerald-500 focus:bg-white transition-all font-black text-slate-900 uppercase italic placeholder:text-slate-300 placeholder:italic italic" 
+                            placeholder="FRAMEWORKS, LENGUAJES O HERRAMIENTAS ESPECÍFICAS CRÍTICAS...">{{ old('requisitos') }}</textarea>
+                        @error('requisitos')
+                            <p class="text-[9px] font-black text-red-500 uppercase tracking-widest mt-2 ml-4 italic animate-pulse">!! {{ $message }}</p>
+                        @enderror
                     </div>
-                    <div class="form-group">
-                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; display: block;">Habilidades Blandas *</label>
-                        <textarea name="habilidades" required class="form-control" rows="3" placeholder="Ej: Comunicación asertiva, Trabajo bajo presión..." style="padding: 12px; border-radius: 8px;">{{ old('habilidades') }}</textarea>
+                    <div class="space-y-4 italic">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-1 block">REQ. CONDUCTUALES / SOFT SKILLS *</label>
+                        <textarea name="habilidades" required rows="4" maxlength="200"
+                            class="w-full px-8 py-6 rounded-[2rem] bg-slate-50 border-2 {{ $errors->has('habilidades') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-amber-500 focus:bg-white transition-all font-black text-slate-900 uppercase italic placeholder:text-slate-300 placeholder:italic italic" 
+                            placeholder="LIDERAZGO, COMUNICACIÓN ASERTIVA, PENSAMIENTO LATERAL...">{{ old('habilidades') }}</textarea>
+                        @error('habilidades')
+                            <p class="text-[9px] font-black text-red-500 uppercase tracking-widest mt-2 ml-4 italic animate-pulse">!! {{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </section>
 
-            <section>
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-calendar-alt" style="color: var(--primary);"></i> Cronograma Estimado
-                </h3>
+            <!-- Cronograma -->
+            <section class="space-y-10 italic">
+                <div class="flex items-center gap-6 border-b border-slate-100 pb-8 italic">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center italic shadow-2xl shadow-amber-500/20 rotate-12">
+                        <i class="fas fa-calendar-check text-xl italic font-bold"></i>
+                    </div>
+                    <div class="italic">
+                        <h3 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Cronograma de Operación</h3>
+                        <p class="text-slate-400 text-[9px] font-black uppercase tracking-[0.3em] italic opacity-60 italic">VENTANA TEMPORAL DE EJECUCIÓN</p>
+                    </div>
+                </div>
                 
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; background: var(--bg-main); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--border);">
-                    <div class="form-group">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">Apertura *</label>
-                        <input type="date" name="fecha_publi" id="fecha_publi" value="{{ old('fecha_publi', date('Y-m-d')) }}" required class="form-control" style="border: 1px solid var(--border);">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 p-10 bg-slate-900 rounded-[3.5rem] border-none shadow-2xl relative overflow-hidden italic">
+                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-emerald-500/5 rounded-full italic font-bold"></div>
+                    
+                    <div class="space-y-4 italic relative z-10 text-center">
+                        <label class="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] italic block">INÍCIO DE DESPLIEGUE</label>
+                        <input type="date" name="fecha_publi" id="fecha_publi" value="{{ old('fecha_publi', date('Y-m-d')) }}" required 
+                            class="w-full bg-white/5 border-2 border-white/10 rounded-2xl px-6 py-4 font-black text-emerald-400 text-center uppercase italic focus:border-emerald-500 focus:ring-0 transition-all cursor-pointer italic">
                     </div>
-                    <div class="form-group">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">Duración</label>
-                        <input type="text" id="duracion" readonly class="form-control" style="background: white; border: 1px solid var(--border); font-weight: 600; color: var(--primary);">
+                    
+                    <div class="space-y-4 italic relative z-10 text-center">
+                        <label class="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] italic block">DURACIÓN ESTIMADA</label>
+                        <div class="px-6 py-4 rounded-2xl bg-emerald-500 text-white font-black text-center shadow-2xl shadow-emerald-500/20 uppercase italic border border-white/10 italic">
+                            <input type="text" id="duracion" readonly class="bg-transparent border-none text-center w-full focus:ring-0 cursor-default p-0 font-black italic value-['--']" value="--">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">Cierre Estimado</label>
-                        <input type="text" id="fecha_finalizacion" readonly class="form-control" style="background: white; border: 1px solid var(--border); font-weight: 600;">
+                    
+                    <div class="space-y-4 italic relative z-10 text-center">
+                        <label class="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] italic block">FINALIZACIÓN PREVISTA</label>
+                        <div class="px-6 py-4 rounded-2xl bg-white/5 border-2 border-white/10 text-slate-300 font-black text-center uppercase italic italic">
+                            <input type="text" id="fecha_finalizacion" readonly class="bg-transparent border-none text-center w-full focus:ring-0 cursor-default p-0 font-black italic uppercase italic value-['--']" value="--">
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section>
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-image" style="color: var(--primary);"></i> Media del Proyecto
-                </h3>
-                <div style="border: 2px dashed var(--border); border-radius: 12px; padding: 2rem; text-align: center; background: var(--bg-main); position: relative; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
-                    <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
-                    <p style="font-size: 0.9rem; color: var(--text-main); font-weight: 600;">Haz clic o arrastra una imagen aquí</p>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Formatos soportados: JPG, PNG (Max 2MB)</p>
-                    <input type="file" name="imagen" class="form-control" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
-                </div>
-            </section>
+            <!-- Media & Geo -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 italic font-bold">
+                <section class="space-y-8 italic">
+                    <div class="flex items-center gap-6 border-b border-slate-100 pb-8 italic">
+                        <div class="w-14 h-14 rounded-2xl bg-red-500 text-white flex items-center justify-center italic shadow-2xl shadow-red-500/20 -rotate-6">
+                            <i class="fas fa-map-marked-alt text-xl italic font-bold"></i>
+                        </div>
+                        <div class="italic">
+                            <h3 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Nodo de Despliegue</h3>
+                            <p class="text-slate-400 text-[9px] font-black uppercase tracking-[0.3em] italic opacity-60 italic">UBICACIÓN GEOGRÁFICA FOCAL</p>
+                        </div>
+                    </div>
+                    <div id="map" class="w-full h-[350px] rounded-[3rem] border-8 border-slate-50 shadow-2xl ring-1 ring-slate-200 overflow-hidden relative z-10 italic"></div>
+                    <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud') }}">
+                    <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud') }}">
+                </section>
 
-            <div style="display: flex; gap: 1rem; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid var(--border);">
-                <a href="{{ route('empresa.proyectos') }}" class="btn-ver" style="background: #64748b; padding: 0.8rem 2rem; border-radius: 8px;">
-                    Cancelar
-                </a>
-                <button type="submit" class="btn-ver" style="padding: 0.8rem 2.5rem; border-radius: 8px;">
-                    <i class="fas fa-paper-plane" style="margin-right: 10px;"></i> Publicar Convocatoria
-                </button>
+                <section class="space-y-8 italic">
+                    <div class="flex items-center gap-6 border-b border-slate-100 pb-8 italic">
+                        <div class="w-14 h-14 rounded-2xl bg-purple-600 text-white flex items-center justify-center italic shadow-2xl shadow-purple-500/20 rotate-6">
+                            <i class="fas fa-satellite text-xl italic font-bold"></i>
+                        </div>
+                        <div class="italic">
+                            <h3 class="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Visual de Misión</h3>
+                            <p class="text-slate-400 text-[9px] font-black uppercase tracking-[0.3em] italic opacity-60 italic">IMAGEN IDENTIFICADORA (HERO)</p>
+                        </div>
+                    </div>
+                    <div id="image-upload-container" class="relative group h-[350px] bg-slate-50 border-8 border-slate-50 shadow-2xl ring-1 ring-slate-200 rounded-[3rem] overflow-hidden flex flex-col items-center justify-center transition-all hover:bg-emerald-50/20 italic">
+                        <div id="image-upload-content" class="text-center p-12 pointer-events-none transition-all group-hover:scale-110 italic">
+                            <div class="w-20 h-20 rounded-3xl bg-white shadow-xl flex items-center justify-center mx-auto mb-6 text-emerald-500 italic">
+                                <i class="fas fa-cloud-upload-alt text-3xl italic"></i>
+                            </div>
+                            <p class="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] italic">Arrastrar Artifacto</p>
+                            <p class="text-[9px] font-black text-slate-400 mt-3 italic uppercase opacity-60">JPG, PNG (MAX 2MB BUFFER)</p>
+                        </div>
+                        <img id="image-preview" src="" class="hidden absolute inset-0 w-full h-full object-cover z-20 pointer-events-none italic">
+                        <input type="file" name="imagen" id="imagen-input" class="absolute inset-0 opacity-0 cursor-pointer z-30 italic" accept="image/*">
+                    </div>
+                </section>
             </div>
-        </div>
+
+            <!-- Action Toolbar -->
+            <div class="flex flex-col md:flex-row gap-6 justify-end items-center pt-12 border-t border-slate-100 group italic">
+                <x-button variant="secondary" :href="route('empresa.proyectos')" class="w-full md:w-auto px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-red-500 border-none bg-transparent active:scale-95 transition-all italic underline decoration-slate-200 hover:decoration-red-200 underline-offset-8">
+                    ABORTAR OPERACIÓN
+                </x-button>
+                <x-button type="submit" variant="primary" shadow="emerald" class="w-full md:w-auto px-14 py-6 rounded-3xl group flex items-center justify-center gap-4 text-[11px] font-black uppercase italic shadow-2xl active:scale-95 transition-all">
+                    <i class="fas fa-paper-plane group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform italic text-lg text-white"></i>
+                    INICIAR DESPLIEGUE DE MISIÓN
+                </x-button>
+            </div>
+        </x-card>
     </form>
 </div>
 
+<!-- LEAFLET & LOGIC SCRIPTS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // ---- Cronograma Logic ----
     const fechaPubliInput = document.getElementById('fecha_publi');
     const duracionInput = document.getElementById('duracion');
     const fechaFinalizacionInput = document.getElementById('fecha_finalizacion');
@@ -139,13 +241,59 @@ document.addEventListener('DOMContentLoaded', function() {
             const fechaFinalizacion = new Date(fechaPubli);
             fechaFinalizacion.setMonth(fechaFinalizacion.getMonth() + 6);
             const duracionDias = Math.ceil((fechaFinalizacion - fechaPubli) / (1000 * 60 * 60 * 24));
-            const opcionesFormato = { year: 'numeric', month: 'short', day: 'numeric' };
-            duracionInput.value = duracionDias + ' días (6 meses)';
-            fechaFinalizacionInput.value = fechaFinalizacion.toLocaleDateString('es-ES', opcionesFormato);
+            duracionInput.value = duracionDias + ' DÍAS (SEMESTRE)';
+            fechaFinalizacionInput.value = fechaFinalizacion.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
         }
     }
     fechaPubliInput.addEventListener('change', calcularFechas);
     calcularFechas();
+
+    // ---- Leaflet Logic ----
+    try {
+        let defaultLat = 4.6097;
+        let defaultLng = -74.0817;
+        const latInput = document.getElementById('latitud');
+        const lngInput = document.getElementById('longitud');
+
+        if(latInput.value && lngInput.value) {
+            defaultLat = parseFloat(latInput.value);
+            defaultLng = parseFloat(lngInput.value);
+        }
+
+        const map = L.map('map', { zoomControl: false }).setView([defaultLat, defaultLng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        const marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+
+        function actualizarInputs(lat, lng) {
+            latInput.value = lat;
+            lngInput.value = lng;
+        }
+
+        marker.on('dragend', () => actualizarInputs(marker.getLatLng().lat, marker.getLatLng().lng));
+        map.on('click', (e) => {
+            marker.setLatLng(e.latlng);
+            actualizarInputs(e.latlng.lat, e.latlng.lng);
+        });
+        setTimeout(() => map.invalidateSize(), 500);
+    } catch (e) { console.error('Map Error:', e); }
+
+    // ---- Image Preview Logic ----
+    const imgInp = document.getElementById('imagen-input');
+    const imgPre = document.getElementById('image-preview');
+    const imgCnt = document.getElementById('image-upload-content');
+
+    imgInp.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imgPre.src = e.target.result;
+                imgPre.classList.remove('hidden');
+                imgCnt.classList.add('hidden');
+            }
+            reader.readAsDataURL(file);
+        }
+    });
 });
 </script>
 @endsection

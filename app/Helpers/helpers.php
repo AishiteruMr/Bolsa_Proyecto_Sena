@@ -44,3 +44,12 @@ if (!function_exists('cname')) {
         return session('nombre');
     }
 }
+
+if (!function_exists('cdocumento')) {
+    /**
+     * Obtener el documento del usuario en sesión
+     */
+    function cdocumento() {
+        return session('documento');
+    }
+}
