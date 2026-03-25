@@ -83,7 +83,6 @@ La plataforma ha sido blindada contra amenazas comunes mediante:
 4. **Base de Datos:**
    ```bash
    php artisan migrate --seed
-   php storage:link
    ```
 
 5. **Ejecutar:**
