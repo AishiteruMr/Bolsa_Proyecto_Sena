@@ -83,7 +83,7 @@
     font-weight: 700;
     margin: 32px 0 20px 0;
     padding-bottom: 12px;
-    border-bottom: 2px solid #39a900;
+    border-bottom: 2px solid #34d399;
     color: #333;
 }
 
@@ -105,7 +105,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #39a900, #2d8500);
+    background: linear-gradient(135deg, #34d399, #10b981);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -136,7 +136,7 @@
 }
 
 .postulation-program i {
-    color: #39a900;
+    color: #34d399;
     margin-right: 6px;
 }
 
@@ -226,13 +226,13 @@
 }
 
 .stage-item:hover {
-    border-color: #39a900;
+    border-color: #34d399;
     box-shadow: 0 2px 8px rgba(57, 169, 0, 0.1);
 }
 
 .stage-order {
     display: inline-block;
-    background: #39a900;
+    background: #34d399;
     color: white;
     width: 28px;
     height: 28px;
@@ -263,7 +263,7 @@
 /* ENTREGAS Y EVIDENCIAS */
 .delivery-item {
     background: #fff;
-    border-left: 4px solid #39a900;
+    border-left: 4px solid #34d399;
     padding: 16px;
     margin-bottom: 12px;
     border-radius: 4px;
@@ -327,7 +327,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #39a900, #2d8500);
+    background: linear-gradient(135deg, #34d399, #10b981);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -432,7 +432,7 @@
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    background: #39a900;
+    background: #34d399;
     color: white;
     border-radius: 6px;
     text-decoration: none;
@@ -443,7 +443,7 @@
 }
 
 .btn-primary:hover {
-    background: #2d8500;
+    background: #10b981;
 }
 
 /* CARD */
@@ -510,7 +510,7 @@
 .evidence-student i,
 .evidence-email i,
 .evidence-date i {
-    color: #39a900;
+    color: #34d399;
     margin-right: 6px;
 }
 

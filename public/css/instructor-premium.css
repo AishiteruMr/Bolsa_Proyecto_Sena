@@ -5,10 +5,10 @@
 
 :root {
     /* Emerald Color Palette */
-    --primary: #298564;
-    --primary-light: #3eb489;
-    --primary-dark: #1f6b4d;
-    --accent: #10b981;
+    --primary: #34d399;
+    --primary-light: #6ee7b7;
+    --primary-dark: #10b981;
+    --accent: #059669;
     
     /* Neutral Palette */
     --bg-main: #f8fafc;
