@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Aprendiz extends Model
 {
+    use HasFactory;
     protected $table = 'aprendiz';
     protected $primaryKey = 'apr_id';
     public $timestamps = false;

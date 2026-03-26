@@ -6,36 +6,34 @@ use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Empresa;
+use App\Models\Proyecto;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
 
 class EmpresaTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $empresa;
     protected $usuario;
+    protected $empresa;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         // Crear usuario con rol empresa (3)
-        $usrId = DB::table('usuario')->insertGetId([
+        $this->usuario = User::create([
             'usr_documento' => 123456789,
             'usr_correo'    => 'test_empresa@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
+            'usr_contrasena' => Hash::make('password123'),
             'rol_id'        => 3,
             'usr_fecha_creacion' => now(),
         ]);
 
-        $this->usuario = DB::table('usuario')->where('usr_id', $usrId)->first();
-
         // Crear perfil de empresa
-        DB::table('empresa')->insert([
-            'usr_id'           => $usrId,
+        $this->empresa = Empresa::create([
+            'usr_id'           => $this->usuario->usr_id,
             'emp_nit'          => 900112233,
             'emp_nombre'       => 'Empresa Test SAS',
             'emp_representante'=> 'Representante Test',
@@ -43,14 +41,12 @@ class EmpresaTest extends TestCase
             'emp_contrasena'   => Hash::make('password123'),
             'emp_estado'       => 1,
         ]);
-
-        $this->empresa = DB::table('empresa')->where('usr_id', $usrId)->first();
     }
 
     #[Test]
     public function empresa_can_view_dashboard()
     {
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'emp_id' => $this->empresa->emp_id,
             'nit'    => $this->empresa->emp_nit,
             'rol'    => 3,
@@ -71,9 +67,11 @@ class EmpresaTest extends TestCase
             'requisitos'  => 'Conocimientos en PHP y Laravel',
             'habilidades' => 'Trabajo en equipo, proactividad',
             'fecha_publi' => now()->format('Y-m-d'),
+            'latitud'     => '4.5709',
+            'longitud'    => '-74.2973',
         ];
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'emp_id' => $this->empresa->emp_id,
             'nit'    => $this->empresa->emp_nit,
             'rol'    => 3
@@ -82,15 +80,15 @@ class EmpresaTest extends TestCase
         $response->assertRedirect(route('empresa.proyectos'));
         $this->assertDatabaseHas('proyecto', [
             'pro_titulo_proyecto' => 'Nuevo Proyecto de Prueba',
-            'emp_nit'             => $this->empresa->emp_nit
+            'emp_nit'             => $this->empresa->emp_nit,
+            'pro_latitud'         => '4.5709'
         ]);
     }
 
     #[Test]
     public function empresa_can_update_project()
     {
-        // Primero creamos un proyecto
-        $proId = DB::table('proyecto')->insertGetId([
+        $proyecto = Proyecto::create([
             'emp_nit'                    => $this->empresa->emp_nit,
             'pro_titulo_proyecto'        => 'Proyecto Original',
             'pro_categoria'              => 'Categoría',
@@ -111,15 +109,15 @@ class EmpresaTest extends TestCase
             'fecha_publi' => now()->format('Y-m-d'),
         ];
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'emp_id' => $this->empresa->emp_id,
             'nit'    => $this->empresa->emp_nit,
             'rol'    => 3
-        ])->put(route('empresa.proyectos.update', $proId), $updateData);
+        ])->put(route('empresa.proyectos.update', $proyecto->pro_id), $updateData);
 
         $response->assertRedirect(route('empresa.proyectos'));
         $this->assertDatabaseHas('proyecto', [
-            'pro_id'              => $proId,
+            'pro_id'              => $proyecto->pro_id,
             'pro_titulo_proyecto' => 'Proyecto Actualizado'
         ]);
     }
@@ -127,7 +125,7 @@ class EmpresaTest extends TestCase
     #[Test]
     public function empresa_can_delete_project()
     {
-        $proId = DB::table('proyecto')->insertGetId([
+        $proyecto = Proyecto::create([
             'emp_nit'                    => $this->empresa->emp_nit,
             'pro_titulo_proyecto'        => 'Proyecto a Eliminar',
             'pro_categoria'              => 'Categoría',
@@ -139,14 +137,14 @@ class EmpresaTest extends TestCase
             'pro_estado'                 => 'Activo',
         ]);
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'emp_id' => $this->empresa->emp_id,
             'nit'    => $this->empresa->emp_nit,
             'rol'    => 3
-        ])->delete(route('empresa.proyectos.destroy', $proId));
+        ])->delete(route('empresa.proyectos.destroy', $proyecto->pro_id));
 
         $response->assertRedirect(route('empresa.proyectos'));
-        $this->assertDatabaseMissing('proyecto', ['pro_id' => $proId]);
+        $this->assertDatabaseMissing('proyecto', ['pro_id' => $proyecto->pro_id]);
     }
 
     #[Test]
@@ -157,7 +155,7 @@ class EmpresaTest extends TestCase
             'representante'  => 'Nuevo Representante',
         ];
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'emp_id' => $this->empresa->emp_id,
             'nit'    => $this->empresa->emp_nit,
             'rol'    => 3

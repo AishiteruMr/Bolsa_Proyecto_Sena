@@ -17,7 +17,7 @@
         <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Directorio Empresas</span>
     </a>
     <a href="{{ route('admin.proyectos') }}" class="nav-item group {{ request()->routeIs('admin.proyectos') ? 'active' : '' }}">
-        <i class="fas fa-project-diagram group-hover:text-emerald-500 transition-colors italic"></i> 
+        <i class="fas fa-project-diagram group-hover:text-[#FF6B00] transition-colors italic"></i> 
         <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Banco de Proyectos</span>
     </a>
 @endsection
@@ -29,7 +29,7 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
         <div class="space-y-4">
             <h2 class="text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">
-                Empresas <span class="text-emerald-500 underline decoration-emerald-500/20 decoration-8 underline-offset-8">Aliadas</span>
+                Empresas <span class="text-[#FF6B00] underline decoration-[#FF6B00]/20 decoration-8 underline-offset-8">Aliadas</span>
             </h2>
             <p class="text-slate-400 font-bold text-sm uppercase tracking-widest flex items-center gap-4 italic opacity-70">
                 <span class="w-16 h-px bg-slate-200"></span>
@@ -44,7 +44,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left font-bold">
                     <thead>
-                        <tr class="bg-slate-900 text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em] italic">
+                        <tr class="bg-slate-900 text-[10px] font-black text-orange-400 uppercase tracking-[0.3em] italic">
                             <th class="px-10 py-6 italic">Entidad</th>
                             <th class="px-10 py-6 italic">Representación Legal</th>
                             <th class="px-10 py-6 italic">Contacto Digital</th>
@@ -57,7 +57,7 @@
                             <tr class="group hover:bg-slate-50/50 transition-all duration-300 italic font-bold">
                                 <td class="px-10 py-8 italic font-bold">
                                     <div class="flex items-center gap-6 italic font-bold">
-                                        <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 border border-slate-200 flex items-center justify-center italic text-xl shadow-inner group-hover:bg-slate-900 group-hover:text-emerald-400 group-hover:scale-110 transition-all italic">
+                                        <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 border border-slate-200 flex items-center justify-center italic text-xl shadow-inner group-hover:bg-slate-900 group-hover:text-orange-400 group-hover:scale-110 transition-all italic">
                                             <i class="fas fa-building"></i>
                                         </div>
                                         <div>
@@ -70,11 +70,11 @@
                                     <span class="text-xs font-black text-slate-600 uppercase italic opacity-80 italic italic font-bold">{{ $e->emp_representante ?? 'N/A' }}</span>
                                 </td>
                                 <td class="px-10 py-8 italic font-bold">
-                                    <span class="text-[10px] text-slate-400 lowercase italic underline decoration-slate-200 decoration-dotted hover:text-emerald-500 transition-colors uppercase font-bold italic">{{ $e->emp_correo }}</span>
+                                    <span class="text-[10px] text-slate-400 lowercase italic underline decoration-slate-200 decoration-dotted hover:text-[#FF6B00] transition-colors uppercase font-bold italic">{{ $e->emp_correo }}</span>
                                 </td>
                                 <td class="px-10 py-8 italic text-center font-bold">
                                     @if($e->emp_estado == 1)
-                                        <x-badge class="bg-emerald-500 text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-emerald-500/20 italic">VINCULADA</x-badge>
+                                        <x-badge class="bg-[#FF6B00] text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-[#FF6B00]/20 italic">VINCULADA</x-badge>
                                     @else
                                         <x-badge class="bg-red-500 text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-red-500/20 italic">RESTRINGIDA</x-badge>
                                     @endif

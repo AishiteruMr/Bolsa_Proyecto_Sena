@@ -35,14 +35,14 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-10 px-4 italic">
         <div class="space-y-6 italic">
             <div class="flex items-center gap-4 italic font-bold">
-                <x-badge class="bg-emerald-500 text-white border-none px-6 py-2 rounded-full font-black tracking-[0.2em] text-[10px] uppercase italic shadow-2xl shadow-emerald-500/20 italic">
+                <x-badge class="bg-[#FF6B00] text-white border-none px-6 py-2 rounded-full font-black tracking-[0.2em] text-[10px] uppercase italic shadow-2xl shadow-[#FF6B00]/20 italic">
                     AUDITORÍA DE TALENTO
                 </x-badge>
                 <div class="h-1 w-12 bg-slate-100 rounded-full italic"></div>
                 <span class="text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] italic opacity-60 italic leading-none italic">SINCRONIZACIÓN DE EQUIPOS OPERATIVOS</span>
             </div>
             <h2 class="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase italic leading-none italic">
-                NÓMINA DE <span class="text-emerald-500 block mt-2 text-6xl md:text-7xl">TALENTO</span>
+                NÓMINA DE <span class="text-[#FF6B00] block mt-2 text-6xl md:text-7xl">TALENTO</span>
             </h2>
         </div>
 
@@ -50,7 +50,7 @@
             <div class="flex items-center gap-4 bg-slate-900 px-8 py-4 rounded-[1.5rem] shadow-2xl italic">
                 <span class="text-4xl font-black text-white tracking-tighter italic leading-none italic">{{ str_pad($aprendices->count(), 2, '0', STR_PAD_LEFT) }}</span>
                 <div class="h-10 w-px bg-white/10 italic"></div>
-                <span class="text-[9px] font-black text-emerald-400 uppercase tracking-[0.3em] italic leading-tight italic">TALENTOS <br>BAJO VIGILANCIA</span>
+                <span class="text-[9px] font-black text-orange-400 uppercase tracking-[0.3em] italic leading-tight italic">TALENTOS <br>BAJO VIGILANCIA</span>
             </div>
         </div>
     </div>
@@ -68,27 +68,27 @@
                     <div class="w-32 h-32 rounded-[3rem] bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-2xl flex items-center justify-center font-black group-hover:rotate-6 group-hover:scale-110 transition-all duration-700 italic border-4 border-white italic">
                         <span class="text-5xl font-black italic tracking-tighter italic leading-none italic">{{ strtoupper(substr($a->apr_nombre ?? 'A', 0, 1)) }}</span>
                     </div>
-                    <div class="absolute -bottom-4 -right-4 w-12 h-12 rounded-2xl bg-emerald-500 shadow-2xl flex items-center justify-center text-white border-4 border-white italic rotate-12 group-hover:rotate-0 transition-transform italic shadow-emerald-500/20 italic">
+                    <div class="absolute -bottom-4 -right-4 w-12 h-12 rounded-2xl bg-[#FF6B00] shadow-2xl flex items-center justify-center text-white border-4 border-white italic rotate-12 group-hover:rotate-0 transition-transform italic shadow-[#FF6B00]/20 italic">
                         <i class="fas fa-certificate text-xl italic font-bold"></i>
                     </div>
                 </div>
                 
-                <h4 class="text-2xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors uppercase italic tracking-tighter italic leading-none italic">{{ $a->apr_nombre }} <br> {{ $a->apr_apellido }}</h4>
+                <h4 class="text-2xl font-black text-slate-900 group-hover:text-[#E65100] transition-colors uppercase italic tracking-tighter italic leading-none italic">{{ $a->apr_nombre }} <br> {{ $a->apr_apellido }}</h4>
                 <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] mt-5 italic transparency-60 italic leading-tight italic">{{ strtoupper($a->apr_programa ?? 'TÉCNICO OPERATIVO') }}</p>
                 
                 <div class="mt-10 pt-10 border-t border-slate-50 w-full space-y-5 italic font-bold">
                     <div class="flex items-center justify-center gap-4 bg-slate-50 p-4 rounded-2xl border-2 border-white italic">
-                        <i class="fas fa-id-card text-emerald-500 italic font-bold"></i>
+                        <i class="fas fa-id-card text-[#FF6B00] italic font-bold"></i>
                         <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest italic leading-none italic">{{ $a->usr_documento }}</span>
                     </div>
                     <div class="flex items-center justify-center gap-4 text-[10px] text-slate-400 font-black lowercase tracking-widest italic opacity-60 italic">
-                        <i class="fas fa-envelope text-emerald-500 italic font-bold"></i>
+                        <i class="fas fa-envelope text-[#FF6B00] italic font-bold"></i>
                         <span class="truncate max-w-[180px] italic leading-none italic">{{ $a->usr_correo ?? 'N/A' }}</span>
                     </div>
                 </div>
 
                 <div class="mt-auto pt-10 w-full italic">
-                    <div class="p-6 rounded-[2rem] bg-slate-900 text-white text-[9px] font-black uppercase tracking-[0.3em] leading-relaxed group-hover:bg-emerald-600 transition-all italic shadow-2xl shadow-slate-200/50 italic border-2 border-white/5 italic">
+                    <div class="p-6 rounded-[2rem] bg-slate-900 text-white text-[9px] font-black uppercase tracking-[0.3em] leading-relaxed group-hover:bg-[#E65100] transition-all italic shadow-2xl shadow-slate-200/50 italic border-2 border-white/5 italic">
                         <span class="block text-white/30 text-[8px] mb-2 italic opacity-50 italic">PROTOCOLO ACTIVO</span>
                         <span class="truncate block italic italic leading-none italic">{{ strtoupper($a->pro_titulo_proyecto ?? 'SIN ASIGNACIÓN') }}</span>
                     </div>
@@ -97,7 +97,7 @@
         @empty
             <div class="col-span-full py-48 italic text-center text-slate-200 font-black uppercase tracking-[0.4em] text-lg opacity-40 italic border-8 border-dashed border-slate-50 rounded-[4rem] bg-slate-50/50 italic">
                 <div class="relative inline-block italic">
-                    <div class="absolute inset-0 bg-emerald-500/5 rounded-full blur-[100px] animate-pulse italic"></div>
+                    <div class="absolute inset-0 bg-[#FF6B00]/5 rounded-full blur-[100px] animate-pulse italic"></div>
                     <i class="fas fa-user-astronaut text-8xl mb-10 block italic animate-bounce italic font-bold"></i>
                 </div>
                 <h3 class="text-3xl font-black text-slate-300 uppercase italic tracking-tighter italic">Sin Señales en Radar</h3>

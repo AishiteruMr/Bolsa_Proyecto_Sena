@@ -17,7 +17,7 @@
         <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400 font-bold uppercase transition-colors tracking-widest">Directorio Empresas</span>
     </a>
     <a href="{{ route('admin.proyectos') }}" class="nav-item group {{ request()->routeIs('admin.proyectos') ? 'active' : '' }}">
-        <i class="fas fa-project-diagram group-hover:text-emerald-500 transition-colors italic text-emerald-500"></i> 
+        <i class="fas fa-project-diagram group-hover:text-[#FF6B00] transition-colors italic text-[#FF6B00]"></i> 
         <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400 font-bold uppercase transition-colors tracking-widest">Banco de Proyectos</span>
     </a>
 @endsection
@@ -29,11 +29,11 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
         <div class="space-y-4">
             <div class="flex items-center gap-4 animate-in fade-in slide-in-from-left duration-700">
-                <span class="bg-emerald-500 text-white px-4 py-1.5 rounded-2xl text-[10px] font-black tracking-[0.2em] uppercase italic shadow-lg shadow-emerald-500/20">Admin Hub</span>
+                <span class="bg-[#FF6B00] text-white px-4 py-1.5 rounded-2xl text-[10px] font-black tracking-[0.2em] uppercase italic shadow-lg shadow-[#FF6B00]/20">Admin Hub</span>
                 <span class="text-slate-400 text-xs font-black uppercase tracking-widest italic opacity-60">{{ now()->translatedFormat('l, d F Y') }}</span>
             </div>
             <h2 class="text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">
-                Control <span class="text-emerald-500 underline decoration-emerald-500/10 decoration-8 underline-offset-8 transition-all hover:decoration-emerald-500/30 font-black">Maestro</span>
+                Control <span class="text-[#FF6B00] underline decoration-[#FF6B00]/10 decoration-8 underline-offset-8 transition-all hover:decoration-[#FF6B00]/30 font-black">Maestro</span>
             </h2>
             <p class="text-slate-400 font-bold text-sm uppercase tracking-[0.25em] flex items-center gap-4 italic">
                 <span class="w-16 h-px bg-slate-200"></span>
@@ -45,17 +45,17 @@
     <!-- Bento Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
         <!-- Projects Stat -->
-        <x-card class="group bg-slate-900 border-none shadow-2xl p-8 relative overflow-hidden transition-all hover:-translate-y-2 hover:shadow-emerald-500/10" shadow="none">
+        <x-card class="group bg-slate-900 border-none shadow-2xl p-8 relative overflow-hidden transition-all hover:-translate-y-2 hover:shadow-[#FF6B00]/10" shadow="none">
             <div class="absolute -right-8 -bottom-8 text-9xl text-white/5 transform -rotate-12 group-hover:rotate-0 transition-transform duration-700">
                 <i class="fas fa-project-diagram"></i>
             </div>
             <div class="relative z-10 space-y-6">
-                <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-2xl italic shadow-inner">
+                <div class="w-14 h-14 rounded-2xl bg-[#FF6B00]/20 flex items-center justify-center text-orange-400 text-2xl italic shadow-inner">
                     <i class="fas fa-cubes"></i>
                 </div>
                 <div>
                     <h3 class="text-4xl font-black text-white italic tracking-tighter">{{ $stats['proyectos'] }}</h3>
-                    <p class="text-emerald-500/60 text-[10px] font-black uppercase tracking-widest italic mt-1">PROYECTOS TOTALES</p>
+                    <p class="text-[#FF6B00]/60 text-[10px] font-black uppercase tracking-widest italic mt-1">PROYECTOS TOTALES</p>
                 </div>
                 <div class="pt-4 border-t border-white/5">
                     <span class="text-white/40 text-[9px] font-black uppercase tracking-widest flex items-center gap-2">
@@ -110,7 +110,7 @@
                 <i class="fas fa-user-graduate"></i>
             </div>
             <div class="relative z-10 space-y-6">
-                <div class="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 text-2xl italic shadow-sm">
+                <div class="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center text-[#E65100] text-2xl italic shadow-sm">
                     <i class="fas fa-graduation-cap"></i>
                 </div>
                 <div>
@@ -131,10 +131,10 @@
         <div class="lg:col-span-2 space-y-6 italic">
             <div class="flex items-center justify-between mb-4 italic text-slate-400 font-bold">
                 <h3 class="text-xl font-black text-slate-900 tracking-tight uppercase italic flex items-center gap-3">
-                    <span class="w-2 h-8 bg-emerald-500 rounded-full italic"></span>
+                    <span class="w-2 h-8 bg-[#FF6B00] rounded-full italic"></span>
                     Actividad de Proyectos
                 </h3>
-                <a href="{{ route('admin.proyectos') }}" class="text-[10px] font-black text-emerald-600 uppercase tracking-widest hover:translate-x-2 transition-transform italic underline decoration-emerald-500/20 underline-offset-4">Ver Todos <i class="fas fa-external-link-alt ml-1"></i></a>
+                <a href="{{ route('admin.proyectos') }}" class="text-[10px] font-black text-[#E65100] uppercase tracking-widest hover:translate-x-2 transition-transform italic underline decoration-[#FF6B00]/20 underline-offset-4">Ver Todos <i class="fas fa-external-link-alt ml-1"></i></a>
             </div>
 
             <x-card class="border-none shadow-xl overflow-hidden bg-white" shadow="none">
@@ -166,7 +166,7 @@
                                     </td>
                                     <td class="px-8 py-6 italic font-bold">
                                         @if($p->pro_estado == 'Activo')
-                                            <x-badge class="bg-emerald-500 text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-emerald-500/10 italic">OPERATIVO</x-badge>
+                                            <x-badge class="bg-[#FF6B00] text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-[#FF6B00]/10 italic">OPERATIVO</x-badge>
                                         @else
                                             <x-badge class="bg-slate-200 text-slate-600 border-none py-1.5 px-4 rounded-xl text-[9px] font-black italic">PENDIENTE</x-badge>
                                         @endif
