@@ -10,15 +10,11 @@ class RolMiddleware
 {
     public function handle(Request $request, Closure $next, int $rol): Response
     {
-        $rolSesion = session('rol');
-
-        // Si no hay sesión válida
-        if (!session()->has('usr_id') && !session()->has('emp_id')) {
+        if (!\Illuminate\Support\Facades\Auth::check()) {
             return redirect()->route('login')->with('error', 'Sesión expirada o no autorizada.');
         }
 
-        // Si el rol en sesión no coincide con el exigido por la ruta
-        if ($rolSesion != $rol) {
+        if (\Illuminate\Support\Facades\Auth::user()->rol_id != $rol) {
             abort(403, 'No tienes permiso para acceder a esta sección.');
         }
 

@@ -1,12 +1,18 @@
 :root {
-    --verde: #6ee7b7;
-    --verde-dark: #34d399;
-    --verde-void: #10b981;
+    --verde-dark: #298564;
+    --verde-void: #1b6b5f;
+    --verde-light: #3eb489;
+    --blanco: #ffffff;
+    --texto-suave:#523E3D;
 }
 
 /* ── HERO ── */
 .hero-nosotros {
-    background: linear-gradient(135deg, var(--verde-dark) 0%, var(--verde) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--verde-void) 0%,
+        var(--verde-dark) 100%
+    );
     padding: 80px 80px;
     color: var(--blanco);
 }
@@ -113,7 +119,7 @@
 
 /* ── CTA FINAL ── */
 .cta-final {
-    background: linear-gradient(135deg, var(--verde), var(--verde-dark));
+    background: linear-gradient(135deg, var(--verde-dark), var(--verde-void));
     padding: 64px 80px;
     text-align: center;
 }

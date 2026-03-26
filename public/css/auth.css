@@ -1,0 +1,863 @@
+/* =============================================================================
+   1. CSS VARIABLES
+   ============================================================================= */
+
+:root {
+    --verde-dark: #298564;
+    --verde-void: #1b6b5f;
+    --verde-light: #3eb489;
+    --blanco: #ffffff;
+    --texto-suave: #523e3d;
+    --azul:#7EA3CC;
+}
+
+/* =============================================================================
+   2. SHARED — MAIN BACKGROUND
+   Used by: login, registro-aprendiz, registro-instructor, registro-empresa
+   ============================================================================= */
+
+main {
+    background: linear-gradient(
+        135deg,
+        var(--verde-void) 0%,
+        var(--verde-dark) 40%,
+        var(--verde-light) 100%
+    );
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+main::before {
+    content: "";
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.08) 0%,
+        transparent 70%
+    );
+    border-radius: 50%;
+}
+
+/* login.blade.php also has a ::after orb */
+main.login-main::after {
+    content: "";
+    position: absolute;
+    bottom: -50px;
+    left: -50px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.05) 0%,
+        transparent 70%
+    );
+    border-radius: 50%;
+}
+
+/* =============================================================================
+   3. SHARED — ANIMATIONS
+   ============================================================================= */
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* =============================================================================
+   4. SHARED — FORM BASE ELEMENTS
+   Used by: login, registro-aprendiz, registro-instructor, registro-empresa
+   ============================================================================= */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+}
+
+/* --- Input with left icon (login version — slightly more padding) --- */
+.login-form .input-icon {
+    position: relative;
+}
+
+.login-form .input-icon i.icon-left {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #bbb;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.login-form .input-icon input {
+    width: 100%;
+    padding: 12px 14px 12px 44px;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.login-form .input-icon input:focus {
+    border-color: var(--verde-dark);
+    background: var(--blanco);
+    box-shadow: 0 0 0 3px rgba(41, 133, 100, 0.1);
+}
+
+.login-form .input-icon input:focus + i {
+    color: var(--verde-dark);
+}
+
+/* --- Input with left icon (registration version) --- */
+.registro-container .input-icon {
+    position: relative;
+}
+
+.registro-container .input-icon i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #bbb;
+    font-size: 15px;
+    transition: color 0.3s;
+}
+
+.registro-container .input-icon input {
+    width: 100%;
+    padding: 11px 12px 11px 40px;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    background: #fafafa;
+}
+
+.registro-container .input-icon input:focus {
+    border-color: var(--verde-dark);
+    background: var(--blanco);
+    box-shadow: 0 0 0 3px rgba(41, 133, 100, 0.1);
+}
+
+.registro-container .input-icon input:focus + i {
+    color: var(--verde-dark);
+}
+
+/* --- Two-column input row (aprendiz, instructor) --- */
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* --- Checkbox group --- */
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    margin-top: 4px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    cursor: pointer;
+    margin-top: 3px;
+    accent-color: var(--verde-dark);
+}
+
+.checkbox-group label {
+    cursor: pointer;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* =============================================================================
+   5. SHARED — ALERTS & ERROR MESSAGES
+   ============================================================================= */
+
+/* Login-style alerts (success / error) */
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    border-left: 4px solid;
+    animation: slideDown 0.4s ease-out;
+}
+
+.alert-success {
+    background: #ecf7f3;
+    color: var(--verde-void);
+    border-left-color: var(--verde-dark);
+}
+
+.alert-error {
+    background: #fef0f0;
+    color: #c0392b;
+    border-left-color: #e74c3c;
+}
+
+/* Registration-style error block */
+.error-msg {
+    background: #fef0f0;
+    color: #c0392b;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    border-left: 4px solid #e74c3c;
+    animation: slideDown 0.4s ease-out;
+}
+
+/* =============================================================================
+   6. LOGIN PAGE  (login.blade.php)
+   ============================================================================= */
+
+.login-wrapper {
+    display: flex;
+    max-width: 1000px;
+    width: 100%;
+    background: var(--blanco);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(27, 107, 95, 0.3);
+    z-index: 1;
+    animation: slideUp 0.6s ease-out;
+}
+
+/* --- Left panel: form --- */
+.login-form {
+    flex: 1;
+    padding: 56px 48px;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.form-header img {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.form-header h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0f2419;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+}
+
+.form-header p {
+    font-size: 14px;
+    color: var(--texto-suave);
+    font-weight: 500;
+}
+
+/* --- Submit button (login) --- */
+.btn-login-form {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(
+        135deg,
+        var(--verde-dark) 0%,
+        var(--verde-void) 100%
+    );
+    color: var(--blanco);
+    border: none;
+    border-radius: 8px;
+    font-family: "Poppins", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(41, 133, 100, 0.25);
+    letter-spacing: 0.3px;
+}
+
+.btn-login-form:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(41, 133, 100, 0.35);
+}
+
+.btn-login-form:active {
+    transform: translateY(0);
+}
+
+/* --- Bottom links row --- */
+.links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-top: 20px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.links a {
+    color: var(--verde-dark);
+    font-weight: 600;
+    transition: color 0.2s;
+    text-decoration: none;
+}
+
+.links a:hover {
+    color: var(--verde-void);
+}
+
+/* --- "Register as" divider --- */
+.divider {
+    text-align: center;
+    color: #ccc;
+    font-size: 12px;
+    margin: 28px 0;
+    position: relative;
+    font-weight: 600;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 36%;
+    height: 1px;
+    background: #e8e8e8;
+}
+
+.divider::before {
+    left: 0;
+}
+.divider::after {
+    right: 0;
+}
+
+/* --- Register role buttons --- */
+.register-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reg-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: #1a1a1a;
+    background: #fafafa;
+}
+
+.reg-btn:hover {
+    border-color: var(--verde-dark);
+    background: #f0f9f7;
+    transform: translateX(4px);
+}
+
+.reg-btn i {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+    color: var(--verde-dark);
+}
+
+/* --- Right panel: decorative message --- */
+.login-message {
+    width: 380px;
+    background: linear-gradient(
+        180deg,
+        var(--verde-void) 0%,
+        var(--verde-dark) 50%,
+        var(--verde-light) 100%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 56px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-message::before {
+    content: "";
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 70%
+    );
+    border-radius: 50%;
+}
+
+.login-message img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px;
+    z-index: 1;
+    position: relative;
+}
+
+.login-message .quote {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 16px;
+    line-height: 1.8;
+    font-style: italic;
+    margin-bottom: 36px;
+    z-index: 1;
+    position: relative;
+    font-weight: 500;
+}
+
+.login-message .team {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    z-index: 1;
+    position: relative;
+    line-height: 1.6;
+}
+
+.login-message .team strong {
+    display: block;
+    color: var(--blanco);
+    font-size: 14px;
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+
+/* =============================================================================
+   7. REGISTRATION PAGES
+   Shared by: registro-aprendiz, registro-instructor, registro-empresa
+   ============================================================================= */
+
+.registro-container {
+    background: var(--blanco);
+    border-radius: 16px;
+    padding: 48px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    z-index: 1;
+    animation: slideUp 0.6s ease-out;
+}
+
+.reg-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.reg-header img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 16px;
+}
+
+.reg-header h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f2419;
+    letter-spacing: -0.5px;
+}
+
+/* --- Back link (top of registration forms) --- */
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--texto-suave);
+    margin-bottom: 20px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.back-btn:hover {
+    color: var(--verde-dark);
+}
+
+/* --- Submit button (registration) --- */
+.btn-registro {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(
+        135deg,
+        var(--verde-dark) 0%,
+        var(--verde-void) 100%
+    );
+    color: var(--blanco);
+    border: none;
+    border-radius: 8px;
+    font-family: "Poppins", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(41, 133, 100, 0.25);
+    letter-spacing: 0.3px;
+}
+
+.btn-registro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(41, 133, 100, 0.35);
+}
+
+/* --- "Already have an account?" link --- */
+.link-text {
+    text-align: center;
+    font-size: 13px;
+    color: var(--texto-suave);
+    margin-top: 16px;
+}
+
+.link-text a {
+    color: var(--verde-dark);
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.link-text a:hover {
+    color: var(--verde-void);
+}
+
+/* =============================================================================
+   8. PASSWORD RECOVERY PAGES (standalone, blue palette)
+   Covers: olvide-contraseña.blade.php, restablecer-contraseña.blade.php
+   NOTE: These pages use a separate blue color scheme (#005a87, #003d5c)
+         and a purple body gradient (#667eea → #764ba2) — left as-is.
+   ============================================================================= */
+
+/* These pages are standalone (no @extends) so they include their own body reset */
+.password-page * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.password-page body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.password-page .container {
+    width: 100%;
+    max-width: 420px;
+}
+
+.password-page .card {
+    background: var(--blanco);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* --- Card header (blue) --- */
+.password-page .header {
+    background: linear-gradient(135deg, #005a87 0%, #003d5c 100%);
+    padding: 30px 20px;
+    text-align: center;
+    color: var(--blanco);
+}
+
+.password-page .header h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.password-page .header p {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+/* --- Card body --- */
+.password-page .content {
+    padding: 30px 20px;
+}
+
+/* --- Form group (password pages have visible labels) --- */
+.password-page .form-group {
+    margin-bottom: 20px;
+}
+
+.password-page .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.password-page .form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.password-page .form-group input:focus {
+    outline: none;
+    border-color: #005a87;
+    box-shadow: 0 0 0 3px rgba(0, 90, 135, 0.1);
+}
+
+.password-page .form-group input[type="password"]::placeholder {
+    font-size: 13px;
+}
+
+/* --- Submit button (password pages) --- */
+.password-page .btn {
+    width: 100%;
+    padding: 11px;
+    background: #005a87;
+    color: var(--blanco);
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.password-page .btn:hover {
+    background: #003d5c;
+}
+
+/* --- Alerts (password pages) --- */
+.password-page .alert {
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    border-left: none; /* override global alert style */
+}
+
+.password-page .alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.password-page .alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.password-page .alert-warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+/* --- Info box (olvide-contraseña only) --- */
+.info-box {
+    background: #f0f7ff;
+    border-left: 4px solid #005a87;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #333;
+    line-height: 1.6;
+}
+
+.info-box strong {
+    color: #005a87;
+}
+
+/* --- Password requirements box (restablecer-contraseña only) --- */
+.password-requirements {
+    background: #f0f7ff;
+    border-left: 4px solid #005a87;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: #333;
+}
+
+.password-requirements h4 {
+    margin-bottom: 8px;
+    color: #005a87;
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+    font-size: 12px;
+    list-style: none;
+}
+
+.requirement.met {
+    color: #28a745;
+}
+.requirement.unmet {
+    color: #dc3545;
+}
+
+.requirement-icon {
+    margin-right: 8px;
+}
+
+/* --- Back links (password pages) --- */
+.password-page .back-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.password-page .back-link a {
+    color: #005a87;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.password-page .back-link a:hover {
+    text-decoration: underline;
+}
+
+/* --- Footer text --- */
+.password-page .page-footer {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 20px;
+    font-size: 12px;
+}
+
+/* =============================================================================
+   9. RESPONSIVE
+   ============================================================================= */
+
+/* Login page */
+@media (max-width: 800px) {
+    .login-message {
+        display: none;
+    }
+
+    .login-form {
+        padding: 40px 30px;
+    }
+
+    .login-wrapper {
+        border-radius: 12px;
+    }
+
+    .form-header h2 {
+        font-size: 24px;
+    }
+
+    main {
+        padding: 20px;
+        min-height: auto;
+    }
+}
+
+/* Registration pages */
+@media (max-width: 600px) {
+    .registro-container {
+        padding: 32px 24px;
+    }
+
+    .input-row {
+        grid-template-columns: 1fr;
+    }
+
+    main {
+        padding: 20px;
+    }
+}
+
+/* Password recovery pages */
+@media (max-width: 480px) {
+    .password-page .container {
+        margin: 20px;
+    }
+
+    .password-page .header {
+        padding: 20px 15px;
+    }
+
+    .password-page .header h1 {
+        font-size: 20px;
+    }
+
+    .password-page .content {
+        padding: 20px 15px;
+    }
+}
