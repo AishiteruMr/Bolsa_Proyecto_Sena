@@ -98,14 +98,7 @@ class AdminController extends Controller
                 ];
             });
 
-        $instructores = Instructor::with('usuario')
-            ->get()
-            ->map(function($instructor) {
-                return (object)[
-                    'ins_nombre' => $instructor->ins_nombre,
-                    'usr_documento' => $instructor->usuario->usr_documento,
-                ];
-            });
+        $instructores = Instructor::with('usuario')->get();
 
         return view('admin.proyectos', compact('proyectos', 'instructores'));
     }

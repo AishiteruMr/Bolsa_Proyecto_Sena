@@ -41,6 +41,11 @@ class Aprendiz extends Model
         return $this->hasMany(Evidencia::class, 'evid_apr_id', 'apr_id');
     }
 
+    public function entregas(): HasMany
+    {
+        return $this->hasMany(Entrega::class, 'ene_apr_id', 'apr_id');
+    }
+
     // ── ATRIBUTOS ──
     public function getFullNameAttribute(): string
     {
