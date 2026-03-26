@@ -26,26 +26,24 @@ class AprendizTest extends TestCase
         parent::setUp();
 
         // 1. Crear usuario con rol aprendiz (1)
-        $usrId = DB::table('usuario')->insertGetId([
+        $user = \App\Models\User::create([
             'usr_documento' => 111222333,
             'usr_correo'    => 'test_aprendiz@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
+            'usr_contrasena'=> \Illuminate\Support\Facades\Hash::make('password123'),
             'rol_id'        => 1,
             'usr_fecha_creacion' => now(),
         ]);
 
-        $this->usuario = DB::table('usuario')->where('usr_id', $usrId)->first();
+        $this->usuario = $user;
 
         // 2. Crear perfil de aprendiz
-        $aprId = DB::table('aprendiz')->insertGetId([
-            'usr_id'       => $usrId,
+        $this->aprendiz = \App\Models\Aprendiz::create([
+            'usr_id'       => $user->usr_id,
             'apr_nombre'   => 'Aprendiz',
             'apr_apellido' => 'Test',
             'apr_programa' => 'ADSO',
             'apr_estado'   => 1,
         ]);
-
-        $this->aprendiz = DB::table('aprendiz')->where('apr_id', $aprId)->first();
 
         // 3. Crear empresa para tener proyectos
         $empUsrId = DB::table('usuario')->insertGetId([
@@ -77,7 +75,7 @@ class AprendizTest extends TestCase
             'pro_habilidades_requerida'  => 'Hab',
             'pro_fecha_publi'            => now()->format('Y-m-d'),
             'pro_duracion_estimada'      => 180,
-            'pro_estado'                 => 'Activo',
+            'pro_estado'                 => 'Aprobado',
         ]);
 
         $this->proyecto = DB::table('proyecto')->where('pro_id', $proId)->first();
@@ -86,10 +84,10 @@ class AprendizTest extends TestCase
     #[Test]
     public function aprendiz_can_view_dashboard()
     {
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 1,
-            'nombre' => $this->aprendiz->apr_nombre
+            'nombre' => 'Aprendiz'
         ])->get(route('aprendiz.dashboard'));
 
         $response->assertStatus(200);
@@ -99,7 +97,7 @@ class AprendizTest extends TestCase
     #[Test]
     public function aprendiz_can_apply_to_project()
     {
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 1
         ])->post(route('aprendiz.postular', $this->proyecto->pro_id));
@@ -136,7 +134,7 @@ class AprendizTest extends TestCase
             'archivo'     => UploadedFile::fake()->create('evidencia.pdf', 500),
         ];
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 1
         ])->post(route('aprendiz.evidencia.enviar', ['proId' => $this->proyecto->pro_id, 'etaId' => $etaId]), $evidenceData);
@@ -159,7 +157,7 @@ class AprendizTest extends TestCase
             'programa' => 'Nuevo Programa',
         ];
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 1
         ])->put(route('aprendiz.perfil.update'), $profileData);

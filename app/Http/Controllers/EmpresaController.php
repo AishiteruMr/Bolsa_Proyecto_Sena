@@ -106,7 +106,7 @@ class EmpresaController extends Controller
             'pro_fecha_publi'            => $request->fecha_publi,
             'pro_fecha_finalizacion'     => $fechaFinalizacion,
             'pro_duracion_estimada'      => $fechaPubli->diffInDays($fechaFinalizacion),
-            'pro_estado'                 => 'Activo',
+            'pro_estado'                 => 'Pendiente',
             'pro_imagen_url'             => $imagenUrl,
             'pro_latitud'                => $request->latitud,
             'pro_longitud'               => $request->longitud,
