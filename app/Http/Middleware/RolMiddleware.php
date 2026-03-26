@@ -10,18 +10,12 @@ class RolMiddleware
 {
     public function handle(Request $request, Closure $next, int $rol): Response
     {
-        $rolSesion = session('rol');
+        if (!\Illuminate\Support\Facades\Auth::check()) {
+            return redirect()->route('login')->with('error', 'Sesión expirada o no autorizada.');
+        }
 
-        // Usar comparación estricta (===) en lugar de débil (!=)
-        if ((int)$rolSesion !== $rol) {
-            // Redirigir al dashboard correcto según el rol en sesión
-            return match ((int) $rolSesion) {
-                1 => redirect()->route('aprendiz.dashboard'),
-                2 => redirect()->route('instructor.dashboard'),
-                3 => redirect()->route('empresa.dashboard'),
-                4 => redirect()->route('admin.dashboard'),
-                default => redirect()->route('login')->with('error', 'Acceso no autorizado.')
-            };
+        if (\Illuminate\Support\Facades\Auth::user()->rol_id != $rol) {
+            abort(403, 'No tienes permiso para acceder a esta sección.');
         }
 
         return $next($request);

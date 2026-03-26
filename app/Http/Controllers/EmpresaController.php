@@ -5,18 +5,32 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use App\Models\Proyecto;
 use App\Models\Postulacion;
 use App\Models\Empresa;
 use App\Models\Evidencia;
 use App\Models\Etapa;
+use App\Http\Requests\StoreProyectoRequest;
+use App\Http\Requests\UpdateProyectoRequest;
+use App\Services\PostulacionService;
 
 class EmpresaController extends Controller
 {
+    protected $postulacionService;
+
+    public function __construct(PostulacionService $postulacionService)
+    {
+        $this->postulacionService = $postulacionService;
+    }
     public function dashboard()
     {
         $nit = session('nit');
-        $empresa = Empresa::where('emp_nit', $nit)->firstOrFail();
+        $empresa = Empresa::where('emp_nit', $nit)->first();
+
+        if (!$empresa) {
+            return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
+        }
 
         // Obtener proyectos de la empresa
         $proyectos = $empresa->proyectos();
@@ -24,7 +38,14 @@ class EmpresaController extends Controller
         $totalProyectos = $proyectos->count();
         $proyectosActivos = $proyectos->where('pro_estado', 'Activo')->count();
         
-        // Contar postulaciones totales (a través de proyectos)
+        // Proyectos recientes con eager loading y conteo de postulaciones
+        $proyectosRecientes = $empresa->proyectos()
+            ->with(['instructor'])
+            ->withCount('postulaciones')
+            ->orderByDesc('pro_id')
+            ->limit(5)
+            ->get();
+        
         $totalPostulaciones = Postulacion::whereIn('pro_id', 
             $empresa->proyectos()->pluck('pro_id')
         )->count();
@@ -32,12 +53,6 @@ class EmpresaController extends Controller
         $postulacionesPendientes = Postulacion::whereIn('pro_id', 
             $empresa->proyectos()->pluck('pro_id')
         )->where('pos_estado', 'Pendiente')->count();
-
-        // Proyectos recientes
-        $proyectosRecientes = $empresa->proyectos()
-            ->orderByDesc('pro_id')
-            ->limit(5)
-            ->get();
 
         return view('empresa.dashboard', compact(
             'totalProyectos', 'proyectosActivos', 'totalPostulaciones',
@@ -48,7 +63,11 @@ class EmpresaController extends Controller
     public function proyectos()
     {
         $nit = session('nit');
-        $empresa = Empresa::where('emp_nit', $nit)->firstOrFail();
+        $empresa = Empresa::where('emp_nit', $nit)->first();
+
+        if (!$empresa) {
+            return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
+        }
         
         $proyectos = $empresa->proyectos()
             ->orderByDesc('pro_id')
@@ -62,17 +81,8 @@ class EmpresaController extends Controller
         return view('empresa.crear-proyecto');
     }
 
-    public function guardarProyecto(Request $request)
+    public function guardarProyecto(StoreProyectoRequest $request)
     {
-        $request->validate([
-            'titulo'       => 'required|string|max:200',
-            'categoria'    => 'required|string|max:100',
-            'descripcion'  => 'required|string|max:500',
-            'requisitos'   => 'required|string|max:200',
-            'habilidades'  => 'required|string|max:200',
-            'fecha_publi'  => 'required|date',
-            'imagen'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
 
         $nit = session('nit');
         $imagenUrl = null;
@@ -96,8 +106,10 @@ class EmpresaController extends Controller
             'pro_fecha_publi'            => $request->fecha_publi,
             'pro_fecha_finalizacion'     => $fechaFinalizacion,
             'pro_duracion_estimada'      => $fechaPubli->diffInDays($fechaFinalizacion),
-            'pro_estado'                 => 'Activo',
+            'pro_estado'                 => 'Pendiente',
             'pro_imagen_url'             => $imagenUrl,
+            'pro_latitud'                => $request->latitud,
+            'pro_longitud'               => $request->longitud,
         ]);
 
         return redirect()->route('empresa.proyectos')->with('success', '✅ Proyecto publicado correctamente.');
@@ -113,17 +125,8 @@ class EmpresaController extends Controller
         return view('empresa.editar-proyecto', compact('proyecto'));
     }
 
-    public function actualizarProyecto(Request $request, int $id)
+    public function actualizarProyecto(UpdateProyectoRequest $request, int $id)
     {
-        $request->validate([
-            'titulo'      => 'required|string|max:200',
-            'categoria'   => 'required|string|max:100',
-            'descripcion' => 'required|string|max:500',
-            'requisitos'  => 'required|string|max:200',
-            'habilidades' => 'required|string|max:200',
-            'fecha_publi' => 'required|date',
-            'imagen'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
 
         $nit = session('nit');
         $proyecto = Proyecto::where('pro_id', $id)
@@ -143,6 +146,8 @@ class EmpresaController extends Controller
             'pro_fecha_publi'            => $request->fecha_publi,
             'pro_fecha_finalizacion'     => $fechaFinalizacion,
             'pro_duracion_estimada'      => $fechaPubli->diffInDays($fechaFinalizacion),
+            'pro_latitud'                => $request->latitud,
+            'pro_longitud'               => $request->longitud,
         ];
 
         if ($request->hasFile('imagen')) {
@@ -214,7 +219,7 @@ class EmpresaController extends Controller
     public function cambiarEstadoPostulacion(Request $request, int $id)
     {
         $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
-
+        
         $nit = session('nit');
         
         // SEGURIDAD: Validar que la postulación pertenece a un proyecto de esta empresa
@@ -225,7 +230,7 @@ class EmpresaController extends Controller
             })
             ->firstOrFail();
 
-        $postulacion->update(['pos_estado' => $request->estado]);
+        $this->postulacionService->updateStatus($id, $request->estado);
 
         return back()->with('success', 'Estado de postulación actualizado.');
     }

@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\RegistroExitoso;
 use App\Mail\RecuperarContraseña;
 use Illuminate\Support\Str;
+use App\Http\Requests\ValidarLoginRequest;
+use App\Http\Requests\RegistroAprendizRequest;
+use App\Http\Requests\RegistroInstructorRequest;
+use App\Http\Requests\RegistroEmpresaRequest;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -25,109 +31,86 @@ class AuthController extends Controller
 
     // ─── PROCESO DE LOGIN ────────────────────────────────────────────────────────
 
-    public function login(Request $request)
+    public function login(\App\Http\Requests\ValidarLoginRequest $request)
     {
-        $request->validate([
-            'correo'   => 'required|email|max:255',
-            'password' => 'required|string|min:6|max:100',
-        ], [
-            'correo.required'   => 'El correo es obligatorio.',
-            'correo.email'      => 'Ingresa un correo válido.',
-            'correo.max'        => 'El correo no puede tener más de 255 caracteres.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.min'      => 'La contraseña debe tener al menos 6 caracteres.',
-            'password.max'      => 'La contraseña no puede exceder 100 caracteres.',
-        ]);
+        $credentials = [
+            'usr_correo' => strip_tags(trim($request->correo)),
+            'password'   => $request->password,
+        ];
 
-        $correo   = strip_tags(trim($request->correo));
-        $password = $request->password;
-
-        $rateLimitKey = 'login_attempts:' . $request->ip();
-        $attempts = cache()->get($rateLimitKey, 0);
-        
-        if ($attempts >= 5) {
-            return back()->with('error', 'Demasiados intentos. Intenta de nuevo en 15 minutos.')->withInput(['correo' => $correo]);
+        // 1. Intentar login estándar
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            return $this->handleSuccessfulLogin($request);
         }
 
-        $usuario = DB::table('usuario')->where('usr_correo', $correo)->first();
-
-        if ($usuario) {
-            $loginOk = false;
-
-            if (!empty($usuario->usr_contrasena) && Hash::check($password, $usuario->usr_contrasena)) {
-                $loginOk = true;
-            } elseif ($usuario->usr_contrasena === $password) {
-                DB::table('usuario')
-                    ->where('usr_id', $usuario->usr_id)
-                    ->update(['usr_contrasena' => Hash::make($password)]);
-                $loginOk = true;
+        // 2. Fallback para empresas legado (que no están en la tabla usuario)
+        if ($this->syncLegacyEmpresa($credentials)) {
+            if (Auth::attempt($credentials)) {
+                return $this->handleSuccessfulLogin($request);
             }
-
-            if (!$loginOk) {
-                cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
-                return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
-            }
-
-            $perfil = $this->getPerfilUsuario($usuario->usr_id, $usuario->rol_id);
-
-            if (!$perfil) {
-                return back()->with('error', 'Perfil de usuario no encontrado.')->withInput(['correo' => $correo]);
-            }
-
-            if (isset($perfil->estado) && $perfil->estado == 0) {
-                return back()->with('error', 'Tu cuenta está desactivada. Contacta al administrador.');
-            }
-
-            cache()->forget($rateLimitKey);
-
-            session([
-                'usr_id'   => $usuario->usr_id,
-                'documento'=> $usuario->usr_documento,
-                'correo'   => $correo,
-                'rol'      => $usuario->rol_id,
-                'nombre'   => $perfil->nombre ?? '',
-                'apellido' => $perfil->apellido ?? '',
-            ]);
-
-            return $this->redirectByRol($usuario->rol_id);
         }
 
-        $empresa = DB::table('empresa')->where('emp_correo', $correo)->first();
-
-        if ($empresa) {
-            if ($empresa->emp_estado == 0) {
-                return back()->with('error', 'Esta empresa está desactivada.')->withInput(['correo' => $correo]);
-            }
-
-            if (!Hash::check($password, $empresa->emp_contrasena)) {
-                cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
-                return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
-            }
-
-            cache()->forget($rateLimitKey);
-
-            session([
-                'emp_id'   => $empresa->emp_id,
-                'nit'      => $empresa->emp_nit,
-                'documento'=> $empresa->emp_nit,
-                'rol'      => 3,
-                'correo'   => $correo,
-                'nombre'   => $empresa->emp_nombre,
-                'apellido' => '',
-            ]);
-
-            return redirect()->route('empresa.dashboard');
-        }
-
-        cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
-        return back()->with('error', 'Usuario no registrado.')->withInput(['correo' => $correo]);
+        return back()->with('error', 'Credenciales incorrectas o usuario no registrado.')->withInput($request->only('correo'));
     }
 
-    // ─── LOGOUT ─────────────────────────────────────────────────────────────────
+    protected function handleSuccessfulLogin(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user->isActivo()) {
+            Auth::logout();
+            return back()->with('error', 'Tu cuenta está desactivada.');
+        }
+
+        // Poblar sesión para compatibilidad (Legacy Support)
+        $perfil = $this->getPerfilUsuario($user->usr_id, $user->rol_id);
+        
+        session([
+            'usr_id'    => $user->usr_id,
+            'rol'       => $user->rol_id,
+            'documento' => $user->usr_documento,
+            'nombre'    => $perfil->nombre ?? '',
+            'apellido'  => $perfil->apellido ?? '',
+        ]);
+
+        if ($user->rol_id === 3) { // Empresa
+            session(['emp_id' => $perfil->id, 'nit' => $perfil->nit, 'documento' => $perfil->nit]);
+        }
+
+        $request->session()->regenerate();
+        Log::info('Usuario inició sesión', ['id' => $user->usr_id, 'rol' => $user->rol_id]);
+
+        return $this->redirectByRol($user->rol_id);
+    }
+
+    protected function syncLegacyEmpresa(array $credentials): bool
+    {
+        $empresa = DB::table('empresa')->where('emp_correo', $credentials['usr_correo'])->first();
+        
+        if ($empresa && !$empresa->usr_id) {
+            if (Hash::check($credentials['password'], $empresa->emp_contrasena)) {
+                // Crear el registro en 'usuario' para esta empresa legacy
+                $usrId = DB::table('usuario')->insertGetId([
+                    'usr_documento'  => $empresa->emp_nit,
+                    'usr_correo'     => $empresa->emp_correo,
+                    'usr_contrasena' => $empresa->emp_contrasena,
+                    'rol_id'         => 3,
+                    'usr_fecha_creacion' => now(),
+                ]);
+                
+                DB::table('empresa')->where('emp_id', $empresa->emp_id)->update(['usr_id' => $usrId]);
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     public function logout(Request $request)
     {
-        $request->session()->flush();
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('login')->with('success', 'Sesión cerrada correctamente.');
     }
 
@@ -150,18 +133,8 @@ class AuthController extends Controller
 
     // ─── REGISTRO APRENDIZ ───────────────────────────────────────────────────────
 
-    public function registrarAprendiz(Request $request)
+    public function registrarAprendiz(RegistroAprendizRequest $request)
     {
-        $request->validate([
-            'nombre'    => 'required|string|max:50|regex:/^[a-zA-Z\s]+$/',
-            'apellido'  => 'required|string|max:50|regex:/^[a-zA-Z\s]+$/',
-            'documento' => 'required|numeric|digits_between:6,12|unique:usuario,usr_documento',
-            'programa'  => 'required|string|max:100',
-            'correo'    => 'required|email|max:255|unique:usuario,usr_correo',
-            'password'  => 'required|string|min:6|max:100|confirmed',
-            'terminos'  => 'accepted',
-        ], $this->mensajesValidacion());
-
         DB::transaction(function () use ($request) {
             $usrId = DB::table('usuario')->insertGetId([
                 'usr_documento' => (int) $request->documento,
@@ -187,18 +160,8 @@ class AuthController extends Controller
 
     // ─── REGISTRO INSTRUCTOR ─────────────────────────────────────────────────────
 
-    public function registrarInstructor(Request $request)
+    public function registrarInstructor(RegistroInstructorRequest $request)
     {
-        $request->validate([
-            'nombre'       => 'required|string|max:50|regex:/^[a-zA-Z\s]+$/',
-            'apellido'     => 'required|string|max:50|regex:/^[a-zA-Z\s]+$/',
-            'documento'    => 'required|numeric|digits_between:6,12|unique:usuario,usr_documento',
-            'especialidad' => 'required|string|max:100',
-            'correo'       => 'required|email|max:255|unique:usuario,usr_correo',
-            'password'     => 'required|string|min:6|max:100|confirmed',
-            'terminos'     => 'accepted',
-        ], $this->mensajesValidacion());
-
         DB::transaction(function () use ($request) {
             $usrId = DB::table('usuario')->insertGetId([
                 'usr_documento' => (int) $request->documento,
@@ -225,27 +188,29 @@ class AuthController extends Controller
 
     // ─── REGISTRO EMPRESA ────────────────────────────────────────────────────────
 
-    public function registrarEmpresa(Request $request)
+    public function registrarEmpresa(RegistroEmpresaRequest $request)
     {
-        $request->validate([
-            'nombre_empresa' => 'required|string|max:150',
-            'nit'            => 'required|numeric|digits_between:6,15|unique:empresa,emp_nit',
-            'representante'  => 'required|string|max:100',
-            'correo'         => 'required|email|max:255|unique:empresa,emp_correo',
-            'password'       => 'required|string|min:6|max:100|confirmed',
-            'terminos'       => 'accepted',
-        ], $this->mensajesValidacion());
+        DB::transaction(function () use ($request) {
+            $usrId = DB::table('usuario')->insertGetId([
+                'usr_documento'  => (int) $request->nit,
+                'usr_correo'     => strip_tags(trim($request->correo)),
+                'usr_contrasena' => Hash::make($request->password),
+                'rol_id'         => 3,
+                'usr_fecha_creacion' => now(),
+            ]);
 
-        DB::table('empresa')->insert([
-            'emp_nit'           => (int) $request->nit,
-            'emp_nombre'        => strip_tags(trim($request->nombre_empresa)),
-            'emp_representante' => strip_tags(trim($request->representante)),
-            'emp_correo'        => strip_tags(trim($request->correo)),
-            'emp_contrasena'    => Hash::make($request->password),
-            'emp_estado'        => 1,
-        ]);
+            DB::table('empresa')->insert([
+                'usr_id'            => $usrId,
+                'emp_nit'           => (int) $request->nit,
+                'emp_nombre'        => strip_tags(trim($request->nombre_empresa)),
+                'emp_representante' => strip_tags(trim($request->representante)),
+                'emp_correo'        => strip_tags(trim($request->correo)),
+                'emp_contrasena'    => Hash::make($request->password),
+                'emp_estado'        => 1,
+            ]);
 
-        $this->enviarCorreoBienvenida($request->correo, $request->nombre_empresa, '');
+            $this->enviarCorreoBienvenida($request->correo, $request->nombre_empresa, '');
+        });
 
         return redirect()->route('login')->with('success', '✅ Empresa registrada exitosamente. Ya puedes iniciar sesión.');
     }
@@ -257,15 +222,19 @@ class AuthController extends Controller
         return match ($rol) {
             1 => DB::table('aprendiz')
                     ->where('usr_id', $usrId)
-                    ->select('apr_nombre as nombre', 'apr_apellido as apellido', 'apr_estado as estado')
+                    ->select('apr_id as id', 'apr_nombre as nombre', 'apr_apellido as apellido', 'apr_estado as estado')
                     ->first(),
             2 => DB::table('instructor')
                     ->where('usr_id', $usrId)
-                    ->select('ins_nombre as nombre', 'ins_apellido as apellido', 'ins_estado as estado')
+                    ->select('usr_id as id', 'ins_nombre as nombre', 'ins_apellido as apellido', 'ins_estado as estado')
+                    ->first(),
+            3 => DB::table('empresa')
+                    ->where('usr_id', $usrId)
+                    ->select('emp_id as id', 'emp_nit as nit', 'emp_nombre as nombre', DB::raw("'' as apellido"), 'emp_estado as estado')
                     ->first(),
             4 => DB::table('administrador')
                     ->where('usr_id', $usrId)
-                    ->select('adm_nombre as nombre', 'adm_apellido as apellido', DB::raw('1 as estado'))
+                    ->select('adm_id as id', 'adm_nombre as nombre', 'adm_apellido as apellido', DB::raw('1 as estado'))
                     ->first(),
             default => null
         };
@@ -291,23 +260,7 @@ class AuthController extends Controller
         }
     }
 
-    private function mensajesValidacion(): array
-    {
-        return [
-            'required'          => 'El campo :attribute es obligatorio.',
-            'email'             => 'Ingresa un correo electrónico válido.',
-            'email.max'         => 'El correo no puede exceder 255 caracteres.',
-            'unique'            => 'Este :attribute ya está registrado.',
-            'min'              => 'La contraseña debe tener al menos :min caracteres.',
-            'min.string'       => 'La contraseña debe tener al menos :min caracteres.',
-            'max'              => 'El campo :attribute no puede exceder :max caracteres.',
-            'numeric'          => 'El campo :attribute debe ser numérico.',
-            'digits_between'    => 'El documento debe tener entre :min y :max dígitos.',
-            'accepted'         => 'Debes aceptar los términos y condiciones.',
-            'regex'            => 'El campo :attribute solo puede contener letras.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-        ];
-    }
+    // Removed mensajesValidacion function as it is now part of the FormRequests
 
     // ─── RECUPERACIÓN DE CONTRASEÑA ──────────────────────────────────────────
 

@@ -2,126 +2,44 @@
 
 namespace App\Services;
 
-use App\Models\Aprendiz;
-use App\Models\Proyecto;
 use App\Models\Postulacion;
-use App\Models\Etapa;
-use App\Models\Evidencia;
-use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PostulacionEstadoCambiado;
+use App\Notifications\PostulacionActualizada;
 
 class PostulacionService
 {
     /**
-     * Procesar postulación de un aprendiz a un proyecto
-     *
-     * @param  int  $aprendizId
-     * @param  int  $proyectoId
-     * @return array [boolean, string mensaje]
+     * Update postulation status and notify learner.
      */
-    public function postular(int $aprendizId, int $proyectoId): array
+    public function updateStatus(int $posId, string $estado): bool
     {
-        try {
-            // Validar postulación
-            [$esValido, $mensaje] = Postulacion::validarPostulacion($aprendizId, $proyectoId);
+        $postulacion = Postulacion::with(['aprendiz.usuario', 'proyecto'])->findOrFail($posId);
+        $postulacion->update(['pos_estado' => $estado]);
 
-            if (!$esValido) {
-                return [false, $mensaje];
-            }
-
-            // Crear postulación
-            Postulacion::create([
-                'apr_id'     => $aprendizId,
-                'pro_id'     => $proyectoId,
-                'pos_fecha'  => now(),
-                'pos_estado' => 'Pendiente',
-            ]);
-
-            return [true, '✅ Postulación enviada correctamente. Espera la revisión del instructor.'];
-        } catch (\Exception $e) {
-            return [false, '❌ Error al procesar la postulación: ' . $e->getMessage()];
-        }
-    }
-
-    /**
-     * Obtener postulaciones de un aprendiz
-     *
-     * @param  int  $aprendizId
-     * @param  int  $paginate
-     * @return \Illuminate\Pagination\Paginator
-     */
-    public function obtenerPostulacionesPaginadas(int $aprendizId, int $paginate = 10)
-    {
-        return Postulacion::with(['proyecto' => function ($query) {
-            $query->with('empresa');
-        }])
-        ->where('apr_id', $aprendizId)
-        ->recientes()
-        ->paginate($paginate);
-    }
-
-    /**
-     * Obtener postulaciones aprobadas de un aprendiz
-     *
-     * @param  int  $aprendizId
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function obtenerPostulacionesAprobadas(int $aprendizId)
-    {
-        return Postulacion::with(['proyecto' => function ($query) {
-            $query->with('empresa');
-        }])
-        ->where('apr_id', $aprendizId)
-        ->aprobadas()
-        ->recientes()
-        ->get();
-    }
-
-    /**
-     * Obtener historial de postulaciones con proyectos
-     *
-     * @param  int  $aprendizId
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function obtenerHistorialPostulaciones(int $aprendizId)
-    {
-        return Postulacion::with(['proyecto' => function ($query) {
-            $query->with(['empresa', 'instructor']);
-        }])
-        ->where('apr_id', $aprendizId)
-        ->recientes()
-        ->get()
-        ->map(function ($postulacion) {
+        if (in_array($estado, ['Aprobada', 'Rechazada'])) {
+            $aprendiz = $postulacion->aprendiz;
             $proyecto = $postulacion->proyecto;
-            $proyecto->pos_estado = $postulacion->pos_estado;
-            $proyecto->pos_fecha = $postulacion->pos_fecha;
-            $proyecto->instructor_nombre = $proyecto->instructor?->getFullNameAttribute() ?? 'No asignado';
-            return $proyecto;
-        });
-    }
+            
+            if ($aprendiz?->usuario) {
+                try {
+                    Mail::to($aprendiz->usuario->usr_correo)
+                        ->send(new PostulacionEstadoCambiado(
+                            $aprendiz->apr_nombre,
+                            $proyecto->pro_titulo_proyecto,
+                            $estado
+                        ));
 
-    /**
-     * Contar postulaciones de un aprendiz por estado
-     *
-     * @param  int  $aprendizId
-     * @param  string  $estado
-     * @return int
-     */
-    public function contarPostulacionesPorEstado(int $aprendizId, string $estado): int
-    {
-        return Postulacion::where('apr_id', $aprendizId)
-            ->where('pos_estado', $estado)
-            ->count();
-    }
+                    $aprendiz->usuario->notify(new PostulacionActualizada(
+                        $proyecto->pro_titulo_proyecto,
+                        $estado
+                    ));
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Error sending postulation notification: ' . $e->getMessage());
+                }
+            }
+        }
 
-    /**
-     * Verificar si un aprendiz está postulado a un proyecto
-     *
-     * @param  int  $aprendizId
-     * @param  int  $proyectoId
-     * @return bool
-     */
-    public function yaPostulado(int $aprendizId, int $proyectoId): bool
-    {
-        return Postulacion::yaPostulado($aprendizId, $proyectoId);
+        return true;
     }
 }

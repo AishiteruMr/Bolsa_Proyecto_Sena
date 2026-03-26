@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Mi Perfil')
+@section('title', 'Mi Perfil - Inspírate SENA')
 @section('page-title', 'Mi Perfil')
 
 @section('sidebar-nav')
@@ -21,82 +21,212 @@
 @endsection
 
 @section('content')
-    <div style="margin-bottom: 24px;">
-        <h2 style="font-size:22px; font-weight:700;">Mi Perfil</h2>
-        <p style="color:#666; font-size:14px; margin-top:4px;">Actualiza tu información personal y contraseña.</p>
+<div class="max-w-7xl mx-auto space-y-10 pb-16">
+    
+    <!-- HEADER BENTO -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Welcome Card -->
+        <x-card class="md:col-span-2 p-10 border-none ring-1 ring-slate-100 shadow-2xl relative overflow-hidden group">
+            <div class="absolute -right-20 -top-20 w-80 h-80 bg-emerald-50 rounded-full blur-3xl opacity-50 group-hover:bg-emerald-100/50 transition-colors"></div>
+            
+            <div class="relative flex flex-col md:flex-row items-center gap-10">
+                <div class="relative">
+                    <div class="w-32 h-32 rounded-[2.5rem] bg-slate-900 flex items-center justify-center text-white text-5xl font-black italic shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform duration-500 ring-8 ring-slate-50">
+                        {{ strtoupper(substr($aprendiz->apr_nombre ?? 'A', 0, 1)) }}
+                    </div>
+                    <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center text-emerald-500 shadow-xl border-4 border-slate-50">
+                        <i class="fas fa-certificate text-xs"></i>
+                    </div>
+                </div>
+
+                <div class="flex-1 space-y-6 text-center md:text-left">
+                    <div class="space-y-1">
+                        <span class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] italic">CENTRO DE FORMACIÓN ACADÉMICA</span>
+                        <h2 class="text-4xl font-black text-slate-900 tracking-tighter uppercase italic">¡Hola, {{ $aprendiz->apr_nombre }}!</h2>
+                    </div>
+                    
+                    <!-- Perfil Integrity -->
+                    @php
+                        $camposCompletos = 0;
+                        if(!empty($aprendiz->apr_nombre)) $camposCompletos++;
+                        if(!empty($aprendiz->apr_apellido)) $camposCompletos++;
+                        if(!empty($aprendiz->apr_programa)) $camposCompletos++;
+                        if(!empty($usuario->usr_correo)) $camposCompletos++;
+                        $progresoPerfil = ($camposCompletos / 4) * 100;
+                    @endphp
+                    <div class="space-y-3 max-w-sm mx-auto md:mx-0">
+                        <div class="flex items-center justify-between px-1">
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">INTEGRIDAD DE IDENTIDAD</span>
+                            <span class="text-[10px] font-black text-emerald-600 italic">{{ $progresoPerfil }}%</span>
+                        </div>
+                        <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner ring-1 ring-slate-50">
+                            <div class="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(16,185,129,0.5)]" style="width: {{ $progresoPerfil }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </x-card>
+
+        <!-- Training Program Card -->
+        <x-card class="p-10 border-none ring-1 ring-slate-100 shadow-2xl relative overflow-hidden bg-slate-900 group">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
+            <div class="relative h-full flex flex-col justify-between space-y-8">
+                <div class="space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl italic shadow-inner">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">ESPECIALIDAD</h4>
+                        <p class="text-xl font-black text-white leading-tight uppercase italic group-hover:text-emerald-400 transition-colors">{{ $aprendiz->apr_programa }}</p>
+                    </div>
+                </div>
+                <x-badge class="bg-emerald-500/20 text-emerald-400 border-none py-1.5 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest w-fit">
+                    ROL ACTIVO
+                </x-badge>
+            </div>
+        </x-card>
     </div>
 
-    <div style="display:grid; grid-template-columns: 1fr 2fr; gap:24px;">
-        <!-- Info Card -->
-        <div class="card" style="text-align:center;">
-            <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg, #39a900, #2d8500); margin:0 auto 16px; display:flex; align-items:center; justify-content:center;">
-                <span style="color:#fff; font-size:36px; font-weight:700;">{{ strtoupper(substr($aprendiz->apr_nombre ?? 'A', 0, 1)) }}</span>
+    <!-- MAIN GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        
+        <!-- Editable Info -->
+        <x-card class="lg:col-span-2 p-10 md:p-12 border-none ring-1 ring-slate-100 shadow-2xl space-y-12">
+            <div class="flex items-center justify-between border-b border-slate-50 pb-8">
+                <h3 class="text-2xl font-black text-slate-900 tracking-tighter italic flex items-center gap-4 uppercase">
+                    <span class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-sm shadow-inner italic">
+                        <i class="fas fa-user-gear"></i>
+                    </span>
+                    Matriz de Identidad
+                </h3>
             </div>
-            <h3 style="font-size:18px; font-weight:600; margin-bottom:4px;">{{ $aprendiz->apr_nombre ?? '' }} {{ $aprendiz->apr_apellido ?? '' }}</h3>
-            <p style="color:#666; font-size:14px; margin-bottom:16px;">{{ $usuario->usr_correo ?? '' }}</p>
-            <span class="badge badge-success" style="font-size:12px; padding:6px 14px;">
-                <i class="fas fa-graduation-cap" style="margin-right:6px;"></i>{{ $aprendiz->apr_programa ?? 'Sin programa' }}
-            </span>
-        </div>
 
-        <!-- Form -->
-        <div class="card">
-            <h3 style="font-size:16px; font-weight:600; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid #f0f0f0;">
-                <i class="fas fa-edit" style="color:#39a900; margin-right:8px;"></i>Editar Información
-            </h3>
-
-            <form action="{{ route('aprendiz.perfil.update') }}" method="POST">
+            <form action="{{ route('aprendiz.perfil.update') }}" method="POST" class="space-y-10">
                 @csrf
                 @method('PUT')
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nombre</label>
-                        <input type="text" name="nombre" class="form-control" value="{{ old('nombre', $aprendiz->apr_nombre ?? '') }}" required>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-3">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic ml-1">Nombres</label>
+                        <div class="relative group">
+                            <i class="fas fa-id-card absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors italic"></i>
+                            <input type="text" name="nombre" value="{{ old('nombre', $aprendiz->apr_nombre) }}" required 
+                                   class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm font-black text-slate-900 focus:border-emerald-500 focus:bg-white transition-all outline-none shadow-inner">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Apellido</label>
-                        <input type="text" name="apellido" class="form-control" value="{{ old('apellido', $aprendiz->apr_apellido ?? '') }}" required>
+                    <div class="space-y-3">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic ml-1">Apellidos</label>
+                        <div class="relative group">
+                            <i class="fas fa-id-card absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors italic"></i>
+                            <input type="text" name="apellido" value="{{ old('apellido', $aprendiz->apr_apellido) }}" required 
+                                   class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm font-black text-slate-900 focus:border-emerald-500 focus:bg-white transition-all outline-none shadow-inner">
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Programa de Formación</label>
-                    <input type="text" name="programa" class="form-control" value="{{ old('programa', $aprendiz->apr_programa ?? '') }}" required>
+                <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic ml-1">Programa de Formación</label>
+                    <div class="relative group">
+                        <i class="fas fa-award absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors italic"></i>
+                        <input type="text" name="programa" value="{{ old('programa', $aprendiz->apr_programa) }}" required 
+                               class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm font-black text-slate-900 focus:border-emerald-500 focus:bg-white transition-all outline-none shadow-inner">
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Correo Electrónico</label>
-                    <input type="email" class="form-control" value="{{ $usuario->usr_correo ?? '' }}" disabled style="background:#f8f9fa;">
-                    <small style="color:#888; font-size:12px;">El correo no se puede cambiar.</small>
+                <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic ml-1">Correo Institucional (Bloqueado)</label>
+                    <div class="relative">
+                        <i class="fas fa-at absolute left-5 top-1/2 -translate-y-1/2 text-slate-200 italic"></i>
+                        <input type="email" value="{{ $usuario->usr_correo }}" disabled 
+                               class="w-full bg-slate-100/50 border-2 border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm font-black text-slate-400 italic cursor-not-allowed">
+                        <i class="fas fa-lock absolute right-5 top-1/2 -translate-y-1/2 text-slate-200 text-xs italic"></i>
+                    </div>
                 </div>
 
-                <div style="background:#f8fff4; padding:16px; border-radius:10px; margin-top:20px;">
-                    <h4 style="font-size:14px; font-weight:600; margin-bottom:12px; color:#1a5c00;">
-                        <i class="fas fa-lock" style="margin-right:8px;"></i>Cambiar Contraseña
+                <!-- Security Section -->
+                <div class="bg-slate-50 rounded-[2.5rem] p-10 border border-slate-100 space-y-8 relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-32 h-32 bg-slate-100 rounded-full -mr-16 -mt-16 opacity-50"></div>
+                    <h4 class="text-xs font-black text-slate-900 uppercase tracking-widest italic flex items-center gap-3 relative">
+                        <span class="w-8 h-8 rounded-xl bg-white text-slate-400 flex items-center justify-center text-[10px] shadow-sm italic">
+                            <i class="fas fa-shield-halved"></i>
+                        </span>
+                        Protocolos de Acceso
                     </h4>
-                    <div class="form-group" style="margin-bottom:12px;">
-                        <label>Nueva Contraseña</label>
-                        <input type="password" name="password" class="form-control" placeholder="Mínimo 6 caracteres">
+                    
+                    <div class="space-y-3 relative">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic ml-1">Nueva Contraseña</label>
+                        <div class="relative group">
+                            <i class="fas fa-key absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors italic"></i>
+                            <input type="password" name="password" placeholder="Mínimo 6 caracteres • Vacío para mantener" 
+                                   class="w-full bg-white border-2 border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm font-black text-slate-900 focus:border-emerald-500 transition-all outline-none shadow-sm">
+                        </div>
                     </div>
                 </div>
 
-                <div style="margin-top:24px; display:flex; gap:12px; justify-content:flex-end;">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Guardar Cambios
-                    </button>
+                <div class="flex justify-end pt-6">
+                    <x-button type="submit" variant="primary" shadow="emerald" class="py-5 px-12 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center gap-4 hover:scale-105 active:scale-95 transition-all">
+                        SINCRONIZAR DATOS <i class="fas fa-rotate italic text-lg"></i>
+                    </x-button>
                 </div>
             </form>
+        </x-card>
+
+        <!-- Sidebar Bento -->
+        <div class="space-y-10 order-first lg:order-last">
+            
+            <!-- Quick Stats -->
+            <x-card class="p-10 border-none ring-1 ring-slate-100 shadow-2xl space-y-8">
+                <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-3">
+                    <i class="fas fa-wave-square text-emerald-500"></i> VECTOR DE ACTIVIDAD
+                </h4>
+                
+                <div class="grid gap-4">
+                    <div class="flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 group hover:border-emerald-500 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-white text-emerald-500 flex items-center justify-center text-lg italic shadow-sm group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                                <i class="fas fa-satellite-dish"></i>
+                            </div>
+                            <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">POSTULACIONES</span>
+                        </div>
+                        <span class="text-2xl font-black text-slate-900 italic group-hover:text-emerald-600 transition-colors">{{ $aprendiz->postulaciones()->count() }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 group hover:border-blue-500 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-white text-blue-500 flex items-center justify-center text-lg italic shadow-sm group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                                <i class="fas fa-check-double"></i>
+                            </div>
+                            <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">MISIÓN OK</span>
+                        </div>
+                        <span class="text-2xl font-black text-slate-900 italic group-hover:text-blue-600 transition-colors">{{ $aprendiz->postulacionesAprobadas()->count() }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 group hover:border-amber-500 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-white text-amber-500 flex items-center justify-center text-lg italic shadow-sm group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                                <i class="fas fa-file-export"></i>
+                            </div>
+                            <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">EVIDENCIAS</span>
+                        </div>
+                        <span class="text-2xl font-black text-slate-900 italic group-hover:text-amber-600 transition-colors">{{ $aprendiz->evidencias()->count() }}</span>
+                    </div>
+                </div>
+            </x-card>
+
+            <!-- Help Card -->
+            <x-card class="p-10 border-none ring-1 ring-slate-100 shadow-2xl bg-slate-900 relative overflow-hidden group">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-colors"></div>
+                <div class="relative space-y-6">
+                    <h4 class="text-lg font-black text-white italic tracking-tight uppercase">¿Dudas de Control?</h4>
+                    <p class="text-[11px] font-bold text-slate-400 leading-relaxed italic">Si los datos de tu programa no coinciden con la realidad académica, contacta al centro de mando.</p>
+                    <x-button variant="secondary" class="w-full py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest italic border-none bg-emerald-500 text-white hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-900/20">
+                        ABRIR TICKET DE SOPORTE
+                    </x-button>
+                </div>
+            </x-card>
         </div>
     </div>
+</div>
 @endsection
-
-@section('styles')
-<style>
-    .pagination { display:flex; gap:6px; }
-    .pagination a, .pagination span { padding:8px 14px; border-radius:8px; font-size:13px; }
-    .pagination a { background:#fff; color:#2c3e50; border:1px solid #e8edf0; }
-    .pagination a:hover { background:#39a900; color:#fff; border-color:#39a900; }
-    .pagination span { background:#39a900; color:#fff; }
-</style>
 @endsection

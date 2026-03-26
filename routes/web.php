@@ -7,16 +7,17 @@ use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProyectoController;
-
+use App\Http\Controllers\HomeController;
 /*
 |--------------------------------------------------------------------------
 | Rutas públicas
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('index');
-})->name('home');
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/nosotros', function () {
     return view('nosotros');
@@ -131,6 +132,8 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::post('/empresas/{id}/estado', [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
     Route::get('/proyectos', [AdminController::class, 'proyectos'])->name('proyectos');
     Route::post('/proyectos/{id}/estado', [AdminController::class, 'cambiarEstadoProyecto'])->name('proyectos.estado');
+    Route::post('/proyectos/{id}/aprobar', [AdminController::class, 'aprobarProyecto'])->name('proyectos.aprobar');
+    Route::post('/proyectos/{id}/rechazar', [AdminController::class, 'rechazarProyecto'])->name('proyectos.rechazar');
     Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])
     ->name('proyectos.asignar');
     

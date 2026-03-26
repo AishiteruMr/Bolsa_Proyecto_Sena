@@ -24,21 +24,21 @@ class AdminTest extends TestCase
         Mail::fake();
 
         // Crear usuario con rol admin (4)
-        $usrId = DB::table('usuario')->insertGetId([
+        $user = \App\Models\User::create([
             'usr_documento' => 123123123,
             'usr_correo'    => 'admin@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
+            'usr_contrasena'=> \Illuminate\Support\Facades\Hash::make('password123'),
             'rol_id'        => 4,
             'usr_fecha_creacion' => now(),
         ]);
 
-        $this->usuario = DB::table('usuario')->where('usr_id', $usrId)->first();
+        $this->usuario = $user;
     }
 
     #[Test]
     public function admin_can_view_dashboard()
     {
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 4
         ])->get(route('admin.dashboard'));
@@ -63,7 +63,7 @@ class AdminTest extends TestCase
             'apr_nombre' => 'A', 'apr_apellido' => 'B', 'apr_programa' => 'P', 'apr_estado' => 1
         ]);
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 4
         ])->post(route('admin.usuarios.estado', $aprId), [
@@ -92,7 +92,7 @@ class AdminTest extends TestCase
             'emp_contrasena' => 'x', 'emp_estado' => 1
         ]);
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 4
         ])->post(route('admin.empresas.estado', $empId), [
@@ -139,10 +139,10 @@ class AdminTest extends TestCase
             'emp_nit' => 555666555,
             'pro_titulo_proyecto' => 'P', 'pro_categoria' => 'C', 'pro_descripcion' => 'D',
             'pro_requisitos_especificos' => 'R', 'pro_habilidades_requerida' => 'H',
-            'pro_fecha_publi' => now(), 'pro_duracion_estimada' => 10, 'pro_estado' => 'Activo'
+            'pro_fecha_publi' => now()->toDateString(), 'pro_duracion_estimada' => 10, 'pro_estado' => 'Activo'
         ]);
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->from(route('admin.proyectos'))->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 4
         ])->post(route('admin.proyectos.asignar', $proId), [
@@ -154,5 +154,77 @@ class AdminTest extends TestCase
             'pro_id' => $proId,
             'ins_usr_documento' => 789789789
         ]);
+    }
+
+    #[Test]
+    public function admin_can_approve_project()
+    {
+        // 1. Crear empresa
+        $empUsrId = DB::table('usuario')->insertGetId([
+            'usr_documento' => 111000111,
+            'usr_correo'    => 'emp_approve@gmail.com',
+            'usr_contrasena'=> Hash::make('password123'),
+            'rol_id'        => 3,
+            'usr_fecha_creacion' => now(),
+        ]);
+        DB::table('empresa')->insert([
+            'usr_id' => $empUsrId,
+            'emp_nit' => 777888777,
+            'emp_nombre' => 'EmpApprove', 'emp_representante' => 'R',
+            'emp_correo' => 'emp_approve@gmail.com', 'emp_contrasena' => 'x', 'emp_estado' => 1
+        ]);
+
+        // 2. Crear proyecto pendiente
+        $proId = DB::table('proyecto')->insertGetId([
+            'emp_nit' => 777888777,
+            'pro_titulo_proyecto' => 'Proyecto Para Aprobar', 'pro_categoria' => 'C',
+            'pro_descripcion' => 'D', 'pro_requisitos_especificos' => 'R',
+            'pro_habilidades_requerida' => 'H',
+            'pro_fecha_publi' => now()->toDateString(), 'pro_duracion_estimada' => 10, 'pro_estado' => 'Pendiente'
+        ]);
+
+        $response = $this->actingAs($this->usuario)->from(route('admin.proyectos'))->withSession([
+            'usr_id' => $this->usuario->usr_id,
+            'rol'    => 4
+        ])->post(route('admin.proyectos.aprobar', $proId));
+
+        $response->assertStatus(302);
+        $this->assertDatabaseHas('proyecto', ['pro_id' => $proId, 'pro_estado' => 'Aprobado']);
+    }
+
+    #[Test]
+    public function admin_can_reject_project()
+    {
+        // 1. Crear empresa
+        $empUsrId = DB::table('usuario')->insertGetId([
+            'usr_documento' => 222000222,
+            'usr_correo'    => 'emp_reject@gmail.com',
+            'usr_contrasena'=> Hash::make('password123'),
+            'rol_id'        => 3,
+            'usr_fecha_creacion' => now(),
+        ]);
+        DB::table('empresa')->insert([
+            'usr_id' => $empUsrId,
+            'emp_nit' => 666777666,
+            'emp_nombre' => 'EmpReject', 'emp_representante' => 'R',
+            'emp_correo' => 'emp_reject@gmail.com', 'emp_contrasena' => 'x', 'emp_estado' => 1
+        ]);
+
+        // 2. Crear proyecto pendiente
+        $proId = DB::table('proyecto')->insertGetId([
+            'emp_nit' => 666777666,
+            'pro_titulo_proyecto' => 'Proyecto Para Rechazar', 'pro_categoria' => 'C',
+            'pro_descripcion' => 'D', 'pro_requisitos_especificos' => 'R',
+            'pro_habilidades_requerida' => 'H',
+            'pro_fecha_publi' => now()->toDateString(), 'pro_duracion_estimada' => 10, 'pro_estado' => 'Pendiente'
+        ]);
+
+        $response = $this->actingAs($this->usuario)->from(route('admin.proyectos'))->withSession([
+            'usr_id' => $this->usuario->usr_id,
+            'rol'    => 4
+        ])->post(route('admin.proyectos.rechazar', $proId));
+
+        $response->assertStatus(302);
+        $this->assertDatabaseHas('proyecto', ['pro_id' => $proId, 'pro_estado' => 'Rechazado']);
     }
 }

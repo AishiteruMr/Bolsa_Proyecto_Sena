@@ -31,6 +31,8 @@ class Proyecto extends Model
         'pro_fecha_publi',
         'pro_fecha_finalizacion',
         'ins_usr_documento',
+        'pro_latitud',
+        'pro_longitud',
     ];
 
     protected $casts = [
@@ -72,6 +74,22 @@ class Proyecto extends Model
         return $query->where('pro_estado', 'Activo');
     }
 
+    /**
+     * Proyectos aprobados por el admin — visibles para aprendices
+     */
+    public function scopeAprobados(Builder $query): Builder
+    {
+        return $query->where('pro_estado', 'Aprobado');
+    }
+
+    /**
+     * Proyectos pendientes de aprobación por el admin
+     */
+    public function scopePendientes(Builder $query): Builder
+    {
+        return $query->where('pro_estado', 'Pendiente');
+    }
+
     public function scopeInactivos(Builder $query): Builder
     {
         return $query->where('pro_estado', 'Inactivo');
@@ -94,8 +112,15 @@ class Proyecto extends Model
 
     public function scopeBusqueda(Builder $query, $termino): Builder
     {
+<<<<<<< HEAD
         return $query->where('pro_titulo_proyecto', 'like', "%{$termino}%")
             ->orWhere('pro_descripcion', 'like', "%{$termino}%");
+=======
+        return $query->where(function($q) use ($termino) {
+            $q->where('pro_titulo_proyecto', 'like', "%{$termino}%")
+              ->orWhere('pro_descripcion', 'like', "%{$termino}%");
+        });
+>>>>>>> master
     }
 
     public function scopeRecientes(Builder $query): Builder
@@ -107,6 +132,21 @@ class Proyecto extends Model
     public function isActivo(): bool
     {
         return $this->pro_estado === 'Activo';
+    }
+
+    public function isAprobado(): bool
+    {
+        return $this->pro_estado === 'Aprobado';
+    }
+
+    public function isPendiente(): bool
+    {
+        return $this->pro_estado === 'Pendiente';
+    }
+
+    public function isRechazado(): bool
+    {
+        return $this->pro_estado === 'Rechazado';
     }
 
     public function isFinalizado(): bool
@@ -203,7 +243,7 @@ class Proyecto extends Model
     }
 
     /**
-     * Obtener nombre de la empresa
+     * Obtener el nombre de la empresa
      */
     public function getEmpresaNombreAttribute(): string
     {
@@ -211,10 +251,28 @@ class Proyecto extends Model
     }
 
     /**
+<<<<<<< HEAD
      * Obtener categoría con valor por defecto
      */
     public function getProCategoriaAttribute(): string
     {
         return $this->attributes['pro_categoria'] ?? 'Sin categoría';
+=======
+     * Accesor para la URL de la imagen del proyecto
+     */
+    public function getImagenUrlAttribute(): string
+    {
+        if (empty($this->pro_imagen_url)) {
+            return asset('assets/default-project.jpg');
+        }
+
+        // Si la URL ya es completa o empieza por /storage, la devolvemos tal cual
+        if (str_starts_with($this->pro_imagen_url, 'http') || str_starts_with($this->pro_imagen_url, '/storage')) {
+            return $this->pro_imagen_url;
+        }
+
+        // De lo contrario, asumimos que está en el disco public de storage
+        return asset('storage/' . $this->pro_imagen_url);
+>>>>>>> master
     }
 }

@@ -3,16 +3,16 @@
    ============================================ */
 
 :root {
-    --primary: #0056b3;
-    --primary-dark: #004085;
-    --success: #28a745;
+    --primary: #3EB489;
+    --primary-dark: #298564;
+    --success: #3EB489;
     --warning: #ffc107;
     --danger: #dc3545;
-    --light: #f8f9fa;
-    --border: #e0e0e0;
-    --text: #333;
-    --text-light: #666;
-    --text-muted: #999;
+    --light: #E0F2F1;
+    --border: #b2dfdb;
+    --text: #000000;
+    --text-light: #4a6572;
+    --text-muted: #7a9aaa;
 }
 
 /* Reset and Base */

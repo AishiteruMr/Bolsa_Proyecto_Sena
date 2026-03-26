@@ -19,12 +19,21 @@ class AdminController extends Controller
     public function dashboard()
     {
         $stats = [
+<<<<<<< HEAD
             'aprendices' => Aprendiz::count(),
             'instructores' => Instructor::count(),
             'empresas' => Empresa::count(),
             'proyectos' => Proyecto::count(),
             'postulaciones' => Postulacion::count(),
             'aprobadas' => Postulacion::where('pos_estado', 'Aprobada')->count(),
+=======
+            'aprendices'    => Aprendiz::count(),
+            'instructores'  => Instructor::count(),
+            'empresas'      => Empresa::count(),
+            'proyectos'     => Proyecto::count(),
+            'pendientes'    => Proyecto::where('pro_estado', 'Pendiente')->count(),
+            'usuarios'      => User::count(),
+>>>>>>> master
         ];
 
         $proyectosRecientes = Proyecto::with('empresa')
@@ -86,6 +95,7 @@ class AdminController extends Controller
     {
         $proyectos = Proyecto::with(['empresa', 'instructor.usuario'])
             ->orderByDesc('pro_id')
+<<<<<<< HEAD
             ->get()
             ->map(function ($proyecto) {
                 return (object) [
@@ -99,12 +109,16 @@ class AdminController extends Controller
                     'ins_nombre' => $proyecto->instructor ? $proyecto->instructor->ins_nombre : null,
                 ];
             });
+=======
+            ->get();
+>>>>>>> master
 
         $instructores = Instructor::with('usuario')
             ->get()
             ->map(function ($instructor) {
                 return (object) [
                     'ins_nombre' => $instructor->ins_nombre,
+                    'ins_apellido' => $instructor->ins_apellido,
                     'usr_documento' => $instructor->usuario->usr_documento,
                 ];
             });
@@ -115,7 +129,11 @@ class AdminController extends Controller
     public function cambiarEstadoProyecto(Request $request, int $id)
     {
         $request->validate([
+<<<<<<< HEAD
             'estado' => 'required|in:Activo,Inactivo,Aprobado,Rechazado',
+=======
+            'estado' => 'required|in:Activo,Inactivo,Pendiente,Aprobado,Rechazado'
+>>>>>>> master
         ]);
 
         $proyecto = Proyecto::findOrFail($id);
@@ -190,5 +208,21 @@ class AdminController extends Controller
         }
 
         return back()->with('success', 'Instructor asignado correctamente');
+    }
+
+    public function aprobarProyecto(int $id)
+    {
+        $proyecto = Proyecto::findOrFail($id);
+        $proyecto->update(['pro_estado' => 'Aprobado']);
+
+        return back()->with('success', '✅ Proyecto aprobado. Ya es visible para los aprendices.');
+    }
+
+    public function rechazarProyecto(int $id)
+    {
+        $proyecto = Proyecto::findOrFail($id);
+        $proyecto->update(['pro_estado' => 'Rechazado']);
+
+        return back()->with('success', 'Proyecto rechazado correctamente.');
     }
 }
