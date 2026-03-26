@@ -44,7 +44,7 @@
                 <span class="text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] italic opacity-60 italic leading-none">TRAZABILIDAD DE MISIONES EJECUTADAS</span>
             </div>
             <h2 class="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase italic leading-none italic">
-                BÓVEDA DE <span class="text-emerald-500 block mt-2 text-6xl md:text-7xl italic">MISIONES</span>
+                BÓVEDA DE <span class="text-[#FF6B00] block mt-2 text-6xl md:text-7xl italic">MISIONES</span>
             </h2>
         </div>
 
@@ -60,45 +60,45 @@
     @if($proyectos->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 px-4 italic">
             @foreach($proyectos as $proyecto)
-                <x-card class="group flex flex-col h-full border-none shadow-2xl hover:shadow-emerald-500/10 rounded-[4rem] bg-white transition-all duration-700 overflow-hidden italic" shadow="none">
+                <x-card class="group flex flex-col h-full border-none shadow-2xl hover:shadow-[#FF6B00]/10 rounded-[4rem] bg-white transition-all duration-700 overflow-hidden italic" shadow="none">
                     <div class="p-12 md:p-14 space-y-10 flex-1 flex flex-col italic font-bold">
                         <div class="flex justify-between items-start gap-6 italic">
                             <div class="space-y-4 flex-1 italic">
-                                <h3 class="text-3xl font-black text-slate-900 group-hover:text-emerald-500 transition-colors uppercase italic tracking-tighter leading-none italic font-bold">{{ $proyecto->pro_titulo_proyecto }}</h3>
+                                <h3 class="text-3xl font-black text-slate-900 group-hover:text-[#FF6B00] transition-colors uppercase italic tracking-tighter leading-none italic font-bold">{{ $proyecto->pro_titulo_proyecto }}</h3>
                                 <div class="flex items-center gap-4 text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] italic opacity-60 italic leading-none">
-                                    <i class="fas fa-building text-emerald-500 italic font-bold"></i>
+                                    <i class="fas fa-building text-[#FF6B00] italic font-bold"></i>
                                     <span class="truncate italic">{{ strtoupper($proyecto->emp_nombre) }}</span>
                                 </div>
                             </div>
-                            <x-badge class="{{ $proyecto->pro_estado === 'Activo' ? 'bg-emerald-500 text-white' : 'bg-slate-900 text-white' }} border-none px-6 py-2 rounded-xl text-[9px] font-black uppercase italic shadow-2xl shadow-black/20 italic">
+                            <x-badge class="{{ $proyecto->pro_estado === 'Activo' ? 'bg-[#FF6B00] text-white' : 'bg-slate-900 text-white' }} border-none px-6 py-2 rounded-xl text-[9px] font-black uppercase italic shadow-2xl shadow-black/20 italic">
                                 {{ strtoupper($proyecto->pro_estado) }}
                             </x-badge>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-8 p-8 rounded-[2.5rem] bg-slate-50 border-4 border-white italic shadow-xl group-hover:bg-emerald-50/50 group-hover:border-emerald-500/10 transition-all italic font-bold">
+                        <div class="grid grid-cols-2 gap-8 p-8 rounded-[2.5rem] bg-slate-50 border-4 border-white italic shadow-xl group-hover:bg-orange-50/50 group-hover:border-[#FF6B00]/10 transition-all italic font-bold">
                             <div class="text-center italic font-bold">
                                 <p class="text-4xl font-black text-slate-900 italic tracking-tighter italic leading-none italic">{{ str_pad($proyecto->total_aprendices, 2, '0', STR_PAD_LEFT) }}</p>
                                 <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] italic opacity-80 mt-3 italic leading-none italic">POSTULACIONES</p>
                             </div>
                             <div class="text-center pl-8 border-l-4 border-white italic font-bold">
-                                <p class="text-4xl font-black text-emerald-500 italic tracking-tighter italic leading-none italic">{{ str_pad($proyecto->aprendices_aprobados, 2, '0', STR_PAD_LEFT) }}</p>
+                                <p class="text-4xl font-black text-[#FF6B00] italic tracking-tighter italic leading-none italic">{{ str_pad($proyecto->aprendices_aprobados, 2, '0', STR_PAD_LEFT) }}</p>
                                 <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] italic opacity-80 mt-3 italic leading-none italic">APROBACIONES</p>
                             </div>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-8 pt-6 italic font-bold border-t border-slate-50 italic">
                             <div class="flex items-center gap-3 text-slate-400 text-[9px] font-black uppercase italic opacity-60 italic leading-none italic">
-                                <i class="fas fa-tag text-emerald-500 italic font-bold"></i>
+                                <i class="fas fa-tag text-[#FF6B00] italic font-bold"></i>
                                 <span class="italic tracking-widest">{{ strtoupper($proyecto->pro_categoria) }}</span>
                             </div>
                             <div class="flex items-center gap-3 text-slate-400 text-[9px] font-black uppercase italic opacity-60 italic ml-auto leading-none italic">
-                                <i class="fas fa-calendar-check text-emerald-500 italic font-bold"></i>
+                                <i class="fas fa-calendar-check text-[#FF6B00] italic font-bold"></i>
                                 <span class="italic tracking-widest">LANZAMIENTO: {{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->translatedFormat('d M, Y') }}</span>
                             </div>
                         </div>
 
                         <div class="pt-10 mt-auto italic font-bold">
-                            <x-button variant="primary" shadow="emerald" class="w-full justify-center py-6 rounded-2xl text-[11px] font-black uppercase italic shadow-2xl hover:scale-105 transition-all active:scale-95 italic tracking-widest leading-none italic" onclick="window.location.href='{{ route('instructor.reporte', $proyecto->pro_id) }}'">
+                            <x-button variant="primary" shadow="orange" class="w-full justify-center py-6 rounded-2xl text-[11px] font-black uppercase italic shadow-2xl hover:scale-105 transition-all active:scale-95 italic tracking-widest leading-none italic" onclick="window.location.href='{{ route('instructor.reporte', $proyecto->pro_id) }}'">
                                 <i class="fas fa-clipboard-list mr-4 italic text-xl font-bold"></i> REPORTE DE GESTIÓN ANALÍTICA
                             </x-button>
                         </div>
@@ -107,7 +107,7 @@
             @endforeach
         </div>
     @else
-        <div class="py-48 text-center italic border-8 border-dashed border-slate-50 rounded-[5rem] group hover:border-emerald-500/10 transition-all duration-1000 bg-slate-50/30 italic mx-4 italic">
+        <div class="py-48 text-center italic border-8 border-dashed border-slate-50 rounded-[5rem] group hover:border-[#FF6B00]/10 transition-all duration-1000 bg-slate-50/30 italic mx-4 italic">
             <div class="relative inline-block italic">
                 <div class="absolute inset-0 bg-slate-900/5 rounded-full blur-[100px] animate-pulse italic"></div>
                 <div class="relative mb-12 inline-flex p-12 rounded-[4rem] bg-white text-slate-100 shadow-2xl ring-[30px] ring-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-1000 italic">

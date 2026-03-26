@@ -40,7 +40,7 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
                     
                     <div class="absolute top-10 left-10 italic">
-                        <x-badge class="bg-emerald-500 text-white border-none px-6 py-2 rounded-full font-black tracking-[0.2em] text-[10px] uppercase italic shadow-2xl italic">
+                        <x-badge class="bg-[#FF6B00] text-white border-none px-6 py-2 rounded-full font-black tracking-[0.2em] text-[10px] uppercase italic shadow-2xl italic">
                             {{ strtoupper($proyecto->pro_categoria) }}
                         </x-badge>
                     </div>
@@ -50,7 +50,7 @@
                             {{ $proyecto->pro_titulo_proyecto }}
                         </h2>
                         <div class="flex items-center gap-6 italic">
-                            <div class="h-1 w-24 bg-emerald-500 rounded-full italic"></div>
+                            <div class="h-1 w-24 bg-[#FF6B00] rounded-full italic"></div>
                             <span class="text-white/60 text-xs font-black uppercase tracking-[0.3em] italic">EXPEDIENTE DE MISIÓN ACTIVA</span>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                 <div class="p-12 md:p-16 space-y-10 bg-white italic">
                     <div class="space-y-6 italic">
                         <div class="flex items-center gap-4 italic font-black text-slate-900 uppercase tracking-tighter text-xl italic">
-                            <i class="fas fa-align-left text-emerald-500 italic"></i>
+                            <i class="fas fa-align-left text-[#FF6B00] italic"></i>
                             RESUMEN EJECUTIVO DE LA CONVOCATORIA
                         </div>
                         <div class="text-slate-400 font-bold text-lg leading-relaxed text-justify px-2 italic uppercase">
@@ -72,9 +72,9 @@
             <!-- Bento Grid for Requirements -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 italic">
                 <x-card class="p-10 border-none shadow-xl rounded-[3rem] bg-slate-50 space-y-8 relative overflow-hidden italic" shadow="none">
-                    <div class="absolute -right-8 -top-8 w-24 h-24 bg-emerald-500/5 rounded-full italic"></div>
+                    <div class="absolute -right-8 -top-8 w-24 h-24 bg-[#FF6B00]/5 rounded-full italic"></div>
                     <div class="flex items-center gap-6 italic">
-                        <div class="w-16 h-16 rounded-[1.5rem] bg-white text-emerald-500 flex items-center justify-center text-2xl shadow-xl italic rotate-3">
+                        <div class="w-16 h-16 rounded-[1.5rem] bg-white text-[#FF6B00] flex items-center justify-center text-2xl shadow-xl italic rotate-3">
                             <i class="fas fa-microchip italic"></i>
                         </div>
                         <div class="italic">
@@ -108,7 +108,7 @@
             <x-card class="p-12 md:p-16 border-none shadow-2xl rounded-[4rem] bg-white space-y-12 italic" shadow="none">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-slate-100 pb-10 italic">
                     <div class="flex items-center gap-6 italic">
-                        <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-2xl shadow-emerald-500/20 italic rotate-6">
+                        <div class="w-16 h-16 rounded-2xl bg-[#FF6B00] text-white flex items-center justify-center shadow-2xl shadow-[#FF6B00]/20 italic rotate-6">
                             <i class="fas fa-layer-group text-xl font-bold italic"></i>
                         </div>
                         <div class="italic">
@@ -125,12 +125,12 @@
                     @forelse($etapas as $index => $etapa)
                         <div class="relative group italic">
                             <!-- Timeline Dot -->
-                            <div class="absolute -left-[54px] top-1 w-12 h-12 rounded-2xl {{ $index == 0 ? 'bg-emerald-500 shadow-2xl shadow-emerald-500/30 text-white' : 'bg-white border-4 border-slate-50 text-slate-300' }} flex items-center justify-center text-sm font-black z-10 transition-all group-hover:scale-110 group-hover:rotate-6 italic">
+                            <div class="absolute -left-[54px] top-1 w-12 h-12 rounded-2xl {{ $index == 0 ? 'bg-[#FF6B00] shadow-2xl shadow-[#FF6B00]/30 text-white' : 'bg-white border-4 border-slate-50 text-slate-300' }} flex items-center justify-center text-sm font-black z-10 transition-all group-hover:scale-110 group-hover:rotate-6 italic">
                                 {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                             </div>
                             
                             <div class="space-y-3 italic">
-                                <h5 class="text-xl font-black text-slate-900 group-hover:text-emerald-500 transition-colors uppercase italic tracking-tight italic">{{ $etapa->eta_nombre }}</h5>
+                                <h5 class="text-xl font-black text-slate-900 group-hover:text-[#FF6B00] transition-colors uppercase italic tracking-tight italic">{{ $etapa->eta_nombre }}</h5>
                                 <p class="text-slate-400 font-bold text-sm leading-relaxed uppercase italic italic opacity-70">{{ $etapa->eta_descripcion }}</p>
                             </div>
                         </div>
@@ -151,11 +151,11 @@
             
             <!-- Status Card -->
             <x-card class="p-10 border-none shadow-2xl rounded-[3rem] bg-white space-y-10 relative overflow-hidden group italic" shadow="none">
-                <div class="absolute top-0 left-0 w-3 h-full bg-emerald-500 italic"></div>
+                <div class="absolute top-0 left-0 w-3 h-full bg-[#FF6B00] italic"></div>
                 
                 <div class="text-center space-y-6 italic">
                     <span class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] block italic">Estado Operativo</span>
-                    <x-badge class="bg-emerald-50 text-emerald-600 border-none px-10 py-4 rounded-3xl text-xs font-black tracking-widest uppercase italic shadow-sm italic ring-1 ring-emerald-100">
+                    <x-badge class="bg-orange-50 text-[#E65100] border-none px-10 py-4 rounded-3xl text-xs font-black tracking-widest uppercase italic shadow-sm italic ring-1 ring-orange-100">
                         {{ strtoupper($proyecto->pro_estado) }}
                     </x-badge>
                 </div>
@@ -164,14 +164,14 @@
                     <div class="flex flex-col gap-2 bg-slate-50 p-6 rounded-[2rem] border-2 border-slate-50 italic transition-all hover:bg-white hover:shadow-xl">
                         <span class="text-[9px] text-slate-400 uppercase tracking-[0.3em] italic">VENTANA DE EJECUCIÓN</span>
                         <div class="flex items-center justify-between italic">
-                            <span class="text-emerald-500 text-lg italic"><i class="fas fa-clock italic"></i></span>
+                            <span class="text-[#FF6B00] text-lg italic"><i class="fas fa-clock italic"></i></span>
                             <span class="text-sm text-slate-900 font-black uppercase italic italic">{{ $proyecto->pro_duracion_estimada }}</span>
                         </div>
                     </div>
                     <div class="flex flex-col gap-2 bg-slate-50 p-6 rounded-[2rem] border-2 border-slate-50 italic transition-all hover:bg-white hover:shadow-xl">
                         <span class="text-[9px] text-slate-400 uppercase tracking-[0.3em] italic">COORDENADA TEMPORAL</span>
                         <div class="flex items-center justify-between italic">
-                            <span class="text-emerald-500 text-lg italic"><i class="fas fa-calendar-alt italic"></i></span>
+                            <span class="text-[#FF6B00] text-lg italic"><i class="fas fa-calendar-alt italic"></i></span>
                             <span class="text-sm text-slate-900 font-black uppercase italic italic">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d/m/Y') }}</span>
                         </div>
                     </div>
@@ -188,7 +188,7 @@
                         </div>
                         <div class="space-y-1 italic">
                             <p class="text-sm font-black text-white uppercase tracking-tight italic">{{ $proyecto->ins_nombre }} {{ $proyecto->ins_apellido }}</p>
-                            <div class="flex items-center gap-2 text-emerald-400 italic">
+                            <div class="flex items-center gap-2 text-orange-400 italic">
                                 <i class="fas fa-shield-check text-[10px] italic"></i>
                                 <span class="text-[9px] font-black uppercase tracking-widest italic">LÍDER TÉCNICO</span>
                             </div>
@@ -209,7 +209,7 @@
                 <x-button :href="route('empresa.proyectos.edit', $proyecto->pro_id)" variant="secondary" class="w-full py-6 rounded-[2rem] border-4 border-slate-50 bg-white font-black text-[10px] uppercase tracking-widest group flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl active:scale-95 transition-all italic italic">
                     <i class="fas fa-edit group-hover:rotate-12 transition-transform italic text-slate-400"></i> MODIFICAR ARCHIVOS DE MISIÓN
                 </x-button>
-                <x-button :href="route('empresa.proyectos.postulantes', $proyecto->pro_id)" variant="primary" shadow="emerald" class="w-full py-7 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-4 shadow-2xl active:scale-95 transition-all italic italic">
+                <x-button :href="route('empresa.proyectos.postulantes', $proyecto->pro_id)" variant="primary" shadow="orange" class="w-full py-7 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-4 shadow-2xl active:scale-95 transition-all italic italic">
                     <i class="fas fa-users-viewfinder text-lg italic text-white flex items-center justify-center"></i> EVALUAR OPERATIVOS
                 </x-button>
             </div>

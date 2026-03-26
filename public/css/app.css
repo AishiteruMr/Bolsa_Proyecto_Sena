@@ -1,0 +1,75 @@
+/* =========================================
+   SENA INSPIRATE - GLOBAL DESIGN SYSTEM
+   ========================================= */
+
+:root {
+    /* Color Palette - Modern Mint & Slate */
+    --primary: #FF6B00;
+    --primary-dark: #E65100;
+    --primary-light: #FF9E40;
+    --primary-soft: rgba(255, 107, 0, 0.1);
+    
+    --bg-light: #F8F9FA;
+    --surface: #ffffff;
+    
+    --accent-dark: #231F20;
+    --accent-slate: #1a323d;
+    
+    --text-main: #231F20;
+    --text-muted: #4a6572;
+    --text-white: #ffffff;
+    
+    --border-color: #E0E0E0;
+    --border-light: rgba(35, 31, 32, 0.08);
+    
+    /* Effects */
+    --shadow-sm: 0 4px 12px rgba(46, 70, 82, 0.05);
+    --shadow-md: 0 10px 30px rgba(46, 70, 82, 0.08);
+    --shadow-lg: 0 20px 40px rgba(46, 70, 82, 0.12);
+    --glass: rgba(255, 255, 255, 0.8);
+    --blur: blur(12px);
+    
+    /* Sizing */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --sidebar-width: 280px;
+}
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Modern Utilities */
+.glass {
+    background: var(--glass);
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.bento-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
+}

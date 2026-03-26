@@ -8,11 +8,11 @@
     $baseClasses = 'inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
     
     $variants = [
-        'primary' => 'bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500 shadow-sm',
+        'primary' => 'bg-[#E65100] text-white hover:bg-orange-700 focus:ring-[#FF6B00] shadow-sm',
         'secondary' => 'bg-slate-700 text-white hover:bg-slate-800 focus:ring-slate-500 shadow-sm',
-        'outline' => 'border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 bg-transparent focus:ring-emerald-500',
+        'outline' => 'border-2 border-[#E65100] text-[#E65100] hover:bg-orange-50 bg-transparent focus:ring-[#FF6B00]',
         'danger' => 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
-        'ghost' => 'text-emerald-600 hover:bg-emerald-50 focus:ring-emerald-500',
+        'ghost' => 'text-[#E65100] hover:bg-orange-50 focus:ring-[#FF6B00]',
     ];
 
     $sizes = [

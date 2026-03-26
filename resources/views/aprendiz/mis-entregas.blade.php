@@ -18,7 +18,7 @@
     </a>
     <span class="nav-label text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mt-6 mb-2 block italic">CONFIGURACIÓN</span>
     <a href="{{ route('aprendiz.perfil') }}" class="nav-item group {{ request()->routeIs('aprendiz.perfil') ? 'active' : '' }}">
-        <i class="fas fa-user-shield group-hover:text-emerald-500 transition-colors italic"></i> 
+        <i class="fas fa-user-shield group-hover:text-[#FF6B00] transition-colors italic"></i> 
         <span class="font-bold tracking-tight uppercase text-xs italic">Mi Identidad</span>
     </a>
 @endsection
@@ -29,16 +29,16 @@
     @if($proyectos->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <x-card class="p-8 border-none ring-1 ring-slate-100 shadow-xl bg-slate-900 relative overflow-hidden group">
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-[#FF6B00]/10 rounded-full blur-3xl"></div>
                 <div class="relative flex flex-col justify-between h-full space-y-4">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest italic block">TOTAL EVIDENCIAS</span>
-                    <h3 class="text-5xl font-black text-white italic group-hover:text-emerald-400 transition-colors">{{ $evidencias->count() }}</h3>
+                    <h3 class="text-5xl font-black text-white italic group-hover:text-orange-400 transition-colors">{{ $evidencias->count() }}</h3>
                 </div>
             </x-card>
-            <x-card class="p-8 border-none ring-1 ring-slate-100 shadow-xl bg-emerald-500 relative overflow-hidden group">
+            <x-card class="p-8 border-none ring-1 ring-slate-100 shadow-xl bg-[#FF6B00] relative overflow-hidden group">
                 <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/20 rounded-full blur-3xl"></div>
                 <div class="relative flex flex-col justify-between h-full space-y-4">
-                    <span class="text-[10px] font-black text-emerald-900/40 uppercase tracking-widest italic block">MISIONES OK</span>
+                    <span class="text-[10px] font-black text-orange-900/40 uppercase tracking-widest italic block">MISIONES OK</span>
                     <h3 class="text-5xl font-black text-white italic group-hover:scale-110 origin-left transition-transform">{{ $evidencias->where('evid_estado', 'Aprobada')->count() }}</h3>
                 </div>
             </x-card>
@@ -58,13 +58,13 @@
             @foreach($proyectos as $proyecto)
                 <div class="space-y-6">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-[1.5rem] bg-slate-900 text-emerald-500 flex items-center justify-center text-xl italic shadow-2xl transform -rotate-6">
+                        <div class="w-12 h-12 rounded-[1.5rem] bg-slate-900 text-[#FF6B00] flex items-center justify-center text-xl italic shadow-2xl transform -rotate-6">
                             <i class="fas fa-terminal"></i>
                         </div>
                         <div class="space-y-1">
                             <h3 class="text-2xl font-black text-slate-900 tracking-tight uppercase italic">{{ $proyecto->pro_titulo_proyecto }}</h3>
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
-                                <i class="fas fa-building text-emerald-500"></i> {{ $proyecto->emp_nombre }} • {{ $proyecto->pro_categoria }}
+                                <i class="fas fa-building text-[#FF6B00]"></i> {{ $proyecto->emp_nombre }} • {{ $proyecto->pro_categoria }}
                             </p>
                         </div>
                     </div>
@@ -75,22 +75,22 @@
                         @endphp
 
                         @forelse($evidencias_proyecto as $evidencia)
-                            <x-card class="p-6 md:p-8 border-none ring-1 ring-slate-100 shadow-lg hover:shadow-2xl hover:ring-emerald-500/20 transition-all group/evid flex items-center gap-6 relative overflow-hidden">
+                            <x-card class="p-6 md:p-8 border-none ring-1 ring-slate-100 shadow-lg hover:shadow-2xl hover:ring-[#FF6B00]/20 transition-all group/evid flex items-center gap-6 relative overflow-hidden">
                                 <div class="absolute right-0 top-0 w-24 h-full bg-slate-50 -mr-12 group-hover/evid:-mr-10 transition-all opacity-50"></div>
                                 
-                                <div class="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center text-2xl italic text-slate-300 group-hover/evid:bg-emerald-50 group-hover/evid:text-emerald-500 transition-colors shadow-inner flex-shrink-0">
+                                <div class="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center text-2xl italic text-slate-300 group-hover/evid:bg-orange-50 group-hover/evid:text-[#FF6B00] transition-colors shadow-inner flex-shrink-0">
                                     {{ $evidencia->etapa->eta_orden ?? '!' }}
                                 </div>
 
                                 <div class="flex-1 space-y-3 relative">
                                     <div class="flex justify-between items-start">
                                         <div class="space-y-1">
-                                            <h4 class="text-lg font-black text-slate-900 uppercase italic leading-tight group-hover/evid:text-emerald-600 transition-colors">{{ $evidencia->etapa->eta_nombre ?? 'Módulo Operativo' }}</h4>
+                                            <h4 class="text-lg font-black text-slate-900 uppercase italic leading-tight group-hover/evid:text-[#E65100] transition-colors">{{ $evidencia->etapa->eta_nombre ?? 'Módulo Operativo' }}</h4>
                                             <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic font-bold">{{ \Carbon\Carbon::parse($evidencia->evid_fecha)->format('d M, Y • H:i') }}</span>
                                         </div>
                                         @switch($evidencia->evid_estado)
                                             @case('Aprobada')
-                                                <x-badge class="bg-emerald-500 text-white border-none py-1 px-3 rounded-xl text-[8px] font-black uppercase shadow-lg shadow-emerald-100">VALIDADO</x-badge>
+                                                <x-badge class="bg-[#FF6B00] text-white border-none py-1 px-3 rounded-xl text-[8px] font-black uppercase shadow-lg shadow-orange-100">VALIDADO</x-badge>
                                                 @break
                                             @case('Rechazada')
                                                 <x-badge class="bg-red-500 text-white border-none py-1 px-3 rounded-xl text-[8px] font-black uppercase shadow-lg shadow-red-100">AJUSTE</x-badge>
@@ -137,7 +137,7 @@
                 </div>
 
                 <div class="pt-6">
-                    <x-button :href="route('aprendiz.proyectos')" variant="primary" shadow="emerald" class="px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center gap-4 mx-auto hover:scale-105 active:scale-95 transition-all group">
+                    <x-button :href="route('aprendiz.proyectos')" variant="primary" shadow="orange" class="px-12 py-5 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center gap-4 mx-auto hover:scale-105 active:scale-95 transition-all group">
                         <i class="fas fa-rocket text-lg group-hover:animate-ping transition-transform italic"></i> 
                         ESCANEAR BANCO DE RETOS
                     </x-button>

@@ -1,13 +1,13 @@
 /* ==========================================================================
    INSTRUCTOR PREMIUM DESIGN SYSTEM
-   Theme: Modern Emerald & Glassmorphism
+   Theme: Modern orange & Glassmorphism
    ========================================================================== */
 
 :root {
-    /* Emerald Color Palette */
+    /* orange Color Palette */
     --primary: #34d399;
     --primary-light: #6ee7b7;
-    --primary-dark: #10b981;
+    --primary-dark: #FF6B00;
     --accent: #059669;
     
     /* Neutral Palette */

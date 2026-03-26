@@ -30,8 +30,8 @@
     
     <!-- Header Section -->
     <div class="space-y-8 px-4">
-        <a href="{{ route('empresa.proyectos') }}" class="inline-flex items-center text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] hover:text-emerald-700 transition-all group italic">
-            <i class="fas fa-chevron-left mr-3 group-hover:-translate-x-1 transition-transform italic text-emerald-500"></i> 
+        <a href="{{ route('empresa.proyectos') }}" class="inline-flex items-center text-[10px] font-black text-[#E65100] uppercase tracking-[0.2em] hover:text-orange-700 transition-all group italic">
+            <i class="fas fa-chevron-left mr-3 group-hover:-translate-x-1 transition-transform italic text-[#FF6B00]"></i> 
             RETORNAR AL PUERTO
         </a>
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 italic">
@@ -40,7 +40,7 @@
                     {{ $proyecto->pro_titulo_proyecto }}
                 </h2>
                 <p class="text-slate-400 text-lg uppercase italic font-black flex items-center gap-3 italic">
-                    <span class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs italic shadow-lg shadow-emerald-500/20">
+                    <span class="w-8 h-8 rounded-lg bg-[#FF6B00] text-white flex items-center justify-center text-xs italic shadow-lg shadow-[#FF6B00]/20">
                         <i class="fas fa-users-viewfinder italic"></i>
                     </span>
                     MERITOCRACIA Y GESTIÓN DE TALENTO SENA
@@ -60,7 +60,7 @@
         @forelse($postulantes as $p)
             <x-card class="group flex flex-col p-10 border-none shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-700 relative overflow-hidden bg-white rounded-[3.5rem] italic" shadow="none">
                 <!-- Kinetic Background Element -->
-                <div class="absolute -top-16 -right-16 w-48 h-48 bg-emerald-50 rounded-full group-hover:scale-150 transition-transform duration-[1500ms] opacity-50 italic"></div>
+                <div class="absolute -top-16 -right-16 w-48 h-48 bg-orange-50 rounded-full group-hover:scale-150 transition-transform duration-[1500ms] opacity-50 italic"></div>
                 
                 <div class="relative flex items-start gap-8 italic">
                     <div class="relative shrink-0 italic">
@@ -68,17 +68,17 @@
                             {{ strtoupper(substr($p->apr_nombre ?? 'A', 0, 1)) }}
                         </div>
                         <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-white rounded-2xl flex items-center justify-center border-4 border-slate-50 shadow-xl italic rotate-12">
-                            <i class="fas fa-certificate text-emerald-500 text-sm italic"></i>
+                            <i class="fas fa-certificate text-[#FF6B00] text-sm italic"></i>
                         </div>
                     </div>
 
                     <div class="flex-1 space-y-2 min-w-0 italic">
-                        <h4 class="text-xl font-black text-slate-900 truncate tracking-tight uppercase italic group-hover:text-emerald-500 transition-colors italic">{{ $p->apr_nombre }} {{ $p->apr_apellido }}</h4>
-                        <x-badge class="bg-emerald-50 text-emerald-600 border-none px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest italic italic">
+                        <h4 class="text-xl font-black text-slate-900 truncate tracking-tight uppercase italic group-hover:text-[#FF6B00] transition-colors italic">{{ $p->apr_nombre }} {{ $p->apr_apellido }}</h4>
+                        <x-badge class="bg-orange-50 text-[#E65100] border-none px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest italic italic">
                             {{ strtoupper($p->apr_programa ?? 'ESPECIALIDAD SENA') }}
                         </x-badge>
                         <div class="flex items-center gap-2 text-slate-300 font-bold text-[10px] pt-2 uppercase italic italic">
-                            <i class="fas fa-envelope text-emerald-500 italic"></i>
+                            <i class="fas fa-envelope text-[#FF6B00] italic"></i>
                             <span class="truncate italic">{{ $p->usr_correo }}</span>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                                 <x-badge variant="warning" class="bg-amber-100 text-amber-600 border-none px-5 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest italic italic shadow-sm italic ring-1 ring-amber-200">PENDIENTE</x-badge>
                                 @break
                             @case('Aprobada')
-                                <x-badge variant="success" class="bg-emerald-100 text-emerald-600 border-none px-5 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest italic italic shadow-sm italic ring-1 ring-emerald-200">APROBADO</x-badge>
+                                <x-badge variant="success" class="bg-orange-100 text-[#E65100] border-none px-5 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest italic italic shadow-sm italic ring-1 ring-orange-200">APROBADO</x-badge>
                                 @break
                             @case('Rechazada')
                                 <x-badge variant="danger" class="bg-red-100 text-red-600 border-none px-5 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest italic italic shadow-sm italic ring-1 ring-red-200">RECHAZADO</x-badge>
@@ -107,7 +107,7 @@
 
                 <!-- Action Hub -->
                 <div class="relative mt-10 flex items-center gap-4 pt-10 border-t border-slate-50 italic">
-                    <x-button variant="secondary" class="flex-1 px-6 py-4 rounded-2xl border-4 border-slate-50 bg-white hover:bg-emerald-50 hover:text-emerald-600 text-[10px] font-black uppercase tracking-widest transition-all group/btn flex items-center justify-center gap-3 active:scale-95 italic italic shadow-xl">
+                    <x-button variant="secondary" class="flex-1 px-6 py-4 rounded-2xl border-4 border-slate-50 bg-white hover:bg-orange-50 hover:text-[#E65100] text-[10px] font-black uppercase tracking-widest transition-all group/btn flex items-center justify-center gap-3 active:scale-95 italic italic shadow-xl">
                         <i class="fas fa-file-pdf group-hover/btn:scale-110 transition-transform italic text-slate-400"></i> PORTAFOLIO
                     </x-button>
                     
@@ -124,7 +124,7 @@
                                     @csrf
                                     <input type="hidden" name="estado" value="Aprobada">
                                     <button type="button" @click="$dispatch('open-confirm-modal-modal-aprobar-{{ $p->pos_id }}')" 
-                                        class="w-16 h-16 rounded-2xl bg-emerald-500 text-white shadow-2xl shadow-emerald-500/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all font-bold italic rotate-0 hover:rotate-6 italic" title="VINCULAR OPERATIVO">
+                                        class="w-16 h-16 rounded-2xl bg-[#FF6B00] text-white shadow-2xl shadow-[#FF6B00]/30 flex items-center justify-center hover:scale-110 active:scale-90 transition-all font-bold italic rotate-0 hover:rotate-6 italic" title="VINCULAR OPERATIVO">
                                         <i class="fas fa-check text-xl italic text-white flex items-center justify-center font-bold"></i>
                                     </button>
                                 </form>

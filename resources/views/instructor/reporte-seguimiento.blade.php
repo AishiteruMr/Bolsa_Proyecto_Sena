@@ -36,19 +36,19 @@
     <!-- HEADER SECTION -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-10 px-4 print:hidden italic">
         <div class="space-y-8 italic">
-            <a href="{{ route('instructor.proyecto.detalle', $proyecto->pro_id) }}" class="inline-flex items-center text-[10px] font-black text-emerald-600 hover:text-emerald-700 transition-all group uppercase tracking-[0.3em] italic">
+            <a href="{{ route('instructor.proyecto.detalle', $proyecto->pro_id) }}" class="inline-flex items-center text-[10px] font-black text-[#E65100] hover:text-orange-700 transition-all group uppercase tracking-[0.3em] italic">
                 <i class="fas fa-chevron-left mr-4 group-hover:-translate-x-2 transition-transform italic font-bold"></i> REPLEGAR A CONSOLA DE GESTIÓN
             </a>
             <div class="space-y-4 italic">
                 <div class="flex items-center gap-4 italic font-bold">
-                    <x-badge class="bg-emerald-500 text-white border-none px-6 py-2 rounded-full font-black tracking-[0.2em] text-[10px] uppercase italic shadow-2xl shadow-emerald-500/20 italic">
+                    <x-badge class="bg-[#FF6B00] text-white border-none px-6 py-2 rounded-full font-black tracking-[0.2em] text-[10px] uppercase italic shadow-2xl shadow-[#FF6B00]/20 italic">
                         AUDITORÍA ESTRATÉGICA
                     </x-badge>
                     <div class="h-1 w-12 bg-slate-100 rounded-full italic"></div>
                     <span class="text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] italic opacity-60 italic leading-none">ANÁLISIS LONGITUDINAL DE IMPACTO</span>
                 </div>
                 <h2 class="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase italic leading-[0.9] italic">
-                    REPORTE DE <br> <span class="text-emerald-500 text-6xl md:text-8xl block mt-2">SEGUIMIENTO</span>
+                    REPORTE DE <br> <span class="text-[#FF6B00] text-6xl md:text-8xl block mt-2">SEGUIMIENTO</span>
                 </h2>
                 <p class="text-slate-400 font-black text-sm uppercase tracking-[0.4em] italic opacity-70 italic truncate italic">
                     NODO: {{ strtoupper($proyecto->pro_titulo_proyecto) }}
@@ -57,7 +57,7 @@
         </div>
 
         <div class="flex items-center gap-6 italic">
-            <x-button variant="primary" shadow="emerald" onclick="window.print()" class="bg-slate-900 text-white border-none px-12 py-6 rounded-[2rem] text-[11px] font-black uppercase italic shadow-2xl hover:scale-105 transition-all active:scale-95 italic">
+            <x-button variant="primary" shadow="orange" onclick="window.print()" class="bg-slate-900 text-white border-none px-12 py-6 rounded-[2rem] text-[11px] font-black uppercase italic shadow-2xl hover:scale-105 transition-all active:scale-95 italic">
                 <i class="fas fa-file-pdf mr-4 italic text-xl font-bold"></i> EXPORTAR EXPEDIENTE PDF
             </x-button>
         </div>
@@ -78,16 +78,16 @@
             </div>
         </x-card>
         
-        <x-card class="p-10 border-none shadow-2xl rounded-[3.5rem] bg-white flex flex-col justify-between group hover:shadow-emerald-500/10 transition-all duration-700 italic h-64 italic" shadow="none">
+        <x-card class="p-10 border-none shadow-2xl rounded-[3.5rem] bg-white flex flex-col justify-between group hover:shadow-[#FF6B00]/10 transition-all duration-700 italic h-64 italic" shadow="none">
             <div class="flex items-center justify-between italic">
-                <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-3xl group-hover:-rotate-12 transition-transform italic border-4 border-white shadow-xl italic">
+                <div class="w-16 h-16 rounded-2xl bg-orange-50 text-[#E65100] flex items-center justify-center text-3xl group-hover:-rotate-12 transition-transform italic border-4 border-white shadow-xl italic">
                     <i class="fas fa-satellite-dish italic font-bold"></i>
                 </div>
                 <span class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] italic leading-none">TRANSMISIONES</span>
             </div>
             <div class="italic">
                 <p class="text-6xl font-black text-slate-900 leading-none italic tracking-tighter italic">{{ str_pad($entregas->count(), 2, '0', STR_PAD_LEFT) }}</p>
-                <div class="mt-4 h-1.5 w-12 bg-emerald-500 rounded-full italic"></div>
+                <div class="mt-4 h-1.5 w-12 bg-[#FF6B00] rounded-full italic"></div>
             </div>
         </x-card>
 
@@ -152,9 +152,9 @@
                                     $progreso = $etapas->count() > 0 ? ($a_count / $etapas->count()) * 100 : 0;
                                 @endphp
                                 <tr class="group/row italic">
-                                    <td class="p-8 bg-slate-50 rounded-l-[2.5rem] border-none group-hover/row:bg-emerald-50 transition-all duration-500 italic">
+                                    <td class="p-8 bg-slate-50 rounded-l-[2.5rem] border-none group-hover/row:bg-orange-50 transition-all duration-500 italic">
                                         <div class="flex items-center gap-6 italic">
-                                            <div class="w-16 h-16 rounded-2xl bg-white shadow-2xl flex items-center justify-center font-black text-emerald-600 italic border-4 border-white group-hover/row:scale-110 group-hover/row:rotate-6 transition-all italic">
+                                            <div class="w-16 h-16 rounded-2xl bg-white shadow-2xl flex items-center justify-center font-black text-[#E65100] italic border-4 border-white group-hover/row:scale-110 group-hover/row:rotate-6 transition-all italic">
                                                 {{ strtoupper(substr($aprendiz->apr_nombre, 0, 1)) }}
                                             </div>
                                             <div class="min-w-0 italic">
@@ -163,19 +163,19 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="p-8 bg-slate-50 border-none text-center group-hover/row:bg-emerald-50 transition-all duration-500 italic">
+                                    <td class="p-8 bg-slate-50 border-none text-center group-hover/row:bg-orange-50 transition-all duration-500 italic">
                                         <span class="inline-flex px-6 py-2.5 rounded-xl bg-slate-900 text-white shadow-2xl text-[10px] font-black italic border-2 border-white/5 uppercase tracking-widest italic font-bold">
                                             {{ str_pad($e_count, 2, '0', STR_PAD_LEFT) }} / {{ str_pad($etapas->count(), 2, '0', STR_PAD_LEFT) }}
                                         </span>
                                     </td>
-                                    <td class="p-8 bg-slate-50 rounded-r-[2.5rem] border-none group-hover/row:bg-emerald-50 transition-all duration-500 italic">
+                                    <td class="p-8 bg-slate-50 rounded-r-[2.5rem] border-none group-hover/row:bg-orange-50 transition-all duration-500 italic">
                                         <div class="flex items-center justify-end gap-6 italic">
                                             <div class="w-40 hidden md:block italic">
                                                 <div class="h-4 w-full bg-white rounded-full overflow-hidden shadow-inner p-1 italic border border-slate-100">
-                                                    <div class="h-full rounded-full bg-emerald-500 shadow-xl transition-all duration-1000 italic" style="width: {{ $progreso }}%"></div>
+                                                    <div class="h-full rounded-full bg-[#FF6B00] shadow-xl transition-all duration-1000 italic" style="width: {{ $progreso }}%"></div>
                                                 </div>
                                             </div>
-                                            <span class="text-3xl font-black text-emerald-600 min-w-[80px] italic tracking-tighter italic leading-none">{{ round($progreso) }}%</span>
+                                            <span class="text-3xl font-black text-[#E65100] min-w-[80px] italic tracking-tighter italic leading-none">{{ round($progreso) }}%</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -194,10 +194,10 @@
 
                 <div class="space-y-10 italic font-bold">
                     @foreach($etapas as $etapa)
-                        <div class="group/stage border-none rounded-[3.5rem] overflow-hidden bg-slate-50 hover:bg-white hover:shadow-2xl transition-all duration-700 italic border-4 border-transparent hover:border-emerald-500/10 italic">
+                        <div class="group/stage border-none rounded-[3.5rem] overflow-hidden bg-slate-50 hover:bg-white hover:shadow-2xl transition-all duration-700 italic border-4 border-transparent hover:border-[#FF6B00]/10 italic">
                             <div class="p-10 cursor-pointer flex items-center justify-between italic" onclick="this.nextElementSibling.classList.toggle('hidden')">
                                 <div class="flex items-center gap-10 italic">
-                                    <div class="w-16 h-16 rounded-2xl bg-white shadow-2xl flex items-center justify-center font-black text-2xl text-emerald-500 italic group-hover/stage:rotate-12 transition-transform italic border-4 border-slate-50">
+                                    <div class="w-16 h-16 rounded-2xl bg-white shadow-2xl flex items-center justify-center font-black text-2xl text-[#FF6B00] italic group-hover/stage:rotate-12 transition-transform italic border-4 border-slate-50">
                                         {{ str_pad($etapa->eta_orden, 2, '0', STR_PAD_LEFT) }}
                                     </div>
                                     <div class="min-w-0 italic">
@@ -205,7 +205,7 @@
                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] italic opacity-60 italic leading-none italic">{{ str_pad(count($entregas->where('ene_eta_id', $etapa->eta_id)), 2, '0', STR_PAD_LEFT) }} ENTREGAS REGISTRADAS EN ENTRADA</p>
                                     </div>
                                 </div>
-                                <i class="fas fa-chevron-down text-slate-300 group-hover/stage:text-emerald-500 transition-all italic text-2xl italic font-bold"></i>
+                                <i class="fas fa-chevron-down text-slate-300 group-hover/stage:text-[#FF6B00] transition-all italic text-2xl italic font-bold"></i>
                             </div>
                             <div class="hidden border-t-4 border-slate-100 bg-white p-12 animate-in fade-in slide-in-from-top-6 duration-700 italic">
                                 <div class="space-y-16 italic">
@@ -233,14 +233,14 @@
                                             </div>
                                         </div>
                                         <div class="space-y-10 italic">
-                                            <h5 class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.4em] border-b-4 border-emerald-50 pb-6 flex items-center gap-4 italic font-bold">
+                                            <h5 class="text-[10px] font-black text-[#E65100] uppercase tracking-[0.4em] border-b-4 border-orange-50 pb-6 flex items-center gap-4 italic font-bold">
                                                 <i class="fas fa-check-double text-2xl italic font-bold"></i> ESTATUS DE SENTENCIA
                                             </h5>
                                             <div class="grid gap-5 italic font-bold">
                                                 @forelse($evidencias->where('evid_eta_id', $etapa->eta_id) as $ev)
-                                                    <div class="flex items-center justify-between p-6 bg-slate-50 rounded-[2rem] border-4 border-white group/mini hover:bg-emerald-50 transition-all shadow-xl italic italic">
-                                                        <span class="text-sm font-black text-slate-900 uppercase italic tracking-tighter group-hover/mini:text-emerald-700 transition-colors italic leading-none">{{ $ev->apr_nombre }}</span>
-                                                        <x-badge class="{{ $ev->evid_estado === 'Aprobada' ? 'bg-emerald-500' : 'bg-red-500' }} text-white border-none py-2.5 px-6 rounded-xl text-[9px] font-black uppercase tracking-widest italic shadow-lg shadow-emerald-500/20 italic">
+                                                    <div class="flex items-center justify-between p-6 bg-slate-50 rounded-[2rem] border-4 border-white group/mini hover:bg-orange-50 transition-all shadow-xl italic italic">
+                                                        <span class="text-sm font-black text-slate-900 uppercase italic tracking-tighter group-hover/mini:text-orange-700 transition-colors italic leading-none">{{ $ev->apr_nombre }}</span>
+                                                        <x-badge class="{{ $ev->evid_estado === 'Aprobada' ? 'bg-[#FF6B00]' : 'bg-red-500' }} text-white border-none py-2.5 px-6 rounded-xl text-[9px] font-black uppercase tracking-widest italic shadow-lg shadow-[#FF6B00]/20 italic">
                                                             {{ strtoupper($ev->evid_estado) }}
                                                         </x-badge>
                                                     </div>
@@ -266,29 +266,29 @@
             <x-card class="p-12 border-none shadow-2xl rounded-[3.5rem] bg-white relative overflow-hidden group italic" shadow="none">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-slate-900/5 rounded-bl-[120px] transition-transform duration-1000 group-hover:scale-125 italic"></div>
                 <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-12 border-b-4 border-slate-50 pb-6 flex items-center gap-4 italic opacity-60 italic leading-none">
-                    <i class="fas fa-microchip text-emerald-600 italic font-bold"></i> FICHA TÉCNICA
+                    <i class="fas fa-microchip text-[#E65100] italic font-bold"></i> FICHA TÉCNICA
                 </h4>
                 <div class="space-y-12 italic font-bold">
                     <div class="space-y-4 italic">
-                        <p class="text-[9px] font-black text-emerald-800/40 uppercase tracking-[0.3em] italic leading-none px-2 italic">ESTADO DEL NODO ESTRATÉGICO</p>
-                        <div class="px-8 py-5 rounded-[2rem] bg-slate-900 text-white font-black text-[10px] text-center shadow-2xl shadow-emerald-500/10 italic tracking-widest uppercase italic border-2 border-white/5 italic">
+                        <p class="text-[9px] font-black text-orange-800/40 uppercase tracking-[0.3em] italic leading-none px-2 italic">ESTADO DEL NODO ESTRATÉGICO</p>
+                        <div class="px-8 py-5 rounded-[2rem] bg-slate-900 text-white font-black text-[10px] text-center shadow-2xl shadow-[#FF6B00]/10 italic tracking-widest uppercase italic border-2 border-white/5 italic">
                             {{ strtoupper($proyecto->pro_estado) ?? 'OPERATIVO' }} • ID: {{ str_pad($proyecto->pro_id, 4, '0', STR_PAD_LEFT) }}
                         </div>
                     </div>
                     <div class="space-y-4 italic">
                         <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] italic leading-none px-2 italic">ALIADO CORPORATIVO</p>
                         <div class="flex items-center gap-5 p-6 rounded-[2rem] bg-slate-50 border-4 border-white shadow-xl italic italic">
-                            <i class="fas fa-building text-3xl text-emerald-500 italic font-bold"></i>
+                            <i class="fas fa-building text-3xl text-[#FF6B00] italic font-bold"></i>
                             <p class="text-base font-black text-slate-900 italic tracking-tighter uppercase leading-none italic truncate">{{ strtoupper($proyecto->empresa?->emp_nombre ?? 'CORP. EXTERNA') }}</p>
                         </div>
                     </div>
                     <div class="pt-10 border-t-4 border-slate-50 italic">
                         <p class="text-[9px] font-black text-slate-300 uppercase mb-8 tracking-[0.3em] italic leading-none px-2 italic">PROTOCOLO DE CIERRE</p>
                         <div class="flex justify-between items-center p-8 rounded-[2.5rem] bg-slate-900 text-white shadow-2xl italic border-2 border-white/5 italic">
-                            <i class="fas fa-calendar-check text-4xl text-emerald-500 italic group-hover:rotate-12 transition-transform italic font-bold"></i>
+                            <i class="fas fa-calendar-check text-4xl text-[#FF6B00] italic group-hover:rotate-12 transition-transform italic font-bold"></i>
                             <div class="text-right italic">
                                 <span class="block text-[8px] font-black text-white/30 uppercase tracking-[0.4em] italic mb-2 italic">CIERRE NOMINAL</span>
-                                <span class="block text-xl font-black text-emerald-500 italic tracking-tighter uppercase leading-none italic">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->translatedFormat('d M, Y') }}</span>
+                                <span class="block text-xl font-black text-[#FF6B00] italic tracking-tighter uppercase leading-none italic">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->translatedFormat('d M, Y') }}</span>
                             </div>
                         </div>
                     </div>
@@ -296,14 +296,14 @@
             </x-card>
 
             <x-card class="p-14 bg-slate-900 text-white border-none shadow-2xl rounded-[4rem] relative group overflow-hidden italic" shadow="none">
-                <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-emerald-500/10 rounded-full group-hover:scale-150 transition-transform duration-1000 italic"></div>
-                <h4 class="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-400 opacity-40 mb-12 italic leading-none">GRADE DE AUDITORÍA</h4>
+                <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-[#FF6B00]/10 rounded-full group-hover:scale-150 transition-transform duration-1000 italic"></div>
+                <h4 class="text-[10px] font-black uppercase tracking-[0.4em] text-orange-400 opacity-40 mb-12 italic leading-none">GRADE DE AUDITORÍA</h4>
                 <div class="flex flex-col items-center justify-center space-y-8 relative z-10 italic">
                     <div class="w-40 h-40 rounded-[3rem] bg-white/5 backdrop-blur-2xl border-4 border-white/10 flex items-center justify-center shadow-2xl shadow-black/60 group-hover:scale-110 group-hover:rotate-6 transition-all italic italic">
-                        <span class="text-7xl font-black italic tracking-tighter text-emerald-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.6)]">S+</span>
+                        <span class="text-7xl font-black italic tracking-tighter text-orange-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.6)]">S+</span>
                     </div>
                     <div class="text-center italic">
-                        <p class="text-[11px] font-black uppercase tracking-[0.4em] text-emerald-400 italic mb-3 italic">EXCELENCIA ACADÉMICA</p>
+                        <p class="text-[11px] font-black uppercase tracking-[0.4em] text-orange-400 italic mb-3 italic">EXCELENCIA ACADÉMICA</p>
                         <p class="text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic leading-none italic">MÉTRICA DE GESTIÓN INSTITUCIONAL SENA</p>
                     </div>
                 </div>

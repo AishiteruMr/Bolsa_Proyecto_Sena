@@ -6,17 +6,21 @@ use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Instructor;
+use App\Models\Empresa;
+use App\Models\Proyecto;
+use App\Models\Etapa;
+use App\Models\Aprendiz;
+use App\Models\Evidencia;
 use Illuminate\Support\Facades\Hash;
 
 class InstructorTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $instructor;
     protected $usuario;
-    protected $empresa;
+    protected $instructor;
     protected $proyecto;
 
     protected function setUp(): void
@@ -24,38 +28,33 @@ class InstructorTest extends TestCase
         parent::setUp();
 
         // 1. Crear usuario con rol instructor (2)
-        $usrId = DB::table('usuario')->insertGetId([
+        $this->usuario = User::create([
             'usr_documento' => 555666777,
             'usr_correo'    => 'test_instructor@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
+            'usr_contrasena' => Hash::make('password123'),
             'rol_id'        => 2,
             'usr_fecha_creacion' => now(),
         ]);
 
-        $this->usuario = DB::table('usuario')->where('usr_id', $usrId)->first();
-
         // 2. Crear perfil de instructor
-        DB::table('instructor')->insert([
-            'usr_id'           => $usrId,
+        $this->instructor = Instructor::create([
+            'usr_id'           => $this->usuario->usr_id,
             'ins_nombre'       => 'Instructor',
             'ins_apellido'     => 'Test',
             'ins_especialidad' => 'Software',
             'ins_estado'       => 1,
         ]);
 
-        $this->instructor = DB::table('instructor')->where('usr_id', $usrId)->first();
-
         // 3. Crear empresa
-        $empUsrId = DB::table('usuario')->insertGetId([
+        $empUsr = User::create([
             'usr_documento' => 111000111,
             'usr_correo'    => 'empresa_inst@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
+            'usr_contrasena' => Hash::make('password123'),
             'rol_id'        => 3,
-            'usr_fecha_creacion' => now(),
         ]);
 
-        DB::table('empresa')->insert([
-            'usr_id'           => $empUsrId,
+        $empresa = Empresa::create([
+            'usr_id'           => $empUsr->usr_id,
             'emp_nit'          => 123456781,
             'emp_nombre'       => 'Empresa Inst',
             'emp_representante'=> 'Rep',
@@ -64,7 +63,7 @@ class InstructorTest extends TestCase
         ]);
 
         // 4. Crear un proyecto ASIGNADO al instructor
-        $proId = DB::table('proyecto')->insertGetId([
+        $this->proyecto = Proyecto::create([
             'emp_nit'                    => 123456781,
             'pro_titulo_proyecto'        => 'Proyecto Instructor',
             'pro_categoria'              => 'Web',
@@ -76,14 +75,12 @@ class InstructorTest extends TestCase
             'pro_estado'                 => 'Activo',
             'ins_usr_documento'          => 555666777,
         ]);
-
-        $this->proyecto = DB::table('proyecto')->where('pro_id', $proId)->first();
     }
 
     #[Test]
     public function instructor_can_view_dashboard()
     {
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id'    => $this->usuario->usr_id,
             'documento' => $this->usuario->usr_documento,
             'rol'       => 2,
@@ -110,11 +107,13 @@ class InstructorTest extends TestCase
             'orden'       => 1
         ];
 
-        $response = $this->withSession($session)->post(route('instructor.etapas.crear', $this->proyecto->pro_id), $stageData);
+        $response = $this->actingAs($this->usuario)->withSession($session)
+            ->post(route('instructor.etapas.crear', $this->proyecto->pro_id), $stageData);
+        
         $response->assertStatus(302);
         $this->assertDatabaseHas('etapa', ['eta_nombre' => 'Nueva Etapa', 'eta_pro_id' => $this->proyecto->pro_id]);
 
-        $etaId = DB::table('etapa')->where('eta_nombre', 'Nueva Etapa')->value('eta_id');
+        $etapa = Etapa::where('eta_nombre', 'Nueva Etapa')->first();
 
         // 2. Editar etapa
         $updateData = [
@@ -122,21 +121,25 @@ class InstructorTest extends TestCase
             'descripcion' => 'Nueva desc',
             'orden'       => 2
         ];
-        $response = $this->withSession($session)->put(route('instructor.etapas.editar', $etaId), $updateData);
+        $response = $this->actingAs($this->usuario)->withSession($session)
+            ->put(route('instructor.etapas.editar', $etapa->eta_id), $updateData);
+        
         $response->assertStatus(302);
-        $this->assertDatabaseHas('etapa', ['eta_id' => $etaId, 'eta_nombre' => 'Etapa Actualizada']);
+        $this->assertDatabaseHas('etapa', ['eta_id' => $etapa->eta_id, 'eta_nombre' => 'Etapa Actualizada']);
 
         // 3. Eliminar etapa
-        $response = $this->withSession($session)->delete(route('instructor.etapas.eliminar', $etaId));
+        $response = $this->actingAs($this->usuario)->withSession($session)
+            ->delete(route('instructor.etapas.eliminar', $etapa->eta_id));
+        
         $response->assertStatus(302);
-        $this->assertDatabaseMissing('etapa', ['eta_id' => $etaId]);
+        $this->assertDatabaseMissing('etapa', ['eta_id' => $etapa->eta_id]);
     }
 
     #[Test]
     public function instructor_can_grade_evidence()
     {
         // 1. Crear etapa
-        $etaId = DB::table('etapa')->insertGetId([
+        $etapa = Etapa::create([
             'eta_pro_id' => $this->proyecto->pro_id,
             'eta_orden'  => 1,
             'eta_nombre' => 'Etapa 1',
@@ -144,25 +147,25 @@ class InstructorTest extends TestCase
         ]);
 
         // 2. Crear aprendiz y evidencia
-        $aprUsrId = DB::table('usuario')->insertGetId([
+        $aprUsr = User::create([
             'usr_documento' => 222333444,
             'usr_correo'    => 'apr_test@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
+            'usr_contrasena' => Hash::make('password123'),
             'rol_id'        => 1,
-            'usr_fecha_creacion' => now(),
         ]);
-        $aprId = DB::table('aprendiz')->insertGetId([
-            'usr_id' => $aprUsrId,
+        
+        $aprendiz = Aprendiz::create([
+            'usr_id' => $aprUsr->usr_id,
             'apr_nombre' => 'A', 'apr_apellido' => 'B', 'apr_programa' => 'P'
         ]);
 
-        $evidId = DB::table('evidencia')->insertGetId([
-            'evid_apr_id' => $aprId,
-            'evid_eta_id' => $etaId,
+        $evidencia = Evidencia::create([
+            'evid_apr_id' => $aprendiz->apr_id,
+            'evid_eta_id' => $etapa->eta_id,
             'evid_pro_id' => $this->proyecto->pro_id,
             'evid_archivo' => 'path/to/file.pdf',
             'evid_fecha' => now(),
-            'evid_estado' => 'Pendience'
+            'evid_estado' => 'Pendiente'
         ]);
 
         $gradeData = [
@@ -170,15 +173,15 @@ class InstructorTest extends TestCase
             'comentario' => 'Buen trabajo'
         ];
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id'    => $this->usuario->usr_id,
             'documento' => $this->usuario->usr_documento,
             'rol'       => 2
-        ])->put(route('instructor.evidencias.calificar', $evidId), $gradeData);
+        ])->put(route('instructor.evidencias.calificar', $evidencia->evid_id), $gradeData);
 
         $response->assertStatus(302);
         $this->assertDatabaseHas('evidencia', [
-            'evid_id' => $evidId,
+            'evid_id' => $evidencia->evid_id,
             'evid_estado' => 'Aprobada',
             'evid_comentario' => 'Buen trabajo'
         ]);

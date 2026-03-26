@@ -24,7 +24,7 @@ class="fixed bottom-10 right-10 z-[100] space-y-4 flex flex-col items-end pointe
             <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-white/5 rounded-full italic"></div>
 
             <div :class="{
-                'bg-emerald-500 shadow-emerald-500/20': toast.type === 'success',
+                'bg-[#FF6B00] shadow-[#FF6B00]/20': toast.type === 'success',
                 'bg-red-500 shadow-red-500/20': toast.type === 'error',
                 'bg-amber-500 shadow-amber-500/20': toast.type === 'warning',
                 'bg-blue-500 shadow-blue-500/20': toast.type === 'info'

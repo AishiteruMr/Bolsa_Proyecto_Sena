@@ -14,7 +14,7 @@
         <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Mis Proyectos</span>
     </a>
     <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item group {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}">
-        <i class="fas fa-plus-circle group-hover:scale-110 transition-transform italic text-emerald-500"></i> 
+        <i class="fas fa-plus-circle group-hover:scale-110 transition-transform italic text-[#FF6B00]"></i> 
         <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Lanzar Misión</span>
     </a>
     
@@ -31,13 +31,13 @@
     
     <!-- Header Section -->
     <div class="space-y-8 px-4">
-        <a href="{{ route('empresa.proyectos') }}" class="inline-flex items-center text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] hover:text-emerald-700 transition-all group italic">
-            <i class="fas fa-chevron-left mr-3 group-hover:-translate-x-1 transition-transform italic text-emerald-500"></i> 
+        <a href="{{ route('empresa.proyectos') }}" class="inline-flex items-center text-[10px] font-black text-[#E65100] uppercase tracking-[0.2em] hover:text-orange-700 transition-all group italic">
+            <i class="fas fa-chevron-left mr-3 group-hover:-translate-x-1 transition-transform italic text-[#FF6B00]"></i> 
             RETORNAR AL PUERTO DE PROYECTOS
         </a>
         <div class="space-y-4 italic">
             <h2 class="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">
-                Lanzar <span class="text-emerald-500 underline decoration-emerald-500/10 decoration-8 underline-offset-8">Nueva Misión</span>
+                Lanzar <span class="text-[#FF6B00] underline decoration-[#FF6B00]/10 decoration-8 underline-offset-8">Nueva Misión</span>
             </h2>
             <p class="text-slate-400 text-lg uppercase italic font-bold">
                 DEFINE LOS PARÁMETROS DE TU DESAFÍO TÉCNICO PARA ATRAER AL TALENTO DE ÉLITE SENA.
@@ -53,7 +53,7 @@
             <!-- Identidad Logic -->
             <section class="space-y-10 italic">
                 <div class="flex items-center gap-6 border-b border-slate-100 pb-8 italic">
-                    <div class="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center italic shadow-2xl shadow-emerald-500/20 rotate-3">
+                    <div class="w-14 h-14 rounded-2xl bg-[#FF6B00] text-white flex items-center justify-center italic shadow-2xl shadow-[#FF6B00]/20 rotate-3">
                         <i class="fas fa-fingerprint text-xl italic font-bold text-white"></i>
                     </div>
                     <div class="italic">
@@ -66,7 +66,7 @@
                     <div class="md:col-span-2 space-y-3 italic">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-1 block">TÍTULO DE LA PROPUESTA CORPORATIVA *</label>
                         <input type="text" name="titulo" value="{{ old('titulo') }}" required maxlength="200"
-                            class="w-full px-8 py-5 rounded-[1.5rem] bg-slate-50 border-2 {{ $errors->has('titulo') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-emerald-500 focus:bg-white focus:ring-8 focus:ring-emerald-500/5 transition-all font-black text-slate-900 uppercase italic placeholder:text-slate-300 placeholder:italic italic" 
+                            class="w-full px-8 py-5 rounded-[1.5rem] bg-slate-50 border-2 {{ $errors->has('titulo') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-[#FF6B00] focus:bg-white focus:ring-8 focus:ring-[#FF6B00]/5 transition-all font-black text-slate-900 uppercase italic placeholder:text-slate-300 placeholder:italic italic" 
                             placeholder="EJ: OPTIMIZACIÓN DE ARQUITECTURA CLOUD">
                         @error('titulo')
                             <p class="text-[9px] font-black text-red-500 uppercase tracking-widest mt-2 ml-4 italic animate-pulse">!! {{ $message }}</p>
@@ -76,13 +76,13 @@
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-1 block">DIVISIÓN / CATEGORÍA *</label>
                         <div class="relative italic">
                             <select name="categoria" required 
-                                class="w-full px-8 py-5 rounded-[1.5rem] bg-slate-50 border-2 {{ $errors->has('categoria') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-emerald-500 focus:bg-white transition-all font-black text-slate-900 uppercase italic appearance-none cursor-pointer italic">
+                                class="w-full px-8 py-5 rounded-[1.5rem] bg-slate-50 border-2 {{ $errors->has('categoria') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-[#FF6B00] focus:bg-white transition-all font-black text-slate-900 uppercase italic appearance-none cursor-pointer italic">
                                 <option value="">SELECCIONAR ÁREA...</option>
                                 @foreach(['Tecnología', 'Agrícola', 'Industrial', 'Salud', 'Ambiental', 'Otro'] as $cat)
                                     <option value="{{ $cat }}" {{ old('categoria') == $cat ? 'selected' : '' }}>{{ strtoupper($cat) }}</option>
                                 @endforeach
                             </select>
-                            <i class="fas fa-chevron-down absolute right-6 top-1/2 -translate-y-1/2 text-emerald-500 pointer-events-none italic text-xs"></i>
+                            <i class="fas fa-chevron-down absolute right-6 top-1/2 -translate-y-1/2 text-[#FF6B00] pointer-events-none italic text-xs"></i>
                         </div>
                         @error('categoria')
                             <p class="text-[9px] font-black text-red-500 uppercase tracking-widest mt-2 ml-4 italic animate-pulse">!! {{ $message }}</p>
@@ -117,7 +117,7 @@
                     <div class="space-y-4 italic">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-1 block">REQ. TÉCNICOS / HARD SKILLS *</label>
                         <textarea name="requisitos" required rows="4" maxlength="200"
-                            class="w-full px-8 py-6 rounded-[2rem] bg-slate-50 border-2 {{ $errors->has('requisitos') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-emerald-500 focus:bg-white transition-all font-black text-slate-900 uppercase italic placeholder:text-slate-300 placeholder:italic italic" 
+                            class="w-full px-8 py-6 rounded-[2rem] bg-slate-50 border-2 {{ $errors->has('requisitos') ? 'border-red-500 bg-red-50' : 'border-slate-100' }} focus:border-[#FF6B00] focus:bg-white transition-all font-black text-slate-900 uppercase italic placeholder:text-slate-300 placeholder:italic italic" 
                             placeholder="FRAMEWORKS, LENGUAJES O HERRAMIENTAS ESPECÍFICAS CRÍTICAS...">{{ old('requisitos') }}</textarea>
                         @error('requisitos')
                             <p class="text-[9px] font-black text-red-500 uppercase tracking-widest mt-2 ml-4 italic animate-pulse">!! {{ $message }}</p>
@@ -148,17 +148,17 @@
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 p-10 bg-slate-900 rounded-[3.5rem] border-none shadow-2xl relative overflow-hidden italic">
-                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-emerald-500/5 rounded-full italic font-bold"></div>
+                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-[#FF6B00]/5 rounded-full italic font-bold"></div>
                     
                     <div class="space-y-4 italic relative z-10 text-center">
                         <label class="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] italic block">INÍCIO DE DESPLIEGUE</label>
                         <input type="date" name="fecha_publi" id="fecha_publi" value="{{ old('fecha_publi', date('Y-m-d')) }}" required 
-                            class="w-full bg-white/5 border-2 border-white/10 rounded-2xl px-6 py-4 font-black text-emerald-400 text-center uppercase italic focus:border-emerald-500 focus:ring-0 transition-all cursor-pointer italic">
+                            class="w-full bg-white/5 border-2 border-white/10 rounded-2xl px-6 py-4 font-black text-orange-400 text-center uppercase italic focus:border-[#FF6B00] focus:ring-0 transition-all cursor-pointer italic">
                     </div>
                     
                     <div class="space-y-4 italic relative z-10 text-center">
                         <label class="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] italic block">DURACIÓN ESTIMADA</label>
-                        <div class="px-6 py-4 rounded-2xl bg-emerald-500 text-white font-black text-center shadow-2xl shadow-emerald-500/20 uppercase italic border border-white/10 italic">
+                        <div class="px-6 py-4 rounded-2xl bg-[#FF6B00] text-white font-black text-center shadow-2xl shadow-[#FF6B00]/20 uppercase italic border border-white/10 italic">
                             <input type="text" id="duracion" readonly class="bg-transparent border-none text-center w-full focus:ring-0 cursor-default p-0 font-black italic value-['--']" value="--">
                         </div>
                     </div>
@@ -199,9 +199,9 @@
                             <p class="text-slate-400 text-[9px] font-black uppercase tracking-[0.3em] italic opacity-60 italic">IMAGEN IDENTIFICADORA (HERO)</p>
                         </div>
                     </div>
-                    <div id="image-upload-container" class="relative group h-[350px] bg-slate-50 border-8 border-slate-50 shadow-2xl ring-1 ring-slate-200 rounded-[3rem] overflow-hidden flex flex-col items-center justify-center transition-all hover:bg-emerald-50/20 italic">
+                    <div id="image-upload-container" class="relative group h-[350px] bg-slate-50 border-8 border-slate-50 shadow-2xl ring-1 ring-slate-200 rounded-[3rem] overflow-hidden flex flex-col items-center justify-center transition-all hover:bg-orange-50/20 italic">
                         <div id="image-upload-content" class="text-center p-12 pointer-events-none transition-all group-hover:scale-110 italic">
-                            <div class="w-20 h-20 rounded-3xl bg-white shadow-xl flex items-center justify-center mx-auto mb-6 text-emerald-500 italic">
+                            <div class="w-20 h-20 rounded-3xl bg-white shadow-xl flex items-center justify-center mx-auto mb-6 text-[#FF6B00] italic">
                                 <i class="fas fa-cloud-upload-alt text-3xl italic"></i>
                             </div>
                             <p class="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] italic">Arrastrar Artifacto</p>
@@ -218,7 +218,7 @@
                 <x-button variant="secondary" :href="route('empresa.proyectos')" class="w-full md:w-auto px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-red-500 border-none bg-transparent active:scale-95 transition-all italic underline decoration-slate-200 hover:decoration-red-200 underline-offset-8">
                     ABORTAR OPERACIÓN
                 </x-button>
-                <x-button type="submit" variant="primary" shadow="emerald" class="w-full md:w-auto px-14 py-6 rounded-3xl group flex items-center justify-center gap-4 text-[11px] font-black uppercase italic shadow-2xl active:scale-95 transition-all">
+                <x-button type="submit" variant="primary" shadow="orange" class="w-full md:w-auto px-14 py-6 rounded-3xl group flex items-center justify-center gap-4 text-[11px] font-black uppercase italic shadow-2xl active:scale-95 transition-all">
                     <i class="fas fa-paper-plane group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform italic text-lg text-white"></i>
                     INICIAR DESPLIEGUE DE MISIÓN
                 </x-button>

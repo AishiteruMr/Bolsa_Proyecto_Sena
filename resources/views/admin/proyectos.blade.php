@@ -19,7 +19,7 @@
         <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Directorio Empresas</span>
     </a>
     <a href="{{ route('admin.proyectos') }}" class="nav-item group {{ request()->routeIs('admin.proyectos') ? 'active' : '' }}">
-        <i class="fas fa-project-diagram group-hover:text-emerald-500 transition-colors italic"></i> 
+        <i class="fas fa-project-diagram group-hover:text-[#FF6B00] transition-colors italic"></i> 
         <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Banco de Proyectos</span>
     </a>
 
@@ -33,7 +33,7 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
         <div class="space-y-4">
             <h2 class="text-4xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">
-                Gestión <span class="text-emerald-500 underline decoration-emerald-500/20 decoration-8 underline-offset-8">Global</span>
+                Gestión <span class="text-[#FF6B00] underline decoration-[#FF6B00]/20 decoration-8 underline-offset-8">Global</span>
             </h2>
             <p class="text-slate-400 font-bold text-sm uppercase tracking-widest flex items-center gap-3">
                 <span class="w-12 h-px bg-slate-200"></span>
@@ -54,7 +54,7 @@
             @foreach ([
                 ['label' => 'Total',      'count' => $counts['todos'],      'color' => 'bg-slate-900 text-white'],
                 ['label' => 'Pendientes', 'count' => $counts['pendientes'], 'color' => 'bg-amber-400 text-slate-900'],
-                ['label' => 'Aprobados',  'count' => $counts['aprobados'],  'color' => 'bg-emerald-500 text-white'],
+                ['label' => 'Aprobados',  'count' => $counts['aprobados'],  'color' => 'bg-[#FF6B00] text-white'],
                 ['label' => 'Rechazados', 'count' => $counts['rechazados'], 'color' => 'bg-red-500 text-white'],
             ] as $stat)
             <div class="flex items-center gap-2 px-4 py-2 rounded-2xl {{ $stat['color'] }} font-black text-xs uppercase tracking-widest shadow-sm">
@@ -78,7 +78,7 @@
            class="px-5 py-2 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all
                   {{ $filtro === $tab['key']
                        ? 'bg-slate-900 text-white shadow-lg'
-                       : 'bg-white ring-1 ring-slate-200 text-slate-500 hover:ring-emerald-400 hover:text-slate-800' }}">
+                       : 'bg-white ring-1 ring-slate-200 text-slate-500 hover:ring-orange-400 hover:text-slate-800' }}">
             {{ $tab['label'] }}
         </a>
         @endforeach
@@ -119,15 +119,15 @@
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 font-bold px-4">
         @forelse($proyectosFiltrados as $p)
             <x-card class="group border-none ring-1 ring-slate-100 shadow-xl hover:shadow-2xl
-                           {{ $p->pro_estado === 'Pendiente' ? 'ring-amber-300/60 hover:ring-amber-400/80' : 'hover:ring-emerald-500/20' }}
+                           {{ $p->pro_estado === 'Pendiente' ? 'ring-amber-300/60 hover:ring-amber-400/80' : 'hover:ring-[#FF6B00]/20' }}
                            transition-all overflow-hidden flex flex-col md:flex-row bg-white">
 
                 {{-- Project Visual Side --}}
                 <div class="w-full md:w-56 bg-slate-900 relative flex-shrink-0 flex flex-col items-center justify-center p-8 text-center space-y-4">
                     <div class="absolute inset-0 bg-gradient-to-br
-                         {{ $p->pro_estado === 'Pendiente' ? 'from-amber-500/20' : ($p->pro_estado === 'Rechazado' ? 'from-red-500/20' : 'from-emerald-500/20') }}
+                         {{ $p->pro_estado === 'Pendiente' ? 'from-amber-500/20' : ($p->pro_estado === 'Rechazado' ? 'from-red-500/20' : 'from-[#FF6B00]/20') }}
                          to-transparent opacity-50"></div>
-                    <div class="w-20 h-20 rounded-[2rem] bg-white/10 backdrop-blur-md flex items-center justify-center text-4xl italic text-emerald-400 shadow-2xl relative z-10 transform group-hover:rotate-12 transition-transform">
+                    <div class="w-20 h-20 rounded-[2rem] bg-white/10 backdrop-blur-md flex items-center justify-center text-4xl italic text-orange-400 shadow-2xl relative z-10 transform group-hover:rotate-12 transition-transform">
                         <i class="fas fa-cube"></i>
                     </div>
 
@@ -136,10 +136,10 @@
                             <x-badge class="bg-amber-400 text-slate-900 border-none py-1.5 px-4 rounded-xl text-[9px] font-black uppercase shadow-lg relative z-10 italic">PENDIENTE</x-badge>
                             @break
                         @case('Aprobado')
-                            <x-badge class="bg-emerald-500 text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-emerald-500/20 relative z-10 italic">APROBADO</x-badge>
+                            <x-badge class="bg-[#FF6B00] text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-[#FF6B00]/20 relative z-10 italic">APROBADO</x-badge>
                             @break
                         @case('Activo')
-                            <x-badge class="bg-emerald-500 text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-emerald-500/20 relative z-10 italic">OPERATIVO</x-badge>
+                            <x-badge class="bg-[#FF6B00] text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-[#FF6B00]/20 relative z-10 italic">OPERATIVO</x-badge>
                             @break
                         @case('Rechazado')
                             <x-badge class="bg-red-500 text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-red-500/20 relative z-10 italic">RECHAZADO</x-badge>
@@ -153,14 +153,14 @@
                 <div class="flex-1 p-8 space-y-6 flex flex-col justify-between">
                     <div class="space-y-3">
                         <div class="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic">
-                            <i class="fas fa-building text-emerald-500"></i>
+                            <i class="fas fa-building text-[#FF6B00]"></i>
                             {{ $p->empresa->emp_nombre }}
                         </div>
-                        <h3 class="text-2xl font-black text-slate-900 tracking-tight uppercase italic leading-tight group-hover:text-emerald-600 transition-colors">
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight uppercase italic leading-tight group-hover:text-[#E65100] transition-colors">
                             {{ Str::limit($p->pro_titulo_proyecto, 60) }}
                         </h3>
                         <p class="text-xs text-slate-500 font-semibold">
-                            <i class="fas fa-tag mr-1 text-emerald-400"></i>{{ $p->pro_categoria }}
+                            <i class="fas fa-tag mr-1 text-orange-400"></i>{{ $p->pro_categoria }}
                             <span class="mx-2">·</span>
                             <i class="fas fa-calendar mr-1 text-slate-400"></i>{{ \Carbon\Carbon::parse($p->pro_fecha_publi)->format('d/m/Y') }}
                         </p>
@@ -178,7 +178,7 @@
                                 @csrf
                                 <button type="submit"
                                     class="w-full py-3.5 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest
-                                           bg-emerald-500 text-white hover:bg-emerald-600 transition-all shadow-md shadow-emerald-500/20 active:scale-95">
+                                           bg-[#FF6B00] text-white hover:bg-[#E65100] transition-all shadow-md shadow-[#FF6B00]/20 active:scale-95">
                                     <i class="fas fa-check mr-2"></i>APROBAR
                                 </button>
                             </form>
@@ -200,7 +200,7 @@
                         <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest italic text-slate-500">
                             <span>AUTORIDAD ASIGNADA</span>
                             @if($p->ins_usr_documento)
-                                <span class="text-emerald-600 flex items-center gap-1"><i class="fas fa-check-circle"></i> VINCULADO</span>
+                                <span class="text-[#E65100] flex items-center gap-1"><i class="fas fa-check-circle"></i> VINCULADO</span>
                             @else
                                 <span class="text-amber-500 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> VACANTE</span>
                             @endif
@@ -208,7 +208,7 @@
 
                         <form action="{{ route('admin.proyectos.asignar', $p->pro_id) }}" method="POST" class="flex gap-2">
                             @csrf
-                            <select name="ins_usr_documento" class="flex-1 bg-white border-none ring-1 ring-slate-200 rounded-2xl px-5 py-3 text-[11px] font-bold text-slate-700 focus:ring-2 focus:ring-emerald-500 transition-all outline-none shadow-sm" required>
+                            <select name="ins_usr_documento" class="flex-1 bg-white border-none ring-1 ring-slate-200 rounded-2xl px-5 py-3 text-[11px] font-bold text-slate-700 focus:ring-2 focus:ring-[#FF6B00] transition-all outline-none shadow-sm" required>
                                 <option value="" disabled selected>Elegir Instructor...</option>
                                 @foreach($instructores as $ins)
                                     <option value="{{ $ins->usr_documento }}" {{ $p->ins_usr_documento == $ins->usr_documento ? 'selected' : '' }}>
@@ -216,7 +216,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <x-button type="submit" variant="primary" shadow="emerald" class="p-3.5 rounded-2xl group/btn transition-all active:scale-95">
+                            <x-button type="submit" variant="primary" shadow="orange" class="p-3.5 rounded-2xl group/btn transition-all active:scale-95">
                                 <i class="fas fa-id-badge group-hover/btn:scale-110 transition-transform italic text-lg"></i>
                             </x-button>
                         </form>
@@ -227,7 +227,7 @@
                         @if($p->pro_estado === 'Rechazado' || $p->pro_estado === 'Inactivo')
                             <form action="{{ route('admin.proyectos.aprobar', $p->pro_id) }}" method="POST" class="flex-1 group/act">
                                 @csrf
-                                <x-button type="submit" variant="secondary" class="w-full py-3.5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-md group-hover/act:scale-[1.02] active:scale-95 italic">
+                                <x-button type="submit" variant="secondary" class="w-full py-3.5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest hover:bg-[#FF6B00] hover:text-white transition-all shadow-md group-hover/act:scale-[1.02] active:scale-95 italic">
                                     APROBAR
                                 </x-button>
                             </form>

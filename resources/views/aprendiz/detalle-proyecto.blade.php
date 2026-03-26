@@ -41,14 +41,14 @@
     <div class="space-y-8 px-4 italic">
         <div class="flex items-center gap-4 italic">
             <x-button variant="secondary" :href="route('aprendiz.postulaciones')" class="rounded-[1.5rem] px-8 py-4 border-4 border-slate-50 bg-white text-slate-400 font-black text-[10px] uppercase tracking-widest flex items-center gap-4 group shadow-xl italic active:scale-95 transition-all">
-                <i class="fas fa-arrow-left group-hover:-translate-x-2 transition-transform italic text-emerald-500"></i>
+                <i class="fas fa-arrow-left group-hover:-translate-x-2 transition-transform italic text-[#FF6B00]"></i>
                 RETORNO AL PANEL
             </x-button>
         </div>
         
         <div class="space-y-4 italic">
             <div class="flex items-center gap-4 italic">
-                <x-badge class="bg-emerald-500 text-white border-none px-6 py-1.5 rounded-full font-black tracking-[0.2em] text-[9px] uppercase italic italic shadow-lg shadow-emerald-500/20 italic">
+                <x-badge class="bg-[#FF6B00] text-white border-none px-6 py-1.5 rounded-full font-black tracking-[0.2em] text-[9px] uppercase italic italic shadow-lg shadow-[#FF6B00]/20 italic">
                     EXPEDIENTE OPERATIVO
                 </x-badge>
                 <div class="h-1 w-12 bg-slate-100 rounded-full italic"></div>
@@ -66,12 +66,12 @@
     <!-- BENTO GRID STATS -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-10 px-4 italic">
         <x-card class="p-10 border-none shadow-2xl relative overflow-hidden group bg-white rounded-[3rem] italic" shadow="none">
-            <div class="absolute top-0 left-0 w-3 h-full bg-emerald-500 italic"></div>
+            <div class="absolute top-0 left-0 w-3 h-full bg-[#FF6B00] italic"></div>
             <div class="space-y-6 italic">
                 <span class="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em] italic leading-none">ESTATUS DE MISIÓN</span>
                 <div class="flex items-center justify-between italic">
                     <h3 class="text-3xl font-black text-slate-900 uppercase italic tracking-tighter italic leading-none">{{ $proyecto->pro_estado }}</h3>
-                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl italic shadow-inner italic rotate-12 group-hover:rotate-0 transition-transform italic">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-50 text-[#FF6B00] flex items-center justify-center text-xl italic shadow-inner italic rotate-12 group-hover:rotate-0 transition-transform italic">
                         <i class="fas fa-satellite italic font-bold"></i>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                                 <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-3 italic opacity-60 italic">ESPECIFICACIONES DEL OBJETIVO</p>
                             </div>
                         </div>
-                        <x-badge class="bg-emerald-50 text-emerald-600 border-none px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest italic shadow-sm italic ring-1 ring-emerald-100 italic">
+                        <x-badge class="bg-orange-50 text-[#E65100] border-none px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest italic shadow-sm italic ring-1 ring-orange-100 italic">
                             {{ strtoupper($proyecto->pro_categoria) }}
                         </x-badge>
                     </div>
@@ -136,7 +136,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-slate-50 italic">
                         <div class="space-y-4 italic">
                             <h4 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] flex items-center gap-3 italic">
-                                <i class="fas fa-list-check text-emerald-500 italic"></i> ESPECIFICACIONES
+                                <i class="fas fa-list-check text-[#FF6B00] italic"></i> ESPECIFICACIONES
                             </h4>
                             <div class="bg-slate-50 p-6 rounded-[2rem] border-4 border-white shadow-xl italic">
                                 <p class="text-sm font-black text-slate-700 uppercase italic tracking-tight italic">{{ $proyecto->pro_requisitos_especificos }}</p>
@@ -163,14 +163,14 @@
 
                 <div class="space-y-12 relative before:absolute before:left-12 before:top-4 before:bottom-4 before:w-1.5 before:bg-slate-50 before:rounded-full italic px-2 italic">
                     @forelse($etapas as $index => $etapa)
-                        <x-card class="ml-6 p-10 md:p-14 border-none shadow-2xl relative group hover:shadow-emerald-500/5 transition-all bg-white rounded-[3.5rem] italic" shadow="none">
-                            <div class="absolute -left-[3.75rem] top-6 w-14 h-14 rounded-2xl {{ $index == 0 ? 'bg-emerald-600 shadow-2xl shadow-emerald-500/30 text-white' : 'bg-white border-4 border-slate-50 shadow-xl text-slate-300' }} flex items-center justify-center text-xl font-black italic z-10 italic group-hover:rotate-12 transition-transform italic">
+                        <x-card class="ml-6 p-10 md:p-14 border-none shadow-2xl relative group hover:shadow-[#FF6B00]/5 transition-all bg-white rounded-[3.5rem] italic" shadow="none">
+                            <div class="absolute -left-[3.75rem] top-6 w-14 h-14 rounded-2xl {{ $index == 0 ? 'bg-[#E65100] shadow-2xl shadow-[#FF6B00]/30 text-white' : 'bg-white border-4 border-slate-50 shadow-xl text-slate-300' }} flex items-center justify-center text-xl font-black italic z-10 italic group-hover:rotate-12 transition-transform italic">
                                 {{ str_pad($etapa->eta_orden, 2, '0', STR_PAD_LEFT) }}
                             </div>
 
                             <div class="space-y-10 italic">
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 italic">
-                                    <h4 class="text-2xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors uppercase italic tracking-tighter italic leading-none">{{ $etapa->eta_nombre }}</h4>
+                                    <h4 class="text-2xl font-black text-slate-900 group-hover:text-[#E65100] transition-colors uppercase italic tracking-tighter italic leading-none">{{ $etapa->eta_nombre }}</h4>
                                     <x-badge class="bg-slate-900 text-white border-none px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] italic shadow-2xl italic">FASE ACTIVA</x-badge>
                                 </div>
 
@@ -192,18 +192,18 @@
                                                         <div class="italic">
                                                             <p class="text-[10px] font-black text-slate-900 uppercase tracking-widest italic leading-none">{{ \Carbon\Carbon::parse($evid->evid_fecha)->format('D, d M Y | H:i') }}</p>
                                                             @if($evid->evid_comentario)
-                                                                <p class="text-[10px] font-black text-emerald-500 uppercase italic mt-3 opacity-60 italic truncate max-w-[200px]"><i class="fas fa-terminal text-[8px] mr-2 italic"></i> {{ $evid->evid_comentario }}</p>
+                                                                <p class="text-[10px] font-black text-[#FF6B00] uppercase italic mt-3 opacity-60 italic truncate max-w-[200px]"><i class="fas fa-terminal text-[8px] mr-2 italic"></i> {{ $evid->evid_comentario }}</p>
                                                             @endif
                                                         </div>
                                                     </div>
                                                     <div class="flex items-center gap-6 italic">
                                                         @switch($evid->evid_estado)
-                                                            @case('Aprobada') <x-badge class="bg-emerald-500 text-white border-none py-2 px-5 rounded-xl text-[9px] font-black uppercase tracking-widest italic shadow-lg shadow-emerald-500/20 italic">VALIDADO</x-badge> @break
+                                                            @case('Aprobada') <x-badge class="bg-[#FF6B00] text-white border-none py-2 px-5 rounded-xl text-[9px] font-black uppercase tracking-widest italic shadow-lg shadow-[#FF6B00]/20 italic">VALIDADO</x-badge> @break
                                                             @case('Pendiente') <x-badge class="bg-slate-300 text-white border-none py-2 px-5 rounded-xl text-[9px] font-black uppercase tracking-widest italic italic">EN ESCANEO</x-badge> @break
                                                             @case('Rechazada') <x-badge class="bg-red-500 text-white border-none py-2 px-5 rounded-xl text-[9px] font-black uppercase tracking-widest italic shadow-lg shadow-red-500/20 italic">RECHAZADO</x-badge> @break
                                                         @endswitch
                                                         @if($evid->evid_archivo)
-                                                            <a href="{{ asset('storage/' . $evid->evid_archivo) }}" target="_blank" class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-emerald-500 transition-all shadow-2xl active:scale-95 italic">
+                                                            <a href="{{ asset('storage/' . $evid->evid_archivo) }}" target="_blank" class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-[#FF6B00] transition-all shadow-2xl active:scale-95 italic">
                                                                 <i class="fas fa-download text-sm italic"></i>
                                                             </a>
                                                         @endif
@@ -221,18 +221,18 @@
                                         <div class="space-y-6 italic">
                                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] block pl-4 italic">CONSOLA DE ACTIVACIÓN</label>
                                             <textarea name="descripcion" required placeholder="DESCRIBE LOS LOGROS TÉCNICOS ALCANZADOS EN ESTE HITO OPERATIVO..." 
-                                                      class="w-full bg-slate-50 border-4 border-transparent rounded-[2.5rem] p-10 text-base font-black text-slate-900 placeholder:text-slate-200 focus:border-emerald-500/20 focus:bg-white transition-all outline-none min-h-[160px] shadow-inner uppercase italic tracking-tight italic"></textarea>
+                                                      class="w-full bg-slate-50 border-4 border-transparent rounded-[2.5rem] p-10 text-base font-black text-slate-900 placeholder:text-slate-200 focus:border-[#FF6B00]/20 focus:bg-white transition-all outline-none min-h-[160px] shadow-inner uppercase italic tracking-tight italic"></textarea>
                                         </div>
                                         
                                         <div class="flex flex-col md:flex-row gap-6 italic">
                                             <div class="flex-1 relative group/file italic">
                                                 <input type="file" name="archivo" required class="absolute inset-0 w-full h-full opacity-0 z-20 cursor-pointer italic">
-                                                <div class="bg-slate-50 border-4 border-dashed border-slate-200 rounded-[2rem] p-6 flex items-center justify-center gap-6 group-hover/file:border-emerald-500/40 group-hover/file:bg-emerald-50 transition-all italic">
-                                                    <i class="fas fa-cloud-upload-alt text-slate-300 group-hover/file:text-emerald-500 text-2xl transition-colors italic"></i>
-                                                    <span class="text-[10px] font-black text-slate-400 group-hover/file:text-emerald-600 uppercase tracking-[0.3em] italic">CARGAR EXPEDIENTE (ZIP/PDF)</span>
+                                                <div class="bg-slate-50 border-4 border-dashed border-slate-200 rounded-[2rem] p-6 flex items-center justify-center gap-6 group-hover/file:border-[#FF6B00]/40 group-hover/file:bg-orange-50 transition-all italic">
+                                                    <i class="fas fa-cloud-upload-alt text-slate-300 group-hover/file:text-[#FF6B00] text-2xl transition-colors italic"></i>
+                                                    <span class="text-[10px] font-black text-slate-400 group-hover/file:text-[#E65100] uppercase tracking-[0.3em] italic">CARGAR EXPEDIENTE (ZIP/PDF)</span>
                                                 </div>
                                             </div>
-                                            <x-button type="submit" variant="primary" shadow="emerald" class="py-6 px-12 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-4 active:scale-95 transition-all italic italic shadow-2xl">
+                                            <x-button type="submit" variant="primary" shadow="orange" class="py-6 px-12 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-4 active:scale-95 transition-all italic italic shadow-2xl">
                                                 EJECUTAR TRANSMISIÓN <i class="fas fa-paper-plane italic font-bold"></i>
                                             </x-button>
                                         </div>
@@ -259,12 +259,12 @@
         <div class="space-y-12 sticky top-12 italic">
             
             <x-card class="p-10 border-none shadow-2xl relative overflow-hidden group bg-slate-900 rounded-[3.5rem] italic" shadow="none">
-                <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900/20 italic opacity-80"></div>
+                <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-orange-900/20 italic opacity-80"></div>
                 <div class="relative space-y-8 italic">
-                    <h4 class="text-[10px] font-black text-emerald-400/60 uppercase tracking-[0.4em] flex items-center gap-4 italic">
-                        <i class="fas fa-eye italic text-emerald-500"></i> TRANSMISIÓN VISUAL
+                    <h4 class="text-[10px] font-black text-orange-400/60 uppercase tracking-[0.4em] flex items-center gap-4 italic">
+                        <i class="fas fa-eye italic text-[#FF6B00]"></i> TRANSMISIÓN VISUAL
                     </h4>
-                    <div class="relative rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white/5 group-hover:border-emerald-500/20 transition-all duration-700 italic">
+                    <div class="relative rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white/5 group-hover:border-[#FF6B00]/20 transition-all duration-700 italic">
                         @if($proyecto->pro_imagen_url)
                             <img src="{{ $proyecto->pro_imagen_url }}" class="w-full object-cover aspect-video group-hover:scale-110 transition-transform duration-[2000ms] italic">
                         @else
@@ -281,14 +281,14 @@
                 <div class="absolute top-0 right-0 w-3 h-full bg-slate-900 italic"></div>
                 
                 <h4 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] italic flex items-center gap-4 italic leading-none">
-                    <i class="fas fa-tower-broadcast text-emerald-500 italic"></i> CRONOGRAMA MAESTRO
+                    <i class="fas fa-tower-broadcast text-[#FF6B00] italic"></i> CRONOGRAMA MAESTRO
                 </h4>
                 
                 <div class="space-y-10 italic">
                     <div class="space-y-3 group/date italic">
                         <p class="text-[9px] text-slate-300 uppercase tracking-[0.3em] italic ml-2 italic">FECHA de LANZAMIENTO</p>
-                        <div class="flex items-center gap-6 bg-slate-50 p-6 rounded-[2rem] border-4 border-white group-hover/date:border-emerald-500/10 transition-all shadow-xl italic italic">
-                            <i class="fas fa-calendar-alt text-emerald-500 text-2xl italic font-bold"></i>
+                        <div class="flex items-center gap-6 bg-slate-50 p-6 rounded-[2rem] border-4 border-white group-hover/date:border-[#FF6B00]/10 transition-all shadow-xl italic italic">
+                            <i class="fas fa-calendar-alt text-[#FF6B00] text-2xl italic font-bold"></i>
                             <span class="text-lg font-black text-slate-900 italic tracking-tighter italic">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d M, Y') }}</span>
                         </div>
                     </div>

@@ -4,7 +4,7 @@
 
 @php
     $variants = [
-        'success' => 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20',
+        'success' => 'bg-[#FF6B00] text-white shadow-lg shadow-[#FF6B00]/20',
         'error'   => 'bg-red-500 text-white shadow-lg shadow-red-500/20',
         'warning' => 'bg-amber-500 text-white shadow-lg shadow-amber-500/20',
         'info'    => 'bg-blue-500 text-white shadow-lg shadow-blue-500/20',

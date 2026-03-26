@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Proyecto extends Model
 {
+    use HasFactory;
     protected $table = 'proyecto';
 
     protected $primaryKey = 'pro_id';
@@ -22,9 +25,7 @@ class Proyecto extends Model
         'pro_categoria',
         'pro_estado',
         'pro_imagen_url',
-        'pro_fecha_inicio',
-        'pro_fecha_fin',
-        'pro_num_postulantes',
+        'pro_ubicacion',
         'pro_requisitos_especificos',
         'pro_habilidades_requerida',
         'pro_duracion_estimada',
@@ -36,8 +37,6 @@ class Proyecto extends Model
     ];
 
     protected $casts = [
-        'pro_fecha_inicio' => 'datetime',
-        'pro_fecha_fin' => 'datetime',
         'pro_fecha_publi' => 'datetime',
         'pro_fecha_finalizacion' => 'datetime',
     ];

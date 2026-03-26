@@ -60,7 +60,7 @@ body {
 
 .menu a:hover {
   background: #E0F2F1;
-  color: #10b981;
+  color: #FF6B00;
 }
 
 .menu a.active {
@@ -87,7 +87,7 @@ body {
 
 .icon-btn:hover {
   transform: scale(1.2);
-  color: #10b981;
+  color: #FF6B00;
 }
 
 .search-box input {
@@ -124,7 +124,7 @@ body {
 }
 
 .welcome h1 span {
-  color: #10b981;
+  color: #FF6B00;
   font-weight: bold;
 }
 
@@ -154,7 +154,7 @@ body {
   font-size: 1.2rem;
   font-weight: bold;
   margin-bottom: 15px;
-  color: #10b981;
+  color: #FF6B00;
 }
 
 /* ==========================
@@ -287,7 +287,7 @@ body {
 }
 
 .assigned-btn:hover {
-  background: #10b981;
+  background: #FF6B00;
 }
 
 /* ==========================
@@ -308,7 +308,7 @@ body {
   margin: 15px auto;
   font-size: 1.2rem;
   font-weight: bold;
-  color: #10b981;
+  color: #FF6B00;
 }
 
 .status {
@@ -366,5 +366,5 @@ body {
 
 .btn:hover,
 .add-btn:hover {
-  background: #10b981;
+  background: #FF6B00;
 }
