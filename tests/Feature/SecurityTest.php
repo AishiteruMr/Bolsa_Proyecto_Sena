@@ -34,23 +34,30 @@ class SecurityTest extends TestCase
     #[Test]
     public function user_cannot_access_other_role_dashboard()
     {
-        // 1. Crear un aprendiz
+        // 1. Crear un aprendiz completo (usuario + perfil aprendiz)
         $usrId = DB::table('usuario')->insertGetId([
             'usr_documento' => 111111,
             'usr_correo'    => 'test_sec@gmail.com',
             'usr_contrasena'=> Hash::make('password123'),
             'rol_id'        => 1, // Aprendiz
+            'usr_fecha_creacion' => now(),
+        ]);
+        DB::table('aprendiz')->insert([
+            'usr_id'       => $usrId,
+            'apr_nombre'   => 'Test',
+            'apr_apellido' => 'Sec',
+            'apr_programa' => 'ADSO',
+            'apr_estado'   => 1,
         ]);
 
         // Intentar acceder a admin dashboard como aprendiz
+        // AuthMiddleware pasa (perfil existe), pero RolMiddleware lanza abort(403)
         $response = $this->withSession([
             'usr_id' => $usrId,
             'rol'    => 1
         ])->get(route('admin.dashboard'));
 
-        // El RolMiddleware debería redirigir de vuelta al dashboard del aprendiz
-        $response->assertStatus(302);
-        $response->assertRedirect(route('aprendiz.dashboard'));
+        $response->assertStatus(403);
     }
 
     #[Test]
