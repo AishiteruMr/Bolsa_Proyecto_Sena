@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Proyecto extends Model
 {
+    use HasFactory;
     protected $table = 'proyecto';
     protected $primaryKey = 'pro_id';
     public $timestamps = false;
@@ -20,9 +23,7 @@ class Proyecto extends Model
         'pro_categoria',
         'pro_estado',
         'pro_imagen_url',
-        'pro_fecha_inicio',
-        'pro_fecha_fin',
-        'pro_num_postulantes',
+        'pro_ubicacion',
         'pro_requisitos_especificos',
         'pro_habilidades_requerida',
         'pro_duracion_estimada',
@@ -34,8 +35,6 @@ class Proyecto extends Model
     ];
 
     protected $casts = [
-        'pro_fecha_inicio' => 'datetime',
-        'pro_fecha_fin' => 'datetime',
         'pro_fecha_publi' => 'datetime',
         'pro_fecha_finalizacion' => 'datetime',
     ];
@@ -70,6 +69,22 @@ class Proyecto extends Model
     public function scopeActivos(Builder $query): Builder
     {
         return $query->where('pro_estado', 'Activo');
+    }
+
+    /**
+     * Proyectos aprobados por el admin — visibles para aprendices
+     */
+    public function scopeAprobados(Builder $query): Builder
+    {
+        return $query->where('pro_estado', 'Aprobado');
+    }
+
+    /**
+     * Proyectos pendientes de aprobación por el admin
+     */
+    public function scopePendientes(Builder $query): Builder
+    {
+        return $query->where('pro_estado', 'Pendiente');
     }
 
     public function scopeInactivos(Builder $query): Builder
@@ -109,6 +124,21 @@ class Proyecto extends Model
     public function isActivo(): bool
     {
         return $this->pro_estado === 'Activo';
+    }
+
+    public function isAprobado(): bool
+    {
+        return $this->pro_estado === 'Aprobado';
+    }
+
+    public function isPendiente(): bool
+    {
+        return $this->pro_estado === 'Pendiente';
+    }
+
+    public function isRechazado(): bool
+    {
+        return $this->pro_estado === 'Rechazado';
     }
 
     public function isFinalizado(): bool

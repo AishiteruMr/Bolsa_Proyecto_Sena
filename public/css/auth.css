@@ -3,9 +3,9 @@
    ============================================================================= */
 
 :root {
-    --verde-dark: #298564;
-    --verde-void: #1b6b5f;
-    --verde-light: #3eb489;
+    --primary: #FF6B00;
+    --primary-dark: #E65100;
+    --accent-dark: #231F20;
     --blanco: #ffffff;
     --texto-suave: #666;
     --azul:#7EA3CC;
@@ -19,9 +19,9 @@
 main {
     background: linear-gradient(
         135deg,
-        var(--verde-void) 0%,
-        var(--verde-dark) 40%,
-        var(--verde-light) 100%
+        var(--accent-dark) 0%,
+        var(--primary-dark) 60%,
+        var(--primary) 100%
     );
     min-height: calc(100vh - 70px);
     display: flex;
@@ -144,13 +144,13 @@ main.login-main::after {
 }
 
 .login-form .input-icon input:focus {
-    border-color: var(--verde-dark);
+    border-color: var(--primary-dark);
     background: var(--blanco);
     box-shadow: 0 0 0 3px rgba(41, 133, 100, 0.1);
 }
 
 .login-form .input-icon input:focus + i {
-    color: var(--verde-dark);
+    color: var(--primary-dark);
 }
 
 /* --- Input with left icon (registration version) --- */
@@ -181,13 +181,13 @@ main.login-main::after {
 }
 
 .registro-container .input-icon input:focus {
-    border-color: var(--verde-dark);
+    border-color: var(--primary-dark);
     background: var(--blanco);
     box-shadow: 0 0 0 3px rgba(41, 133, 100, 0.1);
 }
 
 .registro-container .input-icon input:focus + i {
-    color: var(--verde-dark);
+    color: var(--primary-dark);
 }
 
 /* --- Two-column input row (aprendiz, instructor) --- */
@@ -210,7 +210,7 @@ main.login-main::after {
 .checkbox-group input[type="checkbox"] {
     cursor: pointer;
     margin-top: 3px;
-    accent-color: var(--verde-dark);
+    accent-color: var(--primary-dark);
 }
 
 .checkbox-group label {
@@ -235,8 +235,8 @@ main.login-main::after {
 
 .alert-success {
     background: #ecf7f3;
-    color: var(--verde-void);
-    border-left-color: var(--verde-dark);
+    color: var(--accent-dark);
+    border-left-color: var(--primary-dark);
 }
 
 .alert-error {
@@ -311,8 +311,8 @@ main.login-main::after {
     padding: 13px;
     background: linear-gradient(
         135deg,
-        var(--verde-dark) 0%,
-        var(--verde-void) 100%
+        var(--primary-dark) 0%,
+        var(--accent-dark) 100%
     );
     color: var(--blanco);
     border: none;
@@ -409,7 +409,7 @@ main.login-main::after {
 }
 
 .reg-btn:hover {
-    border-color: var(--verde-dark);
+    border-color: var(--primary-dark);
     background: #f0f9f7;
     transform: translateX(4px);
 }
@@ -418,7 +418,7 @@ main.login-main::after {
     font-size: 18px;
     width: 24px;
     text-align: center;
-    color: var(--verde-dark);
+    color: var(--primary-dark);
 }
 
 /* --- Right panel: decorative message --- */
@@ -540,7 +540,7 @@ main.login-main::after {
 }
 
 .back-btn:hover {
-    color: var(--verde-dark);
+    color: var(--primary-dark);
 }
 
 /* --- Submit button (registration) --- */
@@ -549,8 +549,8 @@ main.login-main::after {
     padding: 12px;
     background: linear-gradient(
         135deg,
-        var(--verde-dark) 0%,
-        var(--verde-void) 100%
+        var(--primary-dark) 0%,
+        var(--accent-dark) 100%
     );
     color: var(--blanco);
     border: none;

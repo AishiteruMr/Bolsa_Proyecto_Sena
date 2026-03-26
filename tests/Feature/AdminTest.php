@@ -6,8 +6,11 @@ use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Aprendiz;
+use App\Models\Empresa;
+use App\Models\Instructor;
+use App\Models\Proyecto;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -15,7 +18,6 @@ class AdminTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $admin;
     protected $usuario;
 
     protected function setUp(): void
@@ -24,23 +26,16 @@ class AdminTest extends TestCase
         Mail::fake();
 
         // Crear usuario con rol admin (4)
-        $usrId = DB::table('usuario')->insertGetId([
-            'usr_documento' => 123123123,
-            'usr_correo'    => 'admin@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 4,
-            'usr_fecha_creacion' => now(),
-        ]);
-
-        $this->usuario = DB::table('usuario')->where('usr_id', $usrId)->first();
+        $this->usuario = User::factory()->create(['rol_id' => 4]);
     }
 
     #[Test]
     public function admin_can_view_dashboard()
     {
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id' => $this->usuario->usr_id,
-            'rol'    => 4
+            'rol'    => 4,
+            'nombre' => 'Admin'
         ])->get(route('admin.dashboard'));
 
         $response->assertStatus(200);
@@ -50,109 +45,87 @@ class AdminTest extends TestCase
     #[Test]
     public function admin_can_change_user_status()
     {
-        // 1. Crear un aprendiz
-        $aprUsrId = DB::table('usuario')->insertGetId([
-            'usr_documento' => 321321321,
-            'usr_correo'    => 'apr_admin_test@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 1,
-            'usr_fecha_creacion' => now(),
-        ]);
-        $aprId = DB::table('aprendiz')->insertGetId([
-            'usr_id' => $aprUsrId,
-            'apr_nombre' => 'A', 'apr_apellido' => 'B', 'apr_programa' => 'P', 'apr_estado' => 1
-        ]);
+        // 1. Crear un aprendiz usando factory
+        $aprendiz = Aprendiz::factory()->create();
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 4
-        ])->post(route('admin.usuarios.estado', $aprId), [
+        ])->post(route('admin.usuarios.estado', $aprendiz->apr_id), [
             'tipo' => 'aprendiz',
             'estado' => 0
         ]);
 
         $response->assertStatus(302);
-        $this->assertDatabaseHas('aprendiz', ['apr_id' => $aprId, 'apr_estado' => 0]);
+        $this->assertDatabaseHas('aprendiz', ['apr_id' => $aprendiz->apr_id, 'apr_estado' => 0]);
     }
 
     #[Test]
     public function admin_can_change_company_status()
     {
-        $empUsrId = DB::table('usuario')->insertGetId([
-            'usr_documento' => 456456456,
-            'usr_correo'    => 'emp_admin_test@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 3,
-            'usr_fecha_creacion' => now(),
-        ]);
-        $empId = DB::table('empresa')->insertGetId([
-            'usr_id' => $empUsrId,
-            'emp_nit' => 999000999,
-            'emp_nombre' => 'E', 'emp_representante' => 'R', 'emp_correo' => 'e@e.com',
-            'emp_contrasena' => 'x', 'emp_estado' => 1
-        ]);
+        $empresa = Empresa::factory()->create();
 
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 4
-        ])->post(route('admin.empresas.estado', $empId), [
+        ])->post(route('admin.empresas.estado', $empresa->emp_id), [
             'estado' => 0
         ]);
 
         $response->assertStatus(302);
-        $this->assertDatabaseHas('empresa', ['emp_id' => $empId, 'emp_estado' => 0]);
+        $this->assertDatabaseHas('empresa', ['emp_id' => $empresa->emp_id, 'emp_estado' => 0]);
     }
 
     #[Test]
     public function admin_can_assign_instructor_to_project()
     {
-        // 1. Crear instructor
-        $insUsrId = DB::table('usuario')->insertGetId([
-            'usr_documento' => 789789789,
-            'usr_correo'    => 'ins_admin_test@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 2,
-            'usr_fecha_creacion' => now(),
-        ]);
-        DB::table('instructor')->insert([
-            'usr_id' => $insUsrId,
-            'ins_nombre' => 'I', 'ins_apellido' => 'T', 'ins_especialidad' => 'S'
-        ]);
+        // 1. Crear instructor usando factory
+        $instructor = Instructor::factory()->create();
+        
+        // 2. Crear proyecto usando factory
+        $proyecto = Proyecto::factory()->create(['pro_estado' => 'Activo']);
 
-        // 2. Crear empresa (necesaria para el proyecto)
-        $empUsrId = DB::table('usuario')->insertGetId([
-            'usr_documento' => 888777666,
-            'usr_correo'    => 'emp_assign@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 3,
-            'usr_fecha_creacion' => now(),
-        ]);
-        DB::table('empresa')->insert([
-            'usr_id' => $empUsrId,
-            'emp_nit' => 555666555,
-            'emp_nombre' => 'E', 'emp_representante' => 'R', 'emp_correo' => 'e_assign@e.com',
-            'emp_contrasena' => 'x', 'emp_estado' => 1
-        ]);
-
-        // 3. Crear proyecto
-        $proId = DB::table('proyecto')->insertGetId([
-            'emp_nit' => 555666555,
-            'pro_titulo_proyecto' => 'P', 'pro_categoria' => 'C', 'pro_descripcion' => 'D',
-            'pro_requisitos_especificos' => 'R', 'pro_habilidades_requerida' => 'H',
-            'pro_fecha_publi' => now(), 'pro_duracion_estimada' => 10, 'pro_estado' => 'Activo'
-        ]);
-
-        $response = $this->withSession([
+        $response = $this->actingAs($this->usuario)->from(route('admin.proyectos'))->withSession([
             'usr_id' => $this->usuario->usr_id,
             'rol'    => 4
-        ])->post(route('admin.proyectos.asignar', $proId), [
-            'ins_usr_documento' => 789789789
+        ])->post(route('admin.proyectos.asignar', $proyecto->pro_id), [
+            'ins_usr_documento' => $instructor->usuario->usr_documento
         ]);
 
         $response->assertStatus(302);
         $this->assertDatabaseHas('proyecto', [
-            'pro_id' => $proId,
-            'ins_usr_documento' => 789789789
+            'pro_id' => $proyecto->pro_id,
+            'ins_usr_documento' => $instructor->usuario->usr_documento
         ]);
+    }
+
+    #[Test]
+    public function admin_can_approve_project()
+    {
+        // 1. Crear proyecto pendiente usando factory
+        $proyecto = Proyecto::factory()->create(['pro_estado' => 'Pendiente']);
+
+        $response = $this->actingAs($this->usuario)->from(route('admin.proyectos'))->withSession([
+            'usr_id' => $this->usuario->usr_id,
+            'rol'    => 4
+        ])->post(route('admin.proyectos.aprobar', $proyecto->pro_id));
+
+        $response->assertStatus(302);
+        $this->assertDatabaseHas('proyecto', ['pro_id' => $proyecto->pro_id, 'pro_estado' => 'Aprobado']);
+    }
+
+    #[Test]
+    public function admin_can_reject_project()
+    {
+        // 1. Crear proyecto pendiente usando factory
+        $proyecto = Proyecto::factory()->create(['pro_estado' => 'Pendiente']);
+
+        $response = $this->actingAs($this->usuario)->from(route('admin.proyectos'))->withSession([
+            'usr_id' => $this->usuario->usr_id,
+            'rol'    => 4
+        ])->post(route('admin.proyectos.rechazar', $proyecto->pro_id));
+
+        $response->assertStatus(302);
+        $this->assertDatabaseHas('proyecto', ['pro_id' => $proyecto->pro_id, 'pro_estado' => 'Rechazado']);
     }
 }

@@ -34,23 +34,14 @@ class SecurityTest extends TestCase
     #[Test]
     public function user_cannot_access_other_role_dashboard()
     {
-        // 1. Crear un aprendiz
-        $usrId = DB::table('usuario')->insertGetId([
-            'usr_documento' => 111111,
-            'usr_correo'    => 'test_sec@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 1, // Aprendiz
-        ]);
+        // 1. Crear un aprendiz completo usando factory
+        $aprendiz = \App\Models\Aprendiz::factory()->create();
+        $user = $aprendiz->usuario;
 
         // Intentar acceder a admin dashboard como aprendiz
-        $response = $this->withSession([
-            'usr_id' => $usrId,
-            'rol'    => 1
-        ])->get(route('admin.dashboard'));
+        $response = $this->actingAs($user)->get(route('admin.dashboard'));
 
-        // El RolMiddleware debería redirigir de vuelta al dashboard del aprendiz
-        $response->assertStatus(302);
-        $response->assertRedirect(route('aprendiz.dashboard'));
+        $response->assertStatus(403);
     }
 
     #[Test]
@@ -95,13 +86,8 @@ class SecurityTest extends TestCase
     #[Test]
     public function registration_validation_fails_with_duplicate_email()
     {
-        // 1. Crear un usuario existente
-        DB::table('usuario')->insert([
-            'usr_documento' => 222222,
-            'usr_correo'    => 'duplicate@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 1,
-        ]);
+        // 1. Crear un usuario existente usando factory
+        $existingUser = \App\Models\User::factory()->create(['usr_correo' => 'duplicate@gmail.com']);
 
         $response = $this->post(route('registro.aprendiz.post'), [
             'nombre' => 'Test',
@@ -120,25 +106,41 @@ class SecurityTest extends TestCase
     #[Test]
     public function deactivated_account_cannot_login()
     {
-        // 1. Crear usuario desactivado
-        $usrId = DB::table('usuario')->insertGetId([
-            'usr_documento' => 444444,
-            'usr_correo'    => 'deactivated@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 1,
-        ]);
-        DB::table('aprendiz')->insert([
-            'usr_id' => $usrId,
-            'apr_nombre' => 'A', 'apr_apellido' => 'B', 'apr_programa' => 'P',
-            'apr_estado' => 0 // Desactivado
-        ]);
+        // 1. Crear usuario desactivado usando factory
+        $aprendiz = \App\Models\Aprendiz::factory()->create(['apr_estado' => 0]);
+        $user = $aprendiz->usuario;
 
         $response = $this->post(route('login.post'), [
-            'correo' => 'deactivated@gmail.com',
+            'correo' => $user->usr_correo,
             'password' => 'password123'
         ]);
 
         $response->assertSessionHas('error');
         $this->assertStringContainsString('cuenta está desactivada', session('error'));
+    }
+
+    #[Test]
+    public function company_cannot_edit_another_company_project()
+    {
+        // 1. Crear Empresa A
+        $userA = \App\Models\User::factory()->create(['rol_id' => 3]);
+        $empresaA = \App\Models\Empresa::factory()->create(['usr_id' => $userA->usr_id, 'emp_nit' => 111111111]);
+        $userA->refresh();
+
+        // 2. Crear Empresa B y su proyecto
+        $userB = \App\Models\User::factory()->create(['rol_id' => 3]);
+        $empresaB = \App\Models\Empresa::factory()->create(['usr_id' => $userB->usr_id, 'emp_nit' => 222222222]);
+        $proyectoB = \App\Models\Proyecto::factory()->create(['emp_nit' => 222222222]);
+
+        // Empresa A intenta editar proyecto de Empresa B
+        $response = $this->actingAs($userA)
+            ->withSession([
+                'nit'    => 111111111,
+                'rol'    => 3,
+                'usr_id' => $userA->usr_id
+            ])
+            ->get(route('empresa.proyectos.edit', $proyectoB->pro_id));
+
+        $response->assertStatus(404);
     }
 }

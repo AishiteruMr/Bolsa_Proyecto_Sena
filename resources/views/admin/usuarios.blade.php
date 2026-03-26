@@ -17,7 +17,7 @@
         <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Directorio Empresas</span>
     </a>
     <a href="{{ route('admin.proyectos') }}" class="nav-item group {{ request()->routeIs('admin.proyectos') ? 'active' : '' }}">
-        <i class="fas fa-project-diagram group-hover:text-emerald-500 transition-colors italic"></i> 
+        <i class="fas fa-project-diagram group-hover:text-[#FF6B00] transition-colors italic"></i> 
         <span class="font-bold tracking-tight uppercase text-xs italic text-slate-400">Banco de Proyectos</span>
     </a>
 @endsection
@@ -29,7 +29,7 @@
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 px-4">
         <div class="space-y-4">
             <h2 class="text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none">
-                Gestión <span class="text-emerald-500 underline decoration-emerald-500/20 decoration-8 underline-offset-8">Usuarios</span>
+                Gestión <span class="text-[#FF6B00] underline decoration-[#FF6B00]/20 decoration-8 underline-offset-8">Usuarios</span>
             </h2>
             <p class="text-slate-400 font-bold text-sm uppercase tracking-widest flex items-center gap-4 italic opacity-70">
                 <span class="w-16 h-px bg-slate-200"></span>
@@ -40,13 +40,13 @@
         <!-- Premium Tabs -->
         <div class="flex p-2 bg-slate-100 rounded-[2rem] shadow-inner gap-2">
             <button @click="activeTab = 'aprendices'" 
-                    :class="activeTab === 'aprendices' ? 'bg-white text-emerald-600 shadow-xl scale-105' : 'text-slate-400 hover:text-slate-600'"
+                    :class="activeTab === 'aprendices' ? 'bg-white text-[#E65100] shadow-xl scale-105' : 'text-slate-400 hover:text-slate-600'"
                     class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 italic flex items-center gap-3">
                 <i class="fas fa-user-graduate"></i>
                 Aprendices ({{ $aprendices->count() }})
             </button>
             <button @click="activeTab = 'instructores'" 
-                    :class="activeTab === 'instructores' ? 'bg-white text-emerald-600 shadow-xl scale-105' : 'text-slate-400 hover:text-slate-600'"
+                    :class="activeTab === 'instructores' ? 'bg-white text-[#E65100] shadow-xl scale-105' : 'text-slate-400 hover:text-slate-600'"
                     class="px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 italic flex items-center gap-3">
                 <i class="fas fa-chalkboard-teacher"></i>
                 Instructores ({{ $instructores->count() }})
@@ -62,7 +62,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left font-bold">
                         <thead>
-                            <tr class="bg-slate-900 text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em] italic">
+                            <tr class="bg-slate-900 text-[10px] font-black text-orange-400 uppercase tracking-[0.3em] italic">
                                 <th class="px-10 py-6 italic">Perfil</th>
                                 <th class="px-10 py-6 italic">Programa Formativo</th>
                                 <th class="px-10 py-6 italic text-center">Estado</th>
@@ -80,7 +80,7 @@
                                             <div>
                                                 <p class="text-lg font-black text-slate-900 uppercase italic leading-none">{{ $a->apr_nombre }} {{ $a->apr_apellido }}</p>
                                                 <p class="text-[9px] text-slate-400 mt-2 uppercase italic tracking-widest font-black italic opacity-60 flex items-center gap-2">
-                                                    <i class="fas fa-id-card text-emerald-500"></i>
+                                                    <i class="fas fa-id-card text-[#FF6B00]"></i>
                                                     ID: {{ $a->usr_documento }}
                                                 </p>
                                             </div>
@@ -94,7 +94,7 @@
                                     </td>
                                     <td class="px-10 py-8 italic text-center font-bold">
                                         @if($a->apr_estado == 1)
-                                            <x-badge class="bg-emerald-500 text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-emerald-500/20 italic">OPERATIVO</x-badge>
+                                            <x-badge class="bg-[#FF6B00] text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-[#FF6B00]/20 italic">OPERATIVO</x-badge>
                                         @else
                                             <x-badge class="bg-red-500 text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-red-500/20 italic">DORMIDO</x-badge>
                                         @endif
@@ -130,7 +130,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left font-bold">
                         <thead>
-                            <tr class="bg-slate-900 text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em] italic">
+                            <tr class="bg-slate-900 text-[10px] font-black text-orange-400 uppercase tracking-[0.3em] italic">
                                 <th class="px-10 py-6 italic">Arquitecto</th>
                                 <th class="px-10 py-6 italic">Línea Técnica</th>
                                 <th class="px-10 py-6 italic text-center">Estado</th>
@@ -142,13 +142,13 @@
                                 <tr class="group hover:bg-slate-50/50 transition-all duration-300 italic">
                                     <td class="px-10 py-8 italic font-bold">
                                         <div class="flex items-center gap-6 italic font-bold">
-                                            <div class="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center italic text-xl shadow-xl group-hover:scale-110 group-hover:-rotate-6 transition-transform italic">
+                                            <div class="w-14 h-14 rounded-2xl bg-[#FF6B00] text-white flex items-center justify-center italic text-xl shadow-xl group-hover:scale-110 group-hover:-rotate-6 transition-transform italic">
                                                 {{ strtoupper(substr($i->ins_nombre, 0, 1)) }}
                                             </div>
                                             <div>
                                                 <p class="text-lg font-black text-slate-900 uppercase italic leading-none">{{ $i->ins_nombre }} {{ $i->ins_apellido }}</p>
                                                 <p class="text-[9px] text-slate-400 mt-2 uppercase italic tracking-widest font-black italic opacity-60 flex items-center gap-2">
-                                                    <i class="fas fa-microchip text-emerald-500"></i>
+                                                    <i class="fas fa-microchip text-[#FF6B00]"></i>
                                                     DOC: {{ $i->usr_documento }}
                                                 </p>
                                             </div>
@@ -162,7 +162,7 @@
                                     </td>
                                     <td class="px-10 py-8 italic text-center font-bold">
                                         @if($i->ins_estado == 1)
-                                            <x-badge class="bg-emerald-500 text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-emerald-500/20 italic">AUTORIZADO</x-badge>
+                                            <x-badge class="bg-[#FF6B00] text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-[#FF6B00]/20 italic">AUTORIZADO</x-badge>
                                         @else
                                             <x-badge class="bg-red-500 text-white border-none py-1.5 px-4 rounded-xl text-[9px] font-black shadow-lg shadow-red-500/20 italic">BLOQUEADO</x-badge>
                                         @endif

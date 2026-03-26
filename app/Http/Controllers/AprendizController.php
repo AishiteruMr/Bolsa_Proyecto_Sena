@@ -34,10 +34,10 @@ class AprendizController extends Controller
         $postulacionesAprobadas = $aprendiz->postulaciones()
             ->where('pos_estado', 'Aprobada')
             ->count();
-        $proyectosDisponibles = Proyecto::activos()->count();
+        $proyectosDisponibles = Proyecto::aprobados()->count();
 
         $proyectosRecientes = Proyecto::with('empresa')
-            ->activos()
+            ->aprobados()
             ->recientes()
             ->limit(6)
             ->get();
@@ -80,7 +80,7 @@ class AprendizController extends Controller
         }
 
         $query = Proyecto::with('empresa')
-            ->activos();
+            ->aprobados();
 
         // Búsqueda por título
         if ($request->filled('buscar')) {

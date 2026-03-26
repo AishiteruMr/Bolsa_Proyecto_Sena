@@ -38,12 +38,12 @@
     <!-- Header Section -->
     <div class="space-y-6 px-4 italic">
         <div class="flex items-center gap-6 italic">
-            <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-2xl shadow-emerald-500/20 italic rotate-6">
+            <div class="w-16 h-16 rounded-2xl bg-[#FF6B00] text-white flex items-center justify-center shadow-2xl shadow-[#FF6B00]/20 italic rotate-6">
                 <i class="fas fa-paper-plane-o text-xl font-bold italic"></i>
             </div>
             <div class="italic">
                 <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none italic">
-                    Rastreo de <span class="text-emerald-500">Candidaturas</span>
+                    Rastreo de <span class="text-[#FF6B00]">Candidaturas</span>
                 </h2>
                 <p class="text-slate-400 font-black text-[10px] uppercase tracking-[0.4em] mt-3 italic opacity-60 italic leading-none italic">
                     MONITOR DE ESTADO DE VINCULACIÓN A PROYECTOS ESTRATÉGICOS
@@ -56,7 +56,7 @@
     <div class="grid gap-8 px-4 italic">
         @forelse($postulaciones as $post)
             <x-card class="p-10 md:p-12 border-none shadow-2xl hover:shadow-[0_40px_80px_-20px_rgba(16,185,129,0.1)] transition-all duration-700 group overflow-hidden relative bg-white rounded-[3.5rem] italic" shadow="none">
-                <div class="absolute -right-20 -top-20 w-80 h-80 bg-slate-50 rounded-full blur-[100px] opacity-60 group-hover:bg-emerald-50 transition-all duration-[2000ms] italic"></div>
+                <div class="absolute -right-20 -top-20 w-80 h-80 bg-slate-50 rounded-full blur-[100px] opacity-60 group-hover:bg-orange-50 transition-all duration-[2000ms] italic"></div>
                 
                 <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-12 italic">
                     <div class="flex items-center gap-10 flex-1 italic">
@@ -74,7 +74,7 @@
                         <!-- Project Metadata -->
                         <div class="space-y-4 flex-1 min-w-0 italic">
                             <div class="flex items-center gap-4 italic">
-                                <h4 class="text-2xl font-black text-slate-900 tracking-tighter uppercase italic truncate group-hover:text-emerald-600 transition-colors italic leading-none">{{ $post->pro_titulo_proyecto }}</h4>
+                                <h4 class="text-2xl font-black text-slate-900 tracking-tighter uppercase italic truncate group-hover:text-[#E65100] transition-colors italic leading-none">{{ $post->pro_titulo_proyecto }}</h4>
                                 <x-badge class="bg-slate-900 text-white border-none px-4 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-[0.3em] italic shadow-2xl italic">
                                     {{ strtoupper($post->pro_categoria) }}
                                 </x-badge>
@@ -82,7 +82,7 @@
                             
                             <div class="flex flex-wrap items-center gap-8 italic">
                                 <div class="flex items-center gap-4 bg-slate-50 px-6 py-2.5 rounded-[1.5rem] border-2 border-white shadow-xl italic">
-                                    <i class="fas fa-building text-xs italic text-emerald-500 font-bold"></i>
+                                    <i class="fas fa-building text-xs italic text-[#FF6B00] font-bold"></i>
                                     <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest italic truncate max-w-[200px] italic">{{ $post->emp_nombre }}</span>
                                 </div>
                                 <div class="flex items-center gap-4 italic opacity-40 italic">
@@ -104,7 +104,7 @@
                                     </x-badge>
                                     @break
                                 @case('Aprobada')
-                                    <x-badge class="bg-emerald-500 text-white border-none py-2 px-6 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] italic shadow-2xl shadow-emerald-500/20 italic">
+                                    <x-badge class="bg-[#FF6B00] text-white border-none py-2 px-6 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] italic shadow-2xl shadow-[#FF6B00]/20 italic">
                                         <i class="fas fa-check-circle shadow-sm mr-3 italic"></i> ADMITIDO
                                     </x-badge>
                                     @break
@@ -118,7 +118,7 @@
 
                         <div class="flex items-center italic">
                             @if($post->pos_estado === 'Aprobada')
-                                <x-button :href="route('aprendiz.proyecto.detalle', $post->pro_id)" variant="primary" shadow="emerald" class="py-6 px-12 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] flex items-center gap-4 group/btn hover:scale-105 active:scale-95 transition-all italic italic shadow-2xl">
+                                <x-button :href="route('aprendiz.proyecto.detalle', $post->pro_id)" variant="primary" shadow="orange" class="py-6 px-12 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] flex items-center gap-4 group/btn hover:scale-105 active:scale-95 transition-all italic italic shadow-2xl">
                                     CENTRO DE ACCIÓN 
                                     <i class="fas fa-arrow-right group-hover/btn:translate-x-2 transition-transform italic text-white font-bold flex items-center justify-center"></i>
                                 </x-button>
@@ -134,7 +134,7 @@
         @empty
             <div class="py-40 bg-white rounded-[4rem] border-8 border-slate-50 text-center space-y-12 shadow-inner italic">
                 <div class="relative inline-block italic">
-                    <div class="absolute inset-0 bg-emerald-500/10 rounded-full blur-[80px] animate-pulse italic"></div>
+                    <div class="absolute inset-0 bg-[#FF6B00]/10 rounded-full blur-[80px] animate-pulse italic"></div>
                     <div class="w-48 h-48 rounded-[4rem] bg-slate-900 border-8 border-white flex items-center justify-center mx-auto text-white text-7xl italic relative shadow-2xl transform rotate-12 italic">
                         <i class="fas fa-paper-plane-o animate-bounce italic"></i>
                     </div>
@@ -146,7 +146,7 @@
                 </div>
 
                 <div class="pt-10 italic">
-                    <x-button :href="route('aprendiz.proyectos')" variant="primary" shadow="emerald" class="px-16 py-7 rounded-[2.5rem] font-black text-xs uppercase tracking-[0.3em] flex items-center gap-6 mx-auto hover:scale-105 active:scale-95 transition-all group shadow-2xl italic italic">
+                    <x-button :href="route('aprendiz.proyectos')" variant="primary" shadow="orange" class="px-16 py-7 rounded-[2.5rem] font-black text-xs uppercase tracking-[0.3em] flex items-center gap-6 mx-auto hover:scale-105 active:scale-95 transition-all group shadow-2xl italic italic">
                         <i class="fas fa-radar text-2xl group-hover:rotate-45 transition-transform italic text-white flex items-center justify-center font-bold"></i> 
                         ESCANEAR PROYECTOS
                     </x-button>

@@ -1,7 +1,7 @@
 :root {
-    --verde-dark: #298564;
-    --verde-void: #1b6b5f;
-    --verde-light: #3eb489;
+    --primary-dark: #E65100;
+    --accent-dark: #231F20;
+    --primary: #FF6B00;
     --blanco: #ffffff;
     --texto-suave:#666;
 }
@@ -10,8 +10,8 @@
 .hero-nosotros {
     background: linear-gradient(
         135deg,
-        var(--verde-void) 0%,
-        var(--verde-dark) 100%
+        var(--accent-dark) 0%,
+        var(--primary-dark) 100%
     );
     padding: 80px 80px;
     color: var(--blanco);
@@ -52,7 +52,7 @@
     font-size: 30px;
     font-weight: 700;
     margin-bottom: 18px;
-    color: #1a5c00;
+    color: #E65100;
 }
 
 .about-text p {
@@ -101,7 +101,7 @@
     border-radius: 16px;
     padding: 36px 32px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
-    border-top: 4px solid var(--verde);
+    border-top: 4px solid var(--primary);
     text-align: left;
 }
 
@@ -119,7 +119,7 @@
 
 /* ── CTA FINAL ── */
 .cta-final {
-    background: linear-gradient(135deg, var(--verde-dark), var(--verde-void));
+    background: linear-gradient(135deg, var(--primary-dark), var(--accent-dark));
     padding: 64px 80px;
     text-align: center;
 }
@@ -135,7 +135,7 @@
     display: inline-block;
     padding: 13px 32px;
     background: var(--blanco);
-    color: var(--verde);
+    color: var(--primary);
     border-radius: 30px;
     font-size: 15px;
     font-weight: 700;
