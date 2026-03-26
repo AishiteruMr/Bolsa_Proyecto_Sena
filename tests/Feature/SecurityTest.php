@@ -124,7 +124,7 @@ class SecurityTest extends TestCase
     {
         // 1. Crear Empresa A
         $empresaA = \App\Models\Empresa::factory()->create(['emp_nit' => 111111111]);
-        $userA = $empresaA->usuario;
+        $userA = $empresaA->usuario->refresh();
 
         // 2. Crear Empresa B y su proyecto
         $empresaB = \App\Models\Empresa::factory()->create(['emp_nit' => 222222222]);
@@ -139,6 +139,11 @@ class SecurityTest extends TestCase
             ])
             ->get(route('empresa.proyectos.edit', $proyectoB->pro_id));
 
+        if ($response->status() !== 404) {
+            // fwrite(STDERR, "Unexpected status: " . $response->status() . "\n");
+            // fwrite(STDERR, "Redirect target: " . $response->headers->get('Location') . "\n");
+        }
+        
         $response->assertStatus(404);
     }
 }
