@@ -93,6 +93,23 @@ La plataforma ha sido blindada contra amenazas comunes mediante:
 
 ---
 
+## 🧪 Pruebas y Estabilidad
+
+La plataforma cuenta con una suite de pruebas automatizadas **PHPUnit** que garantizan la integridad de los flujos críticos. Se ha implementado un sistema de **Model Factories** para la generación robusta de datos de prueba.
+
+### Ejecución de Pruebas
+Para correr la suite completa de pruebas:
+```bash
+php artisan test
+```
+
+### Características de la Suite:
+- **Pruebas de Seguridad:** Validación de roles, protección contra IDOR y accesos no autorizados.
+- **Pruebas Funcionales:** Flujo completo de postulación, evidencias y gestión de proyectos.
+- **Factories de Datos:** Generación fluida de `Empresa`, `Aprendiz`, `Instructor`, `Proyecto`, `Postulacion` y `Evidencia`.
+
+---
+
 ## 🔐 Credenciales de Prueba (Seeds)
 
 | Perfil | Correo | Contraseña |
