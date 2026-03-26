@@ -87,6 +87,7 @@ class User extends Authenticatable
         return match ($this->rol_id) {
             self::ROL_APRENDIZ => $this->aprendiz?->apr_estado === 1,
             self::ROL_INSTRUCTOR => $this->instructor?->ins_estado === 1,
+            self::ROL_EMPRESA => $this->empresa?->emp_estado === 1,
             self::ROL_ADMIN => true,
             default => false,
         };
@@ -129,7 +130,7 @@ class User extends Authenticatable
             self::ROL_APRENDIZ => $this->aprendiz !== null,
             self::ROL_INSTRUCTOR => $this->instructor !== null,
             self::ROL_ADMIN => $this->administrador !== null,
-            self::ROL_EMPRESA => false,
+            self::ROL_EMPRESA => $this->empresa !== null,
             default => false,
         };
     }

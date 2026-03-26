@@ -7,7 +7,7 @@
     --verde-void: #1b6b5f;
     --verde-light: #3eb489;
     --blanco: #ffffff;
-    --texto-suave: #523e3d;
+    --texto-suave: #666;
     --azul:#7EA3CC;
 }
 
@@ -348,14 +348,14 @@ main.login-main::after {
 }
 
 .links a {
-    color: var(--verde-dark);
+    color: #387ae4;
     font-weight: 600;
     transition: color 0.2s;
     text-decoration: none;
 }
 
 .links a:hover {
-    color: var(--verde-void);
+    color: #5495ff;
 }
 
 /* --- "Register as" divider --- */
@@ -426,9 +426,9 @@ main.login-main::after {
     width: 380px;
     background: linear-gradient(
         180deg,
-        var(--verde-void) 0%,
+        var(--verde-light) 0%,
         var(--verde-dark) 50%,
-        var(--verde-light) 100%
+        var(--verde-void) 100%
     );
     display: flex;
     flex-direction: column;
@@ -579,14 +579,14 @@ main.login-main::after {
 }
 
 .link-text a {
-    color: var(--verde-dark);
+    color: #387ae4;
     font-weight: 700;
     text-decoration: none;
     transition: color 0.2s;
 }
 
 .link-text a:hover {
-    color: var(--verde-void);
+    color: #5495ff;
 }
 
 /* =============================================================================
