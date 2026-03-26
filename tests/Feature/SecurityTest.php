@@ -123,11 +123,13 @@ class SecurityTest extends TestCase
     public function company_cannot_edit_another_company_project()
     {
         // 1. Crear Empresa A
-        $empresaA = \App\Models\Empresa::factory()->create(['emp_nit' => 111111111]);
-        $userA = $empresaA->usuario->refresh();
+        $userA = \App\Models\User::factory()->create(['rol_id' => 3]);
+        $empresaA = \App\Models\Empresa::factory()->create(['usr_id' => $userA->usr_id, 'emp_nit' => 111111111]);
+        $userA->refresh();
 
         // 2. Crear Empresa B y su proyecto
-        $empresaB = \App\Models\Empresa::factory()->create(['emp_nit' => 222222222]);
+        $userB = \App\Models\User::factory()->create(['rol_id' => 3]);
+        $empresaB = \App\Models\Empresa::factory()->create(['usr_id' => $userB->usr_id, 'emp_nit' => 222222222]);
         $proyectoB = \App\Models\Proyecto::factory()->create(['emp_nit' => 222222222]);
 
         // Empresa A intenta editar proyecto de Empresa B
@@ -139,11 +141,6 @@ class SecurityTest extends TestCase
             ])
             ->get(route('empresa.proyectos.edit', $proyectoB->pro_id));
 
-        if ($response->status() !== 404) {
-            // fwrite(STDERR, "Unexpected status: " . $response->status() . "\n");
-            // fwrite(STDERR, "Redirect target: " . $response->headers->get('Location') . "\n");
-        }
-        
         $response->assertStatus(404);
     }
 }

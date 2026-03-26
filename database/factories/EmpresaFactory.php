@@ -14,7 +14,7 @@ class EmpresaFactory extends Factory
     public function definition(): array
     {
         return [
-            'usr_id'           => User::factory(['rol_id' => 3]),
+            'usr_id'           => fn() => User::factory()->create(['rol_id' => 3])->usr_id,
             'emp_nit'          => fake()->unique()->numberBetween(100000000, 999999999),
             'emp_nombre'       => fake()->company(),
             'emp_representante' => fake()->name(),

@@ -13,7 +13,7 @@ class AprendizFactory extends Factory
     public function definition(): array
     {
         return [
-            'usr_id'       => User::factory(['rol_id' => 1]),
+            'usr_id'       => fn() => User::factory()->create(['rol_id' => 1])->usr_id,
             'apr_nombre'   => fake()->firstName(),
             'apr_apellido' => fake()->lastName(),
             'apr_programa' => 'ADSO',

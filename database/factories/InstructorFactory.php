@@ -13,7 +13,7 @@ class InstructorFactory extends Factory
     public function definition(): array
     {
         return [
-            'usr_id'           => User::factory(['rol_id' => 2]),
+            'usr_id'           => fn() => User::factory()->create(['rol_id' => 2])->usr_id,
             'ins_nombre'       => fake()->firstName(),
             'ins_apellido'     => fake()->lastName(),
             'ins_especialidad' => fake()->word(),
