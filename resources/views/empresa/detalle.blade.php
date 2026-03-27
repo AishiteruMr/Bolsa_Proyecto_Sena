@@ -129,7 +129,7 @@
             <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 1rem;">Instructor Responsable</h4>
             @if($proyecto->ins_nombre)
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">
                         {{ substr($proyecto->ins_nombre, 0, 1) }}
                     </div>
                     <div>

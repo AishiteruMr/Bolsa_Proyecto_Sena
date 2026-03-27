@@ -1,8 +1,11 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Gestión Global de Proyectos')
-@section('page-title', 'Centro de Control de Proyectos')
+@section('title', 'Banco de Proyectos - Admin')
+@section('page-title', 'Banco de Proyectos')
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+@endsection
 @section('sidebar-nav')
     <span class="nav-label">Administración</span>
     <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
@@ -20,64 +23,64 @@
 @endsection
 
 @section('content')
-    <div style="margin-bottom: 40px; animation: fadeIn 0.8s ease-out;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+    <div class="animate-fade-in" style="margin-bottom: 40px;">
+        <div class="admin-page-header">
             <div>
-                <h2 style="font-size:32px; font-weight:800; letter-spacing: -1px; color: var(--text);">Control Central de <span style="color: var(--primary);">Proyectos</span></h2>
-                <p style="color:var(--text-light); font-size:16px; margin-top:6px;">Monitoreo global y asignación estratégica de instructores.</p>
+                <h2 class="admin-title-main">Control Central de <span style="color: var(--primary);">Proyectos</span></h2>
+                <p style="color:var(--text-light); font-size:16px; margin-top:6px; font-weight: 500;">Monitoreo global y asignación estratégica de instructores.</p>
             </div>
         </div>
 
-        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap:28px;">
+        <div class="admin-project-grid">
             @forelse($proyectos as $p)
-            <div class="glass-card" style="display:flex; flex-direction:column; padding:0; overflow:hidden; border-radius: var(--radius); transition: transform 0.3s ease;">
+            <div class="glass-card admin-project-card">
                 {{-- Header Decorativo --}}
-                <div style="height:120px; background: linear-gradient(135deg, var(--secondary) 0%, #1e293b 100%); position:relative; overflow:hidden; display:flex; align-items:center; padding:0 28px;">
+                <div class="admin-project-card-header">
                     <div style="position:relative; z-index:1;">
-                        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
                             @php
                                 $statusStyles = match($p->pro_estado) {
-                                    'Activo' => ['bg' => '#d1fae5', 'color' => '#065f46', 'icon' => 'fa-check-circle'],
-                                    'Pendiente' => ['bg' => '#fef3c7', 'color' => '#92400e', 'icon' => 'fa-clock'],
-                                    'Rechazado' => ['bg' => '#fee2e2', 'color' => '#991b1b', 'icon' => 'fa-times-circle'],
-                                    default => ['bg' => '#f1f5f9', 'color' => '#475569', 'icon' => 'fa-info-circle']
+                                    'Activo' => ['bg' => 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)', 'color' => '#fff', 'icon' => 'fa-check-circle'],
+                                    'Pendiente' => ['bg' => '#fff7ed', 'color' => '#ea580c', 'icon' => 'fa-clock'],
+                                    'Rechazado' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'icon' => 'fa-times-circle'],
+                                    default => ['bg' => '#f8fafc', 'color' => '#64748b', 'icon' => 'fa-info-circle']
                                 };
                             @endphp
-                            <span style="background: {{ $statusStyles['bg'] }}; color: {{ $statusStyles['color'] }}; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                            <span class="admin-project-badge" style="background: {{ $statusStyles['bg'] }}; color: {{ $statusStyles['color'] }};">
                                 <i class="fas {{ $statusStyles['icon'] }}"></i>
                                 {{ $p->pro_estado }}
                             </span>
                         </div>
-                        <h3 style="color:#fff; font-size:20px; font-weight:800; line-height:1.2; letter-spacing: -0.5px;">{{ Str::limit($p->pro_titulo_proyecto, 45) }}</h3>
+                        <h3 style="color:#fff; font-size:1.25rem; font-weight:800; line-height:1.3; letter-spacing: -0.5px;">{{ Str::limit($p->pro_titulo_proyecto, 50) }}</h3>
                     </div>
-                    <i class="fas fa-rocket" style="position:absolute; right:-20px; bottom:-20px; font-size:120px; color:rgba(255,255,255,0.03); transform: rotate(-15deg);"></i>
+                    <i class="fas fa-rocket" style="position:absolute; right:-20px; bottom:-20px; font-size:120px; color:rgba(255,255,255,0.05); transform: rotate(-15deg);"></i>
                 </div>
 
-                <div style="padding:28px; flex:1; display:flex; flex-direction:column; gap:20px;">
+                <div class="admin-project-card-body">
                     <div style="display:flex; align-items:center; gap:16px;">
-                        <div style="width:48px; height:48px; background:var(--bg); border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border: 1px solid var(--border);">
-                            <i class="fas fa-building" style="color:var(--primary); font-size: 1.2rem;"></i>
+                        <div style="width:52px; height:52px; background:#f8fafc; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border: 1px solid var(--border);">
+                            <i class="fas fa-building" style="color:var(--primary); font-size: 1.3rem;"></i>
                         </div>
                         <div>
-                            <span style="display:block; font-size:11px; font-weight:800; color:var(--text-lighter); text-transform:uppercase; letter-spacing: 1px;">Empresa Proponente</span>
-                            <span style="font-size:16px; font-weight:700; color: var(--text);">{{ $p->emp_nombre }}</span>
+                            <span style="display:block; font-size:11px; font-weight:800; color:var(--text-lighter); text-transform:uppercase; letter-spacing: 1px; margin-bottom: 4px;">Empresa Proponente</span>
+                            <span style="font-size:1rem; font-weight:800; color: var(--text);">{{ $p->emp_nombre }}</span>
                         </div>
                     </div>
 
-                    <div style="padding:20px; background:rgba(248, 250, 252, 0.5); border-radius:16px; border:1px solid #f1f5f9;">
+                    <div class="admin-mentor-box">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                            <span style="font-size:12px; font-weight:700; color:var(--text-light);"><i class="fas fa-user-shield" style="margin-right:6px; color:var(--primary);"></i> Mentor Asignado</span>
+                            <span style="font-size:12px; font-weight:800; color:var(--text-light);"><i class="fas fa-user-shield" style="margin-right:6px; color:var(--primary);"></i> Mentor Asignado</span>
                             @if($p->ins_nombre)
-                                <span style="font-size:11px; font-weight:800; color:var(--primary); background: var(--primary-soft); padding: 4px 12px; border-radius: 20px;">{{ $p->ins_nombre }}</span>
+                                <span class="aprendiz-badge-portal" style="background: var(--primary-soft); color: var(--primary); border-color: transparent; padding: 4px 12px; border-radius: 20px; font-size: 11px;">{{ $p->ins_nombre }}</span>
                             @else
-                                <span style="font-size:11px; font-weight:800; color:#f97316; background: #fff7ed; padding: 4px 12px; border-radius: 20px;">SIN ASIGNAR</span>
+                                <span class="aprendiz-badge-portal" style="background: #fff7ed; color: #f97316; border-color: transparent; padding: 4px 12px; border-radius: 20px; font-size: 11px;">SIN ASIGNAR</span>
                             @endif
                         </div>
 
                         <form action="{{ route('admin.proyectos.asignar', $p->pro_id) }}" method="POST">
                             @csrf
                             <div style="display:flex; gap:10px;">
-                                <select name="ins_usr_documento" style="font-size:14px; flex:1; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; color: var(--text); font-weight: 600;" required>
+                                <select name="ins_usr_documento" class="admin-mentor-select" required>
                                     <option value="" disabled selected>Seleccionar Instructor...</option>
                                     @foreach($instructores as $ins)
                                         <option value="{{ $ins->usuario->usr_documento ?? '' }}" {{ $p->ins_usr_documento == ($ins->usuario->usr_documento ?? '') ? 'selected' : '' }}>
@@ -85,24 +88,24 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <button type="submit" class="btn-premium" style="padding: 12px; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: white; color: var(--primary); border: 2px solid var(--primary-soft); box-shadow: none;" title="Actualizar Asignación">
-                                    <i class="fas fa-sync-alt"></i>
+                                <button type="submit" class="btn-premium" style="width: 48px; height: 48px; min-width: 48px; padding: 0; justify-content: center; background: #fff; color: var(--primary); border: 2px solid var(--primary-soft); box-shadow: none;" title="Actualizar Asignación">
+                                    <i class="fas fa-save"></i>
                                 </button>
                             </div>
                         </form>
                     </div>
 
                     <div style="margin-top:auto; display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
-                        <a href="{{ route('admin.proyectos.revisar', $p->pro_id) }}" class="btn-premium" style="justify-content:center; padding: 12px; background: white; color: var(--text); border: 1px solid #e2e8f0; font-size: 13px; box-shadow: none;">
-                            <i class="fas fa-magnifying-glass" style="color: var(--primary);"></i> Revisión
+                        <a href="{{ route('admin.proyectos.revisar', $p->pro_id) }}" class="btn-premium" style="justify-content:center; padding: 12px; background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; font-size: 13px; box-shadow: none;">
+                            <i class="fas fa-file-shield" style="margin-right: 8px; color: var(--primary);"></i> Auditoría
                         </a>
 
                         @if($p->pro_estado == 'Activo')
                         <form action="{{ route('admin.proyectos.estado', $p->pro_id) }}" method="POST" style="width: 100%;">
                             @csrf
                             <input type="hidden" name="estado" value="Inactivo">
-                            <button type="submit" class="btn-premium" style="width:100%; justify-content:center; background:#fee2e2; color: #991b1b; box-shadow: none; font-size: 13px;">
-                                <i class="fas fa-ban"></i> Inactivar
+                            <button type="submit" class="btn-premium" style="width:100%; justify-content:center; background:#fef2f2; color: #dc2626; box-shadow: none; font-size: 13px; border: 1px solid #fee2e2;">
+                                <i class="fas fa-ban" style="margin-right: 8px;"></i> Pausar
                             </button>
                         </form>
                         @endif
@@ -110,12 +113,12 @@
                 </div>
             </div>
             @empty
-            <div class="glass-card" style="grid-column: 1 / -1; text-align:center; padding: 100px 40px;">
-                <div style="width: 80px; height: 80px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; color: #cbd5e1;">
-                    <i class="fas fa-folder-open" style="font-size:32px;"></i>
+            <div class="glass-card admin-empty-state">
+                <div style="width: 90px; height: 90px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; color: #cbd5e1; border: 1px solid var(--border);">
+                    <i class="fas fa-folder-open" style="font-size:36px;"></i>
                 </div>
-                <h3 style="font-size:20px; font-weight:800; color:var(--text); margin-bottom: 8px;">No hay registros</h3>
-                <p style="color: var(--text-light); font-size:15px;">Aún no se han recibido propuestas de proyectos en la plataforma.</p>
+                <h3 style="font-size:22px; font-weight:800; color:var(--text); margin-bottom: 8px;">No hay registros</h3>
+                <p style="color: var(--text-light); font-size:16px; font-weight: 500;">Aún no se han recibido propuestas de proyectos en la plataforma.</p>
             </div>
             @endforelse
         </div>

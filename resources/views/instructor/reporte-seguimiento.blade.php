@@ -31,7 +31,7 @@
                     <i class="fas fa-arrow-left"></i> Volver a la Gestión
                 </a>
             </div>
-            <h2 style="font-size:28px; font-weight:800; color:var(--primary-dark)">Auditoría de Progreso</h2>
+            <h2 style="font-size:28px; font-weight:800; color:var(--primary-hover)">Auditoría de Progreso</h2>
             <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Análisis detallado para: <span style="color: var(--primary); font-weight: 700;">{{ $proyecto->pro_titulo_proyecto }}</span></p>
         </div>
         <button onclick="window.print()" class="btn-ver" style="background: #64748b; padding: 10px 24px; border-radius: 12px; width: auto;">

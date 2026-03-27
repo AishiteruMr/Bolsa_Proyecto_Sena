@@ -123,7 +123,7 @@ class AprendizController extends Controller
         }
 
         $yaPostulado = DB::table('postulacion')
-            ->where('apr_id', $aprendiz?->apr_id)
+            ->where('apr_id', $aprendiz->apr_id)
             ->where('pro_id', $id)
             ->exists();
 
@@ -132,13 +132,39 @@ class AprendizController extends Controller
         }
 
         DB::table('postulacion')->insert([
-            'apr_id'     => $aprendiz?->apr_id,
+            'apr_id'     => $aprendiz->apr_id,
             'pro_id'     => $id,
             'pos_fecha'  => now(),
             'pos_estado' => 'Pendiente',
         ]);
 
-        return back()->with('success', '✅ Postulación enviada correctamente.');
+        // ── Email de confirmación ──────────────────────────────────
+        try {
+            $proyecto  = \App\Models\Proyecto::find($id);
+            $usuCorreo = DB::table('usuario')->where('usr_id', $aprendiz->usr_id)->value('usr_correo');
+            if ($usuCorreo && $proyecto) {
+                Mail::to($usuCorreo)->send(
+                    new PostulacionExitosa($aprendiz->apr_nombre, $proyecto)
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error('Error enviando email de postulación: ' . $e->getMessage());
+        }
+
+        // ── Notificación en BD ────────────────────────────────────
+        try {
+            DB::table('notificacion')->insert([
+                'usr_id'       => $aprendiz->usr_id,
+                'noti_titulo'  => '🎉 Postulación enviada',
+                'noti_mensaje' => 'Tu postulación al proyecto fue registrada. Pronto recibirás una respuesta.',
+                'noti_leida'   => 0,
+                'noti_fecha'   => now(),
+            ]);
+        } catch (\Exception $e) {
+            Log::warning('Tabla notificacion no encontrada o error: ' . $e->getMessage());
+        }
+
+        return back()->with('success', '🎉 ¡Postulación enviada! Revisa tu correo para la confirmación.');
     }
 
     // ══════════════════════════════════════════════════════════════

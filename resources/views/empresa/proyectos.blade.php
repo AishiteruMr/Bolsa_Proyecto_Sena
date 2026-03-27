@@ -19,11 +19,16 @@
     </a>
 @endsection
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/empresa.css') }}">
+@endsection
+
 @section('content')
-    <div style="margin-bottom: 40px; animation: fadeIn 0.8s ease-out;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+    <div class="animate-fade-in" style="margin-bottom: 40px;">
+        <div class="admin-page-header">
             <div>
-                <h2 style="font-size:32px; font-weight:800; letter-spacing: -1px; color: var(--text);">Portafolio de <span style="color: var(--primary);">Convocatorias</span></h2>
+                <h2 class="admin-title-main">Portafolio de <span style="color: var(--primary);">Convocatorias</span></h2>
                 <p style="color:var(--text-light); font-size:16px; margin-top:6px;">Evolución y seguimiento de tus proyectos estratégicos.</p>
             </div>
             <a href="{{ route('empresa.proyectos.crear') }}" class="btn-premium" style="padding: 14px 28px;">
@@ -32,33 +37,33 @@
         </div>
 
         <!-- BENTO STATS FOR EMPRESA -->
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 40px;">
-            <div class="glass-card" style="padding: 28px; background: linear-gradient(135deg, var(--secondary) 0%, #1e293b 100%); color: white; border: none;">
-                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px;">
+        <div class="empresa-stats-grid">
+            <div class="glass-card empresa-stat-card-dark">
+                <div class="empresa-stat-icon-circle" style="background: rgba(255,255,255,0.1);">
                     <i class="fas fa-layer-group"></i>
                 </div>
                 <div style="font-size: 32px; font-weight: 800; line-height: 1;">{{ $proyectos->count() }}</div>
                 <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; opacity: 0.8;">Total Publicados</div>
             </div>
 
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="width: 44px; height: 44px; border-radius: 12px; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px;">
+            <div class="glass-card empresa-stat-card-mini">
+                <div class="empresa-stat-icon-circle" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); color: #fff;">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <div style="font-size: 32px; font-weight: 800; color: #10b981; line-height: 1;">{{ $proyectos->where('pro_estado', 'Activo')->count() }}</div>
+                <div style="font-size: 32px; font-weight: 800; color: var(--primary-hover); line-height: 1;">{{ $proyectos->where('pro_estado', 'Activo')->count() }}</div>
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;">Convocatorias Activas</div>
             </div>
 
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="width: 44px; height: 44px; border-radius: 12px; background: #fef3c7; color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px;">
+            <div class="glass-card empresa-stat-card-mini">
+                <div class="empresa-stat-icon-circle" style="background: #fef3c7; color: #f59e0b;">
                     <i class="fas fa-hourglass-half"></i>
                 </div>
                 <div style="font-size: 32px; font-weight: 800; color: #f59e0b; line-height: 1;">{{ $proyectos->where('pro_estado', 'Pendiente')->count() }}</div>
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;">En Revisión Admin</div>
             </div>
 
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="width: 44px; height: 44px; border-radius: 12px; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px;">
+            <div class="glass-card empresa-stat-card-mini">
+                <div class="empresa-stat-icon-circle" style="background: #fee2e2; color: #ef4444;">
                     <i class="fas fa-times-circle"></i>
                 </div>
                 <div style="font-size: 32px; font-weight: 800; color: #ef4444; line-height: 1;">{{ $proyectos->where('pro_estado', 'Rechazado')->count() }}</div>
@@ -66,12 +71,14 @@
             </div>
         </div>
 
-        <div class="glass-card" style="padding: 0; overflow: hidden; background: white;">
-            <div style="padding: 28px 32px; border-bottom: 1px solid #f1f5f9; background: #fafafa; display: flex; align-items: center; gap: 16px;">
-                 <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 16px;">
-                    <i class="fas fa-list-check"></i>
-                </div>
-                <h3 style="font-size: 20px; font-weight: 800; color: var(--text);">Directorio de Gestión de Proyectos</h3>
+        <div class="glass-card admin-table-card">
+            <div class="admin-table-header">
+                <h3 style="font-size: 20px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 16px;">
+                    <span class="empresa-table-header-icon">
+                        <i class="fas fa-list-check"></i>
+                    </span>
+                    Directorio de Gestión de Proyectos
+                </h3>
             </div>
             
             @if($proyectos->isNotEmpty())
@@ -92,16 +99,16 @@
                             <tr>
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 16px;">
-                                        <div style="width: 52px; height: 52px; border-radius: 14px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                        <div class="empresa-project-img" style="width: 52px; height: 52px; border-radius: 14px;">
                                              @if($proyecto->pro_evidencia_foto)
-                                                <img src="{{ asset('storage/' . $proyecto->pro_evidencia_foto) }}" style="width:100%; height:100%; object-fit:cover;">
+                                                <img src="{{ asset('storage/' . $proyecto->pro_evidencia_foto) }}">
                                             @else
                                                 <i class="fas fa-rocket" style="color: var(--text-lighter); font-size: 20px;"></i>
                                             @endif
                                         </div>
                                         <div>
                                             <div style="font-weight: 800; color: var(--text); font-size: 15px;">{{ Str::limit($proyecto->pro_titulo_proyecto, 40) }}</div>
-                                            <div style="font-size: 12px; color: var(--text-lighter); font-weight: 600;">ID: PROJ-{{ str_pad($proyecto->pro_id, 4, '0', STR_PAD_LEFT) }}</div>
+                                            <div class="empresa-project-id">ID: PROJ-{{ str_pad($proyecto->pro_id, 4, '0', STR_PAD_LEFT) }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -112,15 +119,14 @@
                                 </td>
                                 <td>
                                     @php
-                                        $statusStyles = match($proyecto->pro_estado) {
-                                            'Activo' => ['bg' => '#d1fae5', 'color' => '#065f46', 'icon' => 'fa-check-circle'],
-                                            'Pendiente' => ['bg' => '#fef3c7', 'color' => '#92400e', 'icon' => 'fa-clock'],
-                                            'Rechazado' => ['bg' => '#fee2e2', 'color' => '#991b1b', 'icon' => 'fa-times-circle'],
-                                            default => ['bg' => '#f1f5f9', 'color' => '#475569', 'icon' => 'fa-info-circle']
+                                        $statusClass = match($proyecto->pro_estado) {
+                                            'Activo' => 'active',
+                                            'Pendiente' => 'pending',
+                                            'Rechazado' => 'inactive',
+                                            default => 'inactive'
                                         };
                                     @endphp
-                                    <span style="background: {{ $statusStyles['bg'] }}; color: {{ $statusStyles['color'] }}; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
-                                        <i class="fas {{ $statusStyles['icon'] }}" style="font-size: 10px;"></i>
+                                    <span class="status-badge {{ $statusClass }}">
                                         {{ $proyecto->pro_estado }}
                                     </span>
                                 </td>
@@ -135,17 +141,17 @@
                                 <td>
                                     <div style="display: flex; gap: 10px; justify-content: flex-end;">
                                         @if($proyecto->pro_estado == 'Activo')
-                                        <a href="{{ route('empresa.postulantes', $proyecto->pro_id) }}" class="btn-premium" style="width: 38px; height: 38px; padding: 0; justify-content: center; background: white; color: var(--primary); border: 1px solid var(--primary-soft); box-shadow: none;" title="Ver Postulantes">
+                                        <a href="{{ route('empresa.postulantes', $proyecto->pro_id) }}" class="empresa-action-btn" title="Ver Postulantes">
                                             <i class="fas fa-users-viewfinder"></i>
                                         </a>
                                         @endif
-                                        <a href="{{ route('empresa.proyectos.edit', $proyecto->pro_id) }}" class="btn-premium" style="width: 38px; height: 38px; padding: 0; justify-content: center; background: white; color: var(--text); border: 1px solid #e2e8f0; box-shadow: none;" title="Editar">
+                                        <a href="{{ route('empresa.proyectos.edit', $proyecto->pro_id) }}" class="empresa-action-btn" title="Editar">
                                             <i class="fas fa-pen-to-square"></i>
                                         </a>
                                         <form action="{{ route('empresa.proyectos.destroy', $proyecto->pro_id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este proyecto permanentemente?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-premium" style="width: 38px; height: 38px; padding: 0; justify-content: center; background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; box-shadow: none;" title="Eliminar">
+                                            <button type="submit" class="empresa-action-btn" style="color: #e11d48;" title="Eliminar">
                                                 <i class="fas fa-trash-can"></i>
                                             </button>
                                         </form>
@@ -171,7 +177,4 @@
         </div>
     </div>
 
-    <style>
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
 @endsection

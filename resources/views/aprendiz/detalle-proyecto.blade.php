@@ -27,7 +27,7 @@
             <i class="fas fa-arrow-left"></i> Volver a mis postulaciones
         </a>
     </div>
-    <h2 style="font-size:26px; font-weight:700; color:var(--primary-dark)">{{ $proyecto->pro_titulo_proyecto }}</h2>
+    <h2 style="font-size:26px; font-weight:700; color:var(--primary-hover)">{{ $proyecto->pro_titulo_proyecto }}</h2>
     <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Panel de seguimiento y entrega de productos del proyecto.</p>
 </div>
 
@@ -185,7 +185,7 @@
             @if($proyecto->pro_imagen_url)
                 <img src="{{ $proyecto->pro_imagen_url }}" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             @else
-                <div style="width: 100%; aspect-ratio: 16/10; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;">
+                <div style="width: 100%; aspect-ratio: 16/10; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;">
                     <i class="fas fa-image" style="font-size: 2.5rem; margin-bottom: 10px;"></i>
                     <p style="font-size: 0.8rem; font-weight: 600;">Proyecto SIN EXPO</p>
                 </div>

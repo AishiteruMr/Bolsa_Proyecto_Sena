@@ -23,42 +23,46 @@
     </a>
 @endsection
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/instructor.css') }}">
+@endsection
+
 @section('content')
-    <div style="margin-bottom: 32px;">
-        <h2 style="font-size:26px; font-weight:700; color:var(--primary-dark)">Comunidad de Aprendices</h2>
-        <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Supervisa el desempeño y progreso de los aprendices en tus proyectos.</p>
+    <div style="margin-bottom: 32px;" class="animate-fade-in">
+        <h2 style="font-size:26px; font-weight:800; color:var(--text)">Comunidad de Aprendices</h2>
+        <p style="color:var(--text-light); font-size:15px; margin-top:4px;">Supervisa el desempeño y progreso de los aprendices en tus proyectos.</p>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+    <div class="instructor-community-grid animate-fade-in">
         @forelse($aprendices as $a)
-            <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 20px;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 15px 30px rgba(0,0,0,0.05)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                <div style="width:80px; height:80px; border-radius:50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display:flex; align-items:center; justify-content:center; margin-bottom: 1.25rem; box-shadow: 0 8px 16px rgba(41, 133, 100, 0.2);">
-                    <span style="color:#fff; font-size:28px; font-weight:700;">{{ strtoupper(substr($a->apr_nombre ?? 'A', 0, 1)) }}</span>
+            <div class="glass-card instructor-apprentice-card">
+                <div class="instructor-apprentice-avatar">
+                    <span>{{ strtoupper(substr($a->apr_nombre ?? 'A', 0, 1)) }}</span>
                 </div>
                 
-                <h4 style="font-size:1.1rem; font-weight:600; margin-bottom:0.5rem; color: var(--text-main)">{{ $a->apr_nombre ?? '' }} {{ $a->apr_apellido ?? '' }}</h4>
+                <h4 style="font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; color: var(--text)">{{ $a->apr_nombre ?? '' }} {{ $a->apr_apellido ?? '' }}</h4>
                 
-                <div style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                <div style="font-size:0.85rem; color: var(--text-light); margin-bottom: 1rem;">
                     <div style="margin-bottom: 4px;"><i class="fas fa-graduation-cap" style="color:var(--primary); margin-right:6px;"></i>{{ $a->apr_programa ?? 'Sin programa' }}</div>
                     <div><i class="fas fa-envelope" style="margin-right:6px;"></i>{{ $a->usr_correo ?? 'Sin correo' }}</div>
                 </div>
 
-                <div style="margin-top: auto; width: 100%; pt-4; border-top: 1px solid var(--border); padding-top: 1rem;">
+                <div style="margin-top: auto; width: 100%; border-top: 1px solid var(--border); padding-top: 1rem;">
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <span class="badge badge-success" style="width: fit-content; margin: 0 auto; font-size: 10px; padding: 4px 12px;">
-                            <i class="fas fa-check-circle" style="margin-right:4px;"></i>Postulación Aprobada
+                        <span class="aprendiz-badge-portal" style="background: #f0fdf4; border-color: #bbf7d0; color: #16a34a; width: fit-content; margin: 0 auto; font-size: 10px;">
+                            <i class="fas fa-check-circle"></i> Postulación Aprobada
                         </span>
-                        <div style="font-size:12px; color:var(--primary); font-weight: 500;">
+                        <div style="font-size:12px; color:var(--primary); font-weight: 700;">
                             <i class="fas fa-briefcase" style="margin-right:4px;"></i>{{ $a->pro_titulo_proyecto ?? 'Sin proyecto' }}
                         </div>
                     </div>
                 </div>
             </div>
         @empty
-            <div class="glass-card" style="text-align:center; padding:5rem 2rem; grid-column: 1 / -1;">
-                <i class="fas fa-users" style="font-size:4rem; color:var(--border); margin-bottom:1.5rem;"></i>
-                <h4 style="color:var(--text-main); font-size:1.5rem; margin-bottom:8px;">No hay aprendices activos</h4>
-                <p style="color:var(--text-muted);">Aún no tienes aprendices vinculados a tus proyectos.</p>
+            <div class="instructor-empty-state">
+                <i class="fas fa-users instructor-empty-icon"></i>
+                <h4 style="color:var(--text); font-size:1.5rem; margin-bottom:8px; font-weight: 800;">No hay aprendices activos</h4>
+                <p style="color:var(--text-light); font-weight: 500;">Aún no tienes aprendices vinculados a tus proyectos.</p>
             </div>
         @endforelse
     </div>
