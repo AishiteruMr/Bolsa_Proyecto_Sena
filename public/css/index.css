@@ -131,28 +131,29 @@ body {
 .hero-image img {
     max-width: 520px;
     width: 100%;
-    border-radius: 20px;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
-    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    max-width: 600px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-premium);
+    animation: floating 6s ease-in-out infinite;
 }
 
-.hero-image img:hover {
-    transform: scale(1.03) translateY(-8px);
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
 }
 
-/* BENEFITS SECTION */
+/* ── BENEFITS SECTION ── */
 .benefits {
-    padding: 120px 80px;
+    padding: 120px 8%;
     text-align: center;
-    background: #fff;
+    background: white;
 }
 
 .benefits h2 {
-    font-size: 40px;
+    font-size: 42px;
     font-weight: 800;
     margin-bottom: 16px;
-    color: #0f2419;
-    letter-spacing: -0.5px;
+    letter-spacing: -1px;
 }
 
 .benefits > p {
@@ -171,15 +172,15 @@ body {
 }
 
 .card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 40px 32px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-    text-align: center;
-    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-    border: 1.5px solid #f0f0f0;
+    background: white;
+    padding: 48px 32px;
+    border-radius: var(--radius);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid #f1f5f9;
+    text-align: left;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.02);
 }
 
 .card::before {
@@ -295,17 +296,18 @@ body {
 }
 
 .stat h3 {
-    font-size: 52px;
-    font-weight: 800;
-    margin: 0;
-    letter-spacing: -1px;
+    font-size: 56px;
+    font-weight: 900;
+    margin-bottom: 8px;
+    letter-spacing: -2px;
 }
 
 .stat p {
     font-size: 16px;
-    opacity: 0.85;
-    margin-top: 8px;
-    font-weight: 500;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.7;
 }
 
 /* CTA SECTION */
@@ -410,3 +412,5 @@ body {
         font-size: 40px;
     }
 }
+
+

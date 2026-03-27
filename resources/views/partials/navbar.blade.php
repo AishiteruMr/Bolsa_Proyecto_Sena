@@ -1,10 +1,8 @@
 <header class="navbar">
-    <div class="logo">
-        <a href="{{ route('home') }}">
-            <img src="{{ asset('assets/logo.png') }}" alt="Logo SENA">
-        </a>
+    <a href="{{ route('home') }}" class="logo">
+        <img src="{{ asset('assets/logo.png') }}" alt="Logo SENA">
         <span>Inspírate SENA</span>
-    </div>
+    </a>
 
     <nav class="menu">
         <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Inicio</a>

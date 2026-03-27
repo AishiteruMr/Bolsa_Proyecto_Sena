@@ -72,6 +72,11 @@ class Proyecto extends Model
         return $query->where('pro_estado', 'Activo');
     }
 
+    public function scopePendientes(Builder $query): Builder
+    {
+        return $query->where('pro_estado', 'Pendiente');
+    }
+
     public function scopeInactivos(Builder $query): Builder
     {
         return $query->where('pro_estado', 'Inactivo');
@@ -111,9 +116,14 @@ class Proyecto extends Model
         return $this->pro_estado === 'Activo';
     }
 
-    public function isFinalizado(): bool
+    public function isPendiente(): bool
     {
-        return $this->pro_estado === 'Finalizado';
+        return $this->pro_estado === 'Pendiente';
+    }
+
+    public function isRechazado(): bool
+    {
+        return $this->pro_estado === 'Rechazado';
     }
 
     /**
@@ -228,5 +238,34 @@ class Proyecto extends Model
 
         // De lo contrario, asumimos que está en el disco public de storage
         return asset('storage/' . $this->pro_imagen_url);
+    }
+    /**
+     * Evalúa la calidad del proyecto basándose en características específicas.
+     * Retorna un array con el puntaje y los puntos fallidos.
+     */
+    public function calidadProyecto(): array
+    {
+        $detalles = [
+            'titulo'      => strlen($this->pro_titulo_proyecto) >= 15,
+            'descripcion' => strlen($this->pro_descripcion) >= 100,
+            'requisitos'  => strlen($this->pro_requisitos_especificos) >= 20,
+            'habilidades' => strlen($this->pro_habilidades_requerida) >= 15,
+            'ubicacion'   => !is_null($this->pro_latitud) && !is_null($this->pro_longitud),
+            'imagen'      => !empty($this->pro_imagen_url)
+        ];
+
+        $puntos = 0;
+        $total = count($detalles);
+        foreach ($detalles as $ok) {
+            if ($ok) $puntos++;
+        }
+
+        $porcentaje = ($puntos / $total) * 100;
+
+        return [
+            'porcentaje' => round($porcentaje),
+            'detalles'   => $detalles,
+            'es_apto'    => $porcentaje >= 80 // Consideramos apto si tiene 80% o más
+        ];
     }
 }

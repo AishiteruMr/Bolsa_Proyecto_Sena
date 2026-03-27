@@ -3,162 +3,175 @@
 @section('page-title', 'Panel Empresa')
 
 @section('sidebar-nav')
-    <a href="{{ route('empresa.dashboard') }}"
-        class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}"><i class="fas fa-home"></i>
-        Dashboard</a>
-    <a href="{{ route('empresa.proyectos') }}"
-        class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}"><i
-            class="fas fa-project-diagram"></i> Mis Proyectos</a>
-    <a href="{{ route('empresa.proyectos.crear') }}"
-        class="nav-item {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}"><i
-            class="fas fa-plus-circle"></i> Publicar Proyecto</a>
-    <span class="nav-label">Cuenta</span>
-    <a href="{{ route('empresa.perfil') }}" class="nav-item {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}"><i
-            class="fas fa-building"></i> Perfil Empresa</a>
+    <span class="nav-label">Portal Empresa</span>
+    <a href="{{ route('empresa.dashboard') }}" class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}">
+        <i class="fas fa-th-large"></i> Dashboard
+    </a>
+    <a href="{{ route('empresa.proyectos') }}" class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}">
+        <i class="fas fa-project-diagram"></i> Mis Proyectos
+    </a>
+    <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}">
+        <i class="fas fa-plus-circle"></i> Publicar Proyecto
+    </a>
+    <span class="nav-label">Configuración</span>
+    <a href="{{ route('empresa.perfil') }}" class="nav-item {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}">
+        <i class="fas fa-building"></i> Perfil Empresa
+    </a>
 @endsection
 
 @section('content')
-    <div style="margin-bottom: 40px;">
-        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
-            <span style="background: linear-gradient(135deg, #3EB489, #2d9a6f); color: white; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; box-shadow: 0 4px 12px rgba(62, 180, 137, 0.3);">
-                <i class="fas fa-building" style="margin-right: 6px;"></i>Portal Corporativo
-            </span>
-            <span style="color: var(--text-muted); font-size: 13px;">{{ now()->translatedFormat('l, d F') }}</span>
+    <div style="animation: fadeIn 0.8s ease-out;">
+        <!-- HEADER CORPORATIVO -->
+        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); padding: 48px; border-radius: var(--radius-lg); margin-bottom: 40px; position: relative; overflow: hidden; box-shadow: var(--shadow-premium);">
+            <div style="position: absolute; right: -30px; bottom: -30px; font-size: 240px; color: rgba(62,180,137,0.05); transform: rotate(-15deg); pointer-events: none;">
+                <i class="fas fa-building"></i>
+            </div>
+            <div style="position: relative; z-index: 1;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <span style="background: var(--primary); color: white; padding: 6px 16px; border-radius: 30px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 4px 12px var(--primary-glow);">Portal Corporativo</span>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600;"><i class="far fa-calendar-alt" style="margin-right: 8px;"></i>{{ now()->translatedFormat('l, d F') }}</span>
+                </div>
+                <h1 style="font-size: 48px; font-weight: 800; color: white; margin-bottom: 12px; letter-spacing: -1.5px;">Panel de Control <span style="color: var(--primary);">{{ session('nombre') }}</span></h1>
+                <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 650px; line-height: 1.6;">Impulsa la innovación y conecta con el mejor talento del SENA gestionando tus proyectos estratégicos.</p>
+            </div>
         </div>
-        <h2 style="font-size:32px; font-weight:800; color: #1e293b; letter-spacing: -1px;">
-            Bienvenido, <span style="color: #3EB489;">{{ session('nombre') }}</span> <i class="fas fa-hand-sparkles" style="font-size: 24px;"></i>
-        </h2>
-        <p style="color: #64748b; font-size: 16px; margin-top: 8px;">Gestiona el talento y supervisa el avance de tus proyectos patrocinados.</p>
-    </div>
 
-    <!-- Stats Grid -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px;">
-        <div style="background: linear-gradient(135deg, #1e293b, #334155); border-radius: 20px; padding: 28px; color: white; box-shadow: 0 12px 32px rgba(30, 41, 59, 0.25); position: relative; overflow: hidden;">
-            <div style="position: absolute; right: -20px; top: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
-            <div style="font-size: 13px; opacity: 0.8; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                <i class="fas fa-folder-plus"></i> Proyectos Creados
+        <!-- BENTO STATS GRID -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 48px;">
+            <div class="glass-card" style="padding: 32px; border-color: var(--primary-soft); background: rgba(255,255,255,0.95);">
+                <div style="width: 48px; height: 48px; border-radius: 14px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px;">
+                    <i class="fas fa-folder-plus"></i>
+                </div>
+                <div style="font-size: 34px; font-weight: 800; color: var(--text); line-height: 1;">{{ $totalProyectos }}</div>
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;">Proyectos Totales</div>
             </div>
-            <div style="font-size: 36px; font-weight: 800;">{{ $totalProyectos }}</div>
-            <div style="font-size: 11px; opacity: 0.6; margin-top: 8px;">Total publicados</div>
-        </div>
-        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); position: relative;">
-            <div style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-check-circle" style="color: #10b981; font-size: 18px;"></i>
-            </div>
-            <div style="font-size: 13px; color: #64748b; margin-bottom: 8px;">En Ejecución</div>
-            <div style="font-size: 36px; font-weight: 800; color: #10b981;">{{ $proyectosActivos }}</div>
-            <div style="font-size: 11px; color: #94a3b8; margin-top: 8px;">Proyectos activos</div>
-        </div>
-        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); position: relative;">
-            <div style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-users" style="color: #3b82f6; font-size: 18px;"></i>
-            </div>
-            <div style="font-size: 13px; color: #64748b; margin-bottom: 8px;">Total Interesados</div>
-            <div style="font-size: 36px; font-weight: 800; color: #3b82f6;">{{ $totalPostulaciones }}</div>
-            <div style="font-size: 11px; color: #94a3b8; margin-top: 8px;">Postulaciones recibidas</div>
-        </div>
-        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); position: relative;">
-            <div style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-clock" style="color: #f59e0b; font-size: 18px;"></i>
-            </div>
-            <div style="font-size: 13px; color: #64748b; margin-bottom: 8px;">Nuevas Solicitudes</div>
-            <div style="font-size: 36px; font-weight: 800; color: #f59e0b;">{{ $postulacionesPendientes }}</div>
-            <div style="font-size: 11px; color: #94a3b8; margin-top: 8px;">Pendientes de revisión</div>
-        </div>
-    </div>
 
-    <div class="glass-card" style="border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.5);">
-        <div style="padding: 28px 32px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to right, #f8fafc, #fff);">
-            <h3 style="font-size: 18px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 12px;">
-                <span style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: linear-gradient(135deg, #3EB489, #2d9a6f); border-radius: 12px;">
-                    <i class="fas fa-chart-line" style="color: white; font-size: 16px;"></i>
-                </span>
-                Resumen de Proyectos Recientes
-            </h3>
-            <a href="{{ route('empresa.proyectos.crear') }}" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #3EB489, #2d9a6f); color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 13px; box-shadow: 0 4px 12px rgba(62, 180, 137, 0.25);">
-                <i class="fas fa-plus"></i> Publicar Nuevo
-            </a>
+            <div class="glass-card" style="padding: 32px; background: rgba(255,255,255,0.95);">
+                <div style="width: 48px; height: 48px; border-radius: 14px; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px;">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <div style="font-size: 34px; font-weight: 800; color: #10b981; line-height: 1;">{{ $proyectosActivos }}</div>
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;">En Ejecución</div>
+            </div>
+
+            <div class="glass-card" style="padding: 32px; background: rgba(255,255,255,0.95);">
+                <div style="width: 48px; height: 48px; border-radius: 14px; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px;">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div style="font-size: 34px; font-weight: 800; color: #3b82f6; line-height: 1;">{{ $totalPostulaciones }}</div>
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px;">Postulaciones</div>
+            </div>
+
+            <div class="glass-card" style="padding: 32px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: white;">
+                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px;">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div style="font-size: 34px; font-weight: 800; line-height: 1;">{{ $postulacionesPendientes }}</div>
+                <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; opacity: 0.9;">Pendientes de Revisión</div>
+            </div>
         </div>
-        <div style="padding: 8px;">
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="text-align: left;">
-                        <th style="padding: 18px 20px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Título del Proyecto</th>
-                        <th style="padding: 18px 20px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Categoría</th>
-                        <th style="padding: 18px 20px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Estado</th>
-                        <th style="padding: 18px 20px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Postulados</th>
-                        <th style="padding: 18px 20px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($proyectosRecientes as $p)
-                        <tr style="border-bottom: 1px solid #f8fafc; transition: all 0.3s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='transparent'">
-                            <td style="padding: 18px 20px;">
-                                <div style="display: flex; align-items: center; gap: 14px;">
-                                    <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #e0f2e9, #d1ede5); display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-briefcase" style="color: #3EB489; font-size: 18px;"></i>
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 700; color: #1e293b;">{{ Str::limit($p->pro_titulo_proyecto, 35) }}</div>
-                                        <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Publicado: {{ \Carbon\Carbon::parse($p->pro_fecha_publi)->format('d M, Y') }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td style="padding: 18px 20px;">
-                                <span style="padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; background: #f1f5f9; color: #64748b;">
-                                    {{ $p->pro_categoria }}
-                                </span>
-                            </td>
-                            <td style="padding: 18px 20px;">
-                                <span style="padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; 
-                                    {{ $p->pro_estado === 'Activo' || $p->pro_estado === 'Aprobado' ? 'background: #d1fae5; color: #065f46;' : 'background: #fef3c7; color: #92400e;' }}">
-                                    <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; background: currentColor;"></span>
-                                    {{ $p->pro_estado }}
-                                </span>
-                            </td>
-                            <td style="padding: 18px 20px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-user-graduate" style="color: #6366f1; font-size: 14px;"></i>
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 800; color: #1e293b; font-size: 15px;">{{ $p->postulaciones_count }}</div>
-                                        <div style="font-size: 10px; color: #94a3b8;">Aspirantes</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td style="padding: 18px 20px;">
-                                <a href="{{ route('empresa.proyectos') }}" style="color: #3EB489; font-size: 18px; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='translateX(0)'">
-                                    <i class="fas fa-arrow-circle-right"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    @empty
+
+        <!-- RECENT PROJECTS TABLE -->
+        <div class="glass-card" style="padding: 0; overflow: hidden; border-radius: var(--radius); background: white;">
+            <div style="padding: 32px 40px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 22px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 14px;">
+                    <span style="width: 42px; height: 42px; border-radius: 12px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                        <i class="fas fa-list-ul"></i>
+                    </span>
+                    Proyectos Publicados Recientemente
+                </h3>
+                <a href="{{ route('empresa.proyectos.crear') }}" class="btn-premium">
+                    <i class="fas fa-plus-circle"></i> Nueva Oferta
+                </a>
+            </div>
+            
+            <div class="premium-table-container" style="border: none; box-shadow: none;">
+                <table class="premium-table">
+                    <thead>
                         <tr>
-                            <td colspan="5" style="text-align: center; color: #94a3b8; padding: 60px;">
-                                <div style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-folder-open" style="font-size: 32px; color: #94a3b8;"></i>
-                                </div>
-                                <div style="font-size: 16px; font-weight: 600; color: #64748b; margin-bottom: 8px;">No has publicado proyectos todavía</div>
-                                <div style="font-size: 13px; color: #94a3b8; margin-bottom: 20px;">Crea tu primer proyecto para comenzar a recibir postulaciones</div>
-                                <a href="{{ route('empresa.proyectos.crear') }}" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #3EB489, #2d9a6f); color: white; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600;">
-                                    <i class="fas fa-plus"></i> Publicar Proyecto
-                                </a>
-                            </td>
+                            <th>Identificador y Título</th>
+                            <th>Categoría</th>
+                            <th>Estado Actual</th>
+                            <th>Métricas de Interés</th>
+                            <th>Acción</th>
                         </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($proyectosRecientes as $p)
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 16px;">
+                                        <div style="width: 48px; height: 48px; border-radius: 12px; background: #f8fafc; border: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                            @if($p->pro_evidencia_foto)
+                                                <img src="{{ asset('storage/' . $p->pro_evidencia_foto) }}" style="width:100%; height:100%; object-fit:cover;">
+                                            @else
+                                                <i class="fas fa-briefcase" style="color: var(--text-lighter);"></i>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 700; color: var(--text);">{{ Str::limit($p->pro_titulo_proyecto, 40) }}</div>
+                                            <div style="font-size: 12px; color: var(--text-lighter); font-weight: 500;">
+                                                Expira: {{ \Carbon\Carbon::parse($p->pro_fecha_finalizacion)->format('d/m/Y') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span style="background: #f1f5f9; color: var(--text-light); padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase;">
+                                        {{ $p->pro_categoria }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @php
+                                        $statusClass = [
+                                            'Activo' => 'background: #d1fae5; color: #065f46;',
+                                            'Pendiente' => 'background: #fef3c7; color: #92400e;',
+                                            'Finalizado' => 'background: #f1f5f9; color: var(--text-light);',
+                                            'Rechazado' => 'background: #fef2f2; color: #991b1b;',
+                                        ][$p->pro_estado] ?? 'background: #f1f5f9; color: var(--text-light);';
+                                    @endphp
+                                    <span style="{{ $statusClass }} padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
+                                        <span style="width: 6px; height: 6px; border-radius: 50%; background: currentColor;"></span>
+                                        {{ $p->pro_estado }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="display: flex; -webkit-mask-image: linear-gradient(to right, black 70%, transparent);">
+                                            @foreach($p->postulaciones->take(3) as $post)
+                                                <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary); border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 800; margin-left: -8px;">
+                                                    {{ substr($post->aprendiz->apr_nombres, 0, 1) }}
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <span style="font-weight: 800; color: var(--text); font-size: 14px;">{{ $p->postulaciones_count }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{{ route('empresa.proyectos') }}" style="width: 36px; height: 36px; border-radius: 10px; background: #f8fafc; color: var(--text-light); display: flex; align-items: center; justify-content: center; border: 1px solid #f1f5f9; transition: all 0.2s;" onmouseover="this.style.background='var(--primary)'; this.style.color='white'; this.style.borderColor='var(--primary)'" onmouseout="this.style.background='#f8fafc'; this.style.color='var(--text-light)'; this.style.borderColor='#f1f5f9'">
+                                        <i class="fas fa-eye" style="font-size: 14px;"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 80px;">
+                                    <div style="width: 80px; height: 80px; border-radius: 50%; background: #f8fafc; display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--text-lighter); margin: 0 auto 24px;">
+                                        <i class="fas fa-folder-open"></i>
+                                    </div>
+                                    <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 8px;">No has publicado proyectos aún</h4>
+                                    <p style="color: var(--text-light); margin-bottom: 24px; font-weight: 500;">Comienza ahora y conecta con el mejor talento técnico y tecnológico.</p>
+                                    <a href="{{ route('empresa.proyectos.crear') }}" class="btn-premium">Publicar Primer Proyecto</a>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <style>
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 @endsection

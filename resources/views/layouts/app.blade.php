@@ -7,40 +7,36 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Inspírate SENA')</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --primary: #3EB489;
+            --primary-dark: #298564;
+            --primary-light: #6ee7b7;
+            --primary-soft: rgba(62, 180, 137, 0.08);
+            --primary-glow: rgba(62, 180, 137, 0.4);
+            
+            --secondary: #0f172a;
+            --secondary-light: #1e293b;
+            
+            --bg: #f8fafc;
+            --surface: rgba(255, 255, 255, 0.95);
+            --text: #0f172a;
+            --text-light: #64748b;
+            --radius: 24px;
+            --shadow-premium: 0 20px 40px rgba(62, 180, 137, 0.12);
         }
 
-        :root {
-            --verde-marino: #3EB489;
-            --verde-marino-dark: #298564;
-            --verde-marino-light: #52c89a;
-            --verde-claro: #b2dfdb;
-            --verde-bg: #E0F2F1;
-            --texto: #000000;
-            --texto-suave: #4a6572;
-            --blanco: #ffffff;
-            --gris-light: #f0f8f6;
-            --sidebar: #264653;
-            --sombra: 0 8px 24px rgba(38, 70, 83, 0.12);
-            --sombra-hover: 0 12px 32px rgba(38, 70, 83, 0.18);
-            --radio: 12px;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            color: var(--texto);
-            background: var(--gris-light);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
         a {
@@ -156,162 +152,116 @@
 
         /* --- GLOBAL NAVBAR --- */
         .navbar {
-            background: var(--blanco);
-            padding: 0 48px;
-            height: 70px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 0 8%;
+            height: 85px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
             position: sticky;
             top: 0;
-            z-index: 100;
-            border-bottom: 1px solid #f0f0f0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: opacity .2s;
-        }
-
-        .logo:hover {
-            opacity: 0.8;
+            gap: 14px;
+            text-decoration: none;
         }
 
         .logo img {
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
             object-fit: contain;
         }
 
         .logo span {
-            font-weight: 800;
-            font-size: 19px;
-            background: linear-gradient(135deg, var(--verde-marino) 0%, var(--verde-marino-light) 100%);
+            font-weight: 900;
+            font-size: 24px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--verde-marino) 0%, var(--verde-marino-dark) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .menu {
-            justify-content: center;
             display: flex;
             align-items: center;
-            gap: 4px;
-            flex: 1;
-            margin-left: 40px;
+            gap: 32px;
         }
 
         .menu a {
-            padding: 8px 20px;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             color: var(--texto-suave);
-            transition: all .2s;
-            border-radius: 6px;
+            transition: all 0.3s ease;
             position: relative;
-
         }
 
-        .menu a:hover,
-        .menu a.active {
+        .menu a:hover {
             color: var(--verde-marino);
-            background: var(--verde-bg);
-        }
-
-        .menu a.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 16px;
-            right: 16px;
-            height: 3px;
-            background: var(--verde-marino);
-            border-radius: 2px 2px 0 0;
-        }
-
-        .nav-right {
-            display: flex;
-            gap: 12px;
-            align-items: center;
         }
 
         .btn-login {
-            background: var(--verde-marino);
-            color: var(--blanco);
-            padding: 10px 24px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, var(--verde-marino) 0%, var(--verde-marino-dark) 100%);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 14px;
+            font-weight: 700;
             font-size: 14px;
-            font-weight: 600;
-            transition: all .3s;
-            box-shadow: 0 4px 12px rgba(27, 107, 95, 0.25);
-            cursor: pointer;
-            border: none;
-            display: inline-block;
+            box-shadow: 0 10px 20px rgba(62, 180, 137, 0.2);
+            transition: all 0.3s ease;
         }
 
         .btn-login:hover {
-            background: var(--verde-marino-dark);
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(27, 107, 95, 0.35);
+            box-shadow: 0 15px 30px rgba(62, 180, 137, 0.3);
         }
 
         /* --- GLOBAL FOOTER --- */
         .footer {
-            background: #0f2419;
-            color: #b0b0b0;
-            padding: 60px 80px 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: #0f172a;
+            color: rgba(255,255,255,0.6);
+            padding: 100px 8% 40px;
         }
 
         .footer-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 60px;
+            margin-bottom: 60px;
         }
 
         .footer-col h3 {
-            color: var(--blanco);
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            letter-spacing: 0.5px;
+            color: white;
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 24px;
         }
 
-        .footer-col p,
+        .footer-col ul li {
+            margin-bottom: 12px;
+        }
+
         .footer-col a {
-            font-size: 13px;
-            color: #999;
-            display: block;
-            margin-bottom: 10px;
-            line-height: 1.6;
-            transition: color .2s;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.3s;
         }
 
         .footer-col a:hover {
             color: var(--verde-marino-light);
-        }
-
-        .footer-col ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-col ul li {
-            margin-bottom: 8px;
+            padding-left: 4px;
         }
 
         .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 30px;
             text-align: center;
-            font-size: 12px;
-            color: #666;
+            font-size: 13px;
         }
 
         @media (max-width: 768px) {
