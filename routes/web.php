@@ -131,8 +131,8 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::get('/empresas', [AdminController::class, 'empresas'])->name('empresas');
     Route::post('/empresas/{id}/estado', [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
     Route::get('/proyectos', [AdminController::class, 'proyectos'])->name('proyectos');
+    Route::get('/proyectos/{id}/revisar', [AdminController::class, 'revisarProyecto'])->name('proyectos.revisar');
     Route::post('/proyectos/{id}/estado', [AdminController::class, 'cambiarEstadoProyecto'])->name('proyectos.estado');
-    Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])
-    ->name('proyectos.asignar');
+    Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])->name('proyectos.asignar');
     
 });

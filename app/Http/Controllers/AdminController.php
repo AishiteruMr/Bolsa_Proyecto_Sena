@@ -182,4 +182,12 @@ class AdminController extends Controller
 
         return back()->with('success', 'Instructor asignado correctamente');
     }
+
+    public function revisarProyecto(int $id)
+    {
+        $proyecto = Proyecto::with('empresa')->findOrFail($id);
+        $calidad = $proyecto->calidadProyecto();
+
+        return view('admin.revisar-proyecto', compact('proyecto', 'calidad'));
+    }
 }

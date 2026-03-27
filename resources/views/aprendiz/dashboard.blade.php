@@ -27,87 +27,118 @@
 @endsection
 
 @section('content')
-    <!-- Bienvenida Premium -->
-    <div style="margin-bottom: 40px;">
-        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 8px;">
-            <span style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase;">Portal del Talento</span>
-            <span style="color: var(--text-muted); font-size: 13px;">{{ now()->translatedFormat('l, d F') }}</span>
+    <!-- BIENVENIDA PREMIUM -->
+    <div style="margin-bottom: 48px; position: relative;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+            <span style="background: var(--primary-soft); color: var(--primary-dark); padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: 1px solid var(--primary-glow);">Portal del Talento</span>
+            <span style="color: var(--text-lighter); font-size: 13px; font-weight: 500;"><i class="far fa-calendar-alt" style="margin-right: 6px;"></i>{{ now()->translatedFormat('l, d F') }}</span>
         </div>
-        <h2 style="font-size:32px; font-weight:800; color: #1e293b; letter-spacing: -1px;">¡Hola de nuevo, {{ session('nombre') }}! 👋</h2>
-        <p style="color: #64748b; font-size: 16px;">Sigue impulsando tu carrera participando en proyectos reales de la industria.</p>
+        <h2 style="font-size: 40px; font-weight: 800; color: var(--text); letter-spacing: -1.2px; margin-bottom: 8px;">¡Hola de nuevo, <span style="color: var(--primary);">{{ session('nombre') }}</span>! 👋</h2>
+        <p style="color: var(--text-light); font-size: 17px; max-width: 600px; line-height: 1.6;">Impulsa tu carrera colaborando en desafíos reales de la industria y construye un portafolio de impacto.</p>
     </div>
 
     <!-- BENTO DASHBOARD -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 48px;">
         <!-- Status Card -->
-        <div class="glass-card stat-card-premium" style="grid-column: span 2; background: linear-gradient(135deg, #064e3b, #065f46); color: white; border: none; display: flex; align-items: center; gap: 24px; padding: 32px;">
-            <div style="width: 64px; height: 64px; border-radius: 20px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 28px;">
+        <div class="glass-card" style="grid-column: span 2; background: linear-gradient(135deg, #0f172a, #1e293b); color: white; border: none; display: flex; align-items: center; gap: 32px; padding: 40px; box-shadow: var(--shadow-premium);">
+            <div style="width: 72px; height: 72px; border-radius: 22px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--primary-light);">
                 <i class="fas fa-rocket"></i>
             </div>
             <div>
-                <h3 style="font-size: 24px; font-weight: 800;">{{ $postulacionesAprobadas }} Proyectos Activos</h3>
-                <p style="font-size: 14px; color: rgba(255,255,255,0.7);">Sigue así, estás construyendo tu futuro profesional.</p>
+                <h3 style="font-size: 28px; font-weight: 800;">{{ $postulacionesAprobadas }} Proyectos</h3>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500;">En los que estás transformando el futuro.</p>
             </div>
         </div>
 
         <!-- Info Card 1 -->
-        <div class="glass-card stat-card-premium">
-            <p style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 12px;">Próximo Cierre</p>
-            @if($proximoCierre)
-                <h4 style="font-size: 18px; font-weight: 800; color: #ef4444;">{{ \Carbon\Carbon::parse($proximoCierre->pro_fecha_finalizacion)->diffForHumans() }}</h4>
-                <p style="font-size: 11px; color: #94a3b8; margin-top: 4px;">{{ $proximoCierre->pro_titulo_proyecto }}</p>
-            @else
-                <h4 style="font-size: 18px; font-weight: 800; color: #94a3b8;">Sin cierres</h4>
-                <p style="font-size: 11px; color: #94a3b8; margin-top: 4px;">No tienes proyectos activos.</p>
-            @endif
+        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <p style="font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Próximo Cierre</p>
+                @if($proximoCierre)
+                    <h4 style="font-size: 20px; font-weight: 800; color: #ef4444; letter-spacing: -0.5px;">{{ \Carbon\Carbon::parse($proximoCierre->pro_fecha_finalizacion)->diffForHumans() }}</h4>
+                    <p style="font-size: 12px; color: var(--text-light); margin-top: 6px; font-weight: 500;">{{ Str::limit($proximoCierre->pro_titulo_proyecto, 25) }}</p>
+                @else
+                    <h4 style="font-size: 20px; font-weight: 800; color: var(--text-lighter);">Sin cierres</h4>
+                    <p style="font-size: 12px; color: var(--text-lighter); margin-top: 6px;">Todo bajo control.</p>
+                @endif
+            </div>
+            <div style="height: 4px; background: #f1f5f9; border-radius: 10px; overflow: hidden;">
+                <div style="width: 100%; height: 100%; background: #ef4444; opacity: 0.3;"></div>
+            </div>
         </div>
 
         <!-- Info Card 2 -->
-        <div class="glass-card stat-card-premium">
-            <p style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 12px;">Postulaciones</p>
-            <h4 style="font-size: 24px; font-weight: 800; color: #1e293b;">{{ $totalPostulaciones }}</h4>
-            <div style="width: 100%; height: 6px; background: #f1f5f9; border-radius: 10px; margin-top: 12px; overflow: hidden;">
+        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <p style="font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Actividad</p>
+                <h4 style="font-size: 28px; font-weight: 800; color: var(--text);">{{ $totalPostulaciones }}</h4>
+                <p style="font-size: 12px; color: var(--text-light); margin-top: 4px; font-weight: 500;">Postulaciones enviadas</p>
+            </div>
+            <div style="height: 4px; background: #f1f5f9; border-radius: 10px; overflow: hidden;">
                 <div style="width: 65%; height: 100%; background: var(--primary); border-radius: 10px;"></div>
             </div>
         </div>
     </div>
 
-    <!-- Proyectos Feed -->
-    <div style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="font-size: 22px; font-weight: 700; color: #1e293b;">Oportunidades Destacadas</h3>
-        <a href="{{ route('aprendiz.proyectos') }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 14px;">Explorar todas las vacantes <i class="fas fa-chevron-right" style="margin-left: 5px; font-size: 12px;"></i></a>
+    <!-- FEED SECTION -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px;">
+        <h3 style="font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; display: flex; align-items: center; gap: 12px;">
+            <i class="fas fa-fire" style="color: #f97316;"></i> Oportunidades para ti
+        </h3>
+        <a href="{{ route('aprendiz.proyectos') }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: gap 0.3s;" onmouseover="this.style.gap='12px'" onmouseout="this.style.gap='8px'">
+            Explorar todas <i class="fas fa-arrow-right" style="font-size: 12px;"></i>
+        </a>
     </div>
 
-    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap:24px;">
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(360px,1fr)); gap:32px; animation: fadeIn 1s ease-out 0.4s both;">
         @forelse($proyectosRecientes as $p)
-            <div class="glass-card project-card-aprendiz" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
-                <div style="height: 180px; position: relative;">
-                    <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
-                    <div style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.9); padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; color: var(--primary);">
+            <div class="glass-card project-card-premium" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; border-radius: var(--radius);">
+                <div style="height: 220px; position: relative; overflow: hidden;">
+                    <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover; transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);">
+                    <div style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.9); padding: 8px 16px; border-radius: 30px; font-size: 11px; font-weight: 800; color: var(--primary-dark); text-transform: uppercase; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                         {{ $p->pro_categoria }}
                     </div>
                 </div>
-                <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
-                    <p style="font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 8px;">{{ $p->emp_nombre }}</p>
-                    <h4 style="font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 12px; line-height: 1.4;">{{ $p->pro_titulo_proyecto }}</h4>
+                <div style="padding: 32px; flex: 1; display: flex; flex-direction: column;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                        <span style="width: 24px; height: 3px; background: var(--primary); border-radius: 4px;"></span>
+                        <span style="font-size: 14px; font-weight: 700; color: var(--text-light);">{{ $p->emp_nombre }}</span>
+                    </div>
+                    <h4 style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 20px; line-height: 1.3; height: 58px; overflow: hidden;">{{ $p->pro_titulo_proyecto }}</h4>
                     
-                    <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 12px; color: #94a3b8;"><i class="fas fa-users" style="margin-right: 6px;"></i> Popular</span>
+                    <div style="margin-top: auto; padding-top: 28px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 13px; color: var(--text-light); font-weight: 600;"><i class="fas fa-bolt" style="margin-right: 8px; color: #f59e0b;"></i> Reto {{ $p->pro_duracion ?? '8 semanas' }}</span>
                         @if(in_array($p->pro_id, $proyectosAprobados))
-                            <a href="{{ route('aprendiz.proyecto.detalle', $p->pro_id) }}" class="btn-primary-sm">Gestionar Proyecto</a>
+                            <a href="{{ route('aprendiz.proyecto.detalle', $p->pro_id) }}" class="btn-premium" style="padding: 12px 24px; font-size: 13px;">Gestionar</a>
                         @else
-                            <a href="{{ route('aprendiz.proyectos') }}" class="btn-outline-sm">Ver Detalles</a>
+                            <a href="{{ route('aprendiz.proyectos') }}" class="btn-premium" style="padding: 12px 24px; font-size: 13px; background: #f1f5f9; color: var(--text-light); box-shadow: none;">Detalles</a>
                         @endif
                     </div>
                 </div>
             </div>
         @empty
-            <div class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 60px;">
-                <i class="fas fa-search" style="font-size: 48px; color: #cbd5e1; margin-bottom: 20px;"></i>
-                <h4 style="color: #64748b;">No hay proyectos disponibles en este momento.</h4>
+            <div class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 100px; border: 2px dashed #e2e8f0; background: rgba(248, 250, 252, 0.5);">
+                <div style="width: 100px; height: 100px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.05);">
+                    <i class="fas fa-search" style="font-size: 40px; color: var(--text-lighter);"></i>
+                </div>
+                <h4 style="color: var(--text); font-weight: 800; font-size: 24px; margin-bottom: 12px;">Busca tu próxima oportunidad</h4>
+                <p style="color: var(--text-light); max-width: 450px; margin: 0 auto;">No hay proyectos disponibles en este momento que se ajusten a tu perfil. Sigue explorando nuestro catálogo.</p>
+                <a href="{{ route('aprendiz.proyectos') }}" class="btn-premium" style="margin-top: 40px; background: #0f172a;">Explorar Banco de Proyectos</a>
             </div>
         @endforelse
     </div>
+
+    <style>
+        .project-card-premium {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .project-card-premium:hover img {
+            transform: scale(1.05);
+        }
+        .project-card-premium:hover .btn-premium {
+            transform: translateY(-2px);
+        }
+    </style>
 
     <style>
         .stat-card-premium {

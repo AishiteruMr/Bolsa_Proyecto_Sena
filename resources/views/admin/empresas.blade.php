@@ -4,195 +4,141 @@
 @section('page-title', 'Gestión de Empresas')
 
 @section('sidebar-nav')
+    <span class="nav-label">Administración</span>
     <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Dashboard
+        <i class="fas fa-th-large"></i> Dashboard
     </a>
     <a href="{{ route('admin.usuarios') }}" class="nav-item {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
-        <i class="fas fa-users-cog"></i> Usuarios
+        <i class="fas fa-users"></i> Gestión Usuarios
     </a>
     <a href="{{ route('admin.empresas') }}" class="nav-item {{ request()->routeIs('admin.empresas') ? 'active' : '' }}">
-        <i class="fas fa-building"></i> Empresas
+        <i class="fas fa-building"></i> Empresas Aliadas
     </a>
     <a href="{{ route('admin.proyectos') }}" class="nav-item {{ request()->routeIs('admin.proyectos') ? 'active' : '' }}">
-        <i class="fas fa-project-diagram"></i> Proyectos
+        <i class="fas fa-project-diagram"></i> Banco Proyectos
     </a>
 @endsection
 
-@section('content')
-    <div style="margin-bottom: 32px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+@section('content')    <div style="margin-bottom: 40px; animation: fadeIn 0.8s ease-out;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
             <div>
-                <h2 style="font-size:28px; font-weight:800; letter-spacing: -1px;">Gestión de Empresas</h2>
-                <p style="color:var(--text-light); font-size:15px; margin-top:4px;">Administra las empresas registradas en el sistema.</p>
+                <h2 style="font-size:32px; font-weight:800; letter-spacing: -1px; color: var(--text);">Ecosistema de <span style="color: var(--primary);">Empresas</span></h2>
+                <p style="color:var(--text-light); font-size:16px; margin-top:6px;">Gestión y supervisión de organizaciones aliadas al SENA.</p>
             </div>
         </div>
-        <div style="display: flex; gap: 16px;">
-            <div style="background: linear-gradient(135deg, #3EB489 0%, #2d9a6f 100%); border-radius: 12px; padding: 16px 24px; color: white; flex: 1; box-shadow: 0 4px 12px rgba(62, 180, 137, 0.3);">
-                <div style="font-size: 13px; opacity: 0.9;">Total Empresas</div>
-                <div style="font-size: 28px; font-weight: 700;">{{ $empresas->count() }}</div>
-            </div>
-            <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 12px; padding: 16px 24px; color: white; flex: 1; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
-                <div style="font-size: 13px; opacity: 0.9;">Activas</div>
-                <div style="font-size: 28px; font-weight: 700;">{{ $empresas->where('emp_estado', 1)->count() }}</div>
-            </div>
-            <div style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); border-radius: 12px; padding: 16px 24px; color: white; flex: 1; box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);">
-                <div style="font-size: 13px; opacity: 0.9;">Inactivas</div>
-                <div style="font-size: 28px; font-weight: 700;">{{ $empresas->where('emp_estado', 0)->count() }}</div>
-            </div>
-        </div>
-    </div>
 
-    <div class="card" style="padding: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 12px;">
-        <div style="padding: 24px; border-bottom: 1px solid var(--border); background: linear-gradient(to right, #f8fafc, #fff);">
-            <h3 style="font-size:18px; font-weight:700; display: flex; align-items: center;">
-                <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: linear-gradient(135deg, #3EB489, #2d9a6f); border-radius: 10px; margin-right: 12px;">
-                    <i class="fas fa-building" style="color: white; font-size: 16px;"></i>
-                </span>
-                Empresas Aliadas
-            </h3>
+        <!-- BENTO STATS -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px;">
+            <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-left: 4px solid var(--primary);">
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 0.5px;">Total Aliados</div>
+                    <div style="font-size: 28px; font-weight: 800; color: var(--text);">{{ $empresas->count() }}</div>
+                </div>
+            </div>
+            
+            <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-left: 4px solid #10b981;">
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 0.5px;">Empresas Activas</div>
+                    <div style="font-size: 28px; font-weight: 800; color: #10b981;">{{ $empresas->where('emp_estado', 1)->count() }}</div>
+                </div>
+            </div>
+
+            <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-left: 4px solid #f97316;">
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: #fff7ed; color: #f97316; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 0.5px;">En Espera</div>
+                    <div style="font-size: 28px; font-weight: 800; color: #f97316;">{{ $empresas->where('emp_estado', 0)->count() }}</div>
+                </div>
+            </div>
         </div>
-        <div class="table-container" style="border:none; border-radius:0;">
-            <table class="styled-table">
-                <thead>
-                    <tr>
-                        <th style="width: 120px;">NIT</th>
-                        <th>Nombre</th>
-                        <th>Representante</th>
-                        <th>Correo</th>
-                        <th style="width: 100px;">Estado</th>
-                        <th style="width: 130px;">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($empresas as $e)
+
+        <div class="glass-card" style="padding: 0; overflow: hidden; border-radius: var(--radius);">
+            <div style="padding: 24px 32px; border-bottom: 1px solid #f1f5f9; background: rgba(248, 250, 252, 0.5); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size:18px; font-weight:800; color: var(--text); display: flex; align-items: center; gap: 12px;">
+                    <span style="width: 36px; height: 36px; border-radius: 10px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                        <i class="fas fa-list-check"></i>
+                    </span>
+                    Directorio Corporativo
+                </h3>
+            </div>
+            
+            <div class="premium-table-container" style="border: none; box-shadow: none;">
+                <table class="premium-table">
+                    <thead>
                         <tr>
-                            <td style="font-weight: 600; color: #3EB489;">{{ $e->emp_nit }}</td>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #e0f2e9, #d1ede5); display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-building" style="color: #3EB489; font-size: 16px;"></i>
+                            <th>Identificación (NIT)</th>
+                            <th>Razón Social</th>
+                            <th>Representante Legal</th>
+                            <th>Contacto</th>
+                            <th>Estado</th>
+                            <th style="text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($empresas as $e)
+                            <tr>
+                                <td style="font-weight: 700; color: var(--primary);">{{ $e->emp_nit }}</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 40px; height: 40px; border-radius: 10px; background: #f8fafc; border: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-building" style="color: var(--text-lighter); font-size: 14px;"></i>
+                                        </div>
+                                        <div style="font-weight: 700; color: var(--text);">{{ $e->emp_nombre }}</div>
                                     </div>
-                                    <span style="font-weight: 600;">{{ $e->emp_nombre }}</span>
-                                </div>
-                            </td>
-                            <td style="color: var(--text-light);">
-                                <i class="fas fa-user-tie" style="margin-right: 8px; color: #9ca3af;"></i>
-                                {{ $e->emp_representante }}
-                            </td>
-                            <td style="font-size: 13px; color: #6b7280;">
-                                <i class="fas fa-envelope" style="margin-right: 6px; color: #9ca3af;"></i>
-                                {{ $e->emp_correo }}
-                            </td>
-                            <td>
-                                <span class="status-badge {{ $e->emp_estado == 1 ? 'active' : 'inactive' }}">
-                                    <span class="status-dot"></span>
-                                    {{ $e->emp_estado == 1 ? 'Activa' : 'Inactiva' }}
-                                </span>
-                            </td>
-                            <td>
-                                <form action="{{ route('admin.empresas.estado', $e->emp_id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    <input type="hidden" name="estado" value="{{ $e->emp_estado == 1 ? 0 : 1 }}">
-                                    <button type="submit" class="btn-action {{ $e->emp_estado == 1 ? 'deactivate' : 'activate' }}">
-                                        <i class="fas {{ $e->emp_estado == 1 ? 'fa-ban' : 'fa-check' }}"></i>
-                                        {{ $e->emp_estado == 1 ? 'Desactivar' : 'Activar' }}
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" style="text-align: center; padding: 60px; color: var(--text-light);">
-                                <div style="font-size: 48px; margin-bottom: 16px; color: #d1d5db;">
-                                    <i class="fas fa-building"></i>
-                                </div>
-                                <div style="font-size: 16px; font-weight: 600; color: #6b7280; margin-bottom: 8px;">No hay empresas registradas</div>
-                                <div style="font-size: 14px; color: #9ca3af;">Las empresas aparerán aquí cuando se registren en el sistema.</div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 600; color: var(--text-light); font-size: 14px;">
+                                        <i class="far fa-user-circle" style="margin-right: 6px; opacity: 0.5;"></i>
+                                        {{ $e->emp_representante }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="font-size: 13px; color: var(--text-light);">
+                                        <i class="far fa-envelope" style="margin-right: 6px; opacity: 0.5;"></i>
+                                        {{ $e->emp_correo }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span style="background: {{ $e->emp_estado == 1 ? '#d1fae5' : '#fee2e2' }}; color: {{ $e->emp_estado == 1 ? '#065f46' : '#991b1b' }}; padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px;">
+                                        <span style="width: 6px; height: 6px; border-radius: 50%; background: currentColor;"></span>
+                                        {{ $e->emp_estado == 1 ? 'Activa' : 'Inactiva' }}
+                                    </span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <form action="{{ route('admin.empresas.estado', $e->emp_id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <input type="hidden" name="estado" value="{{ $e->emp_estado == 1 ? 0 : 1 }}">
+                                        <button type="submit" class="btn-premium" style="padding: 8px 16px; font-size: 11px; background: {{ $e->emp_estado == 1 ? '#f1f5f9' : 'var(--primary)' }}; color: {{ $e->emp_estado == 1 ? 'var(--text-light)' : 'white' }}; box-shadow: none;">
+                                            <i class="fas {{ $e->emp_estado == 1 ? 'fa-ban' : 'fa-check-circle' }}"></i>
+                                            {{ $e->emp_estado == 1 ? 'Inhabilitar' : 'Habilitar' }}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 80px; color: var(--text-lighter);">
+                                    <i class="fas fa-building-circle-exclamation" style="font-size: 48px; margin-bottom: 16px; opacity: 0.2;"></i>
+                                    <div style="font-size: 16px; font-weight: 700;">No se han encontrado empresas registradas</div>
+                                    <div style="font-size: 14px; margin-top: 4px;">Las nuevas inscripciones aparecerán en esta tabla automáticamente.</div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <style>
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-badge.active {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        
-        .status-badge.inactive {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-        
-        .status-badge.active .status-dot {
-            background: #10b981;
-        }
-        
-        .status-badge.inactive .status-dot {
-            background: #ef4444;
-        }
-        
-        .btn-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .btn-action.activate {
-            background: linear-gradient(135deg, #3EB489, #2d9a6f);
-            color: white;
-        }
-        
-        .btn-action.activate:hover {
-            background: linear-gradient(135deg, #2d9a6f, #238b5d);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(62, 180, 137, 0.3);
-        }
-        
-        .btn-action.deactivate {
-            background: #f3f4f6;
-            color: #6b7280;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .btn-action.deactivate:hover {
-            background: #fee2e2;
-            color: #dc2626;
-            border-color: #fecaca;
-        }
-        
-        .styled-table tbody tr {
-            transition: background 0.2s;
-        }
-        
-        .styled-table tbody tr:hover {
-            background: #f9fafb;
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 @endsection

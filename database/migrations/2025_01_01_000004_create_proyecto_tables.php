@@ -19,8 +19,9 @@ return new class extends Migration
             $table->string('pro_habilidades_requerida', 200);
             $table->date('pro_fecha_publi');
             $table->integer('pro_duracion_estimada');
-            $table->string('pro_estado', 50)->default('Activo');
+            $table->string('pro_estado', 50)->default('Pendiente');
             $table->string('pro_imagen_url', 255)->nullable();
+            $table->integer('pro_num_postulantes')->default(0);
             $table->bigInteger('ins_usr_documento')->nullable();
 
             $table->foreign('emp_nit')

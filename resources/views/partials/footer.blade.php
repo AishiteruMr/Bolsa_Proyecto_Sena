@@ -9,7 +9,7 @@
         </div>
         <div class="footer-col">
             <h3>Contáctanos</h3>
-            <p>📍 Calle 57 No. 8-69, Bogotá D.C., Colombia</p>
+            <p>📍 #16- a 16-123,, Dg. 18 #111, Malambo, Atlántico</p>
             <p>📧 <a href="mailto:atencionalciudadano@sena.edu.co">atencionalciudadano@sena.edu.co</a></p>
             <p>📞 PBX: (601) 5461500</p>
             <p>☎ Línea gratuita: 018000-910-270</p>
