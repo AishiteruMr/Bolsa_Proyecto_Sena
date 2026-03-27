@@ -33,8 +33,8 @@
             <p style="color:var(--text-light); font-size:16px; margin-top:4px; font-weight: 500;">{{ $proyecto->pro_titulo_proyecto }}</p>
         </div>
         <div style="background: var(--primary-soft); padding: 12px 24px; border-radius: 16px; border: 1px solid var(--primary-glow); display: flex; flex-direction: column; align-items: flex-end;">
-            <span style="font-size: 11px; font-weight: 800; color: var(--primary-dark); text-transform: uppercase; letter-spacing: 1px;">Total Postulaciones</span>
-            <span style="font-size: 24px; font-weight: 900; color: var(--primary-dark);">{{ count($postulantes) }}</span>
+            <span style="font-size: 11px; font-weight: 800; color: var(--primary-hover); text-transform: uppercase; letter-spacing: 1px;">Total Postulaciones</span>
+            <span style="font-size: 24px; font-weight: 900; color: var(--primary-hover);">{{ count($postulantes) }}</span>
         </div>
     </div>
 
@@ -56,7 +56,7 @@
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 18px;">
-                    <div style="width: 70px; height: 70px; border-radius: 20px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 10px 20px var(--primary-glow);">
+                    <div style="width: 70px; height: 70px; border-radius: 20px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 10px 20px var(--primary-glow);">
                         {{ strtoupper(substr($p->apr_nombre ?? 'A', 0, 1)) }}
                     </div>
                     <div style="flex: 1; min-width: 0;">
@@ -117,13 +117,4 @@
         @endforelse
     </div>
 </div>
-
-<style>
-    .candidate-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: var(--primary-glow); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-</style>
-
-<style>
-    .glass-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
-</style>
 @endsection

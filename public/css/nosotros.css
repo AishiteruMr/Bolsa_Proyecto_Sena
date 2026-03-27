@@ -1,200 +1,93 @@
 .hero-nosotros {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    padding: 120px 8%;
-    color: white;
-    text-align: left;
-    position: relative;
-    overflow: hidden;
-    min-height: 400px;
-    display: flex;
-    align-items: center;
+    padding: 120px 8% 80px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    text-align: center;
 }
-
-.hero-nosotros::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(62, 180, 137, 0.15) 0%, transparent 70%);
-    border-radius: 50%;
-}
-
 .hero-nosotros h1 {
-    font-size: 64px;
-    font-weight: 800;
-    margin-bottom: 24px;
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 900;
     letter-spacing: -2px;
-    line-height: 1;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    color: var(--secondary);
 }
-
 .hero-nosotros p {
-    font-size: 20px;
-    opacity: 0.8;
-    max-width: 600px;
+    font-size: 19px;
+    color: var(--text-light);
+    max-width: 700px;
+    margin: 0 auto;
     line-height: 1.6;
 }
 
-.about {
-    padding: 100px 8%;
-    background: white;
-}
+.section-header { text-align: center; margin-bottom: 60px; }
+.section-header h2 { font-size: 36px; font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; }
+.section-header p { color: var(--text-light); font-size: 16px; }
 
-.about-content {
+.about-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1.2fr;
     gap: 80px;
+    padding: 80px 8%;
     align-items: center;
 }
-
-.about-text h2 {
-    font-size: 40px;
-    font-weight: 800;
-    color: #0f172a;
-    margin-bottom: 32px;
-    letter-spacing: -1px;
-}
-
-.about-text p {
-    color: #64748b;
-    margin-bottom: 24px;
-    font-size: 18px;
-    line-height: 1.8;
-}
-
-.about-img {
+.about-image {
     position: relative;
-}
-
-.about-img img {
-    width: 100%;
-    border-radius: 32px;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.1);
-}
-
-.mision-vision {
-    padding: 100px 8%;
-    background: #f8fafc;
-    text-align: center;
-}
-
-.mision-vision h2 {
-    font-size: 40px;
-    font-weight: 800;
-    margin-bottom: 60px;
-    letter-spacing: -1px;
-}
-
-.mv-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-}
-
-.mv-card {
-    background: white;
-    padding: 60px 48px;
-    border-radius: 32px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease;
-    text-align: left;
-}
-
-.mv-card:hover { transform: translateY(-10px); }
-
-.mv-card h3 {
-    font-size: 28px;
-    font-weight: 800;
-    margin-bottom: 24px;
-}
-
-.mv-card p {
-    color: #64748b;
-    line-height: 1.8;
-    font-size: 16px;
-}
-
-.location-section {
-    padding: 100px 8%;
-    background: white;
-}
-
-.location-container {
-    display: grid;
-    grid-template-columns: 1.2fr 1.8fr;
-    gap: 80px;
-    align-items: center;
-}
-
-.location-info h2 {
-    font-size: 40px;
-    font-weight: 800;
-    margin-bottom: 24px;
-    letter-spacing: -1px;
-}
-
-.location-info p {
-    color: #64748b;
-    font-size: 18px;
-    margin-bottom: 40px;
-}
-
-.address-card, .user-location-card {
-    background: #f8fafc;
-    padding: 24px;
-    border-radius: 20px;
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    margin-bottom: 20px;
-    border: 1px solid #f1f5f9;
-}
-
-.address-card i { font-size: 24px; color: var(--primary); }
-.user-location-card i { font-size: 24px; color: #3b82f6; }
-
-.address-card h3, .user-location-card h3 { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
-.address-card p, .user-location-card p { font-size: 14px; margin-bottom: 0; }
-
-.map-wrapper {
-    height: 500px;
-    border-radius: 32px;
+    border-radius: 40px;
     overflow: hidden;
     box-shadow: 0 40px 80px rgba(0,0,0,0.1);
 }
-
-#nosotros-map { height: 100%; width: 100%; }
-
-.cta-final {
-    padding: 120px 8%;
-    background: var(--primary);
-    text-align: center;
-    color: white;
-}
-
-.cta-final h2 {
-    font-size: 48px;
-    font-weight: 800;
-    margin-bottom: 40px;
-}
-
-.cta-final a {
-    display: inline-block;
-    background: white;
-    color: var(--primary);
-    padding: 20px 56px;
-    border-radius: 20px;
-    font-weight: 800;
-    font-size: 18px;
-    text-decoration: none;
-    transition: all 0.3s ease;
+.about-image img { width: 100%; display: block; }
+.about-badge {
+    position: absolute;
+    bottom: 30px; right: 30px;
+    background: #fff;
+    padding: 24px;
+    border-radius: 24px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    border-left: 6px solid var(--primary);
 }
 
-.cta-final a:hover { transform: translateY(-5px); box-shadow: 0 30px 60px rgba(0,0,0,0.2); }
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    padding: 0 8% 100px;
+}
+.value-card {
+    padding: 48px;
+    background: #fff;
+    border-radius: 32px;
+    border: 1px solid var(--border);
+    transition: all 0.4s ease;
+}
+.value-card:hover { transform: translateY(-8px); border-color: var(--primary-glow); box-shadow: var(--shadow-premium); }
+.value-icon { font-size: 40px; margin-bottom: 24px; }
+
+.map-section {
+    padding: 100px 8%;
+    background: #f1f5f9;
+}
+.map-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    background: #fff;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.08);
+    border: 1px solid var(--border);
+}
+.map-info { padding: 48px; }
+.loc-card {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 24px; background: var(--bg);
+    border-radius: 20px; border: 1px solid var(--border);
+    margin-top: 32px;
+}
+.loc-card i { font-size: 20px; color: var(--primary); margin-top: 4px; }
+
+#nosotros-map { height: 500px; width: 100%; }
 
 @media (max-width: 1024px) {
-    .about-content, .location-container, .mv-container { grid-template-columns: 1fr; gap: 40px; }
-    .hero-nosotros h1 { font-size: 48px; }
+    .about-grid, .values-grid, .map-container { grid-template-columns: 1fr; }
+    .hero-nosotros { padding: 80px 24px; }
 }

@@ -23,30 +23,34 @@
     </a>
 @endsection
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/instructor.css') }}">
+@endsection
+
 @section('content')
-<div class="dashboard-wrapper" style="animation: fadeIn 0.8s ease-out;">
+<div class="animate-fade-in dashboard-wrapper">
     
     <!-- HEADER PREMIUM -->
-    <div style="background: linear-gradient(135deg, #0f172a, #1e293b); padding: 48px; border-radius: var(--radius-lg); margin-bottom: 40px; position: relative; overflow: hidden; box-shadow: var(--shadow-premium);">
-        <div style="position: absolute; right: -30px; bottom: -30px; font-size: 240px; color: rgba(62,180,137,0.05); transform: rotate(-15deg); pointer-events: none;">
+    <div class="instructor-hero">
+        <div class="instructor-hero-bg-icon">
             <i class="fas fa-chalkboard-teacher"></i>
         </div>
         <div style="position: relative; z-index: 1;">
             <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
-                <span style="background: var(--primary); color: white; padding: 6px 16px; border-radius: 30px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 4px 12px var(--primary-glow);">SENA INNOVACIÓN</span>
+                <span class="instructor-tag">SENA INNOVACIÓN</span>
                 <span id="current-time" style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600;"></span>
             </div>
-            <h1 style="font-size: 48px; font-weight: 800; color: white; margin-bottom: 12px; letter-spacing: -1.5px;">¡Bienvenido, <span style="color: var(--primary);">{{ session('nombre') }}</span>! 👋</h1>
+            <h1 class="instructor-title">¡Bienvenido, <span style="color: var(--primary);">{{ session('nombre') }}</span>! 👋</h1>
             <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 600px; line-height: 1.6; font-weight: 400;">Tu centro de mando para la excelencia académica y la gestión de proyectos de impacto.</p>
         </div>
     </div>
 
     <!-- BENTO STATS GRID -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 48px;">
+    <div class="instructor-stat-grid">
         
         <!-- Large Stat Card -->
-        <div class="glass-card" style="grid-column: span 2; display: flex; align-items: center; gap: 32px; padding: 40px; border-color: var(--primary-soft); background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(62, 180, 137, 0.05));">
-            <div style="width: 80px; height: 80px; border-radius: 24px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 12px 24px var(--primary-glow);">
+        <div class="instructor-stat-card-lg glass-card">
+            <div class="instructor-stat-icon-main">
                 <i class="fas fa-project-diagram"></i>
             </div>
             <div>
@@ -56,7 +60,7 @@
         </div>
 
         <!-- Warning Stat Card -->
-        <div class="glass-card" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; color: white; display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="instructor-warning-card">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-clock"></i>
@@ -70,7 +74,7 @@
         </div>
 
         <!-- Success Stat Card -->
-        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius); padding: 24px;">
             <div style="width: 48px; height: 48px; border-radius: 14px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 22px;">
                 <i class="fas fa-user-graduate"></i>
             </div>
@@ -82,7 +86,7 @@
     </div>
 
     <!-- MAIN GRID: PROJECTS + QUICK ACTIONS -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
+    <div class="instructor-main-grid">
         
         <!-- Left: Active Projects -->
         <div>
@@ -96,12 +100,12 @@
                 </a>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="instructor-project-grid">
                 @forelse($proyectos as $p)
-                    <div class="glass-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+                    <div class="glass-card instructor-project-card">
                         <div style="height: 160px; position: relative;">
                             <img src="{{ $p->imagen_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
-                            <div style="position: absolute; top: 16px; left: 16px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); padding: 5px 12px; border-radius: 30px; color: white; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <div class="instructor-project-image-badge">
                                 {{ $p->pro_categoria }}
                             </div>
                         </div>
@@ -123,7 +127,7 @@
                         </div>
                     </div>
                 @empty
-                    <div class="glass-card" style="grid-column: span 2; padding: 48px; text-align: center; border-style: dashed;">
+                    <div class="glass-card aprendiz-empty-state" style="grid-column: span 2; padding: 48px; text-align: center;">
                         <i class="fas fa-folder-open" style="font-size: 40px; color: var(--text-lighter); margin-bottom: 16px;"></i>
                         <p style="color: var(--text-light); font-weight: 600;">No tienes proyectos asignados actualmente.</p>
                     </div>
@@ -133,9 +137,9 @@
 
         <!-- Right: Activity & Quick Actions -->
         <div>
-            <h3 style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 24px;">Centro de Notificaciones</h3>
+            <h3 style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 24px;">Notificaciones</h3>
             
-            <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+            <div class="instructor-notification-card">
                 <div style="display: flex; flex-direction: column; gap: 20px;">
                     <div style="display: flex; align-items: center; gap: 16px;">
                         <div style="width: 40px; height: 40px; border-radius: 10px; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center;">
@@ -160,14 +164,14 @@
                 </div>
             </div>
 
-            <div class="glass-card" style="padding: 32px; background: var(--secondary); color: white; border: none; box-shadow: var(--shadow-premium);">
+            <div class="instructor-quick-actions">
                 <h4 style="font-size: 18px; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px;">Acceso Rápido</h4>
                 <div style="display: grid; gap: 12px;">
-                    <a href="{{ route('instructor.aprendices') }}" style="display: flex; align-items: center; gap: 12px; padding: 14px; background: rgba(255,255,255,0.05); border-radius: 14px; text-decoration: none; color: white; transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                    <a href="{{ route('instructor.aprendices') }}" class="instructor-action-link">
                         <i class="fas fa-users" style="color: var(--primary);"></i>
                         <span style="font-size: 14px; font-weight: 600;">Base de Aprendices</span>
                     </a>
-                    <a href="{{ route('instructor.perfil') }}" style="display: flex; align-items: center; gap: 12px; padding: 14px; background: rgba(255,255,255,0.05); border-radius: 14px; text-decoration: none; color: white; transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                    <a href="{{ route('instructor.perfil') }}" class="instructor-action-link">
                         <i class="fas fa-cog" style="color: var(--primary);"></i>
                         <span style="font-size: 14px; font-weight: 600;">Ajustes de Perfil</span>
                     </a>
@@ -177,21 +181,5 @@
     </div>
 </div>
 
-<style>
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
-    .glass-card {
-        border: 1px solid var(--border);
-    }
-</style>
 
-<script>
-    function updateDateTime() {
-        const now = new Date();
-        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        const dateStr = now.toLocaleDateString('es-ES', options);
-        document.getElementById('current-time').textContent = dateStr;
-    }
-    updateDateTime();
-</script>
 @endsection

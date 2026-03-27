@@ -12,11 +12,15 @@ class PostulacionEstadoCambiado extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public string $proyectoTitulo;
+
     public function __construct(
         public string $aprendizNombre,
-        public string $proyectoTitulo,
+        public object $proyecto,
         public string $nuevoEstado
-    ) {}
+    ) {
+        $this->proyectoTitulo = $proyecto->pro_titulo_proyecto ?? 'Proyecto';
+    }
 
     public function envelope(): Envelope
     {

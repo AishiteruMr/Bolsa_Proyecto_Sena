@@ -25,7 +25,7 @@
 
 @section('content')
     <div style="margin-bottom: 32px;">
-        <h2 style="font-size:26px; font-weight:700; color:var(--primary-dark)">Historial de Proyectos</h2>
+        <h2 style="font-size:26px; font-weight:700; color:var(--primary-hover)">Historial de Proyectos</h2>
         <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Registro histórico de todos los proyectos supervisados y completados.</p>
     </div>
 
@@ -44,7 +44,7 @@
                             </span>
                         </div>
                         
-                        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 0.75rem; line-height: 1.4;">
+                        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary-hover); margin-bottom: 0.75rem; line-height: 1.4;">
                             {{ $proyecto->pro_titulo_proyecto }}
                         </h3>
 

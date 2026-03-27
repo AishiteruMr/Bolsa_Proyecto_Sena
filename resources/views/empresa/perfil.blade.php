@@ -20,33 +20,37 @@
     </a>
 @endsection
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/empresa.css') }}">
+@endsection
+
 @section('content')
-<div style="max-width: 1200px; margin: 0 auto; animation: slideUp 0.8s ease-out;">
+<div class="animate-fade-in" style="max-width: 1200px; margin: 0 auto;">
     
     <!-- HEADER BENTO -->
     <div style="display: grid; grid-template-columns: 2.5fr 1fr; gap: 24px; margin-bottom: 32px;">
         
         <!-- Company Info Card -->
-        <div class="glass-card" style="display: flex; align-items: center; gap: 40px; padding: 48px; background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none; overflow: hidden; position: relative;">
-            <div style="position: absolute; right: -50px; top: -50px; font-size: 200px; color: rgba(255,255,255,0.03); transform: rotate(-15deg);">
+        <div class="glass-card empresa-profile-header">
+            <div class="empresa-profile-bg-icon">
                 <i class="fas fa-building"></i>
             </div>
             
-            <div class="company-logo-wrapper" style="position: relative; z-index: 2;">
-                <div style="width: 160px; height: 160px; border-radius: 32px; background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(255,255,255,0.2); box-shadow: 0 25px 50px rgba(0,0,0,0.4);">
+            <div class="empresa-logo-wrapper">
+                <div class="empresa-logo-box">
                     <i class="fas fa-building" style="font-size: 80px; color: var(--primary);"></i>
                 </div>
             </div>
             
             <div style="flex: 1; position: relative; z-index: 2;">
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                    <span style="background: var(--primary); color: white; padding: 5px 16px; border-radius: 20px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Socio Estratégico</span>
+                    <span class="empresa-badge-portal" style="padding: 5px 16px; font-size: 10px;">Socio Estratégico</span>
                     <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">IDENTIFICADOR: {{ $empresa->emp_nit }}</span>
                 </div>
                 <h2 style="font-size: 42px; font-weight: 900; letter-spacing: -2px; margin-bottom: 24px;">{{ $empresa->emp_nombre }}</h2>
                 
                 <!-- Perfil Integrity Bar -->
-                <div style="max-width: 450px; background: rgba(255,255,255,0.05); padding: 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);">
+                <div class="empresa-integrity-card">
                     @php
                         $camposCompletos = 0;
                         if(!empty($empresa->emp_nombre)) $camposCompletos++;
@@ -55,12 +59,12 @@
                         if(!empty($empresa->emp_correo)) $camposCompletos++;
                         $progresoPerfil = ($camposCompletos / 4) * 100;
                     @endphp
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px;">Integridad del Perfil</span>
                         <span style="font-size: 13px; font-weight: 900; color: var(--primary);">{{ $progresoPerfil }}%</span>
                     </div>
-                    <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
-                        <div style="width: {{ $progresoPerfil }}%; height: 100%; background: linear-gradient(to right, var(--primary), var(--primary-glow)); border-radius: 10px; box-shadow: 0 0 15px var(--primary-glow);"></div>
+                    <div class="empresa-integrity-bar">
+                        <div class="empresa-integrity-fill" style="width: {{ $progresoPerfil }}%;"></div>
                     </div>
                 </div>
             </div>
@@ -80,7 +84,7 @@
                     <i class="fas fa-check-double"></i>
                 </div>
                 <div>
-                    <span style="font-size: 10px; font-weight: 800; color: var(--primary-dark); text-transform: uppercase; letter-spacing: 1px; display: block;">Estado Cuenta</span>
+                    <span style="font-size: 10px; font-weight: 800; color: var(--primary-hover); text-transform: uppercase; letter-spacing: 1px; display: block;">Estado Cuenta</span>
                     <span style="font-size: 15px; font-weight: 800; color: var(--text);">Verificada</span>
                 </div>
             </div>
@@ -108,34 +112,34 @@
 
                 <div style="display: grid; gap: 32px; margin-bottom: 48px;">
                     <div class="form-group">
-                        <label style="font-size: 13px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block;">Razón Social / Nombre Comercial</label>
-                        <div style="position: relative;">
-                            <i class="fas fa-building" style="position: absolute; left: 18px; top: 18px; color: #94a3b8;"></i>
-                            <input type="text" name="nombre_empresa" value="{{ old('nombre_empresa', $empresa->emp_nombre) }}" required class="form-control" style="padding-left: 50px; height: 56px; border-radius: 16px; border: 1.5px solid #e2e8f0; font-weight: 600;">
+                        <label class="empresa-form-label">Razón Social / Nombre Comercial</label>
+                        <div class="empresa-input-container">
+                            <i class="fas fa-building empresa-input-icon"></i>
+                            <input type="text" name="nombre_empresa" value="{{ old('nombre_empresa', $empresa->emp_nombre) }}" required class="empresa-form-control">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label style="font-size: 13px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block;">Representante Legal Certificado</label>
-                        <div style="position: relative;">
-                            <i class="fas fa-user-tie" style="position: absolute; left: 18px; top: 18px; color: #94a3b8;"></i>
-                            <input type="text" name="representante" value="{{ old('representante', $empresa->emp_representante) }}" required class="form-control" style="padding-left: 50px; height: 56px; border-radius: 16px; border: 1.5px solid #e2e8f0; font-weight: 600;">
+                        <label class="empresa-form-label">Representante Legal Certificado</label>
+                        <div class="empresa-input-container">
+                            <i class="fas fa-user-tie empresa-input-icon"></i>
+                            <input type="text" name="representante" value="{{ old('representante', $empresa->emp_representante) }}" required class="empresa-form-control">
                         </div>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
                         <div class="form-group">
-                            <label style="font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block;">NIT (Fijo por Seguridad)</label>
-                            <div style="position: relative;">
-                                <i class="fas fa-id-card" style="position: absolute; left: 18px; top: 18px; color: #cbd5e1;"></i>
-                                <input type="text" value="{{ $empresa->emp_nit }}" disabled class="form-control" style="padding-left: 50px; height: 56px; border-radius: 16px; border: 1.5px dashed #e2e8f0; background: #f8fafc; color: #94a3b8; font-weight: 600;">
+                            <label class="empresa-form-label" style="color: #94a3b8;">NIT (Fijo por Seguridad)</label>
+                            <div class="empresa-input-container">
+                                <i class="fas fa-id-card empresa-input-icon" style="color: #cbd5e1;"></i>
+                                <input type="text" value="{{ $empresa->emp_nit }}" disabled class="empresa-form-control" style="border-style: dashed; background: #f8fafc; color: #94a3b8;">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label style="font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block;">Email (Fijo por Seguridad)</label>
-                            <div style="position: relative;">
-                                <i class="fas fa-envelope" style="position: absolute; left: 18px; top: 18px; color: #cbd5e1;"></i>
-                                <input type="email" value="{{ $empresa->emp_correo }}" disabled class="form-control" style="padding-left: 50px; height: 56px; border-radius: 16px; border: 1.5px dashed #e2e8f0; background: #f8fafc; color: #94a3b8; font-weight: 600;">
+                            <label class="empresa-form-label" style="color: #94a3b8;">Email (Fijo por Seguridad)</label>
+                            <div class="empresa-input-container">
+                                <i class="fas fa-envelope empresa-input-icon" style="color: #cbd5e1;"></i>
+                                <input type="email" value="{{ $empresa->emp_correo }}" disabled class="empresa-form-control" style="border-style: dashed; background: #f8fafc; color: #94a3b8;">
                             </div>
                         </div>
                     </div>
@@ -150,17 +154,17 @@
                         Credenciales de Seguridad
                     </h4>
                     <div class="form-group">
-                        <label style="font-size: 12px; font-weight: 700; color: var(--text-light); margin-bottom: 8px; display: block;">Nueva Contraseña</label>
-                        <div style="position: relative; max-width: 400px;">
-                            <i class="fas fa-key" style="position: absolute; left: 16px; top: 14px; color: #94a3b8;"></i>
-                            <input type="password" name="password" placeholder="Mín. 6 caracteres para actualizar" class="form-control" style="padding-left: 44px; height: 46px; border-radius: 12px;">
+                        <label class="empresa-form-label" style="text-transform: none; letter-spacing: 0;">Nueva Contraseña</label>
+                        <div class="empresa-input-container" style="max-width: 400px;">
+                            <i class="fas fa-key empresa-input-icon" style="top: 14px; left: 16px;"></i>
+                            <input type="password" name="password" placeholder="Mín. 6 caracteres para actualizar" class="form-control" style="padding-left: 44px; height: 46px; border-radius: 12px; width: 100%; border: 1px solid #e2e8f0;">
                         </div>
                         <p style="font-size: 11px; color: #64748b; margin-top: 8px; font-weight: 600;"><i class="fas fa-info-circle"></i> Solo completa este campo si deseas cambiar tu clave actual.</p>
                     </div>
                 </div>
 
                 <div style="margin-top: 48px; display: flex; justify-content: flex-end;">
-                    <button type="submit" class="btn-premium" style="padding: 18px 56px; font-size: 16px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
+                    <button type="submit" class="btn-premium" style="padding: 18px 56px; font-size: 16px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);">
                         <i class="fas fa-cloud-arrow-up"></i> Actualizar Perfil Corporativo
                     </button>
                 </div>
@@ -171,12 +175,12 @@
         <div style="display: grid; gap: 32px; align-content: start;">
             
             <!-- Contact Info Bento -->
-            <div class="glass-card" style="padding: 32px; background: white;">
+            <div class="glass-card empresa-contact-card">
                 <h4 style="font-size: 13px; font-weight: 800; color: var(--text-light); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">Puntos de Contacto</h4>
                 
                 <div style="display: grid; gap: 20px;">
-                    <div style="display: flex; align-items: flex-start; gap: 16px;">
-                        <div style="width: 40px; height: 40px; border-radius: 10px; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <div class="empresa-contact-item">
+                        <div class="empresa-contact-icon" style="background: #eff6ff; color: #3b82f6;">
                             <i class="fas fa-user-shield"></i>
                         </div>
                         <div>
@@ -184,8 +188,8 @@
                             <span style="font-size: 14px; font-weight: 700; color: var(--text);">{{ $empresa->emp_representante }}</span>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: flex-start; gap: 16px;">
-                        <div style="width: 40px; height: 40px; border-radius: 10px; background: #fef2f2; color: #ef4444; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <div class="empresa-contact-item">
+                        <div class="empresa-contact-icon" style="background: #fef2f2; color: #ef4444;">
                             <i class="fas fa-envelope-open-text"></i>
                         </div>
                         <div>
@@ -211,8 +215,4 @@
     </div>
 </div>
 
-<style>
-    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .glass-card:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0,0,0,0.06); }
-</style>
 @endsection

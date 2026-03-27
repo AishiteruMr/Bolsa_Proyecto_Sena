@@ -23,22 +23,26 @@
     </a>
 @endsection
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/instructor.css') }}">
+@endsection
+
 @section('content')
-<div class="profile-container" style="max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
+<div class="animate-fade-in" style="max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
     
     <!-- HEADER BENTO -->
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px;">
         
         <!-- Mentor Profile Card -->
-        <div class="glass-card" style="grid-column: span 2; display: flex; align-items: center; gap: 40px; padding: 40px; background: linear-gradient(135deg, #0f766e, #115e59); color: white; border: none;">
+        <div class="instructor-profile-mentor-card glass-card">
             <div class="profile-image-wrapper">
-                <div style="width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 4px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 800; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                <div class="instructor-profile-avatar-lg">
                     {{ strtoupper(substr($instructor->ins_nombre ?? 'I', 0, 1)) }}
                 </div>
             </div>
             <div style="flex: 1;">
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                    <span style="background: var(--primary); color: white; padding: 4px 14px; border-radius: 30px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Instructor Líder</span>
+                    <span class="instructor-tag">Instructor Líder</span>
                     <span style="color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 500;"><i class="fas fa-envelope" style="margin-right: 6px;"></i>{{ $usuario->usr_correo }}</span>
                 </div>
                 <h2 style="font-size: 34px; font-weight: 800; letter-spacing: -0.5px;">{{ $instructor->ins_nombre }} {{ $instructor->ins_apellido }}</h2>
@@ -50,7 +54,7 @@
         </div>
 
         <!-- Role Breakdown -->
-        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: center; padding: 32px; gap: 24px; background: #fff;">
+        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: center; padding: 32px; gap: 24px; background: #fff; border-radius: var(--radius);">
             <div>
                 <h4 style="font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Disponibilidad</h4>
                 <div style="display: flex; align-items: center; gap: 10px;">
@@ -69,9 +73,9 @@
     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
         
         <!-- Main Management Form -->
-        <div class="glass-card" style="padding: 40px;">
+        <div class="glass-card" style="padding: 40px; border-radius: var(--radius);">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px;">
-                <h3 style="font-size: 20px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 12px;">
+                <h3 style="font-size: 20px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 12px;">
                     <i class="fas fa-id-badge" style="color: var(--primary);"></i> Perfil Profesional
                 </h3>
             </div>
@@ -80,36 +84,36 @@
                 @csrf
                 @method('PUT')
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-                    <div class="form-group-modern">
-                        <label>Nombres</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-user-tag"></i>
-                            <input type="text" name="nombre" value="{{ old('nombre', $instructor->ins_nombre) }}" required>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div class="instructor-form-group">
+                        <label style="font-size: 14px; font-weight: 700; color: #475569;">Nombres</label>
+                        <div class="instructor-input-wrapper">
+                            <i class="fas fa-user-tag instructor-input-icon"></i>
+                            <input type="text" name="nombre" value="{{ old('nombre', $instructor->ins_nombre) }}" required class="instructor-input-control">
                         </div>
                     </div>
-                    <div class="form-group-modern">
-                        <label>Apellidos</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-user-tag"></i>
-                            <input type="text" name="apellido" value="{{ old('apellido', $instructor->ins_apellido) }}" required>
+                    <div class="instructor-form-group">
+                        <label style="font-size: 14px; font-weight: 700; color: #475569;">Apellidos</label>
+                        <div class="instructor-input-wrapper">
+                            <i class="fas fa-user-tag instructor-input-icon"></i>
+                            <input type="text" name="apellido" value="{{ old('apellido', $instructor->ins_apellido) }}" required class="instructor-input-control">
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group-modern" style="margin-bottom: 24px;">
-                    <label>Especialidad / Área de Influencia</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                        <input type="text" name="especialidad" value="{{ old('especialidad', $instructor->ins_especialidad) }}" required>
+                <div class="instructor-form-group">
+                    <label style="font-size: 14px; font-weight: 700; color: #475569;">Especialidad / Área de Influencia</label>
+                    <div class="instructor-input-wrapper">
+                        <i class="fas fa-graduation-cap instructor-input-icon"></i>
+                        <input type="text" name="especialidad" value="{{ old('especialidad', $instructor->ins_especialidad) }}" required class="instructor-input-control">
                     </div>
                 </div>
 
-                <div class="form-group-modern" style="margin-bottom: 40px;">
-                    <label>Correo Electrónico (Solo Lectura)</label>
-                    <div class="input-with-icon disabled">
-                        <i class="fas fa-envelope-open"></i>
-                        <input type="email" value="{{ $usuario->usr_correo }}" disabled>
+                <div class="instructor-form-group" style="margin-bottom: 40px;">
+                    <label style="font-size: 14px; font-weight: 700; color: #475569;">Correo Electrónico (Solo Lectura)</label>
+                    <div class="instructor-input-wrapper">
+                        <i class="fas fa-envelope-open instructor-input-icon"></i>
+                        <input type="email" value="{{ $usuario->usr_correo }}" disabled class="instructor-input-control" style="background: #f1f5f9; color: #94a3b8; cursor: not-allowed; border-style: dashed;">
                     </div>
                 </div>
 
@@ -118,19 +122,19 @@
                     <h4 style="font-size: 16px; font-weight: 800; color: #115e59; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
                         <i class="fas fa-key"></i> Parámetros de Seguridad
                     </h4>
-                    <div class="form-group-modern">
-                        <label>Actualizar Contraseña</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-shield-alt"></i>
-                            <input type="password" name="password" placeholder="Define una nueva contraseña segura">
+                    <div class="instructor-form-group" style="margin-bottom: 0;">
+                        <label style="font-size: 14px; font-weight: 700; color: #475569;">Actualizar Contraseña</label>
+                        <div class="instructor-input-wrapper">
+                            <i class="fas fa-shield-alt instructor-input-icon"></i>
+                            <input type="password" name="password" placeholder="Define una nueva contraseña segura" class="instructor-input-control">
                         </div>
-                        <p style="font-size: 13px; color: #64748b; margin-top: 8px;">Mantén este campo vacío para conservar tu contraseña actual.</p>
+                        <p style="font-size: 13px; color: #64748b; margin-top: 8px; font-weight: 500;">Mantén este campo vacío para conservar tu contraseña actual.</p>
                     </div>
                 </div>
 
                 <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
-                    <button type="submit" class="btn btn-primary" style="padding: 16px 48px; font-size: 16px; border-radius: 14px; background: #0f766e; height: auto;">
-                        <i class="fas fa-check-circle" style="margin-right: 12px;"></i> Actualizar Información
+                    <button type="submit" class="btn-instructor-save">
+                        <i class="fas fa-check-circle"></i> Actualizar Información
                     </button>
                 </div>
             </form>
@@ -143,26 +147,26 @@
                 <h4 style="font-size: 14px; font-weight: 700; color: #64748b; margin-bottom: 24px; text-transform: uppercase;">Métricas de Seguimiento</h4>
                 
                 <div style="display: grid; gap: 20px;">
-                    <div class="stat-row">
+                    <div class="instructor-stat-row">
                         <div class="stat-info">
                             <div class="stat-icon" style="background: rgba(15, 118, 110, 0.1); color: #0f766e;"><i class="fas fa-project-diagram"></i></div>
-                            <span style="font-size: 14px; font-weight: 600; color: #475569;">Proyectos Liderados</span>
+                            <span style="font-size: 14px; font-weight: 700; color: #475569;">Proyectos Liderados</span>
                         </div>
                         <span class="stat-number">{{ $proyectosCount }}</span>
                     </div>
 
-                    <div class="stat-row">
+                    <div class="stat-row instructor-stat-row">
                         <div class="stat-info">
                             <div class="stat-icon" style="background: rgba(57, 169, 0, 0.1); color: var(--primary);"><i class="fas fa-user-graduate"></i></div>
-                            <span style="font-size: 14px; font-weight: 600; color: #475569;">Aprendices a Cargo</span>
+                            <span style="font-size: 14px; font-weight: 700; color: #475569;">Aprendices a Cargo</span>
                         </div>
                         <span class="stat-number">{{ $aprendicesCount }}</span>
                     </div>
 
-                    <div class="stat-row">
+                    <div class="stat-row instructor-stat-row">
                         <div class="stat-info">
                             <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;"><i class="fas fa-clipboard-check"></i></div>
-                            <span style="font-size: 14px; font-weight: 600; color: #475569;">Revisiones Pendientes</span>
+                            <span style="font-size: 14px; font-weight: 700; color: #475569;">Revisiones Pendientes</span>
                         </div>
                         <span class="stat-number">{{ $evidenciasPendientesCount }}</span>
                     </div>
@@ -192,109 +196,4 @@
     </div>
 </div>
 
-<style>
-    .glass-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 32px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.01);
-    }
-
-    .form-group-modern {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .form-group-modern label {
-        font-size: 14px;
-        font-weight: 700;
-        color: #475569;
-        padding-left: 4px;
-    }
-
-    .input-with-icon {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-
-    .input-with-icon i {
-        position: absolute;
-        left: 20px;
-        color: #94a3b8;
-        font-size: 18px;
-        transition: color 0.3s;
-    }
-
-    .input-with-icon input {
-        width: 100%;
-        padding: 16px 20px 16px 56px;
-        border-radius: 18px;
-        border: 2px solid #f1f5f9;
-        background: #f8fafc;
-        font-size: 15px;
-        font-weight: 600;
-        color: #1e293b;
-        transition: all 0.3s ease;
-        outline: none;
-    }
-
-    .input-with-icon input:focus {
-        border-color: #0f766e;
-        background: #fff;
-        box-shadow: 0 0 0 5px rgba(15, 118, 110, 0.1);
-    }
-
-    .input-with-icon input:focus + i {
-        color: #0f766e;
-    }
-
-    .input-with-icon.disabled input {
-        background: #f1f5f9;
-        color: #94a3b8;
-        cursor: not-allowed;
-        border-style: dashed;
-    }
-
-    .stat-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px;
-        border-radius: 16px;
-        transition: background 0.3s;
-    }
-
-    .stat-row:hover {
-        background: #f8fafc;
-    }
-
-    .stat-info {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-
-    .stat-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-    }
-
-    .stat-number {
-        font-size: 22px;
-        font-weight: 800;
-        color: #1e293b;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(15, 118, 110, 0.25);
-    }
-</style>
 @endsection

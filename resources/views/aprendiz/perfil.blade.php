@@ -20,16 +20,20 @@
     </a>
 @endsection
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/aprendiz.css') }}">
+@endsection
+
 @section('content')
-<div class="profile-container" style="max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
+<div class="animate-fade-in" style="max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
     
     <!-- HEADER BENTO -->
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px;">
         
         <!-- Welcome Card -->
         <div class="glass-card" style="grid-column: span 2; display: flex; align-items: center; gap: 32px; padding: 32px; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,253,244,0.95));">
-            <div class="profile-avatar-wrapper" style="position: relative;">
-                <div style="width: 120px; height: 120px; border-radius: 30px; background: linear-gradient(135deg, var(--primary), #2d8500); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px; font-weight: 800; transform: rotate(-3deg); box-shadow: 0 15px 35px rgba(57, 169, 0, 0.25);">
+            <div class="aprendiz-profile-avatar-wrapper">
+                <div class="aprendiz-profile-avatar">
                     {{ strtoupper(substr($aprendiz->apr_nombre ?? 'A', 0, 1)) }}
                 </div>
                 <div style="position: absolute; bottom: -5px; right: -5px; width: 32px; height: 32px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #f0fdf4; color: var(--primary); font-size: 14px; box-shadow: var(--shadow-sm);">
@@ -41,7 +45,7 @@
                 <h2 style="font-size: 32px; font-weight: 800; color: #1e293b; margin-top: 4px;">Hola, {{ $aprendiz->apr_nombre }}!</h2>
                 
                 <!-- Perfil Integrity Bar -->
-                <div style="margin-top: 20px; max-width: 400px;">
+                <div class="aprendiz-profile-integrity-card">
                     @php
                         $camposCompletos = 0;
                         if(!empty($aprendiz->apr_nombre)) $camposCompletos++;
@@ -54,22 +58,22 @@
                         <span style="font-size: 12px; font-weight: 700; color: #64748b;">Integridad del Perfil</span>
                         <span style="font-size: 12px; font-weight: 800; color: var(--primary);">{{ $progresoPerfil }}%</span>
                     </div>
-                    <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
-                        <div style="width: {{ $progresoPerfil }}%; height: 100%; background: linear-gradient(90deg, var(--primary), #2d8500); border-radius: 10px; transition: width 1s ease;"></div>
+                    <div class="aprendiz-progress-bar">
+                        <div class="aprendiz-progress-fill" style="width: {{ $progresoPerfil }}%; background: linear-gradient(90deg, var(--primary), #2d8500);"></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Training Program Card -->
-        <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between; padding: 32px; background: #fff; border-left: 6px solid var(--primary);">
+        <div class="glass-card aprendiz-program-card">
             <div>
                 <i class="fas fa-graduation-cap" style="font-size: 24px; color: var(--primary); margin-bottom: 16px;"></i>
                 <h4 style="font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase;">Programa</h4>
                 <p style="font-size: 20px; font-weight: 700; color: #1e293b; margin-top: 4px; line-height: 1.3;">{{ $aprendiz->apr_programa }}</p>
             </div>
             <div style="margin-top: 16px;">
-                <span class="badge badge-success">En Formación</span>
+                <span class="aprendiz-badge-portal" style="background: #f0fdf4; border-color: #bbf7d0; color: #16a34a;">En Formación</span>
             </div>
         </div>
     </div>
@@ -80,7 +84,7 @@
         <!-- Editable Info -->
         <div class="glass-card" style="padding: 40px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
-                <h3 style="font-size: 20px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 12px;">
+                <h3 style="font-size: 20px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 12px;">
                     <i class="fas fa-user-edit" style="color: var(--primary);"></i> Datos Personales
                 </h3>
             </div>
@@ -89,56 +93,56 @@
                 @csrf
                 @method('PUT')
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-                    <div class="form-group-modern">
-                        <label>Nombres</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-user"></i>
-                            <input type="text" name="nombre" value="{{ old('nombre', $aprendiz->apr_nombre) }}" required>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <div class="aprendiz-form-group">
+                        <label class="aprendiz-form-label">Nombres</label>
+                        <div class="aprendiz-input-wrapper">
+                            <i class="fas fa-user aprendiz-input-icon"></i>
+                            <input type="text" name="nombre" value="{{ old('nombre', $aprendiz->apr_nombre) }}" required class="aprendiz-input-control">
                         </div>
                     </div>
-                    <div class="form-group-modern">
-                        <label>Apellidos</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-user"></i>
-                            <input type="text" name="apellido" value="{{ old('apellido', $aprendiz->apr_apellido) }}" required>
+                    <div class="aprendiz-form-group">
+                        <label class="aprendiz-form-label">Apellidos</label>
+                        <div class="aprendiz-input-wrapper">
+                            <i class="fas fa-user aprendiz-input-icon"></i>
+                            <input type="text" name="apellido" value="{{ old('apellido', $aprendiz->apr_apellido) }}" required class="aprendiz-input-control">
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group-modern" style="margin-bottom: 24px;">
-                    <label>Programa de Formación</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                        <input type="text" name="programa" value="{{ old('programa', $aprendiz->apr_programa) }}" required>
+                <div class="aprendiz-form-group">
+                    <label class="aprendiz-form-label">Programa de Formación</label>
+                    <div class="aprendiz-input-wrapper">
+                        <i class="fas fa-graduation-cap aprendiz-input-icon"></i>
+                        <input type="text" name="programa" value="{{ old('programa', $aprendiz->apr_programa) }}" required class="aprendiz-input-control">
                     </div>
                 </div>
 
-                <div class="form-group-modern" style="margin-bottom: 40px;">
-                    <label>Correo Institucional (No editable)</label>
-                    <div class="input-with-icon disabled">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" value="{{ $usuario->usr_correo }}" disabled>
+                <div class="aprendiz-form-group" style="margin-bottom: 40px;">
+                    <label class="aprendiz-form-label">Correo Institucional (No editable)</label>
+                    <div class="aprendiz-input-wrapper">
+                        <i class="fas fa-envelope aprendiz-input-icon"></i>
+                        <input type="email" value="{{ $usuario->usr_correo }}" disabled class="aprendiz-input-control aprendiz-input-disabled">
                     </div>
                 </div>
 
                 <!-- Security Section -->
-                <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 24px;">
-                    <h4 style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 20px; padding: 24px;">
+                    <h4 style="font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                         <i class="fas fa-shield-alt" style="color: #64748b;"></i> Seguridad
                     </h4>
-                    <div class="form-group-modern">
-                        <label>Nueva Contraseña (Opcional)</label>
-                        <div class="input-with-icon password">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" name="password" placeholder="Mínimo 6 caracteres (deja vacío si no deseas cambiar)">
+                    <div class="aprendiz-form-group" style="margin-bottom: 0;">
+                        <label class="aprendiz-form-label">Nueva Contraseña (Opcional)</label>
+                        <div class="aprendiz-input-wrapper">
+                            <i class="fas fa-lock aprendiz-input-icon"></i>
+                            <input type="password" name="password" placeholder="Mínimo 6 caracteres (deja vacío si no deseas cambiar)" class="aprendiz-input-control">
                         </div>
                     </div>
                 </div>
 
                 <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
-                    <button type="submit" class="btn btn-primary" style="padding: 14px 40px; font-size: 16px; border-radius: 12px; height: auto;">
-                        <i class="fas fa-sync-alt" style="margin-right: 10px;"></i> Actualizar Mi Perfil
+                    <button type="submit" class="btn-aprendiz-action">
+                        <i class="fas fa-sync-alt"></i> Actualizar Mi Perfil
                     </button>
                 </div>
             </form>
@@ -199,80 +203,4 @@
     </div>
 </div>
 
-<style>
-    .glass-card {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        border-radius: 24px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-        transition: transform 0.3s ease;
-    }
-
-    .form-group-modern {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .form-group-modern label {
-        font-size: 14px;
-        font-weight: 700;
-        color: #64748b;
-        margin-left: 4px;
-    }
-
-    .input-with-icon {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-
-    .input-with-icon i {
-        position: absolute;
-        left: 16px;
-        color: #94a3b8;
-        font-size: 16px;
-        transition: color 0.3s ease;
-    }
-
-    .input-with-icon input {
-        width: 100%;
-        padding: 14px 16px 14px 48px;
-        border-radius: 14px;
-        border: 2px solid #e2e8f0;
-        background: #fff;
-        font-size: 15px;
-        font-weight: 500;
-        color: #1e293b;
-        transition: all 0.3s ease;
-        outline: none;
-    }
-
-    .input-with-icon input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(57, 169, 0, 0.1);
-    }
-
-    .input-with-icon input:focus + i {
-        color: var(--primary);
-    }
-
-    .input-with-icon.disabled input {
-        background: #f1f5f9;
-        color: #94a3b8;
-        cursor: not-allowed;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, var(--primary), var(--primary-light));
-        border: none;
-        box-shadow: 0 4px 12px rgba(57, 169, 0, 0.3);
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(57, 169, 0, 0.4);
-    }
-</style>
 @endsection

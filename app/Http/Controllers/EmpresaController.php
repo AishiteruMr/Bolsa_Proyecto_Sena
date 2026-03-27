@@ -6,11 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Proyecto;
 use App\Models\Postulacion;
 use App\Models\Empresa;
 use App\Models\Evidencia;
 use App\Models\Etapa;
+use App\Models\Aprendiz;
+use App\Models\User;
+use App\Mail\PostulacionExitosa;
+use App\Mail\PostulacionEstadoCambiado;
 
 class EmpresaController extends Controller
 {
@@ -241,7 +247,24 @@ class EmpresaController extends Controller
 
         $postulacion->update(['pos_estado' => $request->estado]);
 
-        return back()->with('success', 'Estado de postulación actualizado.');
+        // Send email notification to aprendiz
+        try {
+            $aprendiz = $postulacion->aprendiz;
+            $usuarioCorreo = optional($aprendiz->usuario)->usr_correo;
+            if ($usuarioCorreo) {
+                Mail::to($usuarioCorreo)->send(
+                    new PostulacionEstadoCambiado(
+                        $aprendiz->apr_nombre ?? 'Aprendiz',
+                        $postulacion->proyecto,
+                        $request->estado
+                    )
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error('Error enviando email de estado postulación: ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Estado de postulación actualizado y aprendiz notificado.');
     }
 
     public function perfil()
