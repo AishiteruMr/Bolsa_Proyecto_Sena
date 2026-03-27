@@ -87,7 +87,7 @@ class EmpresaController extends Controller
             'requisitos'   => 'required|string|max:200',
             'habilidades'  => 'required|string|max:200',
             'fecha_publi'  => 'required|date',
-            'imagen'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'imagen'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
         $nit = session('nit');

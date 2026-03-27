@@ -57,26 +57,91 @@
         </header>
 
         <div class="page-content">
-            @if(session('success'))
-                <div class="alert alert-success">✅ {{ session('success') }}</div>
-            @endif
-            @if(session('error'))
-                <div class="alert alert-error">❌ {{ session('error') }}</div>
-            @endif
-            @if(session('warning'))
-                <div class="alert alert-warning">⚠️ {{ session('warning') }}</div>
-            @endif
-            @if($errors->any())
-                <div class="alert alert-error">
-                    @foreach($errors->all() as $error)
-                        <div>{{ $error }}</div>
-                    @endforeach
-                </div>
-            @endif
-
             @yield('content')
         </div>
     </div>
+
+    {{-- ── TOAST CONTAINER ──────────────────────────────────── --}}
+    <div id="toast-container" style="position:fixed; bottom:28px; right:28px; z-index:9999; display:flex; flex-direction:column; gap:12px; pointer-events:none;"></div>
+
+    {{-- ── CONFIRM MODAL ────────────────────────────────────── --}}
+    <div id="confirm-modal" style="display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center; background:rgba(0,0,0,0.45); backdrop-filter:blur(4px);">
+        <div style="background:#fff; border-radius:24px; padding:40px 36px; max-width:420px; width:90%; box-shadow:0 24px 64px rgba(0,0,0,0.18); text-align:center;">
+            <div style="width:60px; height:60px; border-radius:50%; background:#fff1f2; color:#ef4444; font-size:26px; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                <i class="fas fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="confirm-title" style="font-size:20px; font-weight:800; color:#1e293b; margin-bottom:10px;">¿Estás seguro?</h3>
+            <p id="confirm-msg" style="font-size:14px; color:#64748b; font-weight:500; margin-bottom:28px; line-height:1.6;">Esta acción no se puede deshacer.</p>
+            <div style="display:flex; gap:12px; justify-content:center;">
+                <button onclick="closeConfirm()" style="padding:12px 28px; border-radius:12px; border:1.5px solid #e2e8f0; background:#fff; color:#64748b; font-weight:700; font-size:14px; cursor:pointer;">Cancelar</button>
+                <button id="confirm-ok" style="padding:12px 28px; border-radius:12px; border:none; background:#ef4444; color:#fff; font-weight:800; font-size:14px; cursor:pointer;">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    @keyframes slideInToast {
+        from { opacity:0; transform:translateX(60px) scale(0.9); }
+        to   { opacity:1; transform:translateX(0) scale(1); }
+    }
+    </style>
+
+    <script>
+    // ── TOAST ─────────────────────────────────────────────────────
+    function showToast(type, message) {
+        const icons   = { success:'fa-circle-check', error:'fa-circle-xmark', warning:'fa-triangle-exclamation' };
+        const colors  = { success:'#22c55e', error:'#ef4444', warning:'#f59e0b' };
+        const bgs     = { success:'#f0fdf4', error:'#fef2f2', warning:'#fffbeb' };
+        const borders = { success:'#bbf7d0', error:'#fecaca', warning:'#fde68a' };
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            pointer-events:all; display:flex; align-items:center; gap:14px;
+            background:${bgs[type]}; color:#1e293b; border:1.5px solid ${borders[type]};
+            border-left:4px solid ${colors[type]}; border-radius:16px;
+            padding:16px 20px; min-width:280px; max-width:380px;
+            box-shadow:0 8px 32px rgba(0,0,0,0.12);
+            animation:slideInToast 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            font-family:'Outfit',sans-serif; font-weight:600; font-size:14px;
+        `;
+        toast.innerHTML = `<i class="fas ${icons[type]}" style="font-size:20px;color:${colors[type]};flex-shrink:0;"></i><span style="flex:1;">${message}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:16px;padding:0;"><i class="fas fa-xmark"></i></button>`;
+        document.getElementById('toast-container').appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.4s';
+            setTimeout(() => toast.remove(), 400);
+        }, 4500);
+    }
+
+    // ── AUTO FLASH ────────────────────────────────────────────────
+    @if(session('success')) showToast('success', "{{ addslashes(session('success')) }}"); @endif
+    @if(session('error'))   showToast('error',   "{{ addslashes(session('error')) }}"); @endif
+    @if(session('warning')) showToast('warning', "{{ addslashes(session('warning')) }}"); @endif
+    @if($errors->any()) @foreach($errors->all() as $e) showToast('error', "{{ addslashes($e) }}"); @endforeach @endif
+
+    // ── CONFIRM MODAL ─────────────────────────────────────────────
+    function openConfirm(title, msg, cb) {
+        document.getElementById('confirm-title').textContent = title || '¿Estás seguro?';
+        document.getElementById('confirm-msg').textContent   = msg   || 'Esta acción no se puede deshacer.';
+        document.getElementById('confirm-ok').onclick = () => { closeConfirm(); if (cb) cb(); };
+        document.getElementById('confirm-modal').style.display = 'flex';
+    }
+    function closeConfirm() {
+        document.getElementById('confirm-modal').style.display = 'none';
+    }
+
+    // Auto-wire [data-confirm] buttons
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[data-confirm]').forEach(btn => {
+            const title = btn.dataset.confirmTitle || '¿Confirmar acción?';
+            const msg   = btn.dataset.confirm;
+            const form  = btn.closest('form');
+            btn.addEventListener('click', e => {
+                e.preventDefault();
+                openConfirm(title, msg, () => { form ? form.submit() : btn.click(); });
+            });
+        });
+    });
+    </script>
 
     <script src="{{ asset('js/dashboard.js') }}"></script>
     @yield('scripts')

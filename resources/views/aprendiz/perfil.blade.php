@@ -1,5 +1,4 @@
 @extends('layouts.dashboard')
-
 @section('title', 'Mi Perfil - Inspírate SENA')
 @section('page-title', 'Mi Perfil')
 
@@ -14,6 +13,9 @@
     <a href="{{ route('aprendiz.postulaciones') }}" class="nav-item {{ request()->routeIs('aprendiz.postulaciones') ? 'active' : '' }}">
         <i class="fas fa-paper-plane"></i> Mis Postulaciones
     </a>
+    <a href="{{ route('aprendiz.historial') }}" class="nav-item {{ request()->routeIs('aprendiz.historial') ? 'active' : '' }}">
+        <i class="fas fa-history"></i> Historial
+    </a>
     <span class="nav-label">Cuenta</span>
     <a href="{{ route('aprendiz.perfil') }}" class="nav-item {{ request()->routeIs('aprendiz.perfil') ? 'active' : '' }}">
         <i class="fas fa-user"></i> Mi Perfil
@@ -25,182 +27,194 @@
 @endsection
 
 @section('content')
-<div class="animate-fade-in" style="max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
-    
-    <!-- HEADER BENTO -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px;">
-        
-        <!-- Welcome Card -->
-        <div class="glass-card" style="grid-column: span 2; display: flex; align-items: center; gap: 32px; padding: 32px; background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,253,244,0.95));">
-            <div class="aprendiz-profile-avatar-wrapper">
-                <div class="aprendiz-profile-avatar">
-                    {{ strtoupper(substr($aprendiz->apr_nombre ?? 'A', 0, 1)) }}
-                </div>
-                <div style="position: absolute; bottom: -5px; right: -5px; width: 32px; height: 32px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #f0fdf4; color: var(--primary); font-size: 14px; box-shadow: var(--shadow-sm);">
-                    <i class="fas fa-check-circle"></i>
-                </div>
+@php
+    $camposCompletos = 0;
+    if(!empty($aprendiz->apr_nombre))  $camposCompletos++;
+    if(!empty($aprendiz->apr_apellido)) $camposCompletos++;
+    if(!empty($aprendiz->apr_programa)) $camposCompletos++;
+    if(!empty($usuario->usr_correo))    $camposCompletos++;
+    $progresoPerfil = ($camposCompletos / 4) * 100;
+
+    $totalPost     = $aprendiz->postulaciones()->count();
+    $aprobadas     = $aprendiz->postulacionesAprobadas()->count();
+    $evidencias    = $aprendiz->evidencias()->count();
+@endphp
+
+<div class="animate-fade-in" style="max-width: 1100px; margin: 0 auto; padding-bottom: 40px;">
+
+    {{-- ── HERO ──────────────────────────────────────────────────── --}}
+    <div class="apr-hero">
+        <div style="position:relative; flex-shrink:0; z-index:1;">
+            <div class="apr-avatar-hero">
+                {{ strtoupper(substr($aprendiz->apr_nombre ?? 'A', 0, 1)) }}
             </div>
-            <div>
-                <span style="font-size: 14px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">Aprendiz SENA</span>
-                <h2 style="font-size: 32px; font-weight: 800; color: #1e293b; margin-top: 4px;">Hola, {{ $aprendiz->apr_nombre }}!</h2>
-                
-                <!-- Perfil Integrity Bar -->
-                <div class="aprendiz-profile-integrity-card">
-                    @php
-                        $camposCompletos = 0;
-                        if(!empty($aprendiz->apr_nombre)) $camposCompletos++;
-                        if(!empty($aprendiz->apr_apellido)) $camposCompletos++;
-                        if(!empty($aprendiz->apr_programa)) $camposCompletos++;
-                        if(!empty($usuario->usr_correo)) $camposCompletos++;
-                        $progresoPerfil = ($camposCompletos / 4) * 100;
-                    @endphp
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-size: 12px; font-weight: 700; color: #64748b;">Integridad del Perfil</span>
-                        <span style="font-size: 12px; font-weight: 800; color: var(--primary);">{{ $progresoPerfil }}%</span>
-                    </div>
-                    <div class="aprendiz-progress-bar">
-                        <div class="aprendiz-progress-fill" style="width: {{ $progresoPerfil }}%; background: linear-gradient(90deg, var(--primary), #2d8500);"></div>
-                    </div>
+            <div class="apr-meta-badge"><i class="fas fa-star"></i></div>
+        </div>
+
+        <div class="apr-hero-meta">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <span style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.2); padding:4px 14px; border-radius:20px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Aprendiz SENA</span>
+                @if($aprendiz->apr_estado)
+                    <span style="background:rgba(251,191,36,0.2); border:1px solid rgba(251,191,36,0.35); color:#fde68a; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:800;">✦ En Formación</span>
+                @endif
+            </div>
+            <h2 style="font-size:34px; font-weight:900; letter-spacing:-0.5px; margin-bottom:4px;">
+                Hola, {{ $aprendiz->apr_nombre }}!
+            </h2>
+            <p style="font-size:14px; color:rgba(255,255,255,0.6); font-weight:500;">
+                <i class="fas fa-graduation-cap" style="margin-right:6px;"></i>{{ $aprendiz->apr_programa }}
+            </p>
+
+            {{-- Integrity bar --}}
+            <div style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:14px; padding:14px 18px; margin-top:16px; max-width:380px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:11px; font-weight:700; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.5px;">Integridad del Perfil</span>
+                    <span style="font-size:13px; font-weight:900; color:#fde68a;">{{ $progresoPerfil }}%</span>
+                </div>
+                <div style="height:6px; background:rgba(255,255,255,0.15); border-radius:3px; overflow:hidden;">
+                    <div style="width:{{ $progresoPerfil }}%; height:100%; background:linear-gradient(90deg,#fde68a,#fbbf24); border-radius:3px; transition:width 1.2s ease;"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Training Program Card -->
-        <div class="glass-card aprendiz-program-card">
-            <div>
-                <i class="fas fa-graduation-cap" style="font-size: 24px; color: var(--primary); margin-bottom: 16px;"></i>
-                <h4 style="font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase;">Programa</h4>
-                <p style="font-size: 20px; font-weight: 700; color: #1e293b; margin-top: 4px; line-height: 1.3;">{{ $aprendiz->apr_programa }}</p>
+        {{-- Stats --}}
+        <div style="display:grid; gap:10px; position:relative; z-index:1; flex-shrink:0;">
+            <div class="apr-stat-chip">
+                <div style="font-size:28px; font-weight:900; color:white;">{{ $totalPost }}</div>
+                <div style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-top:2px;">Postulaciones</div>
             </div>
-            <div style="margin-top: 16px;">
-                <span class="aprendiz-badge-portal" style="background: #f0fdf4; border-color: #bbf7d0; color: #16a34a;">En Formación</span>
+            <div class="apr-stat-chip">
+                <div style="font-size:28px; font-weight:900; color:#86efac;">{{ $aprobadas }}</div>
+                <div style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-top:2px;">Aprobadas</div>
+            </div>
+            <div class="apr-stat-chip">
+                <div style="font-size:28px; font-weight:900; color:#fde68a;">{{ $evidencias }}</div>
+                <div style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-top:2px;">Evidencias</div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN GRID -->
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
-        
-        <!-- Editable Info -->
-        <div class="glass-card" style="padding: 40px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
-                <h3 style="font-size: 20px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 12px;">
-                    <i class="fas fa-user-edit" style="color: var(--primary);"></i> Datos Personales
-                </h3>
+    {{-- ── MAIN GRID ────────────────────────────────────────────── --}}
+    <div style="display:grid; grid-template-columns:2fr 1fr; gap:28px; align-items:start;">
+
+        {{-- FORM --}}
+        <div class="glass-card" style="padding:44px;">
+            <div style="display:flex; align-items:center; gap:16px; margin-bottom:32px; padding-bottom:24px; border-bottom:1.5px solid #f1f5f9;">
+                <div style="width:42px; height:42px; border-radius:12px; background:var(--primary-soft); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:18px;">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+                <div>
+                    <h3 style="font-size:20px; font-weight:800; color:var(--text);">Datos <span style="color:var(--primary);">Personales</span></h3>
+                    <p style="font-size:13px; color:var(--text-light); font-weight:500; margin-top:2px;">Tu información visible en la plataforma.</p>
+                </div>
             </div>
 
             <form action="{{ route('aprendiz.perfil.update') }}" method="POST">
                 @csrf
                 @method('PUT')
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:20px;">
                     <div class="aprendiz-form-group">
                         <label class="aprendiz-form-label">Nombres</label>
                         <div class="aprendiz-input-wrapper">
                             <i class="fas fa-user aprendiz-input-icon"></i>
-                            <input type="text" name="nombre" value="{{ old('nombre', $aprendiz->apr_nombre) }}" required class="aprendiz-input-control">
+                            <input type="text" name="nombre" value="{{ old('nombre', $aprendiz->apr_nombre) }}" required class="aprendiz-input-control" placeholder="Tu nombre">
                         </div>
                     </div>
                     <div class="aprendiz-form-group">
                         <label class="aprendiz-form-label">Apellidos</label>
                         <div class="aprendiz-input-wrapper">
                             <i class="fas fa-user aprendiz-input-icon"></i>
-                            <input type="text" name="apellido" value="{{ old('apellido', $aprendiz->apr_apellido) }}" required class="aprendiz-input-control">
+                            <input type="text" name="apellido" value="{{ old('apellido', $aprendiz->apr_apellido) }}" required class="aprendiz-input-control" placeholder="Tus apellidos">
                         </div>
                     </div>
                 </div>
 
-                <div class="aprendiz-form-group">
+                <div class="aprendiz-form-group" style="margin-bottom:20px;">
                     <label class="aprendiz-form-label">Programa de Formación</label>
                     <div class="aprendiz-input-wrapper">
                         <i class="fas fa-graduation-cap aprendiz-input-icon"></i>
-                        <input type="text" name="programa" value="{{ old('programa', $aprendiz->apr_programa) }}" required class="aprendiz-input-control">
+                        <input type="text" name="programa" value="{{ old('programa', $aprendiz->apr_programa) }}" required class="aprendiz-input-control" placeholder="Tu programa SENA">
                     </div>
                 </div>
 
-                <div class="aprendiz-form-group" style="margin-bottom: 40px;">
-                    <label class="aprendiz-form-label">Correo Institucional (No editable)</label>
+                <div class="aprendiz-form-group" style="margin-bottom:32px;">
+                    <label class="aprendiz-form-label" style="color:#94a3b8;">Correo Institucional (Solo Lectura)</label>
                     <div class="aprendiz-input-wrapper">
                         <i class="fas fa-envelope aprendiz-input-icon"></i>
                         <input type="email" value="{{ $usuario->usr_correo }}" disabled class="aprendiz-input-control aprendiz-input-disabled">
                     </div>
                 </div>
 
-                <!-- Security Section -->
-                <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 20px; padding: 24px;">
-                    <h4 style="font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-shield-alt" style="color: #64748b;"></i> Seguridad
+                {{-- Security --}}
+                <div style="background:#f8fafc; border:2px dashed #e2e8f0; border-radius:20px; padding:28px; margin-bottom:32px;">
+                    <h4 style="font-size:15px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+                        <i class="fas fa-shield-alt" style="color:#64748b;"></i> Seguridad
                     </h4>
-                    <div class="aprendiz-form-group" style="margin-bottom: 0;">
+                    <div class="aprendiz-form-group" style="margin-bottom:0;">
                         <label class="aprendiz-form-label">Nueva Contraseña (Opcional)</label>
                         <div class="aprendiz-input-wrapper">
                             <i class="fas fa-lock aprendiz-input-icon"></i>
-                            <input type="password" name="password" placeholder="Mínimo 6 caracteres (deja vacío si no deseas cambiar)" class="aprendiz-input-control">
+                            <input type="password" name="password" placeholder="Mínimo 6 caracteres (vacío = sin cambio)" class="aprendiz-input-control">
                         </div>
                     </div>
                 </div>
 
-                <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
-                    <button type="submit" class="btn-aprendiz-action">
+                <div style="display:flex; justify-content:flex-end;">
+                    <button type="submit" class="btn-aprendiz-action" style="padding:16px 44px; font-size:15px;">
                         <i class="fas fa-sync-alt"></i> Actualizar Mi Perfil
                     </button>
                 </div>
             </form>
         </div>
 
-        <!-- Sidebar Bento -->
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-            
-            <!-- Quick Stats -->
-            <div class="glass-card" style="padding: 24px;">
-                <h4 style="font-size: 15px; font-weight: 700; color: #64748b; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">Tu Actividad</h4>
-                
-                <div style="display: grid; gap: 16px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg); border-radius: 16px; border: 1px solid var(--border);">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(57, 169, 0, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-paper-plane"></i>
-                            </div>
-                            <span style="font-size: 14px; font-weight: 600; color: #64748b;">Postulaciones</span>
-                        </div>
-                        <span style="font-size: 20px; font-weight: 800; color: #1e293b;">{{ $aprendiz->postulaciones()->count() }}</span>
-                    </div>
+        {{-- SIDEBAR --}}
+        <div style="display:flex; flex-direction:column; gap:20px;">
 
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg); border-radius: 16px; border: 1px solid var(--border);">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-check-circle"></i>
+            {{-- Actividad --}}
+            <div class="glass-card" style="padding:28px;">
+                <h4 style="font-size:12px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:20px;">Tu Actividad</h4>
+                <div style="display:grid; gap:12px;">
+                    @foreach([
+                        ['icon'=>'fa-paper-plane','bg'=>'var(--primary-soft)','color'=>'var(--primary)','label'=>'Postulaciones','value'=>$totalPost],
+                        ['icon'=>'fa-check-circle','bg'=>'#eff6ff','color'=>'#3b82f6','label'=>'Proyectos OK','value'=>$aprobadas],
+                        ['icon'=>'fa-file-alt','bg'=>'#fffbeb','color'=>'#f59e0b','label'=>'Evidencias','value'=>$evidencias],
+                    ] as $s)
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:{{ $s['bg'] }}; border-radius:14px; border:1px solid rgba(0,0,0,0.06);">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div style="width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,0.7); color:{{ $s['color'] }}; display:flex; align-items:center; justify-content:center; font-size:14px;">
+                                <i class="fas {{ $s['icon'] }}"></i>
                             </div>
-                            <span style="font-size: 14px; font-weight: 600; color: #64748b;">Proyectos OK</span>
+                            <span style="font-size:13px; font-weight:700; color:#475569;">{{ $s['label'] }}</span>
                         </div>
-                        <span style="font-size: 20px; font-weight: 800; color: #1e293b;">{{ $aprendiz->postulacionesAprobadas()->count() }}</span>
+                        <span style="font-size:20px; font-weight:900; color:#1e293b;">{{ $s['value'] }}</span>
                     </div>
-
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--bg); border-radius: 16px; border: 1px solid var(--border);">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-file-alt"></i>
-                            </div>
-                            <span style="font-size: 14px; font-weight: 600; color: #64748b;">Evidencias</span>
-                        </div>
-                        <span style="font-size: 20px; font-weight: 800; color: #1e293b;">{{ $aprendiz->evidencias()->count() }}</span>
-                    </div>
+                    @endforeach
                 </div>
             </div>
 
-            <!-- Help Card -->
-            <div class="glass-card" style="padding: 32px; background: var(--primary); color: white; border: none; overflow: hidden; position: relative;">
-                <div style="position: absolute; top: -20px; right: -20px; font-size: 120px; color: rgba(255,255,255,0.1); transform: rotate(15deg);">
-                    <i class="fas fa-question-circle"></i>
+            {{-- Programa --}}
+            <div class="glass-card" style="padding:28px; background:var(--primary); color:white; border:none; position:relative; overflow:hidden;">
+                <div style="position:absolute; top:-20px; right:-20px; font-size:100px; color:rgba(255,255,255,0.06);"><i class="fas fa-graduation-cap"></i></div>
+                <h4 style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; position:relative;">Programa Activo</h4>
+                <p style="font-size:18px; font-weight:800; line-height:1.4; position:relative; margin-bottom:16px;">{{ $aprendiz->apr_programa }}</p>
+                <span style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.2); padding:5px 14px; border-radius:20px; font-size:12px; font-weight:700; position:relative;">En Formación</span>
+            </div>
+
+            {{-- Ayuda --}}
+            <div class="glass-card" style="padding:24px;">
+                <div style="display:flex; align-items:center; gap:14px; margin-bottom:12px;">
+                    <div style="width:40px; height:40px; border-radius:12px; background:#fef2f2; color:#ef4444; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h4 style="font-size:15px; font-weight:800; color:var(--text);">¿Necesitas ayuda?</h4>
                 </div>
-                <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 12px; position: relative; z-index: 1;">¿Necesitas ayuda?</h4>
-                <p style="font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 24px; line-height: 1.5; position: relative; z-index: 1;">Si tienes problemas con tu información institucional, contacta a la coordinación de tu programa.</p>
-                <a href="#" style="background: white; color: var(--primary); padding: 12px 24px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 800; display: inline-block; position: relative; z-index: 1;">
-                    Contactar Soporte
+                <p style="font-size:13px; color:var(--text-light); font-weight:500; line-height:1.5; margin-bottom:16px;">Si tienes problemas con tu información institucional, contacta a la coordinación.</p>
+                <a href="mailto:soporte@sena.edu.co" class="btn-premium" style="width:100%; text-align:center; display:block; padding:10px; background:white; color:var(--text); border:1.5px solid #e2e8f0; box-shadow:none; font-size:13px;">
+                    <i class="fas fa-envelope"></i> Contactar Soporte
                 </a>
             </div>
         </div>
     </div>
 </div>
-
 @endsection
