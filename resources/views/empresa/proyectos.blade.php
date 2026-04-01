@@ -5,7 +5,7 @@
 @section('sidebar-nav')
     <span class="nav-label">Portal Empresa</span>
     <a href="{{ route('empresa.dashboard') }}" class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-th-large"></i> Dashboard
+        <i class="fas fa-th-large"></i> Principal
     </a>
     <a href="{{ route('empresa.proyectos') }}" class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}">
         <i class="fas fa-project-diagram"></i> Mis Proyectos
@@ -141,7 +141,7 @@
                                 <td>
                                     <div style="display: flex; gap: 10px; justify-content: flex-end;">
                                         @if($proyecto->pro_estado == 'Activo')
-                                        <a href="{{ route('empresa.postulantes', $proyecto->pro_id) }}" class="empresa-action-btn" title="Ver Postulantes">
+                                        <a href="{{ route('empresa.proyectos.postulantes', $proyecto->pro_id) }}" class="empresa-action-btn" title="Ver Postulantes">
                                             <i class="fas fa-users-viewfinder"></i>
                                         </a>
                                         @endif

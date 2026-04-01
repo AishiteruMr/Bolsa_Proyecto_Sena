@@ -6,7 +6,7 @@
 @section('sidebar-nav')
     <span class="nav-label">Principal</span>
     <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Dashboard
+        <i class="fas fa-home"></i> Principal
     </a>
     <a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos', 'instructor.proyecto.detalle', 'instructor.evidencias.ver', 'instructor.reporte') ? 'active' : '' }}">
         <i class="fas fa-project-diagram"></i> Mis Proyectos

@@ -183,6 +183,121 @@
     margin-top: 8px;
 }
 
+/* Evitar que el texto sobresalga de los cuadros del panel Principal */
+.stat-card-premium,
+.stat-card-premium * {
+    box-sizing: border-box;
+}
+
+/* Forzar recorte/ellipsis en valores o etiquetas muy largas */
+.stat-card-premium .admin-stat-value,
+.stat-card-premium .admin-stat-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    display: block;
+}
+
+/* Permitir quiebre de palabras en tablas y textos multilínea */
+.admin-table-card td,
+.admin-table-card th,
+.admin-table-card p,
+.admin-table-card small,
+.admin-project-card p,
+.admin-project-card span {
+    word-break: break-word;
+    white-space: normal;
+}
+
+/* Helper: limitar a 2 líneas cuando sea necesario */
+.two-line-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Reglas precisas para evitar overflow sin romper el wrapping natural */
+/* Mantener box-sizing consistente */
+.stat-card-premium,
+.glass-card,
+.admin-table-card,
+.user-incorporation-item {
+    box-sizing: border-box;
+}
+
+/* Valores grandes (normalmente numéricos) se mantienen en una línea con ellipsis si hiciera falta */
+.stat-card-premium .admin-stat-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+
+/* Etiquetas y títulos pueden ocupar hasta 2 líneas */
+.stat-card-premium .admin-stat-label,
+.glass-card .admin-table-header h3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tablas y celdas: permitir quiebre de palabras y ajuste natural */
+.premium-table td,
+.premium-table th {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+/* Incorporaciones: el correo ya tiene inline ellipsis; reforzamos comportamiento seguro */
+.user-incorporation-item p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Helper no agresivo para permitir 2 líneas cuando se quiera */
+.allow-two-lines {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Mejorar legibilidad de badges dentro de stat cards */
+.stat-card-premium > div[style] {
+    max-width: 100%;
+}
+
+/* Nombres y entidades: permitir hasta 2 líneas y recortar con ellipsis */
+.admin-user-name,
+.admin-company-name,
+.admin-company-rep {
+    font-weight: 700;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Contactos y correos: mantener en una sola línea con ellipsis */
+.admin-contact {
+    font-size: 13px;
+    color: var(--text-light);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* --- ADMIN PROJECT GRID --- */
 .admin-project-grid {
     display: grid;
@@ -253,3 +368,150 @@
     .admin-header-title { font-size: 32px; }
     .admin-stats-grid { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 640px) {
+    .admin-project-card { min-height: 260px; }
+    .admin-project-card-header { padding: 14px 16px; }
+    .admin-project-card-body { padding: 12px 14px; }
+}
+
+/* Minimal fixes to project card typography and overflow
+   - keep original colors and visual treatment
+   - prevent title/labels from overflowing their boxes
+*/
+.admin-project-card {
+    overflow: hidden;
+    padding: 0; /* keep header/body paddings as defined inline */
+}
+.admin-project-card-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* limitar a 2 líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Estilo específico del título del proyecto (solo tipografía/color) */
+.admin-project-title {
+    color: var(--text) !important; /* usar color de texto del tema */
+    font-weight: 900;
+    letter-spacing: -0.6px;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.03);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.admin-project-card-body .aprendiz-badge-portal,
+.admin-project-card-body span { 
+    word-break: break-word;
+}
+
+/* Additional refinements for project card layout */
+.admin-project-card-header {
+    padding: 18px 20px;
+    position: relative;
+    background: transparent;
+}
+.admin-project-card-header h3 { color: var(--text); font-size: 1.15rem; }
+.admin-project-card-header i.fa-rocket {
+    position: absolute; right: -10px; bottom: -10px;
+    font-size: 80px; color: rgba(0,0,0,0.035); transform: rotate(-15deg);
+    pointer-events: none; z-index: 0;
+}
+.admin-project-card-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+.admin-project-card { border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.admin-project-card * { box-sizing: border-box; }
+
+/* --- Enhanced project card visuals (overrides, non-intrusive) ---
+   Improves spacing, subtle depth and title hierarchy while keeping colors.
+*/
+.admin-project-card {
+    position: relative;
+    background: linear-gradient(180deg, var(--surface) 0%, rgba(255,255,255,0.96) 100%);
+    border: 1px solid rgba(6,95,70,0.04);
+    box-shadow: 0 12px 30px rgba(6,95,70,0.035);
+    padding: 0;
+    border-radius: 20px; /* softer corners */
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.admin-project-card::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+    opacity: 0.08;
+    pointer-events: none;
+}
+.admin-project-card::after {
+    content: '';
+    position: absolute;
+    right: -40px; bottom: -40px;
+    width: 140px; height: 140px;
+    background: radial-gradient(circle at 30% 30%, rgba(62,180,137,0.06), transparent 40%);
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+.admin-project-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 28px 60px rgba(6,95,70,0.08);
+    border-color: rgba(6,95,70,0.06);
+}
+.admin-project-card-header {
+    padding: 18px 22px;
+}
+.admin-project-card-body {
+    padding: 18px 22px 22px 22px;
+}
+.admin-project-card .admin-project-title {
+    font-size: 1.18rem;
+    line-height: 1.18;
+    color: var(--text) !important;
+}
+.admin-project-badge {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(0,0,0,0.04);
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 999px;
+}
+
+/* Reusable inline pill/badge used across admin pages */
+.inline-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 800;
+}
+.inline-pill--muted {
+    background: #f8fafc;
+    color: var(--text-light);
+    border: 1px solid #e2e8f0;
+}
+.inline-pill--warning {
+    background: #fffbeb;
+    color: #f59e0b;
+    border: 1px solid rgba(0,0,0,0.02);
+}
+.inline-pill--accent {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    color: #fff;
+    border: none;
+}
+.admin-project-card .admin-mentor-select {
+    background: #fff; border: 1px solid var(--border); padding: 10px 12px;
+}
+.admin-project-card .btn-premium {
+    box-shadow: none; padding: 10px 12px; font-size: 13px;
+}
+

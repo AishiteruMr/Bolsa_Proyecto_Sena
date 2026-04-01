@@ -5,7 +5,7 @@
 
 @section('sidebar-nav')
     <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Dashboard
+        <i class="fas fa-home"></i> Principal
     </a>
     <a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos*') ? 'active' : '' }}">
         <i class="fas fa-project-diagram"></i> Mis Proyectos

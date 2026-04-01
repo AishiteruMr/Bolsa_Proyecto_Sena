@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @section('title', 'Admin Dashboard')
-@section('page-title', 'Dashboard Principal')
+@section('page-title', 'Página Principal')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
@@ -10,7 +10,7 @@
 @section('sidebar-nav')
     <span class="nav-label">Administración</span>
     <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-th-large"></i> Dashboard
+        <i class="fas fa-th-large"></i> Principal
     </a>
     <a href="{{ route('admin.usuarios') }}" class="nav-item {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
         <i class="fas fa-users"></i> Gestión Usuarios
@@ -48,7 +48,7 @@
                 </div>
                 <div class="admin-stat-value" style="font-size: 38px;">{{ $stats['proyectos'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Banco de Proyectos</div>
-                <div style="margin-top: 16px; font-size: 11px; color: #f59e0b; font-weight: 800; display: flex; align-items: center; gap: 6px; background: #fffbeb; padding: 6px 12px; border-radius: 10px; width: fit-content;">
+                <div class="inline-pill inline-pill--warning" style="margin-top:16px; width:fit-content;">
                     <i class="fas fa-clock-rotate-left"></i> {{ $stats['pendientes'] }} Pendientes
                 </div>
             </div>

@@ -6,7 +6,7 @@
 @section('sidebar-nav')
     <span class="nav-label">Administración</span>
     <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-th-large"></i> Dashboard
+        <i class="fas fa-th-large"></i> Principal
     </a>
     <a href="{{ route('admin.usuarios') }}" class="nav-item {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
         <i class="fas fa-users"></i> Gestión Usuarios
@@ -25,18 +25,15 @@
 
 @section('content')
     <div class="animate-fade-in" style="margin-bottom: 40px;">
-        <div class="admin-page-header">
-            <div>
-                <h2 class="admin-title-main">Gestión de <span style="color: var(--primary);">Usuarios</span></h2>
-                <p style="color:var(--text-light); font-size:16px; margin-top:6px; font-weight: 500;">Administra y supervisa los perfiles de aprendices e instructores.</p>
-            </div>
-            <div class="admin-tab-group">
-                <button id="btn-apr" class="admin-tab-btn active" onclick="showTable('aprendices')">
-                    <i class="fas fa-graduation-cap"></i> Aprendices
-                </button>
-                <button id="btn-ins" class="admin-tab-btn inactive" onclick="showTable('instructores')">
-                    <i class="fas fa-chalkboard-teacher"></i> Instructores
-                </button>
+        <div class="admin-header-master">
+            <div class="admin-header-icon"><i class="fas fa-users"></i></div>
+            <div style="position: relative; z-index: 1;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <span class="admin-badge-hub">Admin Control Hub</span>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 700;"><i class="far fa-calendar-alt" style="margin-right: 8px;"></i>{{ now()->translatedFormat('l, d F Y') }}</span>
+                </div>
+                <h1 class="admin-header-title">Gestión de <span style="color: var(--primary);">Usuarios</span></h1>
+                <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 720px; font-weight: 500;">Administra y supervisa los perfiles de aprendices e instructores desde un panel centralizado.</p>
             </div>
         </div>
 
@@ -71,14 +68,14 @@
                                 <tr>
                                     <td style="font-weight:800; color: var(--text);">{{ $a->usr_documento }}</td>
                                     <td>
-                                        <div style="font-weight: 700; color: var(--text);">{{ $a->apr_nombre }} {{ $a->apr_apellido }}</div>
+                                        <div class="admin-user-name">{{ $a->apr_nombre }} {{ $a->apr_apellido }}</div>
                                     </td>
                                     <td>
-                                        <span class="aprendiz-badge-portal" style="background: #f8fafc; color: var(--text-light); border-color: #e2e8f0; font-size: 11px;">
+                                        <span class="aprendiz-badge-portal inline-pill inline-pill--muted">
                                             {{ $a->apr_programa }}
                                         </span>
                                     </td>
-                                    <td style="font-size: 13px; color: var(--text-light); font-weight: 600;">{{ $a->usr_correo }}</td>
+                                    <td class="admin-contact">{{ $a->usr_correo }}</td>
                                     <td>
                                         <span class="status-badge {{ $a->apr_estado == 1 ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;">
                                             {{ $a->apr_estado == 1 ? 'Activo' : 'Inactivo' }}
@@ -142,14 +139,14 @@
                                 <tr>
                                     <td style="font-weight:800; color: var(--text);">{{ $i->usr_documento }}</td>
                                     <td>
-                                        <div style="font-weight: 700; color: var(--text);">{{ $i->ins_nombre }} {{ $i->ins_apellido }}</div>
+                                        <div class="admin-user-name">{{ $i->ins_nombre }} {{ $i->ins_apellido }}</div>
                                     </td>
                                     <td>
-                                        <span class="aprendiz-badge-portal" style="background: #eff6ff; color: #3b82f6; border-color: #dbeafe; font-size: 11px;">
+                                        <span class="aprendiz-badge-portal inline-pill inline-pill--muted" style="color:#3b82f6; background:#eff6ff; border-color:#dbeafe;">
                                             {{ $i->ins_especialidad }}
                                         </span>
                                     </td>
-                                    <td style="font-size: 13px; color: var(--text-light); font-weight: 600;">{{ $i->usr_correo }}</td>
+                                    <td class="admin-contact">{{ $i->usr_correo }}</td>
                                     <td>
                                         <span class="status-badge {{ $i->ins_estado == 1 ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;">
                                             {{ $i->ins_estado == 1 ? 'Activo' : 'Inactivo' }}

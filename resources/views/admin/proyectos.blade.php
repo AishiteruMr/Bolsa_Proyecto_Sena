@@ -9,7 +9,7 @@
 @section('sidebar-nav')
     <span class="nav-label">Administración</span>
     <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-th-large"></i> Dashboard
+        <i class="fas fa-th-large"></i> Principal
     </a>
     <a href="{{ route('admin.usuarios') }}" class="nav-item {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
         <i class="fas fa-users"></i> Gestión Usuarios
@@ -24,10 +24,18 @@
 
 @section('content')
     <div class="animate-fade-in" style="margin-bottom: 40px;">
-        <div class="admin-page-header">
-            <div>
-                <h2 class="admin-title-main">Control Central de <span style="color: var(--primary);">Proyectos</span></h2>
-                <p style="color:var(--text-light); font-size:16px; margin-top:6px; font-weight: 500;">Monitoreo global y asignación estratégica de instructores.</p>
+        <!-- Header tipo dashboard (icono + degradado suave) -->
+        <div class="admin-header-master" style="margin-bottom:18px;">
+            <div class="admin-header-icon">
+                <i class="fas fa-project-diagram"></i>
+            </div>
+            <div style="position: relative; z-index: 1;">
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+                    <span class="admin-badge-hub">Banco Proyectos</span>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 700;">Panel de administración</span>
+                </div>
+                <h1 class="admin-header-title">Control Central de <span style="color: var(--primary);">Proyectos</span></h1>
+                <p style="color: rgba(255,255,255,0.6); font-size: 16px; max-width: 700px; font-weight: 500;">Monitoreo global y asignación estratégica de instructores.</p>
             </div>
         </div>
 
@@ -51,7 +59,7 @@
                                 {{ $p->pro_estado }}
                             </span>
                         </div>
-                        <h3 style="color:#fff; font-size:1.25rem; font-weight:800; line-height:1.3; letter-spacing: -0.5px;">{{ Str::limit($p->pro_titulo_proyecto, 50) }}</h3>
+                        <h3 class="admin-project-title" style="font-size:1.25rem; font-weight:800; line-height:1.3; letter-spacing: -0.5px;">{{ Str::limit($p->pro_titulo_proyecto, 50) }}</h3>
                     </div>
                     <i class="fas fa-rocket" style="position:absolute; right:-20px; bottom:-20px; font-size:120px; color:rgba(255,255,255,0.05); transform: rotate(-15deg);"></i>
                 </div>
@@ -73,7 +81,7 @@
                             @if($p->ins_nombre)
                                 <span class="aprendiz-badge-portal" style="background: var(--primary-soft); color: var(--primary); border-color: transparent; padding: 4px 12px; border-radius: 20px; font-size: 11px;">{{ $p->ins_nombre }}</span>
                             @else
-                                <span class="aprendiz-badge-portal" style="background: #fff7ed; color: #f97316; border-color: transparent; padding: 4px 12px; border-radius: 20px; font-size: 11px;">SIN ASIGNAR</span>
+                                <span class="aprendiz-badge-portal inline-pill inline-pill--muted" style="background:#fff7ed;color:#f97316;border-color:transparent;padding:4px 12px;border-radius:20px;font-size:11px;">SIN ASIGNAR</span>
                             @endif
                         </div>
 

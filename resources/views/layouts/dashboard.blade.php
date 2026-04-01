@@ -50,7 +50,7 @@
     <!-- MAIN -->
     <div class="main">
         <header class="topbar">
-            <span class="topbar-title">@yield('page-title', 'Dashboard')</span>
+            <span class="topbar-title">@yield('page-title', 'Principal')</span>
             <div class="topbar-right">
                 <span style="font-size:13px; color: var(--text-light); font-weight: 600;">{{ now()->translatedFormat('d M, Y') }}</span>
             </div>

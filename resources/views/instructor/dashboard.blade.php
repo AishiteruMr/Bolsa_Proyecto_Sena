@@ -6,7 +6,7 @@
 @section('sidebar-nav')
     <span class="nav-label">Principal</span>
     <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Dashboard
+        <i class="fas fa-home"></i> Principal
     </a>
     <a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos') ? 'active' : '' }}">
         <i class="fas fa-project-diagram"></i> Mis Proyectos
@@ -25,23 +25,24 @@
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/instructor.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 @endsection
 
 @section('content')
 <div class="animate-fade-in dashboard-wrapper">
     
-    <!-- HEADER PREMIUM -->
-    <div class="instructor-hero">
-        <div class="instructor-hero-bg-icon">
+    <!-- HEADER MAESTRO (coincidente con Principal) -->
+    <div class="admin-header-master">
+        <div class="admin-header-icon">
             <i class="fas fa-chalkboard-teacher"></i>
         </div>
         <div style="position: relative; z-index: 1;">
             <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
-                <span class="instructor-tag">SENA INNOVACIÓN</span>
+                <span class="admin-badge-hub">Instructor Hub</span>
                 <span id="current-time" style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600;"></span>
             </div>
-            <h1 class="instructor-title">¡Bienvenido, <span style="color: var(--primary);">{{ session('nombre') }}</span>! 👋</h1>
-            <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 600px; line-height: 1.6; font-weight: 400;">Tu centro de mando para la excelencia académica y la gestión de proyectos de impacto.</p>
+            <h1 class="admin-header-title">Centro de Mando del <span style="color: var(--primary);">Instructor</span></h1>
+            <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 720px; line-height: 1.6; font-weight: 500;">Tu centro de mando para la excelencia académica y la gestión de proyectos de impacto.</p>
         </div>
     </div>
 
@@ -110,7 +111,7 @@
                             </div>
                         </div>
                         <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
-                            <h4 style="font-size: 17px; font-weight: 800; color: var(--text); line-height: 1.4; margin-bottom: 16px; height: 48px; overflow: hidden;">{{ $p->pro_titulo_proyecto }}</h4>
+                            <h4 class="admin-project-title" style="font-size: 17px; margin-bottom:16px;">{{ $p->pro_titulo_proyecto }}</h4>
                             <div style="display: flex; gap: 12px; margin-bottom: 20px;">
                                 <div style="flex: 1; background: #f8fafc; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid #f1f5f9;">
                                     <span style="display: block; font-size: 16px; font-weight: 800;">{{ $p->postulaciones->where('pos_estado', 'Aprobada')->count() }}</span>

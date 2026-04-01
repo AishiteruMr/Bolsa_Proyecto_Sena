@@ -6,7 +6,7 @@
 @section('sidebar-nav')
     <span class="nav-label">Administración</span>
     <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-th-large"></i> Dashboard
+        <i class="fas fa-th-large"></i> Principal
     </a>
     <a href="{{ route('admin.usuarios') }}" class="nav-item {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
         <i class="fas fa-users"></i> Gestión Usuarios
@@ -24,10 +24,15 @@
 @endsection
 @section('content')
     <div class="animate-fade-in" style="margin-bottom: 40px;">
-        <div class="admin-page-header">
-            <div>
-                <h2 class="admin-title-main">Ecosistema de <span style="color: var(--primary);">Empresas</span></h2>
-                <p style="color:var(--text-light); font-size:16px; margin-top:6px; font-weight: 500;">Gestión y supervisión de organizaciones aliadas al SENA.</p>
+        <div class="admin-header-master">
+            <div class="admin-header-icon"><i class="fas fa-building"></i></div>
+            <div style="position: relative; z-index: 1;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <span class="admin-badge-hub">Admin Control Hub</span>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 700;"><i class="far fa-calendar-alt" style="margin-right: 8px;"></i>{{ now()->translatedFormat('l, d F Y') }}</span>
+                </div>
+                <h1 class="admin-header-title">Ecosistema de <span style="color: var(--primary);">Empresas</span></h1>
+                <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 720px; font-weight: 500;">Gestión y supervisión de organizaciones aliadas al SENA desde una vista centralizada.</p>
             </div>
         </div>
 
@@ -95,20 +100,15 @@
                                         <div style="width: 40px; height: 40px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center;">
                                             <i class="fas fa-building" style="color: var(--text-light); font-size: 14px;"></i>
                                         </div>
-                                        <div style="font-weight: 800; color: var(--text);">{{ $e->emp_nombre }}</div>
+                                        <div class="admin-company-name">{{ $e->emp_nombre }}</div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div style="font-weight: 700; color: var(--text-light); font-size: 14px;">
-                                        <i class="far fa-user-circle" style="margin-right: 6px; opacity: 0.5;"></i>
-                                        {{ $e->emp_representante }}
-                                    </div>
+                                    <div class="admin-company-rep"><i class="far fa-user-circle" style="margin-right: 6px; opacity: 0.5;"></i>{{ $e->emp_representante }}</div>
                                 </td>
-                                <td>
-                                    <div style="font-size: 13px; color: var(--text-light); font-weight: 600;">
-                                        <i class="far fa-envelope" style="margin-right: 6px; opacity: 0.5;"></i>
-                                        {{ $e->emp_correo }}
-                                    </div>
+                                <td class="admin-contact">
+                                    <i class="far fa-envelope" style="margin-right: 6px; opacity: 0.5;"></i>
+                                    {{ $e->emp_correo }}
                                 </td>
                                 <td>
                                     <span class="status-badge {{ $e->emp_estado == 1 ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;">
