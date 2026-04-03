@@ -79,13 +79,13 @@ body {
     white-space: nowrap;
 }
 
-.sidebar-nav { flex: 1; padding: 10px 20px; overflow-y: auto; }
+.sidebar-nav { flex: 1; padding: 10px 20px; overflow-y: auto; min-height: 0; }
 
 .nav-label { 
     display: block;
     font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.3); 
     text-transform: uppercase; letter-spacing: 1.5px; 
-    margin: 32px 14px 12px;
+    margin: 24px 14px 10px;
 }
 
 .nav-item {
@@ -95,10 +95,11 @@ body {
     font-size: 14px; font-weight: 600;
     border-radius: 14px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     text-decoration: none;
 }
 .nav-item i { font-size: 18px; width: 24px; text-align: center; }
+.nav-item span { flex: 1; white-space: nowrap; }
 .nav-item:hover { 
     background: rgba(var(--h), var(--s), var(--l), 0.1); 
     color: var(--primary); 
@@ -268,6 +269,7 @@ body {
     .sidebar-logo img { width: 36px; height: 36px; padding: 6px; }
     .nav-item { justify-content: center; padding: 14px; }
     .nav-item i { margin: 0; }
+    .nav-item span { display: none; }
 }
 
 .notification-bell:hover { color: var(--primary) !important; transform: scale(1.1); }

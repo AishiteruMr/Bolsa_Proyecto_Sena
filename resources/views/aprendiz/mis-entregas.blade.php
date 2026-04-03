@@ -31,80 +31,85 @@
 @endsection
 
 @section('content')
-<div class="animate-fade-in" style="max-width: 1100px; margin: 0 auto;">
+<div class="animate-fade-in" style="padding-bottom: 40px;">
 
-    {{-- PAGE HEADER --}}
-    <div style="margin-bottom: 40px;">
-        <h2 style="font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;">
-            Mis <span style="color: var(--primary);">Entregas</span> y Evidencias
-        </h2>
-        <p style="color: var(--text-light); font-size: 15px; margin-top: 4px; font-weight: 500;">
-            Seguimiento de tus entregables en proyectos aprovados.
-        </p>
-    </div>
-
-    {{-- SUMMARY STATS --}}
-    @if($proyectos->count() > 0)
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px;">
-        <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px;">
-            <div style="width: 52px; height: 52px; border-radius: 16px; background: #f8fafc; color: #64748b; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
-                <i class="fas fa-file-alt"></i>
+    <!-- Hero Header -->
+    <div class="instructor-hero">
+        <div class="instructor-hero-bg-icon"><i class="fas fa-tasks"></i></div>
+        <div style="position: relative; z-index: 1;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                <span class="instructor-tag">Entregas</span>
             </div>
-            <div>
-                <div style="font-size: 32px; font-weight: 800; color: var(--text); line-height: 1;">{{ $evidencias->count() }}</div>
-                <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Evidencias Totales</div>
-            </div>
-        </div>
-        <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #bbf7d0;">
-            <div style="width: 52px; height: 52px; border-radius: 16px; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
-                <i class="fas fa-check-double"></i>
-            </div>
-            <div>
-                <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $evidencias->where('evid_estado', 'Aprobada')->count() }}</div>
-                <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Aprobadas</div>
-            </div>
-        </div>
-        <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #fde68a;">
-            <div style="width: 52px; height: 52px; border-radius: 16px; background: #fffbeb; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
-                <i class="fas fa-hourglass-half"></i>
-            </div>
-            <div>
-                <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">{{ $evidencias->where('evid_estado', 'Pendiente')->count() }}</div>
-                <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Pendientes</div>
-            </div>
+            <h1 class="instructor-title">Mis <span style="color: var(--primary);">Entregas</span> y Evidencias</h1>
+            <p style="color: rgba(255,255,255,0.75); font-size: 16px; font-weight: 500;">Seguimiento de tus entregables en proyectos aprobados.</p>
         </div>
     </div>
-    @endif
 
-    {{-- PROJECT EVIDENCES LIST --}}
     @if($proyectos->count() > 0)
+        <div class="instructor-stat-grid" style="margin-bottom: 32px;">
+            <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div>
+                    <div style="font-size: 32px; font-weight: 800; color: var(--text); line-height: 1;">{{ $evidencias->count() }}</div>
+                    <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Evidencias Totales</div>
+                </div>
+            </div>
+            <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #bbf7d0;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <div>
+                    <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $evidencias->where('evid_estado', 'Aprobada')->count() }}</div>
+                    <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Aprobadas</div>
+                </div>
+            </div>
+            <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #fde68a;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #fffbeb; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div>
+                    <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">{{ $evidencias->where('evid_estado', 'Pendiente')->count() }}</div>
+                    <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Pendientes</div>
+                </div>
+            </div>
+            <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #fecaca;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #fef2f2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div>
+                    <div style="font-size: 32px; font-weight: 800; color: #ef4444; line-height: 1;">{{ $evidencias->where('evid_estado', 'Rechazada')->count() }}</div>
+                    <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Rechazadas</div>
+                </div>
+            </div>
+        </div>
+
         <div style="display: grid; gap: 32px;">
             @foreach($proyectos as $proyecto)
                 @php
                     $evidencias_proyecto = $evidencias->where('evid_pro_id', $proyecto->pro_id);
                 @endphp
                 <div class="glass-card" style="padding: 0; overflow: hidden;">
-                    {{-- Project Header --}}
-                    <div style="padding: 24px 32px; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+                    <div style="padding: 24px 32px; background: linear-gradient(135deg, rgba(62,180,137,0.05), rgba(62,180,137,0.02)); border-bottom: 1px solid rgba(62,180,137,0.1); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
                         <div style="display: flex; align-items: center; gap: 16px;">
-                            <div style="width: 48px; height: 48px; border-radius: 14px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+                            <div style="width: 52px; height: 52px; border-radius: 16px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
                                 <i class="fas fa-project-diagram"></i>
                             </div>
                             <div>
-                                <h4 style="font-size: 17px; font-weight: 800; color: var(--text);">{{ $proyecto->pro_titulo_proyecto }}</h4>
-                                <p style="font-size: 13px; color: var(--text-light); margin-top: 2px; font-weight: 600;">
-                                    <i class="fas fa-building" style="margin-right: 6px; color: var(--primary);"></i>{{ $proyecto->emp_nombre }}
+                                <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 4px;">{{ $proyecto->pro_titulo_proyecto }}</h4>
+                                <p style="font-size: 13px; color: var(--text-light); margin: 0; font-weight: 600;">
+                                    <i class="fas fa-building" style="margin-right: 6px; color: #3eb489;"></i>{{ $proyecto->emp_nombre }}
                                     &nbsp;&middot;&nbsp;
                                     <i class="fas fa-calendar-alt" style="margin-right: 6px;"></i>Cierre: {{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d/m/Y') }}
                                 </p>
                             </div>
                         </div>
-                        <span style="background: white; border: 1px solid var(--border); padding: 6px 16px; border-radius: 30px; font-size: 12px; font-weight: 800; color: var(--text-light);">
+                        <span style="background: rgba(62,180,137,0.1); border: 1px solid rgba(62,180,137,0.2); padding: 8px 18px; border-radius: 30px; font-size: 12px; font-weight: 800; color: #3eb489;">
                             {{ $evidencias_proyecto->count() }} Evidencias
                         </span>
                     </div>
 
-                    {{-- Evidence Items --}}
                     <div style="padding: 24px 32px; display: grid; gap: 16px;">
                         @if($evidencias_proyecto->count() > 0)
                             @foreach($evidencias_proyecto as $evidencia)
@@ -115,36 +120,36 @@
                                         default     => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-hourglass-half'],
                                     };
                                 @endphp
-                                <div style="background: {{ $stateColor['bg'] }}; border: 1.5px solid {{ $stateColor['border'] }}; border-radius: 16px; padding: 20px 24px;">
-                                    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
-                                        <div style="flex: 1;">
-                                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                                                <span style="width: 28px; height: 28px; border-radius: 8px; background: {{ $stateColor['text'] }}; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0;">
+                                <div style="background: {{ $stateColor['bg'] }}; border: 1.5px solid {{ $stateColor['border'] }}; border-radius: 16px; padding: 20px 24px; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(8px)'" onmouseout="this.style.transform='translateX(0)'">
+                                    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                                        <div style="flex: 1; min-width: 280px;">
+                                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                                <span style="width: 32px; height: 32px; border-radius: 10px; background: {{ $stateColor['text'] }}; color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0;">
                                                     {{ $evidencia->etapa->eta_orden ?? '?' }}
                                                 </span>
-                                                <h5 style="font-size: 15px; font-weight: 800; color: var(--text);">
+                                                <h5 style="font-size: 16px; font-weight: 800; color: var(--text); margin: 0;">
                                                     {{ $evidencia->etapa->eta_nombre ?? 'Etapa sin nombre' }}
                                                 </h5>
                                             </div>
-                                            <div style="font-size: 12px; color: var(--text-light); font-weight: 600; margin-bottom: 8px;">
-                                                <i class="far fa-clock" style="margin-right: 6px;"></i>
+                                            <div style="font-size: 13px; color: var(--text-light); font-weight: 600; margin-bottom: 10px;">
+                                                <i class="far fa-clock" style="margin-right: 8px;"></i>
                                                 Entregado: {{ \Carbon\Carbon::parse($evidencia->evid_fecha)->translatedFormat('d M Y, H:i') }}
                                             </div>
                                             @if($evidencia->evid_comentario)
-                                                <div style="background: rgba(255,255,255,0.7); border-radius: 10px; padding: 12px 16px; margin-top: 10px; border: 1px solid rgba(0,0,0,0.05);">
+                                                <div style="background: rgba(255,255,255,0.8); border-radius: 10px; padding: 12px 16px; border: 1px solid rgba(0,0,0,0.05);">
                                                     <p style="font-size: 13px; color: var(--text); font-weight: 600; margin: 0;">
-                                                        <i class="fas fa-comment-dots" style="color: var(--primary); margin-right: 8px;"></i>{{ $evidencia->evid_comentario }}
+                                                        <i class="fas fa-comment-dots" style="color: #3eb489; margin-right: 8px;"></i>{{ $evidencia->evid_comentario }}
                                                     </p>
                                                 </div>
                                             @endif
                                         </div>
-                                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px; flex-shrink: 0;">
-                                            <span style="background: white; color: {{ $stateColor['text'] }}; border: 1.5px solid {{ $stateColor['border'] }}; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; white-space: nowrap; display: flex; align-items: center; gap: 6px;">
+                                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0;">
+                                            <span style="background: white; color: {{ $stateColor['text'] }}; border: 1.5px solid {{ $stateColor['border'] }}; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; white-space: nowrap; display: flex; align-items: center; gap: 8px;">
                                                 <i class="fas {{ $stateColor['icon'] }}"></i> {{ $evidencia->evid_estado }}
                                             </span>
                                             @if($evidencia->evid_archivo)
                                                 <a href="{{ asset('storage/' . $evidencia->evid_archivo) }}" target="_blank"
-                                                   style="background: white; color: #3b82f6; border: 1.5px solid #dbeafe; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: all 0.2s;">
+                                                   class="btn-premium" style="padding: 8px 16px; font-size: 12px;">
                                                     <i class="fas fa-file-download"></i> Ver Archivo
                                                 </a>
                                             @endif
@@ -153,9 +158,9 @@
                                 </div>
                             @endforeach
                         @else
-                            <div style="text-align: center; padding: 40px; color: var(--text-lighter);">
-                                <i class="fas fa-inbox" style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
-                                <p style="font-weight: 600;">Sin evidencias registradas aún</p>
+                            <div style="text-align: center; padding: 48px; background: rgba(62,180,137,0.02); border-radius: 16px; border: 2px dashed rgba(62,180,137,0.1);">
+                                <i class="fas fa-inbox" style="font-size: 36px; color: var(--text-lighter); margin-bottom: 12px; display: block;"></i>
+                                <p style="font-weight: 700; color: var(--text-light); margin: 0;">Sin evidencias registradas aún</p>
                             </div>
                         @endif
                     </div>
@@ -163,15 +168,15 @@
             @endforeach
         </div>
     @else
-        <div class="glass-card aprendiz-empty-state">
-            <div style="width: 100px; height: 100px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: var(--text-lighter);">
+        <div class="glass-card" style="padding: 80px 40px; text-align: center;">
+            <div style="width: 100px; height: 100px; background: rgba(62,180,137,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: #3eb489;">
                 <i class="fas fa-inbox"></i>
             </div>
             <h4 style="color: var(--text); font-size: 22px; font-weight: 800; margin-bottom: 8px;">Sin proyectos aprobados</h4>
             <p style="color: var(--text-light); max-width: 450px; margin: 0 auto 32px;">
                 Cuando tengas un proyecto aprobado, podrás gestionar y enviar tus evidencias desde aquí.
             </p>
-            <a href="{{ route('aprendiz.proyectos') }}" class="btn-premium" style="background: var(--secondary);">
+            <a href="{{ route('aprendiz.proyectos') }}" class="btn-premium" style="display: inline-flex;">
                 <i class="fas fa-search"></i> Explorar Proyectos
             </a>
         </div>

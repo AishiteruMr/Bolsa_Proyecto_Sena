@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PostulacionExitosa;
 use App\Models\Aprendiz;
-use App\Models\Proyecto;
-use App\Models\Postulacion;
-use App\Models\Evidencia;
 use App\Models\Etapa;
+use App\Models\Evidencia;
+use App\Models\Postulacion;
+use App\Models\Proyecto;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use App\Mail\PostulacionExitosa;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class AprendizController extends Controller
 {
@@ -26,7 +26,7 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        if (!$aprendiz) {
+        if (! $aprendiz) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
@@ -46,7 +46,7 @@ class AprendizController extends Controller
         $proyectosAprobadosQuery = DB::table('postulacion')
             ->where('apr_id', $aprendiz?->apr_id ?? 0)
             ->where('pos_estado', 'Aprobada');
-        
+
         $proyectosAprobados = (clone $proyectosAprobadosQuery)->pluck('pro_id')->toArray();
 
         // Próxima fecha de cierre de sus proyectos
@@ -75,7 +75,7 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        if (!$aprendiz) {
+        if (! $aprendiz) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
@@ -104,7 +104,11 @@ class AprendizController extends Controller
         }
 
         // Obtener categorías disponibles
-        $categorias = Proyecto::distinct()->pluck('pro_categoria');
+        $categorias = Proyecto::whereNotNull('pro_categoria')
+            ->distinct()
+            ->orderBy('pro_categoria')
+            ->pluck('pro_categoria')
+            ->toArray();
 
         return view('aprendiz.proyectos', compact('proyectos', 'postulados', 'categorias'));
     }
@@ -118,7 +122,7 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = DB::table('aprendiz')->where('usr_id', $usrId)->first();
 
-        if (!$aprendiz) {
+        if (! $aprendiz) {
             return back()->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
@@ -132,15 +136,15 @@ class AprendizController extends Controller
         }
 
         DB::table('postulacion')->insert([
-            'apr_id'     => $aprendiz->apr_id,
-            'pro_id'     => $id,
-            'pos_fecha'  => now(),
+            'apr_id' => $aprendiz->apr_id,
+            'pro_id' => $id,
+            'pos_fecha' => now(),
             'pos_estado' => 'Pendiente',
         ]);
 
         // ── Email de confirmación ──────────────────────────────────
         try {
-            $proyecto  = \App\Models\Proyecto::find($id);
+            $proyecto = Proyecto::find($id);
             $usuCorreo = DB::table('usuario')->where('usr_id', $aprendiz->usr_id)->value('usr_correo');
             if ($usuCorreo && $proyecto) {
                 Mail::to($usuCorreo)->send(
@@ -148,20 +152,20 @@ class AprendizController extends Controller
                 );
             }
         } catch (\Exception $e) {
-            Log::error('Error enviando email de postulación: ' . $e->getMessage());
+            Log::error('Error enviando email de postulación: '.$e->getMessage());
         }
 
         // ── Notificación en BD ────────────────────────────────────
         try {
             DB::table('notificacion')->insert([
-                'usr_id'       => $aprendiz->usr_id,
-                'noti_titulo'  => '🎉 Postulación enviada',
+                'usr_id' => $aprendiz->usr_id,
+                'noti_titulo' => '🎉 Postulación enviada',
                 'noti_mensaje' => 'Tu postulación al proyecto fue registrada. Pronto recibirás una respuesta.',
-                'noti_leida'   => 0,
-                'noti_fecha'   => now(),
+                'noti_leida' => 0,
+                'noti_fecha' => now(),
             ]);
         } catch (\Exception $e) {
-            Log::warning('Tabla notificacion no encontrada o error: ' . $e->getMessage());
+            Log::warning('Tabla notificacion no encontrada o error: '.$e->getMessage());
         }
 
         return back()->with('success', '🎉 ¡Postulación enviada! Revisa tu correo para la confirmación.');
@@ -176,7 +180,7 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        if (!$aprendiz) {
+        if (! $aprendiz) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
@@ -197,7 +201,7 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        if (!$aprendiz) {
+        if (! $aprendiz) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
@@ -205,9 +209,10 @@ class AprendizController extends Controller
             ->with(['proyecto.empresa', 'proyecto.instructor'])
             ->orderByDesc('pos_fecha')
             ->get()
-            ->map(function($postulacion) {
+            ->map(function ($postulacion) {
                 $proyecto = $postulacion->proyecto;
-                return (object)[
+
+                return (object) [
                     'pos_id' => $postulacion->pos_id,
                     'pos_estado' => $postulacion->pos_estado,
                     'pos_fecha' => $postulacion->pos_fecha,
@@ -219,9 +224,9 @@ class AprendizController extends Controller
                     'pro_fecha_finalizacion' => $proyecto->pro_fecha_finalizacion,
                     'pro_imagen_url' => $proyecto->pro_imagen_url,
                     'emp_nombre' => $proyecto->empresa->emp_nombre,
-                    'instructor_nombre' => $proyecto->instructor 
-                        ? $proyecto->instructor->ins_nombre . " " . $proyecto->instructor->ins_apellido 
-                        : "No asignado"
+                    'instructor_nombre' => $proyecto->instructor
+                        ? $proyecto->instructor->ins_nombre.' '.$proyecto->instructor->ins_apellido
+                        : 'No asignado',
                 ];
             });
 
@@ -237,18 +242,19 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        if (!$aprendiz) {
+        if (! $aprendiz) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
         // Proyectos aprobados con empresa
-        $proyectos = Proyecto::whereHas('postulaciones', function($q) use ($aprendiz) {
+        $proyectos = Proyecto::whereHas('postulaciones', function ($q) use ($aprendiz) {
             $q->where('apr_id', $aprendiz->apr_id)->where('pos_estado', 'Aprobada');
         })->with('empresa')->get()
-          ->map(function($p) {
-              $p->emp_nombre = $p->empresa->emp_nombre;
-              return $p;
-          });
+            ->map(function ($p) {
+                $p->emp_nombre = $p->empresa->emp_nombre;
+
+                return $p;
+            });
 
         // Entregas por proyecto
         $entregas = $aprendiz->entregas()
@@ -274,7 +280,7 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        if (!$aprendiz) {
+        if (! $aprendiz) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
@@ -283,7 +289,7 @@ class AprendizController extends Controller
             ->where('pro_id', $proId)
             ->first();
 
-        if (!$postulacion) {
+        if (! $postulacion) {
             return back()->with('error', 'No tienes acceso a este proyecto o no has sido aprobado.');
         }
 
@@ -337,7 +343,7 @@ class AprendizController extends Controller
         // Validar datos
         $request->validate([
             'descripcion' => 'required|string|max:1000',
-            'archivo'     => 'nullable|file|max:5120', // 5MB máximo
+            'archivo' => 'nullable|file|max:5120', // 5MB máximo
         ], [
             'descripcion.required' => 'La descripción es obligatoria.',
             'descripcion.max' => 'La descripción no puede exceder 1000 caracteres.',
@@ -352,13 +358,13 @@ class AprendizController extends Controller
         }
 
         DB::table('evidencia')->insert([
-            'evid_apr_id'    => $aprendiz->apr_id,
-            'evid_eta_id'    => $etaId,
-            'evid_pro_id'    => $proId,
-            'evid_archivo'   => $archivoUrl,
-            'evid_fecha'     => now(),
-            'evid_estado'    => 'Pendiente',
-            'evid_comentario'=> null,
+            'evid_apr_id' => $aprendiz->apr_id,
+            'evid_eta_id' => $etaId,
+            'evid_pro_id' => $proId,
+            'evid_archivo' => $archivoUrl,
+            'evid_fecha' => now(),
+            'evid_estado' => 'Pendiente',
+            'evid_comentario' => null,
         ]);
 
         return back()->with('success', '✅ Evidencia enviada correctamente. El instructor la revisará.');
@@ -373,7 +379,7 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usr_id', $usrId)->first();
 
-        if (!$aprendiz) {
+        if (! $aprendiz) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
@@ -393,10 +399,10 @@ class AprendizController extends Controller
 
         // Validar datos
         $request->validate([
-            'nombre'    => 'required|string|max:50',
-            'apellido'  => 'required|string|max:50',
-            'programa'  => 'required|string|max:100',
-            'password'  => 'nullable|string|min:6|confirmed',
+            'nombre' => 'required|string|max:50',
+            'apellido' => 'required|string|max:50',
+            'programa' => 'required|string|max:100',
+            'password' => 'nullable|string|min:6|confirmed',
         ], [
             'nombre.required' => 'El nombre es obligatorio.',
             'nombre.max' => 'El nombre no puede exceder 50 caracteres.',
@@ -410,7 +416,7 @@ class AprendizController extends Controller
 
         // Actualizar aprendiz
         $aprendiz->update([
-            'apr_nombre'   => $request->nombre,
+            'apr_nombre' => $request->nombre,
             'apr_apellido' => $request->apellido,
             'apr_programa' => $request->programa,
         ]);

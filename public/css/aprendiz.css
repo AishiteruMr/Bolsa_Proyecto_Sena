@@ -413,3 +413,160 @@
     border-radius: 16px; padding: 16px 22px;
     text-align: center; backdrop-filter: blur(10px);
 }
+
+/* ── HERO UNIFICADO (mismo estilo que instructor/admin) ── */
+.instructor-hero {
+    background: linear-gradient(135deg, #0a1a15 0%, #1a2e28 100%);
+    padding: 60px 48px;
+    border-radius: 32px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px -15px rgba(62,180,137,0.3);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.instructor-hero-bg-icon {
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
+    font-size: 240px;
+    color: rgba(62,180,137,0.05);
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+.instructor-tag {
+    background: #3eb489;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 40px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    box-shadow: 0 8px 16px rgba(62,180,137,0.3);
+}
+
+.instructor-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.instructor-stat-card-lg {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 40px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(62,180,137,0.1);
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(62,180,137,0.08);
+    transition: all 0.3s;
+}
+
+.glass-card {
+    background: rgba(255,255,255,0.9);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(62,180,137,0.06);
+    border: 1px solid rgba(62,180,137,0.08);
+}
+
+.btn-premium {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #3eb489, #2d9d74);
+    color: white;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.btn-premium:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(62,180,137,0.3);
+}
+
+.instructor-title {
+    font-size: 38px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+}
+
+.aprendiz-form-group {
+    margin-bottom: 20px;
+}
+
+.aprendiz-form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.aprendiz-input-wrapper {
+    position: relative;
+}
+
+.aprendiz-input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-lighter);
+    font-size: 14px;
+}
+
+.aprendiz-input-control {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    background: white;
+    transition: all 0.3s;
+    outline: none;
+}
+
+.aprendiz-input-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(62,180,137,0.1);
+}
+
+.aprendiz-input-disabled {
+    background: #f8fafc;
+    color: var(--text-lighter);
+    cursor: not-allowed;
+}
+
+.btn-aprendiz-action {
+    background: linear-gradient(135deg, #3eb489, #2d9d74);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-aprendiz-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(62,180,137,0.35);
+}
