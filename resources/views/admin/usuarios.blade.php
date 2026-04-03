@@ -37,70 +37,71 @@
             </div>
         </div>
 
-        <div id="aprendices" class="animate-fade-in">
-            <div class="glass-card admin-table-card">
-                <div class="admin-table-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-                    <h3 style="font-size:18px; font-weight:800; color: var(--text); display: flex; align-items: center; gap: 12px;">
-                        <span class="admin-stat-icon" style="width: 36px; height: 36px; background: var(--primary-soft); color: var(--primary); font-size: 16px;">
-                            <i class="fas fa-user-graduate"></i>
-                        </span>
+        <div style="display:flex;gap:12px;margin:24px 0;">
+            <button id="btn-aprendices" onclick="mostrarTabla('aprendices')" style="display:flex;align-items:center;gap:10px;padding:14px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#2e7d46,#1a5c30);color:white;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(46,125,70,0.4);transition:all 0.3s;">
+                <i class="fas fa-user-graduate"></i> Aprendices
+                <span style="background:rgba(255,255,255,0.25);padding:2px 10px;border-radius:20px;font-size:12px;">{{ $aprendices->count() }}</span>
+            </button>
+            <button id="btn-instructores" onclick="mostrarTabla('instructores')" style="display:flex;align-items:center;gap:10px;padding:14px 28px;border:2px solid #2e7d46;color:#2e7d46;border-radius:14px;background:transparent;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.3s;">
+                <i class="fas fa-chalkboard-teacher"></i> Instructores
+                <span style="background:#2e7d46;color:white;padding:2px 10px;border-radius:20px;font-size:12px;">{{ $instructores->count() }}</span>
+            </button>
+        </div>
+
+        <div id="tabla-aprendices" style="display:block;">
+            <div style="background:white;border-radius:20px;box-shadow:0 8px 30px rgba(46,125,70,0.12);overflow:hidden;border:1px solid rgba(46,125,70,0.1);">
+                <div style="background:linear-gradient(135deg,#0a3d2a,#1a5c30);padding:24px 28px;">
+                    <h3 style="margin:0;font-size:20px;font-weight:800;color:white;display:flex;align-items:center;gap:12px;">
+                        <span style="width:44px;height:44px;background:rgba(255,255,255,0.2);color:white;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;"><i class="fas fa-graduation-cap"></i></span>
                         Comunidad de Aprendices
                     </h3>
-                    <div style="position:relative;">
-                        <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;"></i>
-                        <input type="text" id="buscar-aprendiz" placeholder="Buscar aprendiz..." oninput="filtrarTabla(this,'aprendices-tbody')" style="padding:10px 14px 10px 38px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:13px;font-weight:600;color:var(--text);outline:none;background:#f8fafc;min-width:220px;">
-                    </div>
                 </div>
-                <div class="premium-table-container">
-                    <table class="premium-table">
+                <div style="overflow-x:auto;">
+                    <table style="width:100%;border-collapse:collapse;min-width:700px;">
                         <thead>
-                            <tr>
-                                <th>Documento</th>
-                                <th>Nombre Completo</th>
-                                <th>Programa de Formación</th>
-                                <th>Contacto</th>
-                                <th>Estado</th>
-                                <th style="text-align: right;">Acciones</th>
+                            <tr style="background:#f0f5f2;">
+                                <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Documento</th>
+                                <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Nombre Completo</th>
+                                <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Programa</th>
+                                <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Correo</th>
+                                <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Estado</th>
+                                <th style="text-align:right;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="aprendices-tbody">
+                        <tbody>
                             @forelse($aprendices as $a)
-                                <tr>
-                                    <td style="font-weight:800; color: var(--text);">{{ $a->usr_documento }}</td>
-                                    <td>
-                                        <div class="admin-user-name">{{ $a->apr_nombre }} {{ $a->apr_apellido }}</div>
-                                    </td>
-                                    <td>
-                                        <span class="aprendiz-badge-portal inline-pill inline-pill--muted">
-                                            {{ $a->apr_programa }}
-                                        </span>
-                                    </td>
-                                    <td class="admin-contact">{{ $a->usr_correo }}</td>
-                                    <td>
-                                        <span class="status-badge {{ $a->apr_estado == 1 ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;">
-                                            {{ $a->apr_estado == 1 ? 'Activo' : 'Inactivo' }}
-                                        </span>
-                                    </td>
-                                    <td style="text-align: right;">
-                                        <form action="{{ route('admin.usuarios.estado', $a->apr_id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            <input type="hidden" name="tipo" value="aprendiz">
-                                            <input type="hidden" name="estado" value="{{ $a->apr_estado == 1 ? 0 : 1 }}">
-                                            <button type="submit"
-                                                class="btn-premium"
-                                                @if($a->apr_estado == 1)
-                                                    data-confirm="¿Desactivar a {{ $a->apr_nombre }} {{ $a->apr_apellido }}? Perderá acceso a la plataforma."
-                                                    data-confirm-title="Desactivar Aprendiz"
-                                                @endif
-                                                style="padding: 10px 16px; font-size: 11px; background: {{ $a->apr_estado == 1 ? '#f8fafc' : 'var(--primary)' }}; color: {{ $a->apr_estado == 1 ? '#64748b' : 'white' }}; border: {{ $a->apr_estado == 1 ? '1px solid #e2e8f0' : 'none' }}; box-shadow: none;">
-                                                <i class="fas {{ $a->apr_estado == 1 ? 'fa-user-slash' : 'fa-user-check' }}"></i>
-                                                {{ $a->apr_estado == 1 ? 'Desactivar' : 'Activar' }}
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
+                            <tr style="transition:background 0.2s;" onmouseover="this.style.background='#f0f5f2'" onmouseout="this.style.background='white'">
+                                <td style="padding:18px 20px;font-weight:700;color:#0a3d2a;border-bottom:1px solid #e8f5e9;">{{ $a->usr_documento }}</td>
+                                <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
+                                    <div style="display:flex;align-items:center;gap:12px;">
+                                        <div style="width:36px;height:36px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;">{{ strtoupper(substr($a->apr_nombre,0,1)) }}</div>
+                                        <span style="font-weight:600;color:#0a3d2a;">{{ $a->apr_nombre }} {{ $a->apr_apellido }}</span>
+                                    </div>
+                                </td>
+                                <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
+                                    <span style="background:#e8f5e9;color:#1a5c30;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;border:1px solid #a5d6a7;">{{ $a->apr_programa }}</span>
+                                </td>
+                                <td style="padding:18px 20px;color:#1a5c30;font-size:13px;border-bottom:1px solid #e8f5e9;">{{ $a->usr_correo }}</td>
+                                <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
+                                    <span style="display:inline-flex;align-items:center;gap:6px;background:{{ $a->apr_estado == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $a->apr_estado == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $a->apr_estado == 1 ? '#a5d6a7' : '#ef9a9a' }};">
+                                        <span style="width:6px;height:6px;border-radius:50%;background:{{ $a->apr_estado == 1 ? '#2e7d46' : '#e53935' }};"></span>
+                                        {{ $a->apr_estado == 1 ? 'Activo' : 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td style="padding:18px 20px;text-align:right;border-bottom:1px solid #e8f5e9;">
+                                    <form action="{{ route('admin.usuarios.estado', $a->apr_id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <input type="hidden" name="tipo" value="aprendiz">
+                                        <input type="hidden" name="estado" value="{{ $a->apr_estado == 1 ? 0 : 1 }}">
+                                        <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:{{ $a->apr_estado == 1 ? '2px solid #2e7d46' : 'none' }};background:{{ $a->apr_estado == 1 ? 'transparent' : '#2e7d46' }};color:{{ $a->apr_estado == 1 ? '#2e7d46' : 'white' }};border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">
+                                            <i class="fas {{ $a->apr_estado == 1 ? 'fa-user-minus' : 'fa-user-check' }}"></i>
+                                            {{ $a->apr_estado == 1 ? 'Desactivar' : 'Activar' }}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
                             @empty
-                                <tr><td colspan="6" style="text-align:center; padding: 60px; color:var(--text-light); font-weight: 600;">No hay aprendices registrados en el sistema.</td></tr>
+                            <tr><td colspan="6" style="padding:60px;text-align:center;color:#1a5c30;"><i class="fas fa-users" style="font-size:48px;margin-bottom:16px;display:block;opacity:0.3;color:#2e7d46;"></i>No hay aprendices registrados.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -108,88 +109,104 @@
             </div>
         </div>
 
-        <div id="instructores" style="display:none;" class="animate-fade-in">
-            <div class="glass-card admin-table-card">
-                <div class="admin-table-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-                    <h3 style="font-size:18px; font-weight:800; color: var(--text); display: flex; align-items: center; gap: 12px;">
-                        <span class="admin-stat-icon" style="width: 36px; height: 36px; background: #eff6ff; color: #3b82f6; font-size: 16px;">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </span>
+        <div id="tabla-instructores" style="display:none;">
+            <div style="background:white;border-radius:20px;box-shadow:0 8px 30px rgba(46,125,70,0.12);overflow:hidden;border:1px solid rgba(46,125,70,0.1);">
+                <div style="background:linear-gradient(135deg,#0a3d2a,#1a5c30);padding:24px 28px;">
+                    <h3 style="margin:0;font-size:20px;font-weight:800;color:white;display:flex;align-items:center;gap:12px;">
+                        <span style="width:44px;height:44px;background:rgba(255,255,255,0.2);color:white;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;"><i class="fas fa-chalkboard-teacher"></i></span>
                         Cuerpo de Instructores
                     </h3>
-                    <div style="position:relative;">
-                        <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;"></i>
-                        <input type="text" id="buscar-instructor" placeholder="Buscar instructor..." oninput="filtrarTabla(this,'instructores-tbody')" style="padding:10px 14px 10px 38px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:13px;font-weight:600;color:var(--text);outline:none;background:#f8fafc;min-width:220px;">
-                    </div>
                 </div>
-                <div class="premium-table-container">
-                    <table class="premium-table">
+                <div style="overflow-x:auto;">
+                    <table style="width:100%;border-collapse:collapse;min-width:700px;">
                         <thead>
-                            <tr>
-                                <th>Documento</th>
-                                <th>Nombre Completo</th>
-                                <th>Especialidad</th>
-                                <th>Contacto</th>
-                                <th>Estado</th>
-                                <th style="text-align: right;">Acciones</th>
+                            <tr style="background:#f0f5f2;">
+                                <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Documento</th>
+                                <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Nombre Completo</th>
+                                <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Especialidad</th>
+                                <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Correo</th>
+                                <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Estado</th>
+                                <th style="text-align:right;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="instructores-tbody">
+                        <tbody>
                             @forelse($instructores as $i)
-                                <tr>
-                                    <td style="font-weight:800; color: var(--text);">{{ $i->usr_documento }}</td>
-                                    <td>
-                                        <div class="admin-user-name">{{ $i->ins_nombre }} {{ $i->ins_apellido }}</div>
-                                    </td>
-                                    <td>
-                                        <span class="aprendiz-badge-portal inline-pill inline-pill--muted" style="color:#3b82f6; background:#eff6ff; border-color:#dbeafe;">
-                                            {{ $i->ins_especialidad }}
-                                        </span>
-                                    </td>
-                                    <td class="admin-contact">{{ $i->usr_correo }}</td>
-                                    <td>
-                                        <span class="status-badge {{ $i->ins_estado == 1 ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;">
-                                            {{ $i->ins_estado == 1 ? 'Activo' : 'Inactivo' }}
-                                        </span>
-                                    </td>
-                                    <td style="text-align: right;">
-                                        <form action="{{ route('admin.usuarios.estado', $i->usr_id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            <input type="hidden" name="tipo" value="instructor">
-                                            <input type="hidden" name="estado" value="{{ $i->ins_estado == 1 ? 0 : 1 }}">
-                                            <button type="submit"
-                                                class="btn-premium"
-                                                @if($i->ins_estado == 1)
-                                                    data-confirm="¿Desactivar a {{ $i->ins_nombre }} {{ $i->ins_apellido }}? Perderá acceso a la plataforma."
-                                                    data-confirm-title="Desactivar Instructor"
-                                                @endif
-                                                style="padding: 10px 16px; font-size: 11px; background: {{ $i->ins_estado == 1 ? '#f8fafc' : 'var(--primary)' }}; color: {{ $i->ins_estado == 1 ? '#64748b' : 'white' }}; border: {{ $i->ins_estado == 1 ? '1px solid #e2e8f0' : 'none' }}; box-shadow: none;">
-                                                <i class="fas {{ $i->ins_estado == 1 ? 'fa-user-slash' : 'fa-user-check' }}"></i>
-                                                {{ $i->ins_estado == 1 ? 'Desactivar' : 'Activar' }}
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
+                            <tr style="transition:background 0.2s;" onmouseover="this.style.background='#f0f5f2'" onmouseout="this.style.background='white'">
+                                <td style="padding:18px 20px;font-weight:700;color:#0a3d2a;border-bottom:1px solid #e8f5e9;">{{ $i->usuario->usr_documento ?? '-' }}</td>
+                                <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
+                                    <div style="display:flex;align-items:center;gap:12px;">
+                                        <div style="width:36px;height:36px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;">{{ strtoupper(substr($i->ins_nombre,0,1)) }}</div>
+                                        <span style="font-weight:600;color:#0a3d2a;">{{ $i->ins_nombre }} {{ $i->ins_apellido }}</span>
+                                    </div>
+                                </td>
+                                <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
+                                    <span style="background:#e8f5e9;color:#1a5c30;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;border:1px solid #a5d6a7;">{{ $i->ins_especialidad }}</span>
+                                </td>
+                                <td style="padding:18px 20px;color:#1a5c30;font-size:13px;border-bottom:1px solid #e8f5e9;">{{ $i->usuario->usr_correo ?? '-' }}</td>
+                                <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
+                                    <span style="display:inline-flex;align-items:center;gap:6px;background:{{ $i->ins_estado == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $i->ins_estado == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $i->ins_estado == 1 ? '#a5d6a7' : '#ef9a9a' }};">
+                                        <span style="width:6px;height:6px;border-radius:50%;background:{{ $i->ins_estado == 1 ? '#2e7d46' : '#e53935' }};"></span>
+                                        {{ $i->ins_estado == 1 ? 'Activo' : 'Inactivo' }}
+                                    </span>
+                                </td>
+                                <td style="padding:18px 20px;text-align:right;border-bottom:1px solid #e8f5e9;">
+                                    <form action="{{ route('admin.usuarios.estado', $i->usr_id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <input type="hidden" name="tipo" value="instructor">
+                                        <input type="hidden" name="estado" value="{{ $i->ins_estado == 1 ? 0 : 1 }}">
+                                        <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:{{ $i->ins_estado == 1 ? '2px solid #2e7d46' : 'none' }};background:{{ $i->ins_estado == 1 ? 'transparent' : '#2e7d46' }};color:{{ $i->ins_estado == 1 ? '#2e7d46' : 'white' }};border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">
+                                            <i class="fas {{ $i->ins_estado == 1 ? 'fa-user-minus' : 'fa-user-check' }}"></i>
+                                            {{ $i->ins_estado == 1 ? 'Desactivar' : 'Activar' }}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
                             @empty
-                                <tr><td colspan="6" style="text-align:center; padding: 60px; color:var(--text-light); font-weight: 600;">No hay instructores registrados.</td></tr>
+                            <tr><td colspan="6" style="padding:60px;text-align:center;color:#1a5c30;"><i class="fas fa-chalkboard-teacher" style="font-size:48px;margin-bottom:16px;display:block;opacity:0.3;color:#2e7d46;"></i>No hay instructores registrados.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-    </div>
 @endsection
 
 @section('scripts')
 <script>
-function filtrarTabla(inputEl, tbodyId) {
-    const q = inputEl.value.toLowerCase();
-    document.querySelectorAll('#' + tbodyId + ' tr').forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(q) ? '' : 'none';
-    });
+function mostrarTabla(tab) {
+    document.getElementById('tabla-aprendices').style.display = (tab === 'aprendices') ? 'block' : 'none';
+    document.getElementById('tabla-instructores').style.display = (tab === 'instructores') ? 'block' : 'none';
+    
+    const btnA = document.getElementById('btn-aprendices');
+    const btnI = document.getElementById('btn-instructores');
+    
+    if (tab === 'aprendices') {
+        btnA.style.background = 'linear-gradient(135deg,#2e7d46,#1a5c30)';
+        btnA.style.color = 'white';
+        btnA.style.boxShadow = '0 6px 20px rgba(46,125,70,0.4)';
+        btnA.style.border = 'none';
+        btnA.querySelector('span').style.background = 'rgba(255,255,255,0.25)';
+        
+        btnI.style.background = 'transparent';
+        btnI.style.color = '#2e7d46';
+        btnI.style.border = '2px solid #2e7d46';
+        btnI.style.boxShadow = 'none';
+        btnI.querySelector('span').style.background = '#2e7d46';
+        btnI.querySelector('span').style.color = 'white';
+    } else {
+        btnI.style.background = 'linear-gradient(135deg,#2e7d46,#1a5c30)';
+        btnI.style.color = 'white';
+        btnI.style.boxShadow = '0 6px 20px rgba(46,125,70,0.4)';
+        btnI.style.border = 'none';
+        btnI.querySelector('span').style.background = 'rgba(255,255,255,0.25)';
+        
+        btnA.style.background = 'transparent';
+        btnA.style.color = '#2e7d46';
+        btnA.style.border = '2px solid #2e7d46';
+        btnA.style.boxShadow = 'none';
+        btnA.querySelector('span').style.background = '#2e7d46';
+        btnA.querySelector('span').style.color = 'white';
+    }
 }
 </script>
-<script src="{{ asset('js/admin.js') }}"></script>
 @endsection

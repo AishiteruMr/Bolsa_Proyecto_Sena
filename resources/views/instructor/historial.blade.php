@@ -23,67 +23,77 @@
     </a>
 @endsection
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/instructor.css') }}">
+@endsection
+
 @section('content')
-    <div style="margin-bottom: 32px;">
-        <h2 style="font-size:26px; font-weight:700; color:var(--primary-hover)">Historial de Proyectos</h2>
-        <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Registro histórico de todos los proyectos supervisados y completados.</p>
+<div class="instructor-hero" style="padding: 40px 48px; margin-bottom: 32px;">
+    <div class="instructor-hero-bg-icon"><i class="fas fa-history"></i></div>
+    <div style="position: relative; z-index: 1;">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 10px;">
+            <span class="instructor-tag">Historial</span>
+        </div>
+        <h1 style="font-size: 36px; font-weight: 800; color: white; margin-bottom: 8px;">Historial de Proyectos</h1>
+        <p style="color: rgba(255,255,255,0.7); font-size: 15px;">Registro histórico de todos los proyectos supervisados y completados.</p>
     </div>
+</div>
 
     @if($proyectos->count() > 0)
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 2rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1.5rem;">
             @foreach($proyectos as $proyecto)
-                <div class="glass-card" style="display: flex; flex-direction: column; height: 100%;">
+                <div style="background: white; border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s; display: flex; flex-direction: column; min-height: 320px;">
                     <div style="padding: 1.5rem; flex: 1;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                            <span class="badge" style="background: {{ $proyecto->pro_estado === 'Activo' ? 'var(--primary-light)' : '#64748b' }}; color: white; border: none;">
+                            <span style="background: {{ $proyecto->pro_estado === 'Activo' ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : '#64748b' }}; color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">
                                 {{ $proyecto->pro_estado }}
                             </span>
-                            <span style="font-size: 0.75rem; color: var(--text-muted);">
+                            <span style="font-size: 0.75rem; color: var(--text-light);">
                                 <i class="fas fa-calendar-alt" style="margin-right: 4px;"></i>
                                 {{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d M, Y') }}
                             </span>
                         </div>
                         
-                        <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--primary-hover); margin-bottom: 0.75rem; line-height: 1.4;">
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                             {{ $proyecto->pro_titulo_proyecto }}
                         </h3>
 
-                        <div style="display: grid; gap: 8px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; color: var(--text-light); margin-bottom: 1.5rem;">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <i class="fas fa-building" style="color: var(--primary); width: 14px;"></i>
-                                <span>{{ $proyecto->emp_nombre }}</span>
+                                <i class="fas fa-building" style="color: #3eb489; width: 16px;"></i>
+                                <span style="font-weight: 600;">{{ $proyecto->emp_nombre }}</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <i class="fas fa-tag" style="color: var(--primary); width: 14px;"></i>
-                                <span>{{ $proyecto->pro_categoria }}</span>
+                                <i class="fas fa-tag" style="color: #3eb489; width: 16px;"></i>
+                                <span style="font-weight: 600;">{{ $proyecto->pro_categoria }}</span>
                             </div>
                         </div>
 
-                        <div style="background: var(--bg-main); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: center;">
+                        <div style="background: rgba(62,180,137,0.05); padding: 1rem; border-radius: 14px; border: 1px solid rgba(62,180,137,0.1); display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; text-align: center;">
                             <div>
-                                <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary); margin: 0;">{{ $proyecto->total_aprendices }}</p>
-                                <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Postulaciones</p>
+                                <p style="font-size: 1.5rem; font-weight: 800; color: #3eb489; margin: 0 0 4px 0;">{{ $proyecto->total_aprendices }}</p>
+                                <p style="font-size: 0.65rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin: 0;">Postulaciones</p>
                             </div>
-                            <div style="border-left: 1px solid var(--border);">
-                                <p style="font-size: 1.1rem; font-weight: 700; color: #10b981; margin: 0;">{{ $proyecto->aprendices_aprobados }}</p>
-                                <p style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Aprobadas</p>
+                            <div style="border-left: 1px solid rgba(62,180,137,0.2);">
+                                <p style="font-size: 1.5rem; font-weight: 800; color: #10b981; margin: 0 0 4px 0;">{{ $proyecto->aprendices_aprobados }}</p>
+                                <p style="font-size: 0.65rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin: 0;">Aprobadas</p>
                             </div>
                         </div>
                     </div>
 
-                    <div style="padding: 1.25rem; border-top: 1px solid var(--border); background: rgba(0,0,0,0.02);">
-                        <a href="{{ route('instructor.reporte', $proyecto->pro_id) }}" class="btn-ver" style="width: 100%; justify-content: center; background: #3b82f6; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);">
-                            <i class="fas fa-chart-pie" style="margin-right: 8px;"></i> Ver Reporte de Seguimiento
+                    <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(62,180,137,0.1); background: rgba(62,180,137,0.02);">
+                        <a href="{{ route('instructor.reporte', $proyecto->pro_id) }}" class="btn-premium" style="width: 100%; justify-content: center; padding: 10px;">
+                            <i class="fas fa-chart-pie" style="margin-right: 6px;"></i> Ver Reporte
                         </a>
                     </div>
                 </div>
             @endforeach
         </div>
     @else
-        <div class="glass-card" style="padding: 5rem 2rem; text-align: center;">
-            <i class="fas fa-history" style="font-size: 4rem; color: var(--border); margin-bottom: 1.5rem;"></i>
-            <h4 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 8px;">Historial vacío</h4>
-            <p style="color: var(--text-muted);">Aún no tienes proyectos finalizados o registrados en tu historial.</p>
+        <div style="padding: 5rem 2rem; text-align: center; background: white; border-radius: 20px; border: 1px dashed rgba(62,180,137,0.2);">
+            <i class="fas fa-history" style="font-size: 4rem; color: #3eb489; margin-bottom: 1.5rem; opacity: 0.5;"></i>
+            <h4 style="color: var(--text); font-size: 1.5rem; margin-bottom: 8px; font-weight: 800;">Historial vacío</h4>
+            <p style="color: var(--text-light);">Aún no tienes proyectos finalizados o registrados en tu historial.</p>
         </div>
     @endif
 @endsection

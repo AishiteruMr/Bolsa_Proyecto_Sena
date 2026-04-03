@@ -25,24 +25,21 @@
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/instructor.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 @endsection
 
 @section('content')
 <div class="animate-fade-in dashboard-wrapper">
     
-    <!-- HEADER MAESTRO (coincidente con Principal) -->
-    <div class="admin-header-master">
-        <div class="admin-header-icon">
-            <i class="fas fa-chalkboard-teacher"></i>
-        </div>
+    <!-- HEADER INSTRUCTOR (reutiliza estilos de instructor.css) -->
+    <div class="instructor-hero">
+        <div class="instructor-hero-bg-icon"><i class="fas fa-chalkboard-teacher"></i></div>
         <div style="position: relative; z-index: 1;">
-            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
-                <span class="admin-badge-hub">Instructor Hub</span>
-                <span id="current-time" style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600;"></span>
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 10px;">
+                <span class="instructor-tag">Instructor Hub</span>
+                <span id="current-time" style="color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 600;"></span>
             </div>
-            <h1 class="admin-header-title">Centro de Mando del <span style="color: var(--primary);">Instructor</span></h1>
-            <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 720px; line-height: 1.6; font-weight: 500;">Tu centro de mando para la excelencia académica y la gestión de proyectos de impacto.</p>
+            <h1 class="instructor-title">Centro de Mando del <span style="color: var(--primary);">Instructor</span></h1>
+            <p style="color: rgba(255,255,255,0.75); font-size: 16px; max-width: 720px; line-height: 1.6; font-weight: 500;">Tu centro de mando para la excelencia académica y la gestión de proyectos de impacto.</p>
         </div>
     </div>
 
@@ -76,7 +73,7 @@
 
         <!-- Success Stat Card -->
         <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius); padding: 24px;">
-            <div style="width: 48px; height: 48px; border-radius: 14px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 22px;">
+            <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                 <i class="fas fa-user-graduate"></i>
             </div>
             <div style="margin-top: 24px;">
@@ -103,7 +100,7 @@
 
             <div class="instructor-project-grid">
                 @forelse($proyectos as $p)
-                    <div class="glass-card instructor-project-card">
+                    <div class="instructor-project-card">
                         <div style="height: 160px; position: relative;">
                             <img src="{{ $p->imagen_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                             <div class="instructor-project-image-badge">
@@ -111,15 +108,15 @@
                             </div>
                         </div>
                         <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
-                            <h4 class="admin-project-title" style="font-size: 17px; margin-bottom:16px;">{{ $p->pro_titulo_proyecto }}</h4>
+                            <h4 class="instructor-project-title" style="font-size: 17px; margin-bottom:16px;">{{ $p->pro_titulo_proyecto }}</h4>
                             <div style="display: flex; gap: 12px; margin-bottom: 20px;">
-                                <div style="flex: 1; background: #f8fafc; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid #f1f5f9;">
-                                    <span style="display: block; font-size: 16px; font-weight: 800;">{{ $p->postulaciones->where('pos_estado', 'Aprobada')->count() }}</span>
-                                    <span style="font-size: 10px; color: var(--text-lighter); font-weight: 700; text-transform: uppercase;">Activos</span>
+                                <div class="instructor-small-stat">
+                                    <span class="count">{{ $p->postulaciones->where('pos_estado', 'Aprobada')->count() }}</span>
+                                    <span class="label">Activos</span>
                                 </div>
-                                <div style="flex: 1; background: #f8fafc; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid #f1f5f9;">
-                                    <span style="display: block; font-size: 16px; font-weight: 800;">{{ $p->postulaciones->where('pos_estado', 'Pendiente')->count() }}</span>
-                                    <span style="font-size: 10px; color: var(--text-lighter); font-weight: 700; text-transform: uppercase;">Nuevos</span>
+                                <div class="instructor-small-stat">
+                                    <span class="count">{{ $p->postulaciones->where('pos_estado', 'Pendiente')->count() }}</span>
+                                    <span class="label">Nuevos</span>
                                 </div>
                             </div>
                             <a href="{{ route('instructor.proyecto.detalle', $p->pro_id) }}" class="btn-premium" style="width: 100%; justify-content: center; font-size: 13px; padding: 10px;">
@@ -143,7 +140,7 @@
             <div class="instructor-notification-card">
                 <div style="display: flex; flex-direction: column; gap: 20px;">
                     <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="width: 40px; height: 40px; border-radius: 10px; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(62,180,137,0.1); color: var(--primary); display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-bolt"></i>
                         </div>
                         <div style="flex: 1;">
@@ -152,7 +149,7 @@
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="width: 40px; height: 40px; border-radius: 10px; background: #fff1f2; color: #e11d48; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 40px; height: 40px; border-radius: 10px; background: #fff3e0; color: #f59e0b; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-calendar-alt"></i>
                         </div>
                         <div style="flex: 1;">

@@ -28,42 +28,48 @@
 @endsection
 
 @section('content')
-    <div style="margin-bottom: 32px;" class="animate-fade-in">
-        <h2 style="font-size:26px; font-weight:800; color:var(--text)">Comunidad de Aprendices</h2>
-        <p style="color:var(--text-light); font-size:15px; margin-top:4px;">Supervisa el desempeño y progreso de los aprendices en tus proyectos.</p>
+<div class="instructor-hero" style="padding: 40px 48px; margin-bottom: 32px;">
+    <div class="instructor-hero-bg-icon"><i class="fas fa-users"></i></div>
+    <div style="position: relative; z-index: 1;">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 10px;">
+            <span class="instructor-tag">Aprendices</span>
+        </div>
+        <h1 style="font-size: 36px; font-weight: 800; color: white; margin-bottom: 8px;">Comunidad de Aprendices</h1>
+        <p style="color: rgba(255,255,255,0.7); font-size: 15px;">Supervisa el desempeño y progreso de los aprendices en tus proyectos.</p>
     </div>
+</div>
 
-    <div class="instructor-community-grid animate-fade-in">
-        @forelse($aprendices as $a)
-            <div class="glass-card instructor-apprentice-card">
-                <div class="instructor-apprentice-avatar">
-                    <span>{{ strtoupper(substr($a->apr_nombre ?? 'A', 0, 1)) }}</span>
-                </div>
-                
-                <h4 style="font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; color: var(--text)">{{ $a->apr_nombre ?? '' }} {{ $a->apr_apellido ?? '' }}</h4>
-                
-                <div style="font-size:0.85rem; color: var(--text-light); margin-bottom: 1rem;">
-                    <div style="margin-bottom: 4px;"><i class="fas fa-graduation-cap" style="color:var(--primary); margin-right:6px;"></i>{{ $a->apr_programa ?? 'Sin programa' }}</div>
-                    <div><i class="fas fa-envelope" style="margin-right:6px;"></i>{{ $a->usr_correo ?? 'Sin correo' }}</div>
-                </div>
+<div class="instructor-community-grid animate-fade-in">
+    @forelse($aprendices as $a)
+        <div style="background: rgba(255,255,255,0.9); border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s; padding: 32px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; margin-bottom: 16px; box-shadow: 0 10px 20px rgba(62,180,137,0.3);">
+                {{ strtoupper(substr($a->apr_nombre ?? 'A', 0, 1)) }}
+            </div>
+            
+            <h4 style="font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; color: var(--text);">{{ $a->apr_nombre ?? '' }} {{ $a->apr_apellido ?? '' }}</h4>
+            
+            <div style="font-size:0.85rem; color: var(--text-light); margin-bottom: 1rem;">
+                <div style="margin-bottom: 4px;"><i class="fas fa-graduation-cap" style="color:#3eb489; margin-right:6px;"></i>{{ $a->apr_programa ?? 'Sin programa' }}</div>
+                <div><i class="fas fa-envelope" style="color:#3eb489; margin-right:6px;"></i>{{ $a->usr_correo ?? 'Sin correo' }}</div>
+            </div>
 
-                <div style="margin-top: auto; width: 100%; border-top: 1px solid var(--border); padding-top: 1rem;">
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <span class="aprendiz-badge-portal" style="background: #f0fdf4; border-color: #bbf7d0; color: #16a34a; width: fit-content; margin: 0 auto; font-size: 10px;">
-                            <i class="fas fa-check-circle"></i> Postulación Aprobada
-                        </span>
-                        <div style="font-size:12px; color:var(--primary); font-weight: 700;">
-                            <i class="fas fa-briefcase" style="margin-right:4px;"></i>{{ $a->pro_titulo_proyecto ?? 'Sin proyecto' }}
-                        </div>
+            <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(62,180,137,0.1); padding-top: 1rem;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <span style="background: #dcfce7; border: 1px solid #bbf7d0; color: #15803d; width: fit-content; margin: 0 auto; padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 700;">
+                        <i class="fas fa-check-circle"></i> Postulación Aprobada
+                    </span>
+                    <div style="font-size:12px; color:#3eb489; font-weight: 700;">
+                        <i class="fas fa-briefcase" style="margin-right:4px;"></i>{{ $a->pro_titulo_proyecto ?? 'Sin proyecto' }}
                     </div>
                 </div>
             </div>
-        @empty
-            <div class="instructor-empty-state">
-                <i class="fas fa-users instructor-empty-icon"></i>
-                <h4 style="color:var(--text); font-size:1.5rem; margin-bottom:8px; font-weight: 800;">No hay aprendices activos</h4>
-                <p style="color:var(--text-light); font-weight: 500;">Aún no tienes aprendices vinculados a tus proyectos.</p>
-            </div>
-        @endforelse
-    </div>
+        </div>
+    @empty
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: white; border-radius: 20px; border: 1px dashed rgba(62,180,137,0.2);">
+            <i class="fas fa-users" style="font-size: 48px; color: #3eb489; margin-bottom: 16px; opacity: 0.5;"></i>
+            <h4 style="color:var(--text); font-size:1.5rem; margin-bottom:8px; font-weight: 800;">No hay aprendices activos</h4>
+            <p style="color:var(--text-light); font-weight: 500;">Aún no tienes aprendices vinculados a tus proyectos.</p>
+        </div>
+    @endforelse
+</div>
 @endsection

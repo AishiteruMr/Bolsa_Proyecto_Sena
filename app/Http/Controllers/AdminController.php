@@ -43,8 +43,9 @@ class AdminController extends Controller
     {
         $aprendices = Aprendiz::with('usuario')->get();
         $instructores = Instructor::with('usuario')->get();
+        $empresas = Empresa::orderByDesc('emp_id')->get();
 
-        return view('admin.usuarios', compact('aprendices', 'instructores'));
+        return view('admin.usuarios', compact('aprendices', 'instructores', 'empresas'));
     }
 
     public function cambiarEstadoUsuario(Request $request, int $id)
