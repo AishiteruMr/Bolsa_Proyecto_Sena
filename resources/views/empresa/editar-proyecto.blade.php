@@ -3,16 +3,17 @@
 @section('page-title', 'Editar Proyecto')
 
 @section('sidebar-nav')
+    <span class="nav-label">Portal Empresa</span>
     <a href="{{ route('empresa.dashboard') }}" class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Principal
+        <i class="fas fa-th-large"></i> Principal
     </a>
-    <a href="{{ route('empresa.proyectos') }}" class="nav-item {{ request()->routeIs('empresa.proyectos*') ? 'active' : '' }}">
+    <a href="{{ route('empresa.proyectos') }}" class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}">
         <i class="fas fa-project-diagram"></i> Mis Proyectos
     </a>
     <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}">
         <i class="fas fa-plus-circle"></i> Publicar Proyecto
     </a>
-    <span class="nav-label">Cuenta</span>
+    <span class="nav-label">Configuración</span>
     <a href="{{ route('empresa.perfil') }}" class="nav-item {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}">
         <i class="fas fa-building"></i> Perfil Empresa
     </a>
@@ -24,17 +25,23 @@
 @endsection
 
 @section('content')
-<div class="animate-fade-in" style="max-width: 900px; margin: 0 auto;">
-    <div style="margin-bottom: 32px;">
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <a href="{{ route('empresa.proyectos') }}" class="btn-premium" style="background: white; color: var(--text-light); border: 1px solid #e2e8f0; box-shadow: none; padding: 8px 16px; font-size: 13px;">
-                <i class="fas fa-chevron-left"></i> Volver al Portafolio
-            </a>
+<div class="animate-fade-in" style="max-width: 900px; margin: 0 auto; padding-bottom: 40px;">
+    
+    <!-- Hero Header -->
+    <div class="instructor-hero" style="margin-bottom: 32px;">
+        <div class="instructor-hero-bg-icon"><i class="fas fa-edit"></i></div>
+        <div style="position: relative; z-index: 1;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <a href="{{ route('empresa.proyectos') }}" style="display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">
+                    <i class="fas fa-arrow-left"></i> Volver al Portafolio
+                </a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <span class="instructor-tag">Editar Proyecto</span>
+            </div>
+            <h1 class="instructor-title">Editar <span style="color: var(--primary);">Convocatoria</span></h1>
+            <p style="color: rgba(255,255,255,0.6); font-size: 15px; font-weight: 500;">Actualiza la información y requerimientos de tu proyecto.</p>
         </div>
-        <h2 style="font-size:28px; font-weight:800; color:var(--text); letter-spacing:-0.5px;">
-            Editar <span style="color: var(--primary);">Convocatoria</span>
-        </h2>
-        <p style="color:var(--text-light); font-size:15px; margin-top:4px; font-weight: 500;">Actualiza la información y requerimientos de tu proyecto.</p>
     </div>
 
     <form action="{{ route('empresa.proyectos.update', $proyecto->pro_id) }}" method="POST" enctype="multipart/form-data">

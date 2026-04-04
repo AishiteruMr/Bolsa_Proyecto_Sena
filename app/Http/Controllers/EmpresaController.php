@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PostulacionEstadoCambiado;
+use App\Models\Aprendiz;
+use App\Models\Empresa;
+use App\Models\Etapa;
+use App\Models\Evidencia;
+use App\Models\Postulacion;
+use App\Models\Proyecto;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use App\Models\Proyecto;
-use App\Models\Postulacion;
-use App\Models\Empresa;
-use App\Models\Evidencia;
-use App\Models\Etapa;
-use App\Models\Aprendiz;
-use App\Models\User;
-use App\Mail\PostulacionExitosa;
-use App\Mail\PostulacionEstadoCambiado;
 
 class EmpresaController extends Controller
 {
@@ -25,7 +22,7 @@ class EmpresaController extends Controller
         $nit = session('nit');
         $empresa = Empresa::where('emp_nit', $nit)->first();
 
-        if (!$empresa) {
+        if (! $empresa) {
             return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
         }
 
@@ -34,7 +31,7 @@ class EmpresaController extends Controller
 
         $totalProyectos = $proyectos->count();
         $proyectosActivos = $proyectos->where('pro_estado', 'Activo')->count();
-        
+
         // Proyectos recientes con eager loading y conteo de postulaciones
         $proyectosRecientes = $empresa->proyectos()
             ->with(['instructor'])
@@ -42,12 +39,12 @@ class EmpresaController extends Controller
             ->orderByDesc('pro_id')
             ->limit(5)
             ->get();
-        
-        $totalPostulaciones = Postulacion::whereIn('pro_id', 
+
+        $totalPostulaciones = Postulacion::whereIn('pro_id',
             $empresa->proyectos()->pluck('pro_id')
         )->count();
 
-        $postulacionesPendientes = Postulacion::whereIn('pro_id', 
+        $postulacionesPendientes = Postulacion::whereIn('pro_id',
             $empresa->proyectos()->pluck('pro_id')
         )->where('pos_estado', 'Pendiente')->count();
 
@@ -62,10 +59,10 @@ class EmpresaController extends Controller
         $nit = session('nit');
         $empresa = Empresa::where('emp_nit', $nit)->first();
 
-        if (!$empresa) {
+        if (! $empresa) {
             return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
         }
-        
+
         $proyectos = $empresa->proyectos()
             ->orderByDesc('pro_id')
             ->get();
@@ -81,13 +78,13 @@ class EmpresaController extends Controller
     public function guardarProyecto(Request $request)
     {
         $request->validate([
-            'titulo'       => 'required|string|max:200',
-            'categoria'    => 'required|string|max:100',
-            'descripcion'  => 'required|string|max:500',
-            'requisitos'   => 'required|string|max:200',
-            'habilidades'  => 'required|string|max:200',
-            'fecha_publi'  => 'required|date',
-            'imagen'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'titulo' => 'required|string|max:200',
+            'categoria' => 'required|string|max:100',
+            'descripcion' => 'required|string|max:500',
+            'requisitos' => 'required|string|max:200',
+            'habilidades' => 'required|string|max:200',
+            'fecha_publi' => 'required|date',
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
         $nit = session('nit');
@@ -95,27 +92,27 @@ class EmpresaController extends Controller
 
         if ($request->hasFile('imagen')) {
             $path = $request->file('imagen')->store('proyectos', 'public');
-            $imagenUrl = '/storage/' . $path;
+            $imagenUrl = '/storage/'.$path;
         }
 
         // Calcular fecha de finalización (6 meses desde la fecha de publicación)
-        $fechaPubli = \Carbon\Carbon::parse($request->fecha_publi);
+        $fechaPubli = Carbon::parse($request->fecha_publi);
         $fechaFinalizacion = $fechaPubli->addMonths(6);
 
         Proyecto::create([
-            'emp_nit'                    => $nit,
-            'pro_titulo_proyecto'        => $request->titulo,
-            'pro_categoria'              => $request->categoria,
-            'pro_descripcion'            => $request->descripcion,
+            'emp_nit' => $nit,
+            'pro_titulo_proyecto' => $request->titulo,
+            'pro_categoria' => $request->categoria,
+            'pro_descripcion' => $request->descripcion,
             'pro_requisitos_especificos' => $request->requisitos,
-            'pro_habilidades_requerida'  => $request->habilidades,
-            'pro_fecha_publi'            => $request->fecha_publi,
-            'pro_fecha_finalizacion'     => $fechaFinalizacion,
-            'pro_duracion_estimada'      => $fechaPubli->diffInDays($fechaFinalizacion),
-            'pro_estado'                 => 'Pendiente', // Cambiado a Pendiente para flujo de aprobación
-            'pro_imagen_url'             => $imagenUrl,
-            'pro_latitud'                => $request->latitud,
-            'pro_longitud'               => $request->longitud,
+            'pro_habilidades_requerida' => $request->habilidades,
+            'pro_fecha_publi' => $request->fecha_publi,
+            'pro_fecha_finalizacion' => $fechaFinalizacion,
+            'pro_duracion_estimada' => $fechaPubli->diffInDays($fechaFinalizacion),
+            'pro_estado' => 'Pendiente', // Cambiado a Pendiente para flujo de aprobación
+            'pro_imagen_url' => $imagenUrl,
+            'pro_latitud' => $request->latitud,
+            'pro_longitud' => $request->longitud,
         ]);
 
         return redirect()->route('empresa.proyectos')->with('success', '✅ Proyecto enviado para revisión. Aparecerá como "Activo" una vez el administrador lo apruebe.');
@@ -134,13 +131,13 @@ class EmpresaController extends Controller
     public function actualizarProyecto(Request $request, int $id)
     {
         $request->validate([
-            'titulo'      => 'required|string|max:200',
-            'categoria'   => 'required|string|max:100',
+            'titulo' => 'required|string|max:200',
+            'categoria' => 'required|string|max:100',
             'descripcion' => 'required|string|max:500',
-            'requisitos'  => 'required|string|max:200',
+            'requisitos' => 'required|string|max:200',
             'habilidades' => 'required|string|max:200',
             'fecha_publi' => 'required|date',
-            'imagen'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $nit = session('nit');
@@ -149,25 +146,25 @@ class EmpresaController extends Controller
             ->firstOrFail();
 
         // Calcular fecha de finalización (6 meses desde la fecha de publicación)
-        $fechaPubli = \Carbon\Carbon::parse($request->fecha_publi);
+        $fechaPubli = Carbon::parse($request->fecha_publi);
         $fechaFinalizacion = $fechaPubli->addMonths(6);
-        
+
         $datos = [
-            'pro_titulo_proyecto'        => $request->titulo,
-            'pro_categoria'              => $request->categoria,
-            'pro_descripcion'            => $request->descripcion,
+            'pro_titulo_proyecto' => $request->titulo,
+            'pro_categoria' => $request->categoria,
+            'pro_descripcion' => $request->descripcion,
             'pro_requisitos_especificos' => $request->requisitos,
-            'pro_habilidades_requerida'  => $request->habilidades,
-            'pro_fecha_publi'            => $request->fecha_publi,
-            'pro_fecha_finalizacion'     => $fechaFinalizacion,
-            'pro_duracion_estimada'      => $fechaPubli->diffInDays($fechaFinalizacion),
-            'pro_latitud'                => $request->latitud,
-            'pro_longitud'               => $request->longitud,
+            'pro_habilidades_requerida' => $request->habilidades,
+            'pro_fecha_publi' => $request->fecha_publi,
+            'pro_fecha_finalizacion' => $fechaFinalizacion,
+            'pro_duracion_estimada' => $fechaPubli->diffInDays($fechaFinalizacion),
+            'pro_latitud' => $request->latitud,
+            'pro_longitud' => $request->longitud,
         ];
 
         if ($request->hasFile('imagen')) {
             $path = $request->file('imagen')->store('proyectos', 'public');
-            $datos['pro_imagen_url'] = '/storage/' . $path;
+            $datos['pro_imagen_url'] = '/storage/'.$path;
         }
 
         $proyecto->update($datos);
@@ -178,28 +175,28 @@ class EmpresaController extends Controller
     public function eliminarProyecto(int $id)
     {
         $nit = session('nit');
-        
+
         // Verificar que el proyecto pertenece a la empresa
         $proyecto = Proyecto::where('pro_id', $id)
             ->where('emp_nit', $nit)
             ->first();
-        
-        if (!$proyecto) {
+
+        if (! $proyecto) {
             return redirect()->route('empresa.proyectos')->with('error', 'Proyecto no encontrado.');
         }
-        
+
         // Eliminar evidencias del proyecto
         Evidencia::where('evid_pro_id', $id)->delete();
-        
+
         // Eliminar etapas del proyecto
         Etapa::where('eta_pro_id', $id)->delete();
-        
+
         // Eliminar postulaciones del proyecto
         Postulacion::where('pro_id', $id)->delete();
-        
+
         // Finalmente eliminar el proyecto
         $proyecto->delete();
-        
+
         return redirect()->route('empresa.proyectos')->with('success', 'Proyecto eliminado correctamente.');
     }
 
@@ -216,8 +213,8 @@ class EmpresaController extends Controller
             ->with(['aprendiz.usuario'])
             ->orderByDesc('pos_fecha')
             ->get()
-            ->map(function($postulacion) {
-                return (object)[
+            ->map(function ($postulacion) {
+                return (object) [
                     'pos_id' => $postulacion->pos_id,
                     'pos_estado' => $postulacion->pos_estado,
                     'pos_fecha' => $postulacion->pos_fecha,
@@ -231,16 +228,43 @@ class EmpresaController extends Controller
         return view('empresa.postulantes', compact('proyecto', 'postulantes'));
     }
 
+    public function verParticipantes(int $id)
+    {
+        $nit = session('nit');
+
+        $proyecto = Proyecto::with(['instructor', 'empresa'])
+            ->where('pro_id', $id)
+            ->where('emp_nit', $nit)
+            ->firstOrFail();
+
+        // Aprendices aprobados
+        $aprendices = Postulacion::where('pro_id', $id)
+            ->where('pos_estado', 'Aprobada')
+            ->with(['aprendiz.usuario'])
+            ->get()
+            ->map(function ($post) {
+                return (object) [
+                    'apr_id' => $post->aprendiz->apr_id,
+                    'apr_nombre' => $post->aprendiz->apr_nombre,
+                    'apr_apellido' => $post->aprendiz->apr_apellido,
+                    'apr_programa' => $post->aprendiz->apr_programa,
+                    'usr_correo' => optional($post->aprendiz->usuario)->usr_correo,
+                ];
+            });
+
+        return view('empresa.participantes', compact('proyecto', 'aprendices'));
+    }
+
     public function cambiarEstadoPostulacion(Request $request, int $id)
     {
         $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
-        
+
         $nit = session('nit');
-        
+
         // SEGURIDAD: Validar que la postulación pertenece a un proyecto de esta empresa
         $postulacion = Postulacion::with('proyecto')
             ->where('pos_id', $id)
-            ->whereHas('proyecto', function($query) use ($nit) {
+            ->whereHas('proyecto', function ($query) use ($nit) {
                 $query->where('emp_nit', $nit);
             })
             ->firstOrFail();
@@ -261,7 +285,7 @@ class EmpresaController extends Controller
                 );
             }
         } catch (\Exception $e) {
-            Log::error('Error enviando email de estado postulación: ' . $e->getMessage());
+            Log::error('Error enviando email de estado postulación: '.$e->getMessage());
         }
 
         return back()->with('success', 'Estado de postulación actualizado y aprendiz notificado.');
@@ -271,6 +295,7 @@ class EmpresaController extends Controller
     {
         $empId = session('emp_id');
         $empresa = Empresa::findOrFail($empId);
+
         return view('empresa.perfil', compact('empresa'));
     }
 
@@ -281,12 +306,12 @@ class EmpresaController extends Controller
 
         $request->validate([
             'nombre_empresa' => 'required|string|max:150',
-            'representante'  => 'required|string|max:100',
-            'password'       => 'nullable|string|min:6',
+            'representante' => 'required|string|max:100',
+            'password' => 'nullable|string|min:6',
         ]);
 
         $datos = [
-            'emp_nombre'        => $request->nombre_empresa,
+            'emp_nombre' => $request->nombre_empresa,
             'emp_representante' => $request->representante,
         ];
 

@@ -297,6 +297,12 @@ class AprendizController extends Controller
         $proyecto = Proyecto::with(['empresa', 'instructor'])
             ->findOrFail($proId);
 
+        // Agregar nombres para acceso directo en la vista
+        $proyecto->emp_nombre = $proyecto->empresa->emp_nombre ?? 'No asignada';
+        $proyecto->instructor_nombre = $proyecto->instructor
+            ? $proyecto->instructor->ins_nombre.' '.$proyecto->instructor->ins_apellido
+            : 'No asignado';
+
         // Obtener etapas del proyecto
         $etapas = $proyecto->etapasOrdenadas();
 

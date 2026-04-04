@@ -1,19 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AprendizController;
-use App\Http\Controllers\EmpresaController;
-use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ProyectoController;
+use App\Http\Controllers\AprendizController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InstructorController;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Rutas públicas
 |--------------------------------------------------------------------------
 */
-
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -81,6 +80,7 @@ Route::middleware(['auth.custom', 'rol:3'])->prefix('empresa')->name('empresa.')
     Route::put('/proyectos/{id}', [EmpresaController::class, 'actualizarProyecto'])->name('proyectos.update');
     Route::delete('/proyectos/{id}', [EmpresaController::class, 'eliminarProyecto'])->name('proyectos.destroy');
     Route::get('/proyectos/{id}/postulantes', [EmpresaController::class, 'verPostulantes'])->name('proyectos.postulantes');
+    Route::get('/proyectos/{id}/participantes', [EmpresaController::class, 'verParticipantes'])->name('proyectos.participantes');
     Route::post('/postulaciones/{id}/estado', [EmpresaController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado');
     Route::get('/perfil', [EmpresaController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [EmpresaController::class, 'actualizarPerfil'])->name('perfil.update');
@@ -100,19 +100,19 @@ Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instruc
     Route::get('/historial', [InstructorController::class, 'historial'])->name('historial');
     Route::get('/proyectos/{id}/reporte', [InstructorController::class, 'reporteSeguimiento'])->name('reporte');
     Route::post('/postulaciones/{id}/estado', [InstructorController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado');
-    
+
     // RUTAS PARA ETAPAS
     Route::post('/proyectos/{id}/etapas', [InstructorController::class, 'crearEtapa'])->name('etapas.crear');
     Route::put('/etapas/{id}', [InstructorController::class, 'editarEtapa'])->name('etapas.editar');
     Route::delete('/etapas/{id}', [InstructorController::class, 'eliminarEtapa'])->name('etapas.eliminar');
-    
+
     // RUTAS PARA IMAGEN DE PROYECTO
     Route::post('/proyectos/{id}/imagen', [InstructorController::class, 'subirImagenProyecto'])->name('proyectos.imagen');
-    
+
     // RUTAS PARA EVIDENCIAS
     Route::get('/proyectos/{id}/evidencias', [InstructorController::class, 'verEvidencias'])->name('evidencias.ver');
     Route::put('/evidencias/{id}', [InstructorController::class, 'calificarEvidencia'])->name('evidencias.calificar');
-    
+
     Route::get('/aprendices', [InstructorController::class, 'aprendices'])->name('aprendices');
     Route::get('/perfil', [InstructorController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [InstructorController::class, 'actualizarPerfil'])->name('perfil.update');
@@ -134,5 +134,5 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::get('/proyectos/{id}/revisar', [AdminController::class, 'revisarProyecto'])->name('proyectos.revisar');
     Route::post('/proyectos/{id}/estado', [AdminController::class, 'cambiarEstadoProyecto'])->name('proyectos.estado');
     Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])->name('proyectos.asignar');
-    
+
 });
