@@ -70,7 +70,7 @@
                     
                     <div style="text-align: right;">
                         <p style="font-size: 0.75rem; color: var(--text-lighter); margin-bottom: 6px; text-transform: uppercase; font-weight: 800;">Fecha de Entrega</p>
-                        <p style="font-size: 0.95rem; font-weight: 700; color: var(--text);">{{ \Carbon\Carbon::parse($evidencia->fecha_subida)->format('d/m/Y - h:m A') }}</p>
+                        <p style="font-size: 0.95rem; font-weight: 700; color: var(--text);">{{ \Carbon\Carbon::parse($evidencia->fecha_envio)->format('d/m/Y - h:i A') }}</p>
                     </div>
                 </div>
 
@@ -112,7 +112,7 @@
 
                             <div style="margin-bottom: 2rem;">
                                 <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Retroalimentación Técnica</label>
-                                <textarea name="comentario" class="instructor-input-control" style="min-height: 120px; padding: 1.25rem;" placeholder="Escribe aquí los comentarios sobre la calidad del entregable...">{{ $evidencia->comentarios_instructor }}</textarea>
+                                <textarea name="comentario" class="instructor-input-control" style="min-height: 120px; padding: 1.25rem;" placeholder="Escribe aquí los comentarios sobre la calidad del entregable...">{{ $evidencia->comentario_instructor }}</textarea>
                             </div>
 
                             <button type="submit" class="btn-premium" style="width: 100%; padding: 1rem; font-size: 1rem; justify-content: center;">
@@ -124,14 +124,14 @@
                         <div class="instructor-deliverable-info">
                             <div>
                                 <h5 style="font-size: 0.8rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 12px;">Archivo Adjunto</h5>
-                                @if($evidencia->archivo_url)
-                                    <a href="{{ asset('storage/' . $evidencia->archivo_url) }}" target="_blank" class="instructor-team-member" style="text-decoration: none; padding: 12px;">
+                                @if($evidencia->ruta_archivo)
+                                    <a href="{{ asset('storage/' . $evidencia->ruta_archivo) }}" target="_blank" class="instructor-team-member" style="text-decoration: none; padding: 12px;">
                                         <div style="width: 36px; height: 36px; border-radius: 8px; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; border: 1px solid #dbeafe;">
                                             <i class="fas fa-file-download"></i>
                                         </div>
                                         <div style="overflow: hidden;">
                                             <p style="font-size: 0.85rem; font-weight: 800; color: #2563eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Descargar Entregable</p>
-                                            <p style="font-size: 0.7rem; color: var(--text-lighter); font-weight: 600;">Formato: {{ strtoupper(pathinfo($evidencia->archivo_url, PATHINFO_EXTENSION)) }}</p>
+                                            <p style="font-size: 0.7rem; color: var(--text-lighter); font-weight: 600;">Formato: {{ strtoupper(pathinfo($evidencia->ruta_archivo, PATHINFO_EXTENSION)) }}</p>
                                         </div>
                                     </a>
                                 @else

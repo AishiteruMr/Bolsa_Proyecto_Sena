@@ -55,9 +55,10 @@ class AprendizController extends Controller
         $proyectosAsociados = Proyecto::whereIn('id', $proyectosAprobados)->get();
         // Ordenarlos por la estimación (fecha_publicacion + duracion_estimada_dias) que esté en el futuro
         $proximoCierre = $proyectosAsociados->filter(function($p) {
-            return !$p->isVencido();
+            $fechaFin = \Carbon\Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
+            return $fechaFin->isFuture();
         })->sortBy(function($p) {
-            return \Carbon\Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias);
+            return \Carbon\Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
         })->first();
 
         return view('aprendiz.dashboard', compact(
@@ -326,7 +327,7 @@ class AprendizController extends Controller
 
         // Obtener evidencias del aprendiz para este proyecto
         $evidencias = $aprendiz->evidencias()
-            ->where('evidencia.proyecto_id', $proId)
+            ->where('evidencias.proyecto_id', $proId)
             ->with('etapa')
             ->join('etapas', 'evidencias.etapa_id', '=', 'etapas.id')
             ->select(
@@ -335,7 +336,7 @@ class AprendizController extends Controller
                 'etapas.orden as eta_orden'
             )
             ->orderBy('etapas.orden')
-            ->orderByDesc('fecha_subida')
+            ->orderByDesc('evidencias.fecha_envio')
             ->get();
 
         return view('aprendiz.detalle-proyecto', compact('proyecto', 'etapas', 'evidencias', 'aprendiz'));
@@ -379,15 +380,15 @@ class AprendizController extends Controller
         }
 
         DB::table('evidencias')->insert([
-            'aprendiz_id' => $aprendiz->id,
-            'etapa_id' => $etaId,
-            'proyecto_id' => $proId,
-            'archivo_url' => $archivoUrl,
-            'fecha_subida' => now(),
-            'estado' => 'pendiente',
-            'comentarios_instructor' => null,
-            'created_at' => now(),
-            'updated_at' => now()
+            'aprendiz_id'           => $aprendiz->id,
+            'etapa_id'              => $etaId,
+            'proyecto_id'           => $proId,
+            'ruta_archivo'          => $archivoUrl,
+            'fecha_envio'           => now(),
+            'estado'                => 'pendiente',
+            'comentario_instructor' => null,
+            'created_at'            => now(),
+            'updated_at'            => now()
         ]);
 
         return back()->with('success', '✅ Evidencia enviada correctamente. El instructor la revisará.');

@@ -64,7 +64,7 @@
             <div style="margin-top: auto;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--text-lighter);">
                     <span style="font-weight: 600;"><i class="fas fa-calendar-alt"></i> {{ $p->fecha_publicacion }}</span>
-                    <span style="background: rgba(62,180,137,0.1); border: 1px solid rgba(62,180,137,0.2); color: #3eb489; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;">{{ $p->pro_num_postulantes ?? 0 }} Aprendices</span>
+                    <span style="background: rgba(62,180,137,0.1); border: 1px solid rgba(62,180,137,0.2); color: #3eb489; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;">{{ $p->postulaciones->count() }} Aprendices</span>
                 </div>
                 
                 <a href="{{ route('instructor.proyecto.detalle', $p->id) }}" class="btn-premium" style="width: 100%; justify-content: center; padding: 12px;">

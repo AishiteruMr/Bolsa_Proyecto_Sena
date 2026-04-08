@@ -113,7 +113,9 @@ class Proyecto extends Model
         return $query->orderByDesc('fecha_publicacion');
     }
 
+
     // ── MÉTODOS ──
+
     public function isActivo(): bool
     {
         return in_array($this->estado, ['aprobado', 'en_progreso']);
@@ -227,21 +229,28 @@ class Proyecto extends Model
     }
 
     /**
-     * Accesor para la URL de la imagen del proyecto
+     * Accesor para la URL de la imagen del proyecto.
+     * Lee del campo 'imagen_url' en la BD y devuelve una URL pública válida.
      */
     public function getImagenUrlAttribute(): string
     {
-        $value = $this->imagen;
+        $value = $this->attributes['imagen_url'] ?? null;
 
         if (empty($value)) {
             return asset('assets/default-project.jpg');
         }
 
+        // Si ya es URL completa o empieza con /storage
         if (str_starts_with($value, 'http') || str_starts_with($value, '/storage')) {
             return $value;
         }
 
-        return asset('storage/'.$value);
+        // Si ya tiene 'storage/' sin slash inicial, no duplicar
+        if (str_starts_with($value, 'storage/')) {
+            return asset($value);
+        }
+
+        return asset('storage/' . $value);
     }
 
     public function calidadProyecto(): array
