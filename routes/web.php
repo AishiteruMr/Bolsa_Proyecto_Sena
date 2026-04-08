@@ -4,9 +4,11 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AprendizController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\StatsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,8 +32,11 @@ Route::get('/nosotros', function () {
 */
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify')->middleware('signed');
+Route::get('/email/resend-verification', [AuthController::class, 'resendVerification'])->name('verification.resend');
 
 // Recuperación de contraseña
 Route::get('/olvide-contraseña', [AuthController::class, 'showOlvideContraseña'])->name('auth.olvide-contraseña');
@@ -142,4 +147,13 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::post('/proyectos/{id}/estado', [AdminController::class, 'cambiarEstadoProyecto'])->name('proyectos.estado');
     Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])->name('proyectos.asignar');
 
+    Route::get('/exportar/proyectos', [ExportController::class, 'proyectos'])->name('exportar.proyectos');
+    Route::get('/exportar/usuarios', [ExportController::class, 'usuarios'])->name('exportar.usuarios');
+    Route::get('/exportar/empresas', [ExportController::class, 'empresas'])->name('exportar.empresas');
+    Route::get('/exportar/aprendices', [ExportController::class, 'aprendices'])->name('exportar.aprendices');
+    Route::get('/exportar/instructores', [ExportController::class, 'instructores'])->name('exportar.instructores');
+
+    Route::get('/audit', [AuditLogController::class, 'index'])->name('audit');
 });
+
+Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats', [StatsController::class, 'dashboard'])->name('api.admin.stats');

@@ -15,17 +15,16 @@
     <a href="{{ route('admin.usuarios') }}" class="nav-item {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
         <i class="fas fa-users"></i> Gestión Usuarios
     </a>
-    <a href="{{ route('admin.empresas') }}" class="nav-item {{ request()->routeIs('admin.empresas') ? 'active' : '' }}">
+    <a href= "{{ route('admin.empresas') }}" class="nav-item {{ request()->routeIs('admin.empresas') ? 'active' : '' }}">
         <i class="fas fa-building"></i> Empresas Aliadas
     </a>
-    <a href="{{ route('admin.proyectos') }}" class="nav-item {{ request()->routeIs('admin.proyectos') ? 'active' : '' }}">
+    <a href="{{ route('admin.proyectos') }}" class="nav-item {{ request()->routeIs('admin.proyectos*') ? 'active' : '' }}">
         <i class="fas fa-project-diagram"></i> Banco Proyectos
     </a>
 @endsection
 
 @section('content')
     <div class="animate-fade-in">
-        <!-- HEADER MAESTRO -->
         <div class="admin-header-master">
             <div class="admin-header-icon">
                 <i class="fas fa-shield-halved"></i>
@@ -40,7 +39,6 @@
             </div>
         </div>
 
-        <!-- BENTO ADMIN STATS -->
         <div class="admin-stats-grid">
             <div class="stat-card-premium" style="padding: 28px; background: white; border-color: var(--primary-soft);">
                 <div class="admin-stat-icon" style="background: var(--primary-soft); color: var(--primary); margin-bottom: 24px;">
@@ -58,7 +56,7 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="admin-stat-value" style="font-size: 38px;">{{ $stats['usuarios'] }}</div>
-                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Cuentas Activas</div>
+                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Cuentas Totales</div>
             </div>
 
             <div class="stat-card-premium" style="padding: 28px; background: white;">
@@ -66,7 +64,7 @@
                     <i class="fas fa-building"></i>
                 </div>
                 <div class="admin-stat-value" style="font-size: 38px; color: #2563eb;">{{ $stats['empresas'] }}</div>
-                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Aliados Corporativos</div>
+                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Empresas Aliadas</div>
             </div>
 
             <div class="stat-card-premium" style="padding: 28px; background: white;">
@@ -74,12 +72,63 @@
                     <i class="fas fa-graduation-cap"></i>
                 </div>
                 <div class="admin-stat-value" style="font-size: 38px; color: #db2777;">{{ $stats['aprendices'] }}</div>
-                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Comunidad Aprendiz</div>
+                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Aprendices</div>
+            </div>
+
+            <div class="stat-card-premium" style="padding: 28px; background: white;">
+                <div class="admin-stat-icon" style="background: #fef3c7; color: #d97706; margin-bottom: 24px;">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="admin-stat-value" style="font-size: 38px; color: #d97706;">{{ $stats['instructores'] }}</div>
+                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Instructores</div>
             </div>
         </div>
 
-        <div class="admin-main-grid">
-            <!-- ACTIVIDAD RECIENTE -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 24px; margin-top: 24px;">
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-chart-line" style="color: var(--primary); margin-right: 8px;"></i>
+                        Proyectos por Estado
+                    </h3>
+                </div>
+                <canvas id="chartProyectosEstado" height="200"></canvas>
+            </div>
+
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-chart-pie" style="color: #3b82f6; margin-right: 8px;"></i>
+                        Usuarios por Tipo
+                    </h3>
+                </div>
+                <canvas id="chartUsuariosTipo" height="200"></canvas>
+            </div>
+
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-trophy" style="color: #f59e0b; margin-right: 8px;"></i>
+                        Top Empresas
+                    </h3>
+                </div>
+                <div id="rankingEmpresas"></div>
+            </div>
+        </div>
+
+        <div style="margin-top: 24px;">
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-chart-bar" style="color: #10b981; margin-right: 8px;"></i>
+                        Proyectos Creados (Últimos 6 Meses)
+                    </h3>
+                </div>
+                <canvas id="chartProyectosMensual" height="100"></canvas>
+            </div>
+        </div>
+
+        <div class="admin-main-grid" style="margin-top: 24px;">
             <div class="glass-card admin-table-card" style="background: white;">
                 <div class="admin-table-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">Proyectos por Auditar</h3>
@@ -90,7 +139,7 @@
                         <thead>
                             <tr>
                                 <th>Proyecto</th>
-                                <th>Empresa Origen</th>
+                                <th>Empresa</th>
                                 <th>Estado</th>
                                 <th style="text-align: right;">Acciones</th>
                             </tr>
@@ -119,7 +168,6 @@
                 </div>
             </div>
 
-            <!-- NUEVAS REGISTRACIONES -->
             <div class="glass-card" style="padding: 32px; background: white;">
                 <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 28px;">Incorporaciones</h3>
                 <div class="user-incorporation-list">
@@ -145,4 +193,94 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('{{ route('api.admin.stats') }}')
+                .then(r => r.json())
+                .then(data => {
+                    const chartColors = {
+                        pendiente: '#f59e0b',
+                        aprobado: '#22c55e',
+                        rechazado: '#ef4444',
+                        en_progreso: '#3b82f6',
+                        cerrado: '#6b7280'
+                    };
+
+                    new Chart(document.getElementById('chartProyectosEstado'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: data.proyectos_por_estado.labels,
+                            datasets: [{
+                                data: data.proyectos_por_estado.data,
+                                backgroundColor: ['#f59e0b', '#22c55e', '#ef4444', '#3b82f6', '#6b7280'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { padding: 20, font: { size: 11 } } }
+                            }
+                        }
+                    });
+
+                    new Chart(document.getElementById('chartUsuariosTipo'), {
+                        type: 'polarArea',
+                        data: {
+                            labels: data.usuarios_por_tipo.labels,
+                            datasets: [{
+                                data: data.usuarios_por_tipo.data,
+                                backgroundColor: ['#f472b6', '#a78bfa', '#fbbf24', '#34d399'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { padding: 15, font: { size: 11 } } }
+                            }
+                        }
+                    });
+
+                    const rankingContainer = document.getElementById('rankingEmpresas');
+                    if (data.ranking_empresas.length > 0) {
+                        rankingContainer.innerHTML = data.ranking_empresas.map((emp, i) => `
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px; background: ${i === 0 ? '#fef3c7' : '#f8fafc'}; border-radius: 12px; border: 1px solid ${i === 0 ? '#fde68a' : '#e2e8f0'};">
+                                <div style="width: 32px; height: 32px; border-radius: 8px; background: ${i === 0 ? '#f59e0b' : '#94a3b8'}; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+                                    ${i + 1}
+                                </div>
+                                <div style="flex: 1; overflow: hidden;">
+                                    <div style="font-weight: 800; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${emp.nombre}</div>
+                                    <div style="font-size: 11px; color: var(--text-light);">${emp.total} proyecto${emp.total !== 1 ? 's' : ''}</div>
+                                </div>
+                                ${i === 0 ? '<i class="fas fa-trophy" style="color: #f59e0b;"></i>' : ''}
+                            </div>
+                        `).join('');
+                    } else {
+                        rankingContainer.innerHTML = '<p style="text-align: center; color: var(--text-light); font-size: 13px; font-weight: 600;">Sin datos aún</p>';
+                    }
+
+                    new Chart(document.getElementById('chartProyectosMensual'), {
+                        type: 'bar',
+                        data: {
+                            labels: data.metricas_mensuales.labels,
+                            datasets: [{
+                                label: 'Proyectos',
+                                data: data.metricas_mensuales.data,
+                                backgroundColor: 'rgba(62, 180, 137, 0.8)',
+                                borderRadius: 8
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                        }
+                    });
+                })
+                .catch(err => console.error('Error cargando stats:', err));
+        });
+    </script>
 @endsection

@@ -39,13 +39,71 @@
             </div>
         </div>
 
+        <!-- FILTROS DE BÚSQUEDA -->
+        <div class="glass-card" style="padding: 24px; margin-bottom: 24px; background: white;">
+            <form method="GET" action="{{ route('admin.proyectos') }}">
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px; align-items: end;">
+                    <div>
+                        <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Buscar</label>
+                        <input type="text" name="buscar" value="{{ request('buscar') }}" placeholder="Título, descripción o empresa..." style="width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 600; outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Estado</label>
+                        <select name="estado" style="width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 600; outline: none; background: white;">
+                            <option value="">Todos</option>
+                            <option value="pendiente" {{ request('estado') == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                            <option value="aprobado" {{ request('estado') == 'aprobado' ? 'selected' : '' }}>Aprobado</option>
+                            <option value="rechazado" {{ request('estado') == 'rechazado' ? 'selected' : '' }}>Rechazado</option>
+                            <option value="en_progreso" {{ request('estado') == 'en_progreso' ? 'selected' : '' }}>En Progreso</option>
+                            <option value="cerrado" {{ request('estado') == 'cerrado' ? 'selected' : '' }}>Cerrado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Categoría</label>
+                        <select name="categoria" style="width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 600; outline: none; background: white;">
+                            <option value="">Todas</option>
+                            @foreach($categorias ?? [] as $cat)
+                                <option value="{{ $cat }}" {{ request('categoria') == $cat ? 'selected' : '' }}>{{ ucfirst($cat) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Fecha Inicio</label>
+                        <input type="date" name="fecha_inicio" value="{{ request('fecha_inicio') }}" style="width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 600; outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Fecha Fin</label>
+                        <input type="date" name="fecha_fin" value="{{ request('fecha_fin') }}" style="width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 600; outline: none;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 16px; justify-content: flex-end;">
+                    @if(request()->has('buscar') || request()->has('estado') || request()->has('categoria') || request()->has('fecha_inicio') || request()->has('fecha_fin'))
+                        <a href="{{ route('admin.proyectos') }}" class="btn-premium" style="padding: 12px 20px; background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; box-shadow: none; font-size: 13px;">
+                            <i class="fas fa-times"></i> Limpiar
+                        </a>
+                    @endif
+                    <button type="submit" class="btn-premium" style="padding: 12px 24px; font-size: 13px;">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        @if(request()->has('buscar') || request()->has('estado') || request()->has('categoria') || request()->has('fecha_inicio') || request()->has('fecha_fin'))
+        <div style="margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 13px; font-weight: 700; color: var(--primary);">
+                <i class="fas fa-filter"></i> Mostrando {{ $proyectos->count() }} resultado(s)
+            </span>
+        </div>
+        @endif
+
         <div class="admin-project-grid">
             @forelse($proyectos as $p)
             <div class="glass-card admin-project-card">
                 {{-- Header Decorativo --}}
                 <div class="admin-project-card-header">
                     <div style="position:relative; z-index:1;">
-                        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                        <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
                             @php
                                 $statusStyles = match($p->estado) {
                                     'aprobado' => ['bg' => 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)', 'color' => '#fff', 'icon' => 'fa-check-circle'],
@@ -58,6 +116,16 @@
                                 <i class="fas {{ $statusStyles['icon'] }}"></i>
                                 {{ $p->estado }}
                             </span>
+                            @if($p->categoria)
+                                <span style="background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800;">
+                                    <i class="fas fa-tag" style="margin-right: 4px;"></i>{{ ucfirst($p->categoria) }}
+                                </span>
+                            @endif
+                            @if($p->fecha_publicacion)
+                                <span style="background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;">
+                                    <i class="far fa-calendar" style="margin-right: 4px;"></i>{{ \Carbon\Carbon::parse($p->fecha_publicacion)->format('d/m/Y') }}
+                                </span>
+                            @endif
                         </div>
                         <h3 class="admin-project-title" style="font-size:1.25rem; font-weight:800; line-height:1.3; letter-spacing: -0.5px;">{{ Str::limit($p->titulo, 50) }}</h3>
                     </div>

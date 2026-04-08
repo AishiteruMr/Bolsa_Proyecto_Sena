@@ -2,30 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 use App\Mail\InstructorAsignado;
 use App\Mail\InstructorDesasignado;
 use App\Models\Aprendiz;
-use App\Models\Instructor;
 use App\Models\Empresa;
+use App\Models\Instructor;
+use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
-use App\Models\Postulacion;
 use App\Notifications\AppNotification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
         $stats = [
-            'aprendices'    => Aprendiz::count(),
-            'instructores'  => Instructor::count(),
-            'empresas'      => Empresa::count(),
-            'proyectos'     => Proyecto::count(),
-            'pendientes'    => Proyecto::where('estado', 'pendiente')->count(),
-            'usuarios'      => User::count(),
+            'aprendices' => Aprendiz::count(),
+            'instructores' => Instructor::count(),
+            'empresas' => Empresa::count(),
+            'proyectos' => Proyecto::count(),
+            'pendientes' => Proyecto::where('estado', 'pendiente')->count(),
+            'usuarios' => User::count(),
         ];
 
         $proyectosRecientes = Proyecto::with('empresa')
@@ -53,7 +54,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'tipo' => 'required|in:aprendiz,instructor',
-            'estado' => 'required|in:0,1'
+            'estado' => 'required|in:0,1',
         ]);
 
         if ($request->tipo === 'aprendiz') {
@@ -70,12 +71,14 @@ class AdminController extends Controller
             if (isset($usrToNotify)) {
                 $estadoTexto = $request->estado == 1 ? 'activada' : 'desactivada';
                 $usrToNotify->notify(new AppNotification(
-                    'Cuenta ' . $estadoTexto,
-                    'Tu cuenta ha sido ' . $estadoTexto . ' por un administrador.',
+                    'Cuenta '.$estadoTexto,
+                    'Tu cuenta ha sido '.$estadoTexto.' por un administrador.',
                     $request->estado == 1 ? 'fa-user-check' : 'fa-user-lock'
                 ));
             }
-        } catch (\Exception $e) { Log::error($e->getMessage()); }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+        }
 
         return back()->with('success', 'Estado del usuario actualizado.');
     }
@@ -83,6 +86,7 @@ class AdminController extends Controller
     public function empresas()
     {
         $empresas = Empresa::orderByDesc('id')->get();
+
         return view('admin.empresas', compact('empresas'));
     }
 
@@ -97,42 +101,84 @@ class AdminController extends Controller
             if ($empresa->usuario) {
                 $estadoTexto = $request->estado == 1 ? 'activada' : 'desactivada';
                 $empresa->usuario->notify(new AppNotification(
-                    'Empresa ' . $estadoTexto,
-                    'La cuenta de tu empresa ha sido ' . $estadoTexto . ' por un administrador.',
+                    'Empresa '.$estadoTexto,
+                    'La cuenta de tu empresa ha sido '.$estadoTexto.' por un administrador.',
                     $request->estado == 1 ? 'fa-building-circle-check' : 'fa-building-circle-xmark'
                 ));
             }
-        } catch (\Exception $e) { Log::error($e->getMessage()); }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+        }
 
         return back()->with('success', 'Estado de la empresa actualizado.');
     }
 
-    public function proyectos()
+    public function proyectos(Request $request)
     {
-        $proyectos = Proyecto::with(['empresa', 'instructor.usuario'])
-            ->orderByDesc('id')
-            ->get()
-            ->map(function($proyecto) {
-                return (object)[
-                    'id' => $proyecto->id,
-                    'titulo' => $proyecto->titulo,
-                    'empresa_nit' => $proyecto->empresa_nit,
-                    'instructor_usuario_id' => $proyecto->instructor_usuario_id,
-                    'estado' => $proyecto->estado,
-                    'empresa_nombre' => $proyecto->empresa->nombre ?? null,
-                    'instructor_nombre' => $proyecto->instructor ? $proyecto->instructor->nombres : null,
-                ];
+        $query = Proyecto::with(['empresa', 'instructor.usuario']);
+
+        if ($request->filled('buscar')) {
+            $buscar = $request->buscar;
+            $query->where(function ($q) use ($buscar) {
+                $q->where('titulo', 'like', "%{$buscar}%")
+                    ->orWhere('descripcion', 'like', "%{$buscar}%")
+                    ->orWhereHas('empresa', function ($q) use ($buscar) {
+                        $q->where('nombre', 'like', "%{$buscar}%");
+                    });
             });
+        }
+
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        if ($request->filled('categoria')) {
+            $query->where('categoria', $request->categoria);
+        }
+
+        if ($request->filled('fecha_inicio')) {
+            $query->whereDate('fecha_publicacion', '>=', $request->fecha_inicio);
+        }
+
+        if ($request->filled('fecha_fin')) {
+            $query->whereDate('fecha_publicacion', '<=', $request->fecha_fin);
+        }
+
+        if ($request->filled('instructor_id')) {
+            $query->where('instructor_usuario_id', $request->instructor_id);
+        }
+
+        $proyectos = $query->orderByDesc('id')->get()->map(function ($proyecto) {
+            return (object) [
+                'id' => $proyecto->id,
+                'titulo' => $proyecto->titulo,
+                'empresa_nit' => $proyecto->empresa_nit,
+                'instructor_usuario_id' => $proyecto->instructor_usuario_id,
+                'estado' => $proyecto->estado,
+                'categoria' => $proyecto->categoria,
+                'fecha_publicacion' => $proyecto->fecha_publicacion,
+                'empresa_nombre' => $proyecto->empresa->nombre ?? null,
+                'instructor_nombre' => $proyecto->instructor ? $proyecto->instructor->nombres : null,
+            ];
+        });
 
         $instructores = Instructor::with('usuario')->get();
 
-        return view('admin.proyectos', compact('proyectos', 'instructores'));
+        $categorias = Proyecto::select('categoria')
+            ->whereNotNull('categoria')
+            ->distinct()
+            ->pluck('categoria')
+            ->filter()
+            ->sort()
+            ->values();
+
+        return view('admin.proyectos', compact('proyectos', 'instructores', 'categorias'));
     }
 
     public function cambiarEstadoProyecto(Request $request, int $id)
     {
         $request->validate([
-            'estado' => 'required|in:aprobado,rechazado,pendiente,cerrado,en_progreso'
+            'estado' => 'required|in:aprobado,rechazado,pendiente,cerrado,en_progreso',
         ]);
 
         $proyecto = Proyecto::findOrFail($id);
@@ -145,14 +191,14 @@ class AdminController extends Controller
 
             $proyecto->update([
                 'estado' => $request->estado,
-                'instructor_usuario_id' => null
+                'instructor_usuario_id' => null,
             ]);
 
             // Notificar a la empresa
             if ($empresaUsr) {
                 $empresaUsr->notify(new AppNotification(
-                    'Proyecto ' . ucfirst($request->estado),
-                    'Tu proyecto "' . \Illuminate\Support\Str::limit($proyectoActual->titulo, 30) . '" ha sido ' . $request->estado . '.',
+                    'Proyecto '.ucfirst($request->estado),
+                    'Tu proyecto "'.Str::limit($proyectoActual->titulo, 30).'" ha sido '.$request->estado.'.',
                     $request->estado === 'cerrado' ? 'fa-ban' : 'fa-xmark'
                 ));
             }
@@ -163,14 +209,16 @@ class AdminController extends Controller
                     $instructorUsuario = User::where('id', $instructorUsuarioId)->with('instructor')->first();
                     if ($instructorUsuario && $instructorUsuario->instructor) {
                         Mail::to($instructorUsuario->correo)->send(new InstructorDesasignado($instructorUsuario->instructor->nombres, $proyectoActual->titulo, $proyectoActual->empresa->nombre));
-                        
+
                         $instructorUsuario->notify(new AppNotification(
                             'Desasignado de proyecto',
-                            'Has sido removido del proyecto: ' . \Illuminate\Support\Str::limit($proyectoActual->titulo, 30),
+                            'Has sido removido del proyecto: '.Str::limit($proyectoActual->titulo, 30),
                             'fa-user-minus'
                         ));
                     }
-                } catch (\Exception $e) { Log::error($e->getMessage()); }
+                } catch (\Exception $e) {
+                    Log::error($e->getMessage());
+                }
             }
         } else {
             $proyecto->update(['estado' => $request->estado]);
@@ -178,8 +226,8 @@ class AdminController extends Controller
             $empresaUsr = $proyectoActual->empresa->usuario ?? null;
             if ($empresaUsr) {
                 $empresaUsr->notify(new AppNotification(
-                    'Estado de Proyecto: ' . ucfirst($request->estado),
-                    'El estado de tu proyecto "' . \Illuminate\Support\Str::limit($proyectoActual->titulo, 30) . '" es: ' . $request->estado,
+                    'Estado de Proyecto: '.ucfirst($request->estado),
+                    'El estado de tu proyecto "'.Str::limit($proyectoActual->titulo, 30).'" es: '.$request->estado,
                     'fa-info-circle'
                 ));
             }
@@ -191,7 +239,7 @@ class AdminController extends Controller
     public function asignarInstructor(Request $request, $id)
     {
         $request->validate([
-            'instructor_usuario_id' => 'required|exists:usuarios,id'
+            'instructor_usuario_id' => 'required|exists:usuarios,id',
         ]);
 
         $proyecto = Proyecto::findOrFail($id);
@@ -200,7 +248,7 @@ class AdminController extends Controller
         // Enviar correo de notificación al instructor asignado
         try {
             $proyecto->load('empresa');
-            
+
             $instructorUsuario = User::where('id', $request->instructor_usuario_id)
                 ->with('instructor')
                 ->first();
@@ -219,12 +267,12 @@ class AdminController extends Controller
 
                 $instructorUsuario->notify(new AppNotification(
                     'Proyecto Asignado',
-                    'Te han asignado liderar el proyecto: ' . \Illuminate\Support\Str::limit($proyecto->titulo, 30),
+                    'Te han asignado liderar el proyecto: '.Str::limit($proyecto->titulo, 30),
                     'fa-chalkboard-user'
                 ));
             }
         } catch (\Exception $e) {
-            Log::error('Error al enviar correo de asignación de instructor: ' . $e->getMessage());
+            Log::error('Error al enviar correo de asignación de instructor: '.$e->getMessage());
         }
 
         return back()->with('success', 'Instructor asignado correctamente');

@@ -2,23 +2,29 @@
 
 namespace App\Models;
 
+use App\Notifications\VerifyEmailNotification;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'usuarios';
+
     protected $primaryKey = 'id';
 
     const ROL_APRENDIZ = 1;
+
     const ROL_INSTRUCTOR = 2;
+
     const ROL_EMPRESA = 3;
+
     const ROL_ADMIN = 4;
 
     protected $fillable = [
@@ -26,6 +32,7 @@ class User extends Authenticatable
         'correo',
         'contrasena',
         'rol_id',
+        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -37,6 +44,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'contrasena' => 'hashed',
     ];
+
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification);
+    }
+
+    public function hasVerifiedEmail(): bool
+    {
+        return ! is_null($this->email_verified_at);
+    }
+
+    public function markEmailAsVerified(): bool
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+        ])->save();
+    }
 
     // Ahora Laravel gestiona los timestamps (created_at y updated_at) por defecto.
     public $timestamps = true;
@@ -97,9 +121,9 @@ class User extends Authenticatable
     public function getNombreCompletoAttribute(): string
     {
         return match ($this->rol_id) {
-            self::ROL_APRENDIZ => trim(($this->aprendiz?->nombres ?? '') . ' ' . ($this->aprendiz?->apellidos ?? '')),
-            self::ROL_INSTRUCTOR => trim(($this->instructor?->nombres ?? '') . ' ' . ($this->instructor?->apellidos ?? '')),
-            self::ROL_ADMIN => trim(($this->administrador?->nombres ?? '') . ' ' . ($this->administrador?->apellidos ?? '')),
+            self::ROL_APRENDIZ => trim(($this->aprendiz?->nombres ?? '').' '.($this->aprendiz?->apellidos ?? '')),
+            self::ROL_INSTRUCTOR => trim(($this->instructor?->nombres ?? '').' '.($this->instructor?->apellidos ?? '')),
+            self::ROL_ADMIN => trim(($this->administrador?->nombres ?? '').' '.($this->administrador?->apellidos ?? '')),
             self::ROL_EMPRESA => $this->empresa?->nombre ?? '',
             default => '',
         };
