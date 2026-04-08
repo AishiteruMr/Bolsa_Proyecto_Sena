@@ -7,23 +7,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Administrador extends Model
 {
-    protected $table = 'administrador';
-    protected $primaryKey = 'adm_id';
-    public $timestamps = false;
+    protected $table = 'administradores';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
 
     protected $fillable = [
-        'usr_id',
-        'adm_nombre',
-        'adm_apellido',
+        'usuario_id',
+        'nombres',
+        'apellidos',
+        'activo',
     ];
 
     public function usuario(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'usr_id', 'usr_id');
+        return $this->belongsTo(User::class, 'usuario_id', 'id');
     }
 
     public function getFullNameAttribute(): string
     {
-        return trim($this->adm_nombre . ' ' . $this->adm_apellido);
+        return trim($this->nombres . ' ' . $this->apellidos);
     }
 }

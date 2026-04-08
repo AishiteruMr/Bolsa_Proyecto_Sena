@@ -8,7 +8,7 @@
 <body style="font-family: 'Segoe UI', Arial, sans-serif; background:#f4f6f9; padding:40px 20px; margin:0;">
     <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.08); overflow:hidden;">
 
-        @if($nuevoEstado === 'Aprobada')
+        @if($nuevoEstado === 'aceptada')
         <!-- Aprobada Header -->
         <div style="background:linear-gradient(135deg,#39a900,#2d8500); padding:36px 40px; text-align:center;">
             <div style="font-size:56px; margin-bottom:12px;">🎉</div>
@@ -30,7 +30,7 @@
                 Hola <strong>{{ $aprendizNombre }}</strong>,
             </p>
 
-            @if($nuevoEstado === 'Aprobada')
+            @if($nuevoEstado === 'aceptada')
             <p style="font-size:15px; color:#555; line-height:1.7; margin:0 0 24px;">
                 ¡Excelentes noticias! Tu postulación al proyecto <strong style="color:#39a900;">{{ $proyectoTitulo }}</strong> ha sido <strong style="color:#39a900;">aprobada</strong>.
                 Ya puedes acceder a los detalles completos del proyecto, etapas y hacer seguimiento desde tu panel.

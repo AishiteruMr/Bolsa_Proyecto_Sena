@@ -47,19 +47,19 @@
                     <div style="position:relative; z-index:1;">
                         <div style="display: flex; gap: 8px; margin-bottom: 12px;">
                             @php
-                                $statusStyles = match($p->pro_estado) {
-                                    'Activo' => ['bg' => 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)', 'color' => '#fff', 'icon' => 'fa-check-circle'],
-                                    'Pendiente' => ['bg' => '#fff7ed', 'color' => '#ea580c', 'icon' => 'fa-clock'],
-                                    'Rechazado' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'icon' => 'fa-times-circle'],
+                                $statusStyles = match($p->estado) {
+                                    'aprobado' => ['bg' => 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)', 'color' => '#fff', 'icon' => 'fa-check-circle'],
+                                    'pendiente' => ['bg' => '#fff7ed', 'color' => '#ea580c', 'icon' => 'fa-clock'],
+                                    'rechazado' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'icon' => 'fa-times-circle'],
                                     default => ['bg' => '#f8fafc', 'color' => '#64748b', 'icon' => 'fa-info-circle']
                                 };
                             @endphp
                             <span class="admin-project-badge" style="background: {{ $statusStyles['bg'] }}; color: {{ $statusStyles['color'] }};">
                                 <i class="fas {{ $statusStyles['icon'] }}"></i>
-                                {{ $p->pro_estado }}
+                                {{ $p->estado }}
                             </span>
                         </div>
-                        <h3 class="admin-project-title" style="font-size:1.25rem; font-weight:800; line-height:1.3; letter-spacing: -0.5px;">{{ Str::limit($p->pro_titulo_proyecto, 50) }}</h3>
+                        <h3 class="admin-project-title" style="font-size:1.25rem; font-weight:800; line-height:1.3; letter-spacing: -0.5px;">{{ Str::limit($p->titulo, 50) }}</h3>
                     </div>
                     <i class="fas fa-rocket" style="position:absolute; right:-20px; bottom:-20px; font-size:120px; color:rgba(255,255,255,0.05); transform: rotate(-15deg);"></i>
                 </div>
@@ -71,28 +71,28 @@
                         </div>
                         <div>
                             <span style="display:block; font-size:11px; font-weight:800; color:var(--text-lighter); text-transform:uppercase; letter-spacing: 1px; margin-bottom: 4px;">Empresa Proponente</span>
-                            <span style="font-size:1rem; font-weight:800; color: var(--text);">{{ $p->emp_nombre }}</span>
+                            <span style="font-size:1rem; font-weight:800; color: var(--text);">{{ $p->empresa_nombre }}</span>
                         </div>
                     </div>
 
                     <div class="admin-mentor-box">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                             <span style="font-size:12px; font-weight:800; color:var(--text-light);"><i class="fas fa-user-shield" style="margin-right:6px; color:var(--primary);"></i> Mentor Asignado</span>
-                            @if($p->ins_nombre)
-                                <span class="aprendiz-badge-portal" style="background: var(--primary-soft); color: var(--primary); border-color: transparent; padding: 4px 12px; border-radius: 20px; font-size: 11px;">{{ $p->ins_nombre }}</span>
+                            @if($p->instructor_nombre)
+                                <span class="aprendiz-badge-portal" style="background: var(--primary-soft); color: var(--primary); border-color: transparent; padding: 4px 12px; border-radius: 20px; font-size: 11px;">{{ $p->instructor_nombre }}</span>
                             @else
                                 <span class="aprendiz-badge-portal inline-pill inline-pill--muted" style="background:#fff7ed;color:#f97316;border-color:transparent;padding:4px 12px;border-radius:20px;font-size:11px;">SIN ASIGNAR</span>
                             @endif
                         </div>
 
-                        <form action="{{ route('admin.proyectos.asignar', $p->pro_id) }}" method="POST">
+                        <form action="{{ route('admin.proyectos.asignar', $p->id) }}" method="POST">
                             @csrf
                             <div style="display:flex; gap:10px;">
-                                <select name="ins_usr_documento" class="admin-mentor-select" required>
+                                <select name="instructor_usuario_id" class="admin-mentor-select" required>
                                     <option value="" disabled selected>Seleccionar Instructor...</option>
                                     @foreach($instructores as $ins)
-                                        <option value="{{ $ins->usuario->usr_documento ?? '' }}" {{ $p->ins_usr_documento == ($ins->usuario->usr_documento ?? '') ? 'selected' : '' }}>
-                                            {{ $ins->ins_nombre }} {{ $ins->ins_apellido }}
+                                        <option value="{{ $ins->usuario->id ?? '' }}" {{ $p->instructor_usuario_id == ($ins->usuario->id ?? '') ? 'selected' : '' }}>
+                                            {{ $ins->nombres }} {{ $ins->apellidos }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -104,14 +104,14 @@
                     </div>
 
                     <div style="margin-top:auto; display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
-                        <a href="{{ route('admin.proyectos.revisar', $p->pro_id) }}" class="btn-premium" style="justify-content:center; padding: 12px; background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; font-size: 13px; box-shadow: none;">
+                        <a href="{{ route('admin.proyectos.revisar', $p->id) }}" class="btn-premium" style="justify-content:center; padding: 12px; background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; font-size: 13px; box-shadow: none;">
                             <i class="fas fa-file-shield" style="margin-right: 8px; color: var(--primary);"></i> Auditoría
                         </a>
 
-                        @if($p->pro_estado == 'Activo')
-                        <form action="{{ route('admin.proyectos.estado', $p->pro_id) }}" method="POST" style="width: 100%;">
+                        @if($p->estado == 'aprobado')
+                        <form action="{{ route('admin.proyectos.estado', $p->id) }}" method="POST" style="width: 100%;">
                             @csrf
-                            <input type="hidden" name="estado" value="Inactivo">
+                            <input type="hidden" name="estado" value="cerrado">
                             <button type="submit" class="btn-premium" style="width:100%; justify-content:center; background:#fef2f2; color: #dc2626; box-shadow: none; font-size: 13px; border: 1px solid #fee2e2;">
                                 <i class="fas fa-ban" style="margin-right: 8px;"></i> Pausar
                             </button>

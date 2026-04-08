@@ -26,13 +26,13 @@
 @section('content')
 @php
     $camposCompletos = 0;
-    if(!empty($empresa->emp_nombre))         $camposCompletos++;
-    if(!empty($empresa->emp_representante))  $camposCompletos++;
-    if(!empty($empresa->emp_nit))            $camposCompletos++;
-    if(!empty($empresa->emp_correo))         $camposCompletos++;
+    if(!empty($empresa->nombre))         $camposCompletos++;
+    if(!empty($empresa->representante))  $camposCompletos++;
+    if(!empty($empresa->nit))            $camposCompletos++;
+    if(!empty($empresa->correo_contacto))         $camposCompletos++;
     $progresoPerfil = ($camposCompletos / 4) * 100;
     $totalProyectos = $empresa->proyectos()->count();
-    $proyectosActivos = $empresa->proyectos()->where('pro_estado','Activo')->count();
+    $proyectosActivos = $empresa->proyectos()->where('estado','aprobado')->count();
 @endphp
 
 <div class="animate-fade-in" style="max-width: 1100px; margin: 0 auto; padding-bottom: 40px;">
@@ -42,17 +42,17 @@
         <div class="instructor-hero-bg-icon"><i class="fas fa-building"></i></div>
         <div style="display: flex; align-items: center; gap: 32px; position: relative; z-index: 1;">
             <div style="width: 100px; height: 100px; border-radius: 24px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 48px; color: white; flex-shrink: 0; backdrop-filter: blur(10px);">
-                {{ strtoupper(substr($empresa->emp_nombre, 0, 1)) }}
+                {{ strtoupper(substr($empresa->nombre, 0, 1)) }}
             </div>
 
             <div style="flex: 1;">
                 <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
                     <span class="instructor-tag">Perfil Corporativo</span>
-                    <span style="color:rgba(255,255,255,0.5); font-size:13px; font-weight:600;">NIT: {{ $empresa->emp_nit }}</span>
+                    <span style="color:rgba(255,255,255,0.5); font-size:13px; font-weight:600;">NIT: {{ $empresa->nit }}</span>
                 </div>
-                <h1 class="instructor-title">{{ $empresa->emp_nombre }}</h1>
+                <h1 class="instructor-title">{{ $empresa->nombre }}</h1>
                 <p style="font-size:14px; color:rgba(255,255,255,0.6); font-weight:500;">
-                    <i class="fas fa-user-tie" style="margin-right:8px;"></i>{{ $empresa->emp_representante }} · Representante Legal
+                    <i class="fas fa-user-tie" style="margin-right:8px;"></i>{{ $empresa->representante }} · Representante Legal
                 </p>
 
                 <div style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:14px; padding:14px 18px; margin-top:16px; max-width:380px;">
@@ -104,7 +104,7 @@
                         <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Razón Social / Nombre Comercial</label>
                         <div style="position: relative;">
                             <i class="fas fa-building" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
-                            <input type="text" name="nombre_empresa" value="{{ old('nombre_empresa', $empresa->emp_nombre) }}" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Nombre oficial de la empresa">
+                            <input type="text" name="nombre_empresa" value="{{ old('nombre_empresa', $empresa->nombre) }}" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Nombre oficial de la empresa">
                         </div>
                     </div>
 
@@ -112,7 +112,7 @@
                         <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Representante Legal</label>
                         <div style="position: relative;">
                             <i class="fas fa-user-tie" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
-                            <input type="text" name="representante" value="{{ old('representante', $empresa->emp_representante) }}" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Nombre del representante">
+                            <input type="text" name="representante" value="{{ old('representante', $empresa->representante) }}" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Nombre del representante">
                         </div>
                     </div>
 
@@ -121,14 +121,14 @@
                             <label style="display: block; font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">NIT (Solo Lectura)</label>
                             <div style="position: relative;">
                                 <i class="fas fa-id-card" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #cbd5e1;"></i>
-                                <input type="text" value="{{ $empresa->emp_nit }}" disabled style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px dashed #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; background: #f8fafc; color: #94a3b8; outline: none;">
+                                <input type="text" value="{{ $empresa->nit }}" disabled style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px dashed #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; background: #f8fafc; color: #94a3b8; outline: none;">
                             </div>
                         </div>
                         <div class="form-group">
                             <label style="display: block; font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Email (Solo Lectura)</label>
                             <div style="position: relative;">
                                 <i class="fas fa-envelope" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #cbd5e1;"></i>
-                                <input type="email" value="{{ $empresa->emp_correo }}" disabled style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px dashed #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; background: #f8fafc; color: #94a3b8; outline: none;">
+                                <input type="email" value="{{ $empresa->correo_contacto }}" disabled style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px dashed #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; background: #f8fafc; color: #94a3b8; outline: none;">
                             </div>
                         </div>
                     </div>
@@ -167,7 +167,7 @@
                         </div>
                         <div>
                             <span style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; display:block;">Representante</span>
-                            <span style="font-size:14px; font-weight:700; color:var(--text);">{{ $empresa->emp_representante ?: '—' }}</span>
+                            <span style="font-size:14px; font-weight:700; color:var(--text);">{{ $empresa->representante ?: '—' }}</span>
                         </div>
                     </div>
                     <div style="display:flex; align-items:center; gap:14px; padding:14px 16px; background:#fef2f2; border-radius:14px; border:1px solid rgba(0,0,0,0.05);">
@@ -176,7 +176,7 @@
                         </div>
                         <div style="min-width:0;">
                             <span style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; display:block;">Email</span>
-                            <span style="font-size:13px; font-weight:700; color:var(--text); word-break:break-all;">{{ $empresa->emp_correo }}</span>
+                            <span style="font-size:13px; font-weight:700; color:var(--text); word-break:break-all;">{{ $empresa->correo_contacto }}</span>
                         </div>
                     </div>
                     <div style="display:flex; align-items:center; gap:14px; padding:14px 16px; background:rgba(62,180,137,0.1); border-radius:14px; border:1px solid rgba(62,180,137,0.1);">
@@ -185,7 +185,7 @@
                         </div>
                         <div>
                             <span style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; display:block;">NIT</span>
-                            <span style="font-size:14px; font-weight:700; color:var(--text);">{{ $empresa->emp_nit }}</span>
+                            <span style="font-size:14px; font-weight:700; color:var(--text);">{{ $empresa->nit }}</span>
                         </div>
                     </div>
                 </div>

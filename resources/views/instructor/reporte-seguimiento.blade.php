@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Reporte de Seguimiento | ' . $proyecto->pro_titulo_proyecto)
+@section('title', 'Reporte de Seguimiento | ' . $proyecto->titulo)
 @section('page-title', 'Reporte de Seguimiento')
 
 @section('sidebar-nav')
@@ -27,12 +27,12 @@
     <div style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                <a href="{{ route('instructor.proyecto.detalle', $proyecto->pro_id) }}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
+                <a href="{{ route('instructor.proyecto.detalle', $proyecto->id) }}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
                     <i class="fas fa-arrow-left"></i> Volver a la Gestión
                 </a>
             </div>
             <h2 style="font-size:28px; font-weight:800; color:var(--primary-hover)">Auditoría de Progreso</h2>
-            <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Análisis detallado para: <span style="color: var(--primary); font-weight: 700;">{{ $proyecto->pro_titulo_proyecto }}</span></p>
+            <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Análisis detallado para: <span style="color: var(--primary); font-weight: 700;">{{ $proyecto->titulo }}</span></p>
         </div>
         <button onclick="window.print()" class="btn-ver" style="background: #64748b; padding: 10px 24px; border-radius: 12px; width: auto;">
             <i class="fas fa-print" style="margin-right: 8px;"></i> Exportar PDF
@@ -58,7 +58,7 @@
         <div class="glass-card stat-card-rep" style="--c: #f59e0b;">
             <div class="stat-icon-rep"><i class="fas fa-award"></i></div>
             <div class="stat-info-rep">
-                <p class="stat-value-rep">{{ $evidencias->where('evid_estado', 'Aprobada')->count() }}</p>
+                <p class="stat-value-rep">{{ $evidencias->where('estado', 'aceptada')->count() }}</p>
                 <p class="stat-label-rep">Aprobados</p>
             </div>
         </div>
@@ -91,19 +91,19 @@
                         <tbody>
                             @foreach($aprendices as $aprendiz)
                                 @php
-                                    $e_count = $entregas->where('ene_apr_id', $aprendiz->apr_id)->count();
-                                    $a_count = $evidencias->where('evid_apr_id', $aprendiz->apr_id)->where('evid_estado', 'Aprobada')->count();
+                                    $e_count = $entregas->where('aprendiz_id', $aprendiz->id)->count();
+                                    $a_count = $evidencias->where('aprendiz_id', $aprendiz->id)->where('estado', 'aceptada')->count();
                                     $progreso = $etapas->count() > 0 ? ($a_count / $etapas->count()) * 100 : 0;
                                 @endphp
                                 <tr style="background: var(--bg-main); border-radius: 14px;">
                                     <td style="padding: 16px; border-radius: 14px 0 0 14px;">
                                         <div style="display: flex; align-items: center; gap: 12px;">
                                             <div style="width: 38px; height: 38px; background: white; color: var(--primary); border: 2px solid var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">
-                                                {{ substr($aprendiz->apr_nombre, 0, 1) }}
+                                                {{ substr($aprendiz->nombres, 0, 1) }}
                                             </div>
                                             <div>
-                                                <p style="font-weight: 700; color: var(--text-main); font-size: 0.9rem;">{{ $aprendiz->apr_nombre }}</p>
-                                                <p style="font-size: 0.75rem; color: var(--text-muted);">{{ $aprendiz->usr_correo }}</p>
+                                                <p style="font-weight: 700; color: var(--text-main); font-size: 0.9rem;">{{ $aprendiz->nombres }}</p>
+                                                <p style="font-size: 0.75rem; color: var(--text-muted);">{{ $aprendiz->correo }}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -133,24 +133,24 @@
                         <div class="stage-accordion-rep">
                             <div class="accordion-header-rep" onclick="this.nextElementSibling.classList.toggle('active')">
                                 <div style="display: flex; align-items: center; gap: 15px;">
-                                    <div class="stage-num-rep">{{ $etapa->eta_orden }}</div>
+                                    <div class="stage-num-rep">{{ $etapa->orden }}</div>
                                     <div>
-                                        <h4 style="font-weight: 700; font-size: 1.05rem; color: var(--text-main);">{{ $etapa->eta_nombre }}</h4>
-                                        <p style="font-size: 0.8rem; color: var(--text-muted);">{{ count($entregas->where('ene_eta_id', $etapa->eta_id)) }} entregas totales</p>
+                                        <h4 style="font-weight: 700; font-size: 1.05rem; color: var(--text-main);">{{ $etapa->nombre }}</h4>
+                                        <p style="font-size: 0.8rem; color: var(--text-muted);">{{ count($entregas->where('etapa_id', $etapa->id)) }} entregas totales</p>
                                     </div>
                                 </div>
                                 <i class="fas fa-chevron-down" style="color: var(--text-muted);"></i>
                             </div>
                             <div class="accordion-content-rep">
                                 <div style="padding: 1.5rem; background: white; border-radius: 0 0 16px 16px; border: 1px solid var(--border); border-top: none;">
-                                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">{{ $etapa->eta_descripcion }}</p>
+                                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">{{ $etapa->descripcion }}</p>
                                     
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                                         <div>
                                             <h5 class="sub-label-rep" style="--c: #3b82f6;">Entregas Formales</h5>
-                                            @forelse($entregas->where('ene_eta_id', $etapa->eta_id) as $e)
+                                            @forelse($entregas->where('etapa_id', $etapa->id) as $e)
                                                 <div class="mini-card-rep">
-                                                    <span style="font-weight: 700; color: var(--text-main);">{{ $e->apr_nombre }}</span>
+                                                    <span style="font-weight: 700; color: var(--text-main);">{{ $e->nombres }}</span>
                                                     <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: none; font-size: 0.65rem;">ENVIADO</span>
                                                 </div>
                                             @empty
@@ -159,10 +159,10 @@
                                         </div>
                                         <div>
                                             <h5 class="sub-label-rep" style="--c: #10b981;">Calificaciones</h5>
-                                            @forelse($evidencias->where('evid_eta_id', $etapa->eta_id) as $ev)
+                                            @forelse($evidencias->where('etapa_id', $etapa->id) as $ev)
                                                 <div class="mini-card-rep">
-                                                    <span style="font-weight: 700; color: var(--text-main);">{{ $ev->apr_nombre }}</span>
-                                                    <span class="badge" style="background: {{ $ev->evid_estado === 'Aprobada' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)' }}; color: {{ $ev->evid_estado === 'Aprobada' ? '#10b981' : '#ef4444' }}; border: none; font-size: 0.65rem;">{{ strtoupper($ev->evid_estado) }}</span>
+                                                    <span style="font-weight: 700; color: var(--text-main);">{{ $ev->nombres }}</span>
+                                                    <span class="badge" style="background: {{ $ev->estado === 'aceptada' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)' }}; color: {{ $ev->estado === 'aceptada' ? '#10b981' : '#ef4444' }}; border: none; font-size: 0.65rem;">{{ strtoupper($ev->estado) }}</span>
                                                 </div>
                                             @empty
                                                 <p style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Pendiente evaluar.</p>
@@ -184,17 +184,17 @@
                 <div style="display: grid; gap: 1rem;">
                     <div>
                         <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">ESTADO</p>
-                        <span class="badge" style="background: var(--primary); color: white; border: none; width: 100%; text-align: center;">{{ $proyecto->pro_estado }}</span>
+                        <span class="badge" style="background: var(--primary); color: white; border: none; width: 100%; text-align: center;">{{ $proyecto->estado }}</span>
                     </div>
                     <div>
                         <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">EMPRESA</p>
-                        <p style="font-weight: 700; color: var(--text-main);">{{ $proyecto->emp_nombre }}</p>
+                        <p style="font-weight: 700; color: var(--text-main);">{{ $proyecto->nombre }}</p>
                     </div>
                     <div>
                         <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">CRONOGRAMA</p>
                         <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
                             <span style="color: var(--text-muted);">Cierre:</span>
-                            <span style="font-weight: 700; color: var(--text-main);">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d/m/Y') }}</span>
+                            <span style="font-weight: 700; color: var(--text-main);">{{ \Carbon\Carbon::parse($proyecto->fecha_finalizacion)->format('d/m/Y') }}</span>
                         </div>
                     </div>
                 </div>

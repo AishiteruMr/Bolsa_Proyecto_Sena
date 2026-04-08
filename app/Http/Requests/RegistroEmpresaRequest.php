@@ -18,9 +18,9 @@ class RegistroEmpresaRequest extends FormRequest
     {
         return [
             'nombre_empresa' => 'required|string|max:150',
-            'nit'            => 'required|numeric|digits_between:6,15|unique:empresa,emp_nit',
+            'nit'            => 'required|numeric|digits_between:6,15|unique:empresas,nit|unique:usuarios,numero_documento',
             'representante'  => 'required|string|max:100',
-            'correo'         => 'required|email|max:255|unique:empresa,emp_correo|unique:usuario,usr_correo',
+            'correo'         => 'required|email|max:255|unique:empresas,correo_contacto|unique:usuarios,correo',
             'password'       => 'required|string|min:8|max:100|confirmed',
             'terminos'       => 'accepted',
         ];

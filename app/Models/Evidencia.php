@@ -8,70 +8,70 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Evidencia extends Model
 {
-    protected $table = 'evidencia';
-    protected $primaryKey = 'evid_id';
-    public $timestamps = false;
+    protected $table = 'evidencias';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
 
     protected $fillable = [
-        'evid_apr_id',
-        'evid_eta_id',
-        'evid_pro_id',
-        'evid_archivo',
-        'evid_fecha',
-        'evid_estado',
-        'evid_comentario',
+        'aprendiz_id',
+        'etapa_id',
+        'proyecto_id',
+        'ruta_archivo',
+        'fecha_envio',
+        'estado',
+        'comentario_instructor',
     ];
 
     protected $casts = [
-        'evid_fecha' => 'datetime',
+        'fecha_envio' => 'datetime',
     ];
 
     // ── RELACIONES ──
     public function aprendiz(): BelongsTo
     {
-        return $this->belongsTo(Aprendiz::class, 'evid_apr_id', 'apr_id');
+        return $this->belongsTo(Aprendiz::class, 'aprendiz_id', 'id');
     }
 
     public function etapa(): BelongsTo
     {
-        return $this->belongsTo(Etapa::class, 'evid_eta_id', 'eta_id');
+        return $this->belongsTo(Etapa::class, 'etapa_id', 'id');
     }
 
     public function proyecto(): BelongsTo
     {
-        return $this->belongsTo(Proyecto::class, 'evid_pro_id', 'pro_id');
+        return $this->belongsTo(Proyecto::class, 'proyecto_id', 'id');
     }
 
     // ── SCOPES ──
     public function scopeAprobadas(Builder $query): Builder
     {
-        return $query->where('evid_estado', 'Aprobada');
+        return $query->where('estado', 'aprobada');
     }
 
     public function scopePendientes(Builder $query): Builder
     {
-        return $query->where('evid_estado', 'Pendiente');
+        return $query->where('estado', 'pendiente');
     }
 
     public function scopeRechazadas(Builder $query): Builder
     {
-        return $query->where('evid_estado', 'Rechazada');
+        return $query->where('estado', 'rechazada');
     }
 
     // ── MÉTODOS ──
     public function isAprobada(): bool
     {
-        return $this->evid_estado === 'Aprobada';
+        return $this->estado === 'aprobada';
     }
 
     public function isPendiente(): bool
     {
-        return $this->evid_estado === 'Pendiente';
+        return $this->estado === 'pendiente';
     }
 
     public function isRechazada(): bool
     {
-        return $this->evid_estado === 'Rechazada';
+        return $this->estado === 'rechazada';
     }
 
     /**
@@ -79,7 +79,7 @@ class Evidencia extends Model
      */
     public function getFileUrl(): string
     {
-        return asset('storage/' . $this->evid_archivo);
+        return asset('storage/' . $this->ruta_archivo);
     }
 
     /**
@@ -87,7 +87,7 @@ class Evidencia extends Model
      */
     public function hasFile(): bool
     {
-        return !empty($this->evid_archivo);
+        return !empty($this->ruta_archivo);
     }
 
     /**
@@ -95,11 +95,11 @@ class Evidencia extends Model
      */
     public function getEstadoEspañol(): string
     {
-        return match($this->evid_estado) {
-            'Aprobada' => '✅ Aprobada',
-            'Rechazada' => '❌ Rechazada',
-            'Pendiente' => '⏳ Pendiente',
-            default => $this->evid_estado,
+        return match($this->estado) {
+            'aprobada' => '✅ Aprobada',
+            'rechazada' => '❌ Rechazada',
+            'pendiente' => '⏳ Pendiente',
+            default => ucfirst($this->estado),
         };
     }
 }

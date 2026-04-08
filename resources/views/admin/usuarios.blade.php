@@ -71,31 +71,31 @@
                         <tbody>
                             @forelse($aprendices as $a)
                             <tr style="transition:background 0.2s;" onmouseover="this.style.background='#f0f5f2'" onmouseout="this.style.background='white'">
-                                <td style="padding:18px 20px;font-weight:700;color:#0a3d2a;border-bottom:1px solid #e8f5e9;">{{ $a->usr_documento }}</td>
+                                <td style="padding:18px 20px;font-weight:700;color:#0a3d2a;border-bottom:1px solid #e8f5e9;">{{ $a->numero_documento }}</td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
                                     <div style="display:flex;align-items:center;gap:12px;">
-                                        <div style="width:36px;height:36px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;">{{ strtoupper(substr($a->apr_nombre,0,1)) }}</div>
-                                        <span style="font-weight:600;color:#0a3d2a;">{{ $a->apr_nombre }} {{ $a->apr_apellido }}</span>
+                                        <div style="width:36px;height:36px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;">{{ strtoupper(substr($a->nombres,0,1)) }}</div>
+                                        <span style="font-weight:600;color:#0a3d2a;">{{ $a->nombres }} {{ $a->apellidos }}</span>
                                     </div>
                                 </td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
-                                    <span style="background:#e8f5e9;color:#1a5c30;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;border:1px solid #a5d6a7;">{{ $a->apr_programa }}</span>
+                                    <span style="background:#e8f5e9;color:#1a5c30;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;border:1px solid #a5d6a7;">{{ $a->programa_formacion }}</span>
                                 </td>
-                                <td style="padding:18px 20px;color:#1a5c30;font-size:13px;border-bottom:1px solid #e8f5e9;">{{ $a->usr_correo }}</td>
+                                <td style="padding:18px 20px;color:#1a5c30;font-size:13px;border-bottom:1px solid #e8f5e9;">{{ $a->correo }}</td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
-                                    <span style="display:inline-flex;align-items:center;gap:6px;background:{{ $a->apr_estado == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $a->apr_estado == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $a->apr_estado == 1 ? '#a5d6a7' : '#ef9a9a' }};">
-                                        <span style="width:6px;height:6px;border-radius:50%;background:{{ $a->apr_estado == 1 ? '#2e7d46' : '#e53935' }};"></span>
-                                        {{ $a->apr_estado == 1 ? 'Activo' : 'Inactivo' }}
+                                    <span style="display:inline-flex;align-items:center;gap:6px;background:{{ $a->activo == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $a->activo == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $a->activo == 1 ? '#a5d6a7' : '#ef9a9a' }};">
+                                        <span style="width:6px;height:6px;border-radius:50%;background:{{ $a->activo == 1 ? '#2e7d46' : '#e53935' }};"></span>
+                                        {{ $a->activo == 1 ? 'aprobado' : 'cerrado' }}
                                     </span>
                                 </td>
                                 <td style="padding:18px 20px;text-align:right;border-bottom:1px solid #e8f5e9;">
-                                    <form action="{{ route('admin.usuarios.estado', $a->apr_id) }}" method="POST" style="display:inline;">
+                                    <form action="{{ route('admin.usuarios.estado', $a->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         <input type="hidden" name="tipo" value="aprendiz">
-                                        <input type="hidden" name="estado" value="{{ $a->apr_estado == 1 ? 0 : 1 }}">
-                                        <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:{{ $a->apr_estado == 1 ? '2px solid #2e7d46' : 'none' }};background:{{ $a->apr_estado == 1 ? 'transparent' : '#2e7d46' }};color:{{ $a->apr_estado == 1 ? '#2e7d46' : 'white' }};border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">
-                                            <i class="fas {{ $a->apr_estado == 1 ? 'fa-user-minus' : 'fa-user-check' }}"></i>
-                                            {{ $a->apr_estado == 1 ? 'Desactivar' : 'Activar' }}
+                                        <input type="hidden" name="estado" value="{{ $a->activo == 1 ? 0 : 1 }}">
+                                        <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:{{ $a->activo == 1 ? '2px solid #2e7d46' : 'none' }};background:{{ $a->activo == 1 ? 'transparent' : '#2e7d46' }};color:{{ $a->activo == 1 ? '#2e7d46' : 'white' }};border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">
+                                            <i class="fas {{ $a->activo == 1 ? 'fa-user-minus' : 'fa-user-check' }}"></i>
+                                            {{ $a->activo == 1 ? 'Desactivar' : 'Activar' }}
                                         </button>
                                     </form>
                                 </td>
@@ -132,31 +132,31 @@
                         <tbody>
                             @forelse($instructores as $i)
                             <tr style="transition:background 0.2s;" onmouseover="this.style.background='#f0f5f2'" onmouseout="this.style.background='white'">
-                                <td style="padding:18px 20px;font-weight:700;color:#0a3d2a;border-bottom:1px solid #e8f5e9;">{{ $i->usuario->usr_documento ?? '-' }}</td>
+                                <td style="padding:18px 20px;font-weight:700;color:#0a3d2a;border-bottom:1px solid #e8f5e9;">{{ $i->usuario->numero_documento ?? '-' }}</td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
                                     <div style="display:flex;align-items:center;gap:12px;">
-                                        <div style="width:36px;height:36px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;">{{ strtoupper(substr($i->ins_nombre,0,1)) }}</div>
-                                        <span style="font-weight:600;color:#0a3d2a;">{{ $i->ins_nombre }} {{ $i->ins_apellido }}</span>
+                                        <div style="width:36px;height:36px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;">{{ strtoupper(substr($i->nombres,0,1)) }}</div>
+                                        <span style="font-weight:600;color:#0a3d2a;">{{ $i->nombres }} {{ $i->apellidos }}</span>
                                     </div>
                                 </td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
-                                    <span style="background:#e8f5e9;color:#1a5c30;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;border:1px solid #a5d6a7;">{{ $i->ins_especialidad }}</span>
+                                    <span style="background:#e8f5e9;color:#1a5c30;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;border:1px solid #a5d6a7;">{{ $i->especialidad }}</span>
                                 </td>
-                                <td style="padding:18px 20px;color:#1a5c30;font-size:13px;border-bottom:1px solid #e8f5e9;">{{ $i->usuario->usr_correo ?? '-' }}</td>
+                                <td style="padding:18px 20px;color:#1a5c30;font-size:13px;border-bottom:1px solid #e8f5e9;">{{ $i->usuario->correo ?? '-' }}</td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
-                                    <span style="display:inline-flex;align-items:center;gap:6px;background:{{ $i->ins_estado == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $i->ins_estado == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $i->ins_estado == 1 ? '#a5d6a7' : '#ef9a9a' }};">
-                                        <span style="width:6px;height:6px;border-radius:50%;background:{{ $i->ins_estado == 1 ? '#2e7d46' : '#e53935' }};"></span>
-                                        {{ $i->ins_estado == 1 ? 'Activo' : 'Inactivo' }}
+                                    <span style="display:inline-flex;align-items:center;gap:6px;background:{{ $i->activo == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $i->activo == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $i->activo == 1 ? '#a5d6a7' : '#ef9a9a' }};">
+                                        <span style="width:6px;height:6px;border-radius:50%;background:{{ $i->activo == 1 ? '#2e7d46' : '#e53935' }};"></span>
+                                        {{ $i->activo == 1 ? 'aprobado' : 'cerrado' }}
                                     </span>
                                 </td>
                                 <td style="padding:18px 20px;text-align:right;border-bottom:1px solid #e8f5e9;">
-                                    <form action="{{ route('admin.usuarios.estado', $i->usr_id) }}" method="POST" style="display:inline;">
+                                    <form action="{{ route('admin.usuarios.estado', $i->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         <input type="hidden" name="tipo" value="instructor">
-                                        <input type="hidden" name="estado" value="{{ $i->ins_estado == 1 ? 0 : 1 }}">
-                                        <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:{{ $i->ins_estado == 1 ? '2px solid #2e7d46' : 'none' }};background:{{ $i->ins_estado == 1 ? 'transparent' : '#2e7d46' }};color:{{ $i->ins_estado == 1 ? '#2e7d46' : 'white' }};border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">
-                                            <i class="fas {{ $i->ins_estado == 1 ? 'fa-user-minus' : 'fa-user-check' }}"></i>
-                                            {{ $i->ins_estado == 1 ? 'Desactivar' : 'Activar' }}
+                                        <input type="hidden" name="estado" value="{{ $i->activo == 1 ? 0 : 1 }}">
+                                        <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:{{ $i->activo == 1 ? '2px solid #2e7d46' : 'none' }};background:{{ $i->activo == 1 ? 'transparent' : '#2e7d46' }};color:{{ $i->activo == 1 ? '#2e7d46' : 'white' }};border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">
+                                            <i class="fas {{ $i->activo == 1 ? 'fa-user-minus' : 'fa-user-check' }}"></i>
+                                            {{ $i->activo == 1 ? 'Desactivar' : 'Activar' }}
                                         </button>
                                     </form>
                                 </td>

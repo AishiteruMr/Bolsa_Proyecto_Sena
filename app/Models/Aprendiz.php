@@ -9,64 +9,64 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Aprendiz extends Model
 {
-    protected $table = 'aprendiz';
-    protected $primaryKey = 'apr_id';
-    public $timestamps = false;
+    protected $table = 'aprendices';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
 
     protected $fillable = [
-        'usr_id',
-        'apr_nombre',
-        'apr_apellido',
-        'apr_programa',
-        'apr_estado',
+        'usuario_id',
+        'nombres',
+        'apellidos',
+        'programa_formacion',
+        'activo',
     ];
 
     protected $casts = [
-        'apr_estado' => 'integer',
+        'activo' => 'boolean',
     ];
 
     // ── RELACIONES ──
     public function usuario(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'usr_id', 'usr_id');
+        return $this->belongsTo(User::class, 'usuario_id', 'id');
     }
 
     public function postulaciones(): HasMany
     {
-        return $this->hasMany(Postulacion::class, 'apr_id', 'apr_id');
+        return $this->hasMany(Postulacion::class, 'aprendiz_id', 'id');
     }
 
     public function evidencias(): HasMany
     {
-        return $this->hasMany(Evidencia::class, 'evid_apr_id', 'apr_id');
+        return $this->hasMany(Evidencia::class, 'aprendiz_id', 'id');
     }
 
     public function entregas(): HasMany
     {
-        return $this->hasMany(Entrega::class, 'ene_apr_id', 'apr_id');
+        return $this->hasMany(Entrega::class, 'aprendiz_id', 'id');
     }
 
     // ── ATRIBUTOS ──
     public function getFullNameAttribute(): string
     {
-        return trim($this->apr_nombre . ' ' . $this->apr_apellido);
+        return trim($this->nombres . ' ' . $this->apellidos);
     }
 
     // ── SCOPES ──
     public function scopeActivos(Builder $query): Builder
     {
-        return $query->where('apr_estado', 1);
+        return $query->where('activo', true);
     }
 
     public function scopeInactivos(Builder $query): Builder
     {
-        return $query->where('apr_estado', 0);
+        return $query->where('activo', false);
     }
 
     // ── MÉTODOS ──
     public function isActivo(): bool
     {
-        return $this->apr_estado === 1;
+        return $this->activo === true;
     }
 
     /**
@@ -74,7 +74,7 @@ class Aprendiz extends Model
      */
     public function postulacionesAprobadas()
     {
-        return $this->postulaciones()->where('pos_estado', 'Aprobada');
+        return $this->postulaciones()->where('estado', 'aceptada');
     }
 
     /**
@@ -82,7 +82,7 @@ class Aprendiz extends Model
      */
     public function postulacionesPendientes()
     {
-        return $this->postulaciones()->where('pos_estado', 'Pendiente');
+        return $this->postulaciones()->where('estado', 'pendiente');
     }
 
     /**
@@ -90,7 +90,7 @@ class Aprendiz extends Model
      */
     public function postulacionesRechazadas()
     {
-        return $this->postulaciones()->where('pos_estado', 'Rechazada');
+        return $this->postulaciones()->where('estado', 'rechazada');
     }
 
     /**
@@ -110,11 +110,11 @@ class Aprendiz extends Model
     }
 
     /**
-     * Obtener proyectos disponibles (activos)
+     * Obtener proyectos disponibles (aprobados en la nueva estructura)
      */
     public function proyectosDisponibles()
     {
-        return Proyecto::where('pro_estado', 'Activo')->get();
+        return Proyecto::dondeDisponibles()->get();
     }
 
     /**

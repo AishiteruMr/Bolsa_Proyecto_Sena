@@ -32,12 +32,12 @@
             </a>
             <div>
                 <h2 class="admin-title-main" style="font-size: 26px;">Detalles de la Revisión</h2>
-                <p style="color: var(--text-light); font-size: 14px; font-weight: 500;">Evaluando: <span style="color: var(--primary); font-weight: 800;">{{ $proyecto->pro_titulo_proyecto }}</span></p>
+                <p style="color: var(--text-light); font-size: 14px; font-weight: 500;">Evaluando: <span style="color: var(--primary); font-weight: 800;">{{ $proyecto->titulo }}</span></p>
             </div>
         </div>
         <div>
-            <span class="aprendiz-badge-portal" style="background: {{ $proyecto->pro_estado == 'Pendiente' ? '#fff7ed' : ($proyecto->pro_estado == 'Activo' ? '#f0fdf4' : '#fef2f2') }}; border-color: {{ $proyecto->pro_estado == 'Pendiente' ? '#ffedd5' : ($proyecto->pro_estado == 'Activo' ? '#dcfce7' : '#fee2e2') }}; color: {{ $proyecto->pro_estado == 'Pendiente' ? '#ea580c' : ($proyecto->pro_estado == 'Activo' ? '#16a34a' : '#dc2626') }}; padding: 8px 16px; font-weight: 800;">
-                Estado: {{ $proyecto->pro_estado }}
+            <span class="aprendiz-badge-portal" style="background: {{ $proyecto->estado == 'pendiente' ? '#fff7ed' : ($proyecto->estado == 'aprobado' ? '#f0fdf4' : '#fef2f2') }}; border-color: {{ $proyecto->estado == 'pendiente' ? '#ffedd5' : ($proyecto->estado == 'aprobado' ? '#dcfce7' : '#fee2e2') }}; color: {{ $proyecto->estado == 'pendiente' ? '#ea580c' : ($proyecto->estado == 'aprobado' ? '#16a34a' : '#dc2626') }}; padding: 8px 16px; font-weight: 800;">
+                Estado: {{ $proyecto->estado }}
             </span>
         </div>
     </div>
@@ -54,7 +54,7 @@
                 <div style="margin-bottom: 32px;">
                     <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Descripción Técnica</label>
                     <p style="font-size: 15px; color: var(--text); line-height: 1.8; background: #f8fafc; padding: 24px; border-radius: 16px; border-left: 5px solid var(--primary); font-weight: 500;">
-                        {{ $proyecto->pro_descripcion }}
+                        {{ $proyecto->descripcion }}
                     </p>
                 </div>
 
@@ -62,18 +62,18 @@
                     <div>
                         <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Requisitos Específicos</label>
                         <div style="font-size: 14px; color: var(--text-light); line-height: 1.6; padding: 16px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; height: 100%; font-weight: 600;">
-                            {{ $proyecto->pro_requisitos_especificos }}
+                            {{ $proyecto->requisitos_especificos }}
                         </div>
                     </div>
                     <div>
                         <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Habilidades Requeridas</label>
                         <div style="font-size: 14px; color: var(--text-light); line-height: 1.6; padding: 16px; background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; height: 100%; font-weight: 600;">
-                            {{ $proyecto->pro_habilidades_requerida }}
+                            {{ $proyecto->habilidades_requeridas }}
                         </div>
                     </div>
                 </div>
 
-                @if($proyecto->pro_imagen_url)
+                @if($proyecto->imagen_url)
                 <div style="margin-top: 32px;">
                     <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Identidad Visual</label>
                     <img src="{{ $proyecto->getImagenUrlAttribute() }}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
@@ -87,12 +87,12 @@
                         <i class="fas fa-map-marked-alt" style="color: var(--primary); font-size: 1.4rem;"></i>
                         <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text);">Geolocalización</h3>
                     </div>
-                    @if($proyecto->pro_latitud && $proyecto->pro_longitud)
+                    @if($proyecto->latitud && $proyecto->longitud)
                         <span class="status-badge active" style="font-size: 11px; font-weight: 800;">Coordenadas Válidas</span>
                     @endif
                 </div>
 
-                @if($proyecto->pro_latitud && $proyecto->pro_longitud)
+                @if($proyecto->latitud && $proyecto->longitud)
                     <div id="revisar-map" class="admin-map-container"></div>
                 @else
                     <div style="height: 200px; background: #fff1f2; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #be123c; text-align: center; padding: 20px; border: 2px dashed #fecaca;">
@@ -144,17 +144,17 @@
                 <h3 style="font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 24px; opacity: 0.7; letter-spacing: 1px;">Veredicto Final</h3>
                 
                 <div style="display: grid; gap: 12px;">
-                    <form action="{{ route('admin.proyectos.estado', $proyecto->pro_id) }}" method="POST">
+                    <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST">
                         @csrf
-                        <input type="hidden" name="estado" value="Activo">
+                        <input type="hidden" name="estado" value="aprobado">
                         <button type="submit" class="btn-premium" style="width: 100%; background: var(--primary); color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
                             <i class="fas fa-check-double" style="margin-right: 10px;"></i> Publicar Proyecto
                         </button>
                     </form>
 
-                    <form action="{{ route('admin.proyectos.estado', $proyecto->pro_id) }}" method="POST">
+                    <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST">
                         @csrf
-                        <input type="hidden" name="estado" value="Rechazado">
+                        <input type="hidden" name="estado" value="rechazado">
                         <button type="submit" class="btn-premium" style="width: 100%; background: #ef4444; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
                             <i class="fas fa-ban" style="margin-right: 10px;"></i> Rechazar Oferta
                         </button>
@@ -169,12 +169,12 @@
     </div>
 </div>
 
-@if($proyecto->pro_latitud && $proyecto->pro_longitud)
+@if($proyecto->latitud && $proyecto->longitud)
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="{{ asset('js/maps.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    initViewMap('revisar-map', {{ $proyecto->pro_latitud }}, {{ $proyecto->pro_longitud }}, 'Ubicación Propuesta');
+    initViewMap('revisar-map', {{ $proyecto->latitud }}, {{ $proyecto->longitud }}, 'Ubicación Propuesta');
 });
 </script>
 @endif

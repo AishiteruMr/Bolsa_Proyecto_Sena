@@ -38,14 +38,14 @@
                 <span class="instructor-tag">Postulantes</span>
                 <span style="background: rgba(62,180,137,0.1); color: #3eb489; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">{{ count($postulantes) }} candidatos</span>
             </div>
-            <h1 class="instructor-title">{{ $proyecto->pro_titulo_proyecto }}</h1>
+            <h1 class="instructor-title">{{ $proyecto->titulo }}</h1>
             <p style="color: rgba(255,255,255,0.6); font-size: 15px; font-weight: 500;">Gestiona las postulaciones de aprendices para este proyecto.</p>
         </div>
     </div>
 
     <!-- Ver Participantes Button -->
     <div style="margin-bottom: 24px;">
-        <a href="{{ route('empresa.proyectos.participantes', $proyecto->pro_id) }}" class="btn-premium" style="padding: 12px 24px; background: linear-gradient(135deg, #0ea5e9, #0284c7);">
+        <a href="{{ route('empresa.proyectos.participantes', $proyecto->id) }}" class="btn-premium" style="padding: 12px 24px; background: linear-gradient(135deg, #0ea5e9, #0284c7);">
             <i class="fas fa-users-rectangle"></i> Ver Participantes del Proyecto
         </a>
     </div>
@@ -54,11 +54,11 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 24px;">
         @forelse($postulantes as $p)
             @php
-                $statusConfig = match($p->pos_estado) {
-                    'Pendiente' => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-clock', 'label' => 'Por Revisar'],
-                    'Aprobada' => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle', 'label' => 'Aprobado'],
-                    'Rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444', 'icon' => 'fa-times-circle', 'label' => 'Rechazado'],
-                    default => ['bg' => '#f1f5f9', 'border' => '#e2e8f0', 'text' => '#64748b', 'icon' => 'fa-circle', 'label' => $p->pos_estado]
+                $statusConfig = match($p->estado) {
+                    'pendiente' => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-clock', 'label' => 'Por Revisar'],
+                    'aceptada' => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle', 'label' => 'Aprobado'],
+                    'rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444', 'icon' => 'fa-times-circle', 'label' => 'rechazado'],
+                    default => ['bg' => '#f1f5f9', 'border' => '#e2e8f0', 'text' => '#64748b', 'icon' => 'fa-circle', 'label' => $p->estado]
                 };
             @endphp
             <div class="glass-card" style="padding: 28px; position: relative; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 20px 40px rgba(62,180,137,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
@@ -70,17 +70,17 @@
 
                 <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 20px;">
                     <div style="width: 70px; height: 70px; border-radius: 20px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; flex-shrink: 0; box-shadow: 0 8px 20px rgba(62,180,137,0.3);">
-                        {{ strtoupper(substr($p->apr_nombre ?? 'A', 0, 1)) }}
+                        {{ strtoupper(substr($p->nombres ?? 'A', 0, 1)) }}
                     </div>
                     <div style="flex: 1; min-width: 0;">
                         <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            {{ $p->apr_nombre }} {{ $p->apr_apellido }}
+                            {{ $p->nombres }} {{ $p->apellidos }}
                         </h4>
                         <div style="font-size: 13px; color: #3eb489; font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                            <i class="fas fa-graduation-cap"></i> {{ $p->apr_programa ?? 'Especialidad SENA' }}
+                            <i class="fas fa-graduation-cap"></i> {{ $p->programa_formacion ?? 'Especialidad SENA' }}
                         </div>
                         <div style="font-size: 12px; color: var(--text-lighter); display: flex; align-items: center; gap: 8px; font-weight: 600;">
-                            <i class="fas fa-envelope-open-text" style="color: #94a3b8;"></i> {{ $p->usr_correo }}
+                            <i class="fas fa-envelope-open-text" style="color: #94a3b8;"></i> {{ $p->correo }}
                         </div>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
                     <div style="background: #f8fafc; padding: 14px; border-radius: 14px; border: 1px solid #f1f5f9;">
                         <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #94a3b8; font-weight: 800; display: block; margin-bottom: 4px;">Fecha Aplicación</span>
-                        <span style="font-size: 13px; font-weight: 700; color: var(--text);">{{ \Carbon\Carbon::parse($p->pos_fecha)->translatedFormat('d M, Y') }}</span>
+                        <span style="font-size: 13px; font-weight: 700; color: var(--text);">{{ \Carbon\Carbon::parse($p->fecha_postulacion)->translatedFormat('d M, Y') }}</span>
                     </div>
                     <div style="background: #f8fafc; padding: 14px; border-radius: 14px; border: 1px solid #f1f5f9;">
                         <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #94a3b8; font-weight: 800; display: block; margin-bottom: 4px;">Disponibilidad</span>
@@ -97,19 +97,19 @@
                 </div>
 
                 <div style="display: flex; gap: 12px;">
-                    <a href="{{ route('empresa.proyectos.participantes', $proyecto->pro_id) }}" class="btn-premium" style="flex: 1; justify-content: center; background: #3b82f6;">
+                    <a href="{{ route('empresa.proyectos.participantes', $proyecto->id) }}" class="btn-premium" style="flex: 1; justify-content: center; background: #3b82f6;">
                         <i class="fas fa-user"></i> Ver Perfil
                     </a>
                     
-                    @if($p->pos_estado == 'Pendiente')
+                    @if($p->estado == 'pendiente')
                         <div style="display: flex; gap: 8px;">
-                            <form action="{{ route('empresa.postulacion.estado', [$p->pos_id, 'Aprobada']) }}" method="POST">
+                            <form action="{{ route('empresa.postulacion.estado', [$p->id, 'aceptada']) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn-premium" style="width: 44px; height: 44px; padding: 0; justify-content: center; background: #10b981; box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25);" title="Aprobar">
                                     <i class="fas fa-check"></i>
                                 </button>
                             </form>
-                            <form action="{{ route('empresa.postulacion.estado', [$p->pos_id, 'Rechazada']) }}" method="POST">
+                            <form action="{{ route('empresa.postulacion.estado', [$p->id, 'rechazada']) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn-premium" style="width: 44px; height: 44px; padding: 0; justify-content: center; background: #ef4444; box-shadow: 0 8px 16px rgba(239, 68, 68, 0.25);" title="Rechazar">
                                     <i class="fas fa-times"></i>

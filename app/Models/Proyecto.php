@@ -6,124 +6,125 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class Proyecto extends Model
 {
-    protected $table = 'proyecto';
-    protected $primaryKey = 'pro_id';
-    public $timestamps = false;
+    protected $table = 'proyectos';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
 
     protected $fillable = [
-        'emp_nit',
-        'pro_titulo_proyecto',
-        'pro_descripcion',
-        'pro_categoria',
-        'pro_estado',
-        'pro_imagen_url',
-        'pro_fecha_inicio',
-        'pro_fecha_fin',
-        'pro_num_postulantes',
-        'pro_requisitos_especificos',
-        'pro_habilidades_requerida',
-        'pro_duracion_estimada',
-        'pro_fecha_publi',
-        'pro_fecha_finalizacion',
-        'ins_usr_documento',
-        'pro_latitud',
-        'pro_longitud',
+        'empresa_nit',
+        'instructor_usuario_id',
+        'titulo',
+        'descripcion',
+        'categoria',
+        'estado',
+        'imagen_url',
+        'requisitos_especificos',
+        'habilidades_requeridas',
+        'duracion_estimada_dias',
+        'fecha_publicacion',
+        'numero_postulantes',
+        'ubicacion',
+        'latitud',
+        'longitud',
     ];
 
     protected $casts = [
-        'pro_fecha_inicio' => 'datetime',
-        'pro_fecha_fin' => 'datetime',
-        'pro_fecha_publi' => 'datetime',
-        'pro_fecha_finalizacion' => 'datetime',
+        'fecha_publicacion' => 'date',
     ];
 
     // ── RELACIONES ──
     public function empresa(): BelongsTo
     {
-        return $this->belongsTo(Empresa::class, 'emp_nit', 'emp_nit');
+        return $this->belongsTo(Empresa::class, 'empresa_nit', 'nit');
     }
 
     public function instructor(): BelongsTo
     {
-        return $this->belongsTo(Instructor::class, 'ins_usr_documento', 'usr_id');
+        return $this->belongsTo(Instructor::class, 'instructor_usuario_id', 'usuario_id');
     }
 
     public function postulaciones(): HasMany
     {
-        return $this->hasMany(Postulacion::class, 'pro_id', 'pro_id');
+        return $this->hasMany(Postulacion::class, 'proyecto_id', 'id');
     }
 
     public function etapas(): HasMany
     {
-        return $this->hasMany(Etapa::class, 'eta_pro_id', 'pro_id');
+        return $this->hasMany(Etapa::class, 'proyecto_id', 'id');
     }
 
     public function evidencias(): HasMany
     {
-        return $this->hasMany(Evidencia::class, 'evid_pro_id', 'pro_id');
+        return $this->hasMany(Evidencia::class, 'proyecto_id', 'id');
     }
 
     // ── SCOPES ──
     public function scopeActivos(Builder $query): Builder
     {
-        return $query->where('pro_estado', 'Activo');
+        return $query->where('estado', 'aprobado');
     }
 
     public function scopePendientes(Builder $query): Builder
     {
-        return $query->where('pro_estado', 'Pendiente');
+        return $query->where('estado', 'pendiente');
     }
 
-    public function scopeInactivos(Builder $query): Builder
+    public function scopeRechazados(Builder $query): Builder
     {
-        return $query->where('pro_estado', 'Inactivo');
+        return $query->where('estado', 'rechazado');
     }
 
     public function scopeFinalizados(Builder $query): Builder
     {
-        return $query->where('pro_estado', 'Finalizado');
+        return $query->where('estado', 'cerrado');
+    }
+
+    public function scopeDondeDisponibles(Builder $query): Builder
+    {
+        return $query->where('estado', 'aprobado'); // alias para semántica vieja
     }
 
     public function scopePorEmpresa(Builder $query, $empNit): Builder
     {
-        return $query->where('emp_nit', $empNit);
+        return $query->where('empresa_nit', $empNit);
     }
 
     public function scopePorCategoria(Builder $query, $categoria): Builder
     {
-        return $query->where('pro_categoria', $categoria);
+        return $query->where('categoria', $categoria);
     }
 
     public function scopeBusqueda(Builder $query, $termino): Builder
     {
         return $query->where(function($q) use ($termino) {
-            $q->where('pro_titulo_proyecto', 'like', "%{$termino}%")
-              ->orWhere('pro_descripcion', 'like', "%{$termino}%");
+            $q->where('titulo', 'like', "%{$termino}%")
+              ->orWhere('descripcion', 'like', "%{$termino}%");
         });
     }
 
     public function scopeRecientes(Builder $query): Builder
     {
-        return $query->orderByDesc('pro_fecha_publi');
+        return $query->orderByDesc('fecha_publicacion');
     }
 
     // ── MÉTODOS ──
     public function isActivo(): bool
     {
-        return $this->pro_estado === 'Activo';
+        return in_array($this->estado, ['aprobado', 'en_progreso']);
     }
 
     public function isPendiente(): bool
     {
-        return $this->pro_estado === 'Pendiente';
+        return $this->estado === 'pendiente';
     }
 
     public function isRechazado(): bool
     {
-        return $this->pro_estado === 'Rechazado';
+        return $this->estado === 'rechazado';
     }
 
     /**
@@ -131,7 +132,7 @@ class Proyecto extends Model
      */
     public function postulacionesAprobadas()
     {
-        return $this->postulaciones()->where('pos_estado', 'Aprobada');
+        return $this->postulaciones()->where('estado', 'aceptada');
     }
 
     /**
@@ -139,7 +140,7 @@ class Proyecto extends Model
      */
     public function postulacionesPendientes()
     {
-        return $this->postulaciones()->where('pos_estado', 'Pendiente');
+        return $this->postulaciones()->where('estado', 'pendiente');
     }
 
     /**
@@ -147,7 +148,7 @@ class Proyecto extends Model
      */
     public function postulacionesRechazadas()
     {
-        return $this->postulaciones()->where('pos_estado', 'Rechazada');
+        return $this->postulaciones()->where('estado', 'rechazada');
     }
 
     /**
@@ -179,7 +180,7 @@ class Proyecto extends Model
      */
     public function getPostulantesCountAttribute(): int
     {
-        return $this->countPostulaciones();
+        return $this->numero_postulantes ?: $this->countPostulaciones();
     }
 
     /**
@@ -195,23 +196,19 @@ class Proyecto extends Model
      */
     public function etapasOrdenadas()
     {
-        return $this->etapas()->orderBy('eta_orden')->get();
+        return $this->etapas()->orderBy('orden')->get();
     }
 
     /**
-     * Verificar si está vencido
+     * Verificar si está vencido (Usaba fecha_finalizacion, ahora estimamos por duracion o estado cerrado)
      */
     public function isVencido(): bool
     {
-        return now()->isAfter($this->pro_fecha_finalizacion);
-    }
-
-    /**
-     * Obtener días restantes
-     */
-    public function diasRestantes(): int
-    {
-        return max(0, now()->diffInDays($this->pro_fecha_finalizacion, false));
+        if ($this->estado == 'cerrado') return true;
+        if (!$this->fecha_publicacion || !$this->duracion_estimada_dias) return false;
+        
+        $fechaFinEstimada = Carbon::parse($this->fecha_publicacion)->addDays($this->duracion_estimada_dias);
+        return now()->isAfter($fechaFinEstimada);
     }
 
     /**
@@ -219,26 +216,28 @@ class Proyecto extends Model
      */
     public function getEmpresaNombreAttribute(): string
     {
-        return $this->empresa?->emp_nombre ?? 'Empresa no asignada';
+        return $this->empresa?->nombre ?? 'Empresa no asignada';
     }
 
     /**
      * Accesor para la URL de la imagen del proyecto
      */
-    public function getImagenUrlAttribute(): string
+    public function getImagenUrlAttribute($value): string
     {
-        if (empty($this->pro_imagen_url)) {
+        // En Eloquent, recibir el $value original de la BD si usamos el mutator:
+        if (empty($value)) {
             return asset('assets/default-project.jpg');
         }
 
         // Si la URL ya es completa o empieza por /storage, la devolvemos tal cual
-        if (str_starts_with($this->pro_imagen_url, 'http') || str_starts_with($this->pro_imagen_url, '/storage')) {
-            return $this->pro_imagen_url;
+        if (str_starts_with($value, 'http') || str_starts_with($value, '/storage')) {
+            return $value;
         }
 
         // De lo contrario, asumimos que está en el disco public de storage
-        return asset('storage/' . $this->pro_imagen_url);
+        return asset('storage/' . $value);
     }
+
     /**
      * Evalúa la calidad del proyecto basándose en características específicas.
      * Retorna un array con el puntaje y los puntos fallidos.
@@ -246,12 +245,12 @@ class Proyecto extends Model
     public function calidadProyecto(): array
     {
         $detalles = [
-            'titulo'      => strlen($this->pro_titulo_proyecto) >= 15,
-            'descripcion' => strlen($this->pro_descripcion) >= 100,
-            'requisitos'  => strlen($this->pro_requisitos_especificos) >= 20,
-            'habilidades' => strlen($this->pro_habilidades_requerida) >= 15,
-            'ubicacion'   => !is_null($this->pro_latitud) && !is_null($this->pro_longitud),
-            'imagen'      => !empty($this->pro_imagen_url)
+            'titulo'      => strlen($this->titulo) >= 15,
+            'descripcion' => strlen($this->descripcion) >= 100,
+            'requisitos'  => strlen($this->requisitos_especificos) >= 20,
+            'habilidades' => strlen($this->habilidades_requeridas) >= 15,
+            'ubicacion'   => !is_null($this->latitud) && !is_null($this->longitud),
+            'imagen'      => !empty($this->getRawOriginal('imagen_url'))
         ];
 
         $puntos = 0;

@@ -46,6 +46,12 @@ Route::post('/registro/aprendiz', [AuthController::class, 'registrarAprendiz'])-
 Route::post('/registro/empresa', [AuthController::class, 'registrarEmpresa'])->name('registro.empresa.post');
 Route::post('/registro/instructor', [AuthController::class, 'registrarInstructor'])->name('registro.instructor.post');
 
+Route::middleware(['auth.custom'])->group(function () {
+    Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
+    Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'leer_todas'])->name('notificaciones.leer_todas');
+    Route::post('/notificaciones/{id}/leer', [NotificacionController::class, 'leer'])->name('notificaciones.leer');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Rutas protegidas — Aprendiz (rol 1)

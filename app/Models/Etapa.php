@@ -9,49 +9,31 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Etapa extends Model
 {
-    protected $table = 'etapa';
-    protected $primaryKey = 'eta_id';
-    public $timestamps = false;
+    protected $table = 'etapas';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
 
     protected $fillable = [
-        'eta_pro_id',
-        'eta_nombre',
-        'eta_descripcion',
-        'eta_orden',
-        'eta_estado',
+        'proyecto_id',
+        'nombre',
+        'descripcion',
+        'orden',
     ];
 
     // ── RELACIONES ──
     public function proyecto(): BelongsTo
     {
-        return $this->belongsTo(Proyecto::class, 'eta_pro_id', 'pro_id');
+        return $this->belongsTo(Proyecto::class, 'proyecto_id', 'id');
     }
 
     public function evidencias(): HasMany
     {
-        return $this->hasMany(Evidencia::class, 'evid_eta_id', 'eta_id');
-    }
-
-    // ── SCOPES ──
-    public function scopeActivas(Builder $query): Builder
-    {
-        return $query->where('eta_estado', 'Activa');
-    }
-
-    public function scopeInactivas(Builder $query): Builder
-    {
-        return $query->where('eta_estado', 'Inactiva');
+        return $this->hasMany(Evidencia::class, 'etapa_id', 'id');
     }
 
     public function scopeOrdenadas(Builder $query): Builder
     {
-        return $query->orderBy('eta_orden');
-    }
-
-    // ── MÉTODOS ──
-    public function isActiva(): bool
-    {
-        return $this->eta_estado === 'Activa';
+        return $query->orderBy('orden');
     }
 
     /**
@@ -59,7 +41,7 @@ class Etapa extends Model
      */
     public function evidenciasAprobadas()
     {
-        return $this->evidencias()->where('evid_estado', 'Aprobada');
+        return $this->evidencias()->where('estado', 'aprobada');
     }
 
     /**
@@ -67,7 +49,7 @@ class Etapa extends Model
      */
     public function evidenciasPendientes()
     {
-        return $this->evidencias()->where('evid_estado', 'Pendiente');
+        return $this->evidencias()->where('estado', 'pendiente');
     }
 
     /**
@@ -91,7 +73,7 @@ class Etapa extends Model
      */
     public function isUltima(): bool
     {
-        return $this->eta_orden === $this->proyecto->etapas()->max('eta_orden');
+        return $this->orden === $this->proyecto->etapas()->max('orden');
     }
 
     /**
@@ -101,8 +83,8 @@ class Etapa extends Model
     {
         return $this->proyecto
             ->etapas()
-            ->where('eta_orden', '<', $this->eta_orden)
-            ->orderByDesc('eta_orden')
+            ->where('orden', '<', $this->orden)
+            ->orderByDesc('orden')
             ->first();
     }
 
@@ -113,8 +95,8 @@ class Etapa extends Model
     {
         return $this->proyecto
             ->etapas()
-            ->where('eta_orden', '>', $this->eta_orden)
-            ->orderBy('eta_orden')
+            ->where('orden', '>', $this->orden)
+            ->orderBy('orden')
             ->first();
     }
 }

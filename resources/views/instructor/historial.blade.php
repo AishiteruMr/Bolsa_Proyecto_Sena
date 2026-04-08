@@ -45,27 +45,27 @@
                 <div style="background: white; border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s; display: flex; flex-direction: column; min-height: 320px;">
                     <div style="padding: 1.5rem; flex: 1;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                            <span style="background: {{ $proyecto->pro_estado === 'Activo' ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : '#64748b' }}; color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">
-                                {{ $proyecto->pro_estado }}
+                            <span style="background: {{ $proyecto->estado === 'aprobado' ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : '#64748b' }}; color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">
+                                {{ $proyecto->estado }}
                             </span>
                             <span style="font-size: 0.75rem; color: var(--text-light);">
                                 <i class="fas fa-calendar-alt" style="margin-right: 4px;"></i>
-                                {{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d M, Y') }}
+                                {{ \Carbon\Carbon::parse($proyecto->fecha_publicacion)->format('d M, Y') }}
                             </span>
                         </div>
                         
                         <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                            {{ $proyecto->pro_titulo_proyecto }}
+                            {{ $proyecto->titulo }}
                         </h3>
 
                         <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; color: var(--text-light); margin-bottom: 1.5rem;">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <i class="fas fa-building" style="color: #3eb489; width: 16px;"></i>
-                                <span style="font-weight: 600;">{{ $proyecto->emp_nombre }}</span>
+                                <span style="font-weight: 600;">{{ $proyecto->nombre }}</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <i class="fas fa-tag" style="color: #3eb489; width: 16px;"></i>
-                                <span style="font-weight: 600;">{{ $proyecto->pro_categoria }}</span>
+                                <span style="font-weight: 600;">{{ $proyecto->categoria }}</span>
                             </div>
                         </div>
 
@@ -82,7 +82,7 @@
                     </div>
 
                     <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(62,180,137,0.1); background: rgba(62,180,137,0.02);">
-                        <a href="{{ route('instructor.reporte', $proyecto->pro_id) }}" class="btn-premium" style="width: 100%; justify-content: center; padding: 10px;">
+                        <a href="{{ route('instructor.reporte', $proyecto->id) }}" class="btn-premium" style="width: 100%; justify-content: center; padding: 10px;">
                             <i class="fas fa-chart-pie" style="margin-right: 6px;"></i> Ver Reporte
                         </a>
                     </div>

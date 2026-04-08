@@ -32,14 +32,14 @@
         <div class="instructor-hero-bg-icon"><i class="fas fa-users"></i></div>
         <div style="position: relative; z-index: 1;">
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                <a href="{{ route('empresa.proyectos.postulantes', $proyecto->pro_id) }}" style="display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">
+                <a href="{{ route('empresa.proyectos.postulantes', $proyecto->id) }}" style="display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 13px; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">
                     <i class="fas fa-arrow-left"></i> Volver a Postulantes
                 </a>
             </div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                 <span class="instructor-tag">Participantes</span>
             </div>
-            <h1 class="instructor-title">{{ $proyecto->pro_titulo_proyecto }}</h1>
+            <h1 class="instructor-title">{{ $proyecto->titulo }}</h1>
             <p style="color: rgba(255,255,255,0.6); font-size: 15px; font-weight: 500;">Aprendices aprobados e instructor asignado a este proyecto.</p>
         </div>
     </div>
@@ -52,11 +52,11 @@
         @if($proyecto->instructor)
             <div class="glass-card" style="padding: 28px; display: flex; align-items: center; gap: 24px; border-left: 4px solid #3eb489;">
                 <div style="width: 80px; height: 80px; border-radius: 20px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; flex-shrink: 0; box-shadow: 0 8px 20px rgba(62,180,137,0.3);">
-                    {{ strtoupper(substr($proyecto->instructor->ins_nombre, 0, 1)) }}
+                    {{ strtoupper(substr($proyecto->instructor->nombres, 0, 1)) }}
                 </div>
                 <div style="flex: 1;">
                     <h4 style="font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 6px;">
-                        {{ $proyecto->instructor->ins_nombre }} {{ $proyecto->instructor->ins_apellido }}
+                        {{ $proyecto->instructor->nombres }} {{ $proyecto->instructor->apellidos }}
                     </h4>
                     <div style="display: flex; gap: 20px; font-size: 14px; color: var(--text-light);">
                         <span><i class="fas fa-envelope" style="margin-right: 6px; color: #3eb489;"></i> {{ $proyecto->instructor->ins_correo }}</span>
@@ -90,14 +90,14 @@
                     <div class="glass-card" style="padding: 24px; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 32px rgba(62,180,137,0.12)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
                             <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; flex-shrink: 0; box-shadow: 0 6px 16px rgba(59,130,246,0.3);">
-                                {{ strtoupper(substr($aprendiz->apr_nombre, 0, 1)) }}
+                                {{ strtoupper(substr($aprendiz->nombres, 0, 1)) }}
                             </div>
                             <div style="flex: 1; min-width: 0;">
                                 <h4 style="font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 4px;">
-                                    {{ $aprendiz->apr_nombre }} {{ $aprendiz->apr_apellido }}
+                                    {{ $aprendiz->nombres }} {{ $aprendiz->apellidos }}
                                 </h4>
                                 <p style="font-size: 13px; color: #3eb489; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                                    <i class="fas fa-graduation-cap"></i> {{ $aprendiz->apr_programa }}
+                                    <i class="fas fa-graduation-cap"></i> {{ $aprendiz->programa_formacion }}
                                 </p>
                             </div>
                         </div>
@@ -105,7 +105,7 @@
                         <div style="background: #f8fafc; border-radius: 12px; padding: 14px 16px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <i class="fas fa-envelope" style="color: #94a3b8; width: 16px;"></i>
-                                <span style="font-size: 13px; color: var(--text-light); font-weight: 600; word-break: break-all;">{{ $aprendiz->usr_correo }}</span>
+                                <span style="font-size: 13px; color: var(--text-light); font-weight: 600; word-break: break-all;">{{ $aprendiz->correo }}</span>
                             </div>
                         </div>
                     </div>

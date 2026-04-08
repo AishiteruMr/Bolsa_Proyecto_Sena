@@ -8,87 +8,86 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Postulacion extends Model
 {
-    protected $table = 'postulacion';
-    protected $primaryKey = 'pos_id';
-    public $timestamps = false;
+    protected $table = 'postulaciones';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
 
     protected $fillable = [
-        'apr_id',
-        'pro_id',
-        'pos_fecha',
-        'pos_estado',
+        'aprendiz_id',
+        'proyecto_id',
+        'fecha_postulacion',
+        'estado',
     ];
 
     protected $casts = [
-        'pos_fecha' => 'datetime',
+        'fecha_postulacion' => 'datetime',
     ];
 
     // ── RELACIONES ──
     public function aprendiz(): BelongsTo
     {
-        return $this->belongsTo(Aprendiz::class, 'apr_id', 'apr_id');
+        return $this->belongsTo(Aprendiz::class, 'aprendiz_id', 'id');
     }
 
     public function proyecto(): BelongsTo
     {
-        return $this->belongsTo(Proyecto::class, 'pro_id', 'pro_id');
+        return $this->belongsTo(Proyecto::class, 'proyecto_id', 'id');
     }
 
     // ── SCOPES ──
     public function scopeAprobadas(Builder $query): Builder
     {
-        return $query->where('pos_estado', 'Aprobada');
+        return $query->where('estado', 'aceptada');
     }
 
     public function scopePendientes(Builder $query): Builder
     {
-        return $query->where('pos_estado', 'Pendiente');
+        return $query->where('estado', 'pendiente');
     }
 
     public function scopeRechazadas(Builder $query): Builder
     {
-        return $query->where('pos_estado', 'Rechazada');
+        return $query->where('estado', 'rechazada');
     }
 
     public function scopePorAprendiz(Builder $query, $aprendizId): Builder
     {
-        return $query->where('apr_id', $aprendizId);
+        return $query->where('aprendiz_id', $aprendizId);
     }
 
     public function scopePorProyecto(Builder $query, $proyectoId): Builder
     {
-        return $query->where('pro_id', $proyectoId);
+        return $query->where('proyecto_id', $proyectoId);
     }
 
     public function scopeRecientes(Builder $query): Builder
     {
-        return $query->orderByDesc('pos_fecha');
+        return $query->orderByDesc('fecha_postulacion');
     }
 
     // ── MÉTODOS ──
     public function isPendiente(): bool
     {
-        return $this->pos_estado === 'Pendiente';
+        return $this->estado === 'pendiente';
     }
 
     public function isAprobada(): bool
     {
-        return $this->pos_estado === 'Aprobada';
+        return $this->estado === 'aceptada';
     }
 
     public function isRechazada(): bool
     {
-        return $this->pos_estado === 'Rechazada';
+        return $this->estado === 'rechazada';
     }
 
     /**
      * Verificar si la postulación es duplicada
-     * (ya existe una postulación de este aprendiz para este proyecto)
      */
     public static function yaPostulado($aprendizId, $proyectoId): bool
     {
-        return self::where('apr_id', $aprendizId)
-                   ->where('pro_id', $proyectoId)
+        return self::where('aprendiz_id', $aprendizId)
+                   ->where('proyecto_id', $proyectoId)
                    ->exists();
     }
 
@@ -97,24 +96,21 @@ class Postulacion extends Model
      */
     public static function obtenerPostulacion($aprendizId, $proyectoId): ?self
     {
-        return self::where('apr_id', $aprendizId)
-                   ->where('pro_id', $proyectoId)
+        return self::where('aprendiz_id', $aprendizId)
+                   ->where('proyecto_id', $proyectoId)
                    ->first();
     }
 
     /**
      * Validar si puede postularse
-     * Retorna array con [bool, string mensaje]
      */
     public static function validarPostulacion($aprendizId, $proyectoId): array
     {
-        // Verificar que el aprendiz existe y está activo
         $aprendiz = Aprendiz::find($aprendizId);
         if (!$aprendiz || !$aprendiz->isActivo()) {
             return [false, 'Tu cuenta de aprendiz no está activa.'];
         }
 
-        // Verificar que el proyecto existe y está activo
         $proyecto = Proyecto::find($proyectoId);
         if (!$proyecto) {
             return [false, 'El proyecto no existe.'];
@@ -124,15 +120,13 @@ class Postulacion extends Model
             return [false, 'El proyecto no está disponible para postulaciones.'];
         }
 
-        // Verificar que no esté duplicada
         if (self::yaPostulado($aprendizId, $proyectoId)) {
             return [false, 'Ya te postulaste a este proyecto.'];
         }
 
-        // Verificar si fue rechazado en este proyecto antes
-        $rechazada = self::where('apr_id', $aprendizId)
-                         ->where('pro_id', $proyectoId)
-                         ->where('pos_estado', 'Rechazada')
+        $rechazada = self::where('aprendiz_id', $aprendizId)
+                         ->where('proyecto_id', $proyectoId)
+                         ->where('estado', 'rechazada')
                          ->exists();
         
         if ($rechazada) {
@@ -147,11 +141,11 @@ class Postulacion extends Model
      */
     public function getEstadoEspañol(): string
     {
-        return match($this->pos_estado) {
-            'Aprobada' => '✅ Aprobada',
-            'Rechazada' => '❌ Rechazada',
-            'Pendiente' => '⏳ Pendiente',
-            default => $this->pos_estado,
+        return match($this->estado) {
+            'aceptada' => '✅ Aprobada',
+            'rechazada' => '❌ Rechazada',
+            'pendiente' => '⏳ Pendiente',
+            default => ucfirst($this->estado),
         };
     }
 }

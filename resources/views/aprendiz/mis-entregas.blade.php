@@ -61,7 +61,7 @@
                     <i class="fas fa-check-double"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $evidencias->where('evid_estado', 'Aprobada')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $evidencias->where('estado', 'aceptada')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Aprobadas</div>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                     <i class="fas fa-hourglass-half"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">{{ $evidencias->where('evid_estado', 'Pendiente')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">{{ $evidencias->where('estado', 'pendiente')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Pendientes</div>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                     <i class="fas fa-times-circle"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #ef4444; line-height: 1;">{{ $evidencias->where('evid_estado', 'Rechazada')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #ef4444; line-height: 1;">{{ $evidencias->where('estado', 'rechazada')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Rechazadas</div>
                 </div>
             </div>
@@ -88,7 +88,7 @@
         <div style="display: grid; gap: 32px;">
             @foreach($proyectos as $proyecto)
                 @php
-                    $evidencias_proyecto = $evidencias->where('evid_pro_id', $proyecto->pro_id);
+                    $evidencias_proyecto = $evidencias->where('proyecto_id', $proyecto->id);
                 @endphp
                 <div class="glass-card" style="padding: 0; overflow: hidden;">
                     <div style="padding: 24px 32px; background: linear-gradient(135deg, rgba(62,180,137,0.05), rgba(62,180,137,0.02)); border-bottom: 1px solid rgba(62,180,137,0.1); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
@@ -97,11 +97,11 @@
                                 <i class="fas fa-project-diagram"></i>
                             </div>
                             <div>
-                                <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 4px;">{{ $proyecto->pro_titulo_proyecto }}</h4>
+                                <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 4px;">{{ $proyecto->titulo }}</h4>
                                 <p style="font-size: 13px; color: var(--text-light); margin: 0; font-weight: 600;">
-                                    <i class="fas fa-building" style="margin-right: 6px; color: #3eb489;"></i>{{ $proyecto->emp_nombre }}
+                                    <i class="fas fa-building" style="margin-right: 6px; color: #3eb489;"></i>{{ $proyecto->nombre }}
                                     &nbsp;&middot;&nbsp;
-                                    <i class="fas fa-calendar-alt" style="margin-right: 6px;"></i>Cierre: {{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d/m/Y') }}
+                                    <i class="fas fa-calendar-alt" style="margin-right: 6px;"></i>Cierre: {{ \Carbon\Carbon::parse($proyecto->fecha_finalizacion)->format('d/m/Y') }}
                                 </p>
                             </div>
                         </div>
@@ -114,9 +114,9 @@
                         @if($evidencias_proyecto->count() > 0)
                             @foreach($evidencias_proyecto as $evidencia)
                                 @php
-                                    $stateColor = match($evidencia->evid_estado) {
-                                        'Aprobada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
-                                        'Rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#dc2626', 'icon' => 'fa-times-circle'],
+                                    $stateColor = match($evidencia->estado) {
+                                        'aceptada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
+                                        'rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#dc2626', 'icon' => 'fa-times-circle'],
                                         default     => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-hourglass-half'],
                                     };
                                 @endphp
@@ -125,30 +125,30 @@
                                         <div style="flex: 1; min-width: 280px;">
                                             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                                                 <span style="width: 32px; height: 32px; border-radius: 10px; background: {{ $stateColor['text'] }}; color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; flex-shrink: 0;">
-                                                    {{ $evidencia->etapa->eta_orden ?? '?' }}
+                                                    {{ $evidencia->etapa->orden ?? '?' }}
                                                 </span>
                                                 <h5 style="font-size: 16px; font-weight: 800; color: var(--text); margin: 0;">
-                                                    {{ $evidencia->etapa->eta_nombre ?? 'Etapa sin nombre' }}
+                                                    {{ $evidencia->etapa->nombre ?? 'Etapa sin nombre' }}
                                                 </h5>
                                             </div>
                                             <div style="font-size: 13px; color: var(--text-light); font-weight: 600; margin-bottom: 10px;">
                                                 <i class="far fa-clock" style="margin-right: 8px;"></i>
-                                                Entregado: {{ \Carbon\Carbon::parse($evidencia->evid_fecha)->translatedFormat('d M Y, H:i') }}
+                                                Entregado: {{ \Carbon\Carbon::parse($evidencia->fecha_subida)->translatedFormat('d M Y, H:i') }}
                                             </div>
-                                            @if($evidencia->evid_comentario)
+                                            @if($evidencia->comentarios_instructor)
                                                 <div style="background: rgba(255,255,255,0.8); border-radius: 10px; padding: 12px 16px; border: 1px solid rgba(0,0,0,0.05);">
                                                     <p style="font-size: 13px; color: var(--text); font-weight: 600; margin: 0;">
-                                                        <i class="fas fa-comment-dots" style="color: #3eb489; margin-right: 8px;"></i>{{ $evidencia->evid_comentario }}
+                                                        <i class="fas fa-comment-dots" style="color: #3eb489; margin-right: 8px;"></i>{{ $evidencia->comentarios_instructor }}
                                                     </p>
                                                 </div>
                                             @endif
                                         </div>
                                         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0;">
                                             <span style="background: white; color: {{ $stateColor['text'] }}; border: 1.5px solid {{ $stateColor['border'] }}; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; white-space: nowrap; display: flex; align-items: center; gap: 8px;">
-                                                <i class="fas {{ $stateColor['icon'] }}"></i> {{ $evidencia->evid_estado }}
+                                                <i class="fas {{ $stateColor['icon'] }}"></i> {{ $evidencia->estado }}
                                             </span>
-                                            @if($evidencia->evid_archivo)
-                                                <a href="{{ asset('storage/' . $evidencia->evid_archivo) }}" target="_blank"
+                                            @if($evidencia->archivo_url)
+                                                <a href="{{ asset('storage/' . $evidencia->archivo_url) }}" target="_blank"
                                                    class="btn-premium" style="padding: 8px 16px; font-size: 12px;">
                                                     <i class="fas fa-file-download"></i> Ver Archivo
                                                 </a>

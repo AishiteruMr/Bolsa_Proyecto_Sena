@@ -67,8 +67,8 @@
                     <span style="font-size: 12px; color: var(--text-light); font-weight: 700; text-transform: uppercase;">Próximo Cierre</span>
                 </div>
                 @if($proximoCierre)
-                    <h4 style="font-size: 20px; font-weight: 800; color: #ef4444; margin: 0;">{{ \Carbon\Carbon::parse($proximoCierre->pro_fecha_finalizacion)->diffForHumans() }}</h4>
-                    <p style="font-size: 12px; color: var(--text-light); margin: 0; font-weight: 500;">{{ Str::limit($proximoCierre->pro_titulo_proyecto, 30) }}</p>
+                    <h4 style="font-size: 20px; font-weight: 800; color: #ef4444; margin: 0;">{{ \Carbon\Carbon::parse($proximoCierre->fecha_finalizacion)->diffForHumans() }}</h4>
+                    <p style="font-size: 12px; color: var(--text-light); margin: 0; font-weight: 500;">{{ Str::limit($proximoCierre->titulo, 30) }}</p>
                 @else
                     <h4 style="font-size: 20px; font-weight: 800; color: var(--text-lighter); margin: 0;">Sin cierres</h4>
                     <p style="font-size: 12px; color: var(--text-lighter); margin: 0;">Todo bajo control.</p>
@@ -107,20 +107,20 @@
                 <div style="height: 180px; position: relative;">
                     <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
                     <div style="position: absolute; top: 16px; left: 16px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; padding: 5px 14px; border-radius: 20px; font-size: 10px; font-weight: 700;">
-                        {{ $p->pro_categoria }}
+                        {{ $p->categoria }}
                     </div>
                 </div>
                 <div style="padding: 24px;">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
                         <span style="width: 4px; height: 20px; background: linear-gradient(135deg, #3eb489, #2d9d74); border-radius: 4px;"></span>
-                        <span style="font-size: 14px; font-weight: 700; color: var(--text-light);">{{ $p->emp_nombre }}</span>
+                        <span style="font-size: 14px; font-weight: 700; color: var(--text-light);">{{ $p->nombre }}</span>
                     </div>
-                    <h4 style="font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 16px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $p->pro_titulo_proyecto }}</h4>
+                    <h4 style="font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 16px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $p->titulo }}</h4>
                     
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 13px; color: var(--text-light); font-weight: 600;"><i class="fas fa-bolt" style="margin-right: 6px; color: #f59e0b;"></i>{{ $p->pro_duracion ?? '8 semanas' }}</span>
-                        @if(in_array($p->pro_id, $proyectosAprobados))
-                            <a href="{{ route('aprendiz.proyecto.detalle', $p->pro_id) }}" class="btn-premium" style="padding: 10px 20px; font-size: 13px;">Gestionar</a>
+                        @if(in_array($p->id, $proyectosAprobados))
+                            <a href="{{ route('aprendiz.proyecto.detalle', $p->id) }}" class="btn-premium" style="padding: 10px 20px; font-size: 13px;">Gestionar</a>
                         @else
                             <a href="{{ route('aprendiz.proyectos') }}" style="padding: 10px 20px; font-size: 13px; background: rgba(62,180,137,0.1); color: #3eb489; border-radius: 10px; font-weight: 700; text-decoration: none;">Detalles</a>
                         @endif

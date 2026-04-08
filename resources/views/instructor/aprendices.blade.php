@@ -43,14 +43,14 @@
     @forelse($aprendices as $a)
         <div style="background: rgba(255,255,255,0.9); border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s; padding: 32px; display: flex; flex-direction: column; align-items: center; text-align: center;">
             <div style="width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; margin-bottom: 16px; box-shadow: 0 10px 20px rgba(62,180,137,0.3);">
-                {{ strtoupper(substr($a->apr_nombre ?? 'A', 0, 1)) }}
+                {{ strtoupper(substr($a->nombres ?? 'A', 0, 1)) }}
             </div>
             
-            <h4 style="font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; color: var(--text);">{{ $a->apr_nombre ?? '' }} {{ $a->apr_apellido ?? '' }}</h4>
+            <h4 style="font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; color: var(--text);">{{ $a->nombres ?? '' }} {{ $a->apellidos ?? '' }}</h4>
             
             <div style="font-size:0.85rem; color: var(--text-light); margin-bottom: 1rem;">
-                <div style="margin-bottom: 4px;"><i class="fas fa-graduation-cap" style="color:#3eb489; margin-right:6px;"></i>{{ $a->apr_programa ?? 'Sin programa' }}</div>
-                <div><i class="fas fa-envelope" style="color:#3eb489; margin-right:6px;"></i>{{ $a->usr_correo ?? 'Sin correo' }}</div>
+                <div style="margin-bottom: 4px;"><i class="fas fa-graduation-cap" style="color:#3eb489; margin-right:6px;"></i>{{ $a->programa_formacion ?? 'Sin programa' }}</div>
+                <div><i class="fas fa-envelope" style="color:#3eb489; margin-right:6px;"></i>{{ $a->correo ?? 'Sin correo' }}</div>
             </div>
 
             <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(62,180,137,0.1); padding-top: 1rem;">
@@ -59,7 +59,7 @@
                         <i class="fas fa-check-circle"></i> Postulación Aprobada
                     </span>
                     <div style="font-size:12px; color:#3eb489; font-weight: 700;">
-                        <i class="fas fa-briefcase" style="margin-right:4px;"></i>{{ $a->pro_titulo_proyecto ?? 'Sin proyecto' }}
+                        <i class="fas fa-briefcase" style="margin-right:4px;"></i>{{ $a->titulo ?? 'Sin proyecto' }}
                     </div>
                 </div>
             </div>

@@ -104,22 +104,22 @@
                         <div style="height: 160px; position: relative;">
                             <img src="{{ $p->imagen_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                             <div class="instructor-project-image-badge">
-                                {{ $p->pro_categoria }}
+                                {{ $p->categoria }}
                             </div>
                         </div>
                         <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
-                            <h4 class="instructor-project-title" style="font-size: 17px; margin-bottom:16px;">{{ $p->pro_titulo_proyecto }}</h4>
+                            <h4 class="instructor-project-title" style="font-size: 17px; margin-bottom:16px;">{{ $p->titulo }}</h4>
                             <div style="display: flex; gap: 12px; margin-bottom: 20px;">
                                 <div class="instructor-small-stat">
-                                    <span class="count">{{ $p->postulaciones->where('pos_estado', 'Aprobada')->count() }}</span>
+                                    <span class="count">{{ $p->postulaciones->where('estado', 'aceptada')->count() }}</span>
                                     <span class="label">Activos</span>
                                 </div>
                                 <div class="instructor-small-stat">
-                                    <span class="count">{{ $p->postulaciones->where('pos_estado', 'Pendiente')->count() }}</span>
+                                    <span class="count">{{ $p->postulaciones->where('estado', 'pendiente')->count() }}</span>
                                     <span class="label">Nuevos</span>
                                 </div>
                             </div>
-                            <a href="{{ route('instructor.proyecto.detalle', $p->pro_id) }}" class="btn-premium" style="width: 100%; justify-content: center; font-size: 13px; padding: 10px;">
+                            <a href="{{ route('instructor.proyecto.detalle', $p->id) }}" class="btn-premium" style="width: 100%; justify-content: center; font-size: 13px; padding: 10px;">
                                 Gestionar <i class="fas fa-play" style="font-size: 10px;"></i>
                             </a>
                         </div>
@@ -155,7 +155,7 @@
                         <div style="flex: 1;">
                             <div style="font-size: 13px; color: var(--text-light); font-weight: 600;">Próximo Hito</div>
                             <div style="font-size: 16px; font-weight: 800; color: var(--text);">
-                                {{ $proximoCierre ? $proximoCierre->pro_fecha_finalizacion->diffForHumans() : 'Sin eventos' }}
+                                {{ $proximoCierre ? $proximoCierre->fecha_finalizacion->diffForHumans() : 'Sin eventos' }}
                             </div>
                         </div>
                     </div>

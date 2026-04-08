@@ -7,36 +7,36 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Instructor extends Model
 {
-    protected $table = 'instructor';
-    protected $primaryKey = 'usr_id';
-    public $incrementing = false;
-    public $timestamps = false;
+    protected $table = 'instructores';
+    protected $primaryKey = 'id';
+    public $incrementing = true;
+    public $timestamps = true;
 
     protected $fillable = [
-        'usr_id',
-        'ins_nombre',
-        'ins_apellido',
-        'ins_especialidad',
-        'ins_estado',
-        'ins_estado_dis',
+        'usuario_id',
+        'nombres',
+        'apellidos',
+        'especialidad',
+        'activo',
+        'disponibilidad',
     ];
 
     protected $casts = [
-        'ins_estado' => 'integer',
+        'activo' => 'boolean',
     ];
 
     public function usuario(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'usr_id', 'usr_id');
+        return $this->belongsTo(User::class, 'usuario_id', 'id');
     }
 
     public function getFullNameAttribute(): string
     {
-        return trim($this->ins_nombre . ' ' . $this->ins_apellido);
+        return trim($this->nombres . ' ' . $this->apellidos);
     }
 
     public function isActivo(): bool
     {
-        return $this->ins_estado === 1;
+        return $this->activo === true;
     }
 }

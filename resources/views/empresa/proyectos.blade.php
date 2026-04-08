@@ -55,7 +55,7 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $proyectos->where('pro_estado', 'Activo')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $proyectos->where('estado', 'aprobado')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Activas</div>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                     <i class="fas fa-hourglass-half"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">{{ $proyectos->where('pro_estado', 'Pendiente')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">{{ $proyectos->where('estado', 'pendiente')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">En Revisión</div>
                 </div>
             </div>
@@ -75,7 +75,7 @@
                     <i class="fas fa-times-circle"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #ef4444; line-height: 1;">{{ $proyectos->where('pro_estado', 'Rechazado')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #ef4444; line-height: 1;">{{ $proyectos->where('estado', 'rechazado')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Rechazados</div>
                 </div>
             </div>
@@ -121,48 +121,48 @@
                                             @endif
                                         </div>
                                         <div>
-                                            <div style="font-weight: 800; color: var(--text); font-size: 14px;">{{ Str::limit($proyecto->pro_titulo_proyecto, 40) }}</div>
-                                            <div style="font-size: 11px; color: var(--text-lighter); font-weight: 600;">ID: PROJ-{{ str_pad($proyecto->pro_id, 4, '0', STR_PAD_LEFT) }}</div>
+                                            <div style="font-weight: 800; color: var(--text); font-size: 14px;">{{ Str::limit($proyecto->titulo, 40) }}</div>
+                                            <div style="font-size: 11px; color: var(--text-lighter); font-weight: 600;">ID: PROJ-{{ str_pad($proyecto->id, 4, '0', STR_PAD_LEFT) }}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td style="padding: 20px 24px;">
                                     <span style="background: #f1f5f9; color: var(--text-light); padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase;">
-                                        {{ $proyecto->pro_categoria }}
+                                        {{ $proyecto->categoria }}
                                     </span>
                                 </td>
                                 <td style="padding: 20px 24px;">
                                     @php
-                                        $statusClass = match($proyecto->pro_estado) {
-                                            'Activo' => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a'],
-                                            'Pendiente' => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706'],
-                                            'Rechazado' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444'],
+                                        $statusClass = match($proyecto->estado) {
+                                            'aprobado' => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a'],
+                                            'pendiente' => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706'],
+                                            'rechazado' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444'],
                                             default => ['bg' => '#f1f5f9', 'border' => '#e2e8f0', 'text' => '#64748b'],
                                         };
                                     @endphp
                                     <span style="background: {{ $statusClass['bg'] }}; border: 1px solid {{ $statusClass['border'] }}; color: {{ $statusClass['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">
-                                        {{ $proyecto->pro_estado }}
+                                        {{ $proyecto->estado }}
                                     </span>
                                 </td>
                                 <td style="padding: 20px 24px; font-weight: 700; color: var(--text-light); font-size: 14px;">
                                     <i class="fas fa-hourglass" style="margin-right: 6px; color: #3eb489;"></i>
-                                    {{ $proyecto->pro_duracion_estimada }} días
+                                    {{ $proyecto->duracion_estimada_dias }} días
                                 </td>
                                 <td style="padding: 20px 24px; color: var(--text-lighter); font-size: 13px; font-weight: 600;">
                                     <i class="far fa-calendar-alt" style="margin-right: 6px;"></i>
-                                    {{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->translatedFormat('d M, Y') }}
+                                    {{ \Carbon\Carbon::parse($proyecto->fecha_publicacion)->translatedFormat('d M, Y') }}
                                 </td>
                                 <td style="padding: 20px 24px;">
                                     <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                                        @if($proyecto->pro_estado == 'Activo')
-                                        <a href="{{ route('empresa.proyectos.postulantes', $proyecto->pro_id) }}" style="width: 36px; height: 36px; border-radius: 10px; background: #eff6ff; color: #3b82f6; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.2s;" title="Ver Postulantes" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                                        @if($proyecto->estado == 'aprobado')
+                                        <a href="{{ route('empresa.proyectos.postulantes', $proyecto->id) }}" style="width: 36px; height: 36px; border-radius: 10px; background: #eff6ff; color: #3b82f6; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.2s;" title="Ver Postulantes" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
                                             <i class="fas fa-users-viewfinder"></i>
                                         </a>
                                         @endif
-                                        <a href="{{ route('empresa.proyectos.edit', $proyecto->pro_id) }}" style="width: 36px; height: 36px; border-radius: 10px; background: #f8fafc; color: var(--text-light); display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.2s;" title="Editar" onmouseover="this.style.background='#3eb489'; this.style.color='white'" onmouseout="this.style.background='#f8fafc'; this.style.color='var(--text-light)'">
+                                        <a href="{{ route('empresa.proyectos.edit', $proyecto->id) }}" style="width: 36px; height: 36px; border-radius: 10px; background: #f8fafc; color: var(--text-light); display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.2s;" title="Editar" onmouseover="this.style.background='#3eb489'; this.style.color='white'" onmouseout="this.style.background='#f8fafc'; this.style.color='var(--text-light)'">
                                             <i class="fas fa-pen-to-square"></i>
                                         </a>
-                                        <form action="{{ route('empresa.proyectos.destroy', $proyecto->pro_id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este proyecto?');">
+                                        <form action="{{ route('empresa.proyectos.destroy', $proyecto->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este proyecto?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" style="width: 36px; height: 36px; border-radius: 10px; background: #fef2f2; color: #ef4444; display: inline-flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: all 0.2s;" title="Eliminar" onmouseover="this.style.background='#ef4444'; this.style.color='white'" onmouseout="this.style.background='#fef2f2'; this.style.color='#ef4444'">

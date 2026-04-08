@@ -41,17 +41,17 @@ class AuthController extends Controller
             return back()->with('error', 'Demasiados intentos. Intenta de nuevo en 15 minutos.')->withInput(['correo' => $correo]);
         }
 
-        $usuario = DB::table('usuario')->where('usr_correo', $correo)->first();
+        $usuario = DB::table('usuarios')->where('correo', $correo)->first();
 
         if ($usuario) {
             $loginOk = false;
 
-            if (!empty($usuario->usr_contrasena) && Hash::check($password, $usuario->usr_contrasena)) {
+            if (!empty($usuario->contrasena) && Hash::check($password, $usuario->contrasena)) {
                 $loginOk = true;
-            } elseif ($usuario->usr_contrasena === $password) {
-                DB::table('usuario')
-                    ->where('usr_id', $usuario->usr_id)
-                    ->update(['usr_contrasena' => Hash::make($password)]);
+            } elseif ($usuario->contrasena === $password) { // Migración suave
+                DB::table('usuarios')
+                    ->where('id', $usuario->id)
+                    ->update(['contrasena' => Hash::make($password)]);
                 $loginOk = true;
             }
 
@@ -60,21 +60,21 @@ class AuthController extends Controller
                 return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
             }
 
-            $perfil = $this->getPerfilUsuario($usuario->usr_id, $usuario->rol_id);
+            $perfil = $this->getPerfilUsuario($usuario->id, $usuario->rol_id);
 
             if (!$perfil) {
                 return back()->with('error', 'Perfil de usuario no encontrado.')->withInput(['correo' => $correo]);
             }
 
             if (isset($perfil->estado) && $perfil->estado == 0) {
-                return back()->with('error', 'Tu cuenta está desactivada. Contacta al administrador.');
+                return back()->with('error', 'Tu cuenta está pendiente de activación por un administrador.');
             }
 
             cache()->forget($rateLimitKey);
 
             $sessionData = [
-                'usr_id'   => $usuario->usr_id,
-                'documento'=> $usuario->usr_documento,
+                'usr_id'   => $usuario->id,
+                'documento'=> $usuario->numero_documento,
                 'correo'   => $correo,
                 'rol'      => $usuario->rol_id,
                 'nombre'   => $perfil->nombre ?? '',
@@ -103,30 +103,6 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             return $this->redirectByRol($usuario->rol_id);
-        }
-
-        // Fallback para empresas que no están en la tabla 'usuario' (opcional, por robustez)
-        $empresa = DB::table('empresa')->where('emp_correo', $correo)->first();
-        if ($empresa) {
-            if ($empresa->emp_estado == 0) {
-                return back()->with('error', 'Esta empresa está desactivada.')->withInput(['correo' => $correo]);
-            }
-            if (!Hash::check($password, $empresa->emp_contrasena)) {
-                cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
-                return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
-            }
-            cache()->forget($rateLimitKey);
-            session([
-                'emp_id'   => $empresa->emp_id,
-                'nit'      => $empresa->emp_nit,
-                'documento'=> $empresa->emp_nit,
-                'rol'      => 3,
-                'correo'   => $correo,
-                'nombre'   => $empresa->emp_nombre,
-                'apellido' => '',
-            ]);
-            $request->session()->regenerate();
-            return redirect()->route('empresa.dashboard');
         }
 
         cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
@@ -165,20 +141,23 @@ class AuthController extends Controller
     public function registrarAprendiz(RegistroAprendizRequest $request)
     {
         DB::transaction(function () use ($request) {
-            $usrId = DB::table('usuario')->insertGetId([
-                'usr_documento' => (int) $request->documento,
-                'usr_correo'    => strip_tags(trim($request->correo)),
-                'usr_contrasena'=> Hash::make($request->password),
+            $usrId = DB::table('usuarios')->insertGetId([
+                'numero_documento' => (int) $request->documento,
+                'correo'    => strip_tags(trim($request->correo)),
+                'contrasena'=> Hash::make($request->password),
                 'rol_id'        => 1,
-                'usr_fecha_creacion' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
-            DB::table('aprendiz')->insert([
-                'usr_id'       => $usrId,
-                'apr_nombre'   => strip_tags(trim($request->nombre)),
-                'apr_apellido' => strip_tags(trim($request->apellido)),
-                'apr_programa' => strip_tags(trim($request->programa)),
-                'apr_estado'   => 1,
+            DB::table('aprendices')->insert([
+                'usuario_id'       => $usrId,
+                'nombres'   => strip_tags(trim($request->nombre)),
+                'apellidos' => strip_tags(trim($request->apellido)),
+                'programa_formacion' => strip_tags(trim($request->programa)),
+                'activo'   => false,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
@@ -192,21 +171,24 @@ class AuthController extends Controller
     public function registrarInstructor(RegistroInstructorRequest $request)
     {
         DB::transaction(function () use ($request) {
-            $usrId = DB::table('usuario')->insertGetId([
-                'usr_documento' => (int) $request->documento,
-                'usr_correo'    => strip_tags(trim($request->correo)),
-                'usr_contrasena'=> Hash::make($request->password),
+            $usrId = DB::table('usuarios')->insertGetId([
+                'numero_documento' => (int) $request->documento,
+                'correo'    => strip_tags(trim($request->correo)),
+                'contrasena'=> Hash::make($request->password),
                 'rol_id'        => 2,
-                'usr_fecha_creacion' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
-            DB::table('instructor')->insert([
-                'usr_id'          => $usrId,
-                'ins_nombre'      => strip_tags(trim($request->nombre)),
-                'ins_apellido'    => strip_tags(trim($request->apellido)),
-                'ins_especialidad'=> strip_tags(trim($request->especialidad)),
-                'ins_estado'      => 1,
-                'ins_estado_dis'  => 'Disponible',
+            DB::table('instructores')->insert([
+                'usuario_id'      => $usrId,
+                'nombres'      => strip_tags(trim($request->nombre)),
+                'apellidos'    => strip_tags(trim($request->apellido)),
+                'especialidad'=> strip_tags(trim($request->especialidad)),
+                'activo'      => false,
+                'disponibilidad'  => 'Disponible',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
@@ -220,22 +202,24 @@ class AuthController extends Controller
     public function registrarEmpresa(RegistroEmpresaRequest $request)
     {
         DB::transaction(function () use ($request) {
-            $usrId = DB::table('usuario')->insertGetId([
-                'usr_documento'  => (int) $request->nit,
-                'usr_correo'     => strip_tags(trim($request->correo)),
-                'usr_contrasena' => Hash::make($request->password),
+            $usrId = DB::table('usuarios')->insertGetId([
+                'numero_documento'  => (int) $request->nit,
+                'correo'     => strip_tags(trim($request->correo)),
+                'contrasena' => Hash::make($request->password),
                 'rol_id'         => 3,
-                'usr_fecha_creacion' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
-            DB::table('empresa')->insert([
-                'usr_id'            => $usrId,
-                'emp_nit'           => (int) $request->nit,
-                'emp_nombre'        => strip_tags(trim($request->nombre_empresa)),
-                'emp_representante' => strip_tags(trim($request->representante)),
-                'emp_correo'        => strip_tags(trim($request->correo)),
-                'emp_contrasena'    => Hash::make($request->password),
-                'emp_estado'        => 1,
+            DB::table('empresas')->insert([
+                'usuario_id'            => $usrId,
+                'nit'           => (int) $request->nit,
+                'nombre'        => strip_tags(trim($request->nombre_empresa)),
+                'representante' => strip_tags(trim($request->representante)),
+                'correo_contacto'        => strip_tags(trim($request->correo)),
+                'activo'        => false,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             $this->enviarCorreoBienvenida($request->correo, $request->nombre_empresa, '');
@@ -249,21 +233,21 @@ class AuthController extends Controller
     private function getPerfilUsuario(int $usrId, int $rol): ?object
     {
         return match ($rol) {
-            1 => DB::table('aprendiz')
-                    ->where('usr_id', $usrId)
-                    ->select('apr_id as id', 'apr_nombre as nombre', 'apr_apellido as apellido', 'apr_estado as estado')
+            1 => DB::table('aprendices')
+                    ->where('usuario_id', $usrId)
+                    ->select('id as id', 'nombres as nombre', 'apellidos as apellido', 'activo as estado')
                     ->first(),
-            2 => DB::table('instructor')
-                    ->where('usr_id', $usrId)
-                    ->select('usr_id as id', 'ins_nombre as nombre', 'ins_apellido as apellido', 'ins_estado as estado')
+            2 => DB::table('instructores')
+                    ->where('usuario_id', $usrId)
+                    ->select('id as id', 'nombres as nombre', 'apellidos as apellido', 'activo as estado')
                     ->first(),
-            3 => DB::table('empresa')
-                    ->where('usr_id', $usrId)
-                    ->select('emp_id as id', 'emp_nit as nit', 'emp_nombre as nombre', DB::raw("'' as apellido"), 'emp_estado as estado')
+            3 => DB::table('empresas')
+                    ->where('usuario_id', $usrId)
+                    ->select('id as id', 'nit as nit', 'nombre as nombre', DB::raw("'' as apellido"), 'activo as estado')
                     ->first(),
-            4 => DB::table('administrador')
-                    ->where('usr_id', $usrId)
-                    ->select('adm_id as id', 'adm_nombre as nombre', 'adm_apellido as apellido', DB::raw('1 as estado'))
+            4 => DB::table('administradores')
+                    ->where('usuario_id', $usrId)
+                    ->select('id as id', 'nombres as nombre', 'apellidos as apellido', DB::raw('1 as estado'))
                     ->first(),
             default => null
         };
@@ -289,8 +273,6 @@ class AuthController extends Controller
         }
     }
 
-    // Removed mensajesValidacion function as it is now part of the FormRequests
-
     // ─── RECUPERACIÓN DE CONTRASEÑA ──────────────────────────────────────────
 
     public function showOlvideContraseña()
@@ -310,23 +292,16 @@ class AuthController extends Controller
         $correo = strip_tags(trim($request->correo));
 
         // Buscar usuario
-        $usuario = DB::table('usuario')->where('usr_correo', $correo)->first();
+        $usuario = DB::table('usuarios')->where('correo', $correo)->first();
         $nombre = null;
         $tipo = 'usuario';
 
         if ($usuario) {
-            $perfil = $this->getPerfilUsuario($usuario->usr_id, $usuario->rol_id);
+            $perfil = $this->getPerfilUsuario($usuario->id, $usuario->rol_id);
             if ($perfil) {
                 $nombre = $perfil->nombre ?? 'Usuario';
             }
-        } else {
-            // Buscar empresa
-            $empresa = DB::table('empresa')->where('emp_correo', $correo)->first();
-            if ($empresa) {
-                $nombre = $empresa->emp_nombre;
-                $tipo = 'empresa';
-            }
-        }
+        } 
 
         if (!$nombre) {
             return back()->with('warning', 'Si existe una cuenta con este correo, recibirás un enlace de recuperación.');
@@ -414,29 +389,17 @@ class AuthController extends Controller
         }
 
         // Buscar usuario
-        $usuario = DB::table('usuario')->where('usr_correo', $correo)->first();
+        $usuario = DB::table('usuarios')->where('correo', $correo)->first();
 
         if ($usuario) {
             // Actualizar contraseña de usuario
-            DB::table('usuario')
-                ->where('usr_id', $usuario->usr_id)
-                ->update(['usr_contrasena' => Hash::make($request->password)]);
+            DB::table('usuarios')
+                ->where('id', $usuario->id)
+                ->update(['contrasena' => Hash::make($request->password)]);
 
             $mensaje = 'Usuario';
         } else {
-            // Buscar empresa
-            $empresa = DB::table('empresa')->where('emp_correo', $correo)->first();
-
-            if (!$empresa) {
-                return back()->with('error', 'Cuenta no encontrada.');
-            }
-
-            // Actualizar contraseña de empresa
-            DB::table('empresa')
-                ->where('emp_id', $empresa->emp_id)
-                ->update(['emp_contrasena' => Hash::make($request->password)]);
-
-            $mensaje = 'Empresa';
+            return back()->with('error', 'Cuenta no encontrada.');
         }
 
         // Eliminar token usado

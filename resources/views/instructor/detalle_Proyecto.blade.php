@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Gestión de Proyecto | ' . $proyecto->pro_titulo_proyecto)
+@section('title', 'Gestión de Proyecto | ' . $proyecto->titulo)
 @section('page-title', 'Gestión Técnica')
 
 @section('sidebar-nav')
@@ -41,9 +41,9 @@
                 <div class="instructor-hero-content">
                     <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                         <div>
-                            <span style="background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-bottom: 8px; display: inline-block;">{{ $proyecto->pro_categoria }}</span>
-                            <h2 style="color: white; font-size: 2rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.3); margin: 0;">{{ $proyecto->pro_titulo_proyecto }}</h2>
-                            <p style="color: rgba(255,255,255,0.8); font-size: 0.95rem; margin-top: 8px; font-weight: 500;"><i class="fas fa-building" style="margin-right: 8px;"></i>{{ $proyecto->emp_nombre }}</p>
+                            <span style="background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-bottom: 8px; display: inline-block;">{{ $proyecto->categoria }}</span>
+                            <h2 style="color: white; font-size: 2rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.3); margin: 0;">{{ $proyecto->titulo }}</h2>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 0.95rem; margin-top: 8px; font-weight: 500;"><i class="fas fa-building" style="margin-right: 8px;"></i>{{ $proyecto->nombre }}</p>
                         </div>
                         <button type="button" onclick="document.getElementById('uploadForm').classList.toggle('active')" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); color: white; padding: 10px 18px; border: 1px solid rgba(255,255,255,0.25); border-radius: 12px; font-weight: 700; cursor: pointer;">
                             <i class="fas fa-camera" style="margin-right: 8px;"></i> Editar Visual
@@ -53,7 +53,7 @@
             </div>
 
             <div id="uploadForm" class="instructor-collapsible" style="display: none;">
-                <form action="{{ route('instructor.proyectos.imagen', $proyecto->pro_id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('instructor.proyectos.imagen', $proyecto->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div style="display: flex; gap: 1rem; align-items: center;">
                         <input type="file" name="imagen" accept="image/*" required class="aprendiz-input-control" style="flex: 1; padding: 10px;">
@@ -66,11 +66,11 @@
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
                     <div style="background: rgba(62,180,137,0.05); padding: 1.25rem; border-radius: 14px; border: 1px solid rgba(62,180,137,0.1);">
                         <p style="font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700;">Publicación</p>
-                        <p style="font-weight: 800; color: var(--text);">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d M, Y') }}</p>
+                        <p style="font-weight: 800; color: var(--text);">{{ \Carbon\Carbon::parse($proyecto->fecha_publicacion)->format('d M, Y') }}</p>
                     </div>
                     <div style="background: rgba(62,180,137,0.05); padding: 1.25rem; border-radius: 14px; border: 1px solid rgba(62,180,137,0.1);">
                         <p style="font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700;">Duración</p>
-                        <p style="font-weight: 800; color: var(--text);">{{ $proyecto->pro_duracion_estimada }} días</p>
+                        <p style="font-weight: 800; color: var(--text);">{{ $proyecto->duracion_estimada_dias }} días</p>
                     </div>
                     <div style="background: rgba(62,180,137,0.05); padding: 1.25rem; border-radius: 14px; border: 1px solid rgba(62,180,137,0.1);">
                         <p style="font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700;">Ubicación</p>
@@ -80,7 +80,7 @@
 
                 <div style="color: var(--text-light); line-height: 1.7; font-size: 0.95rem;">
                     <h4 style="color: var(--text); font-weight: 800; margin-bottom: 0.75rem;">Descripción Técnica</h4>
-                    {!! nl2br(e($proyecto->pro_description ?? $proyecto->pro_descripcion)) !!}
+                    {!! nl2br(e($proyecto->pro_description ?? $proyecto->descripcion)) !!}
                 </div>
             </div>
         </div>
@@ -98,7 +98,7 @@
             </div>
 
             <div id="stageForm" class="instructor-collapsible" style="display: none; margin-bottom: 2rem;">
-                <form action="{{ route('instructor.etapas.crear', $proyecto->pro_id) }}" method="POST">
+                <form action="{{ route('instructor.etapas.crear', $proyecto->id) }}" method="POST">
                     @csrf
                     <div style="display: grid; grid-template-columns: 80px 1fr; gap: 1rem; margin-bottom: 1rem;">
                         <input type="number" name="orden" placeholder="N°" required class="aprendiz-input-control">
@@ -116,14 +116,14 @@
                 @forelse($etapas as $index => $etapa)
                     <div class="instructor-stage-card">
                         <div class="instructor-stage-number" style="background: {{ $index == 0 ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : 'rgba(62,180,137,0.08)' }}; color: {{ $index == 0 ? 'white' : '#3eb489' }};">
-                            {{ $etapa->eta_orden }}
+                            {{ $etapa->orden }}
                         </div>
                         <div style="flex: 1;">
-                            <h4 style="font-weight: 800; color: var(--text); margin-bottom: 6px; font-size: 1.1rem;">{{ $etapa->eta_nombre }}</h4>
-                            <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6; font-weight: 500;">{{ $etapa->eta_descripcion }}</p>
+                            <h4 style="font-weight: 800; color: var(--text); margin-bottom: 6px; font-size: 1.1rem;">{{ $etapa->nombre }}</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6; font-weight: 500;">{{ $etapa->descripcion }}</p>
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <form action="{{ route('instructor.etapas.eliminar', $etapa->eta_id) }}" method="POST">
+                            <form action="{{ route('instructor.etapas.eliminar', $etapa->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar esta etapa?')" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" class="btn-del-hover">
@@ -149,7 +149,7 @@
         <div class="instructor-sidebar-card" style="text-align: center;">
             <p style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-light); margin-bottom: 1rem;">Estado del Proyecto</p>
             <span style="background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; display: inline-block;">
-                 <i class="fas fa-check-circle" style="margin-right: 8px;"></i> {{ $proyecto->pro_estado }}
+                 <i class="fas fa-check-circle" style="margin-right: 8px;"></i> {{ $proyecto->estado }}
             </span>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1.5rem; border-top: 1px solid rgba(62,180,137,0.1); padding-top: 1.5rem;">
@@ -168,10 +168,10 @@
         <div class="instructor-sidebar-card">
             <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 1.25rem;">Suite de Seguimiento</h4>
             <div style="display: flex; flex-direction: column; gap: 12px;">
-                <a href="{{ route('instructor.reporte', $proyecto->pro_id) }}" class="btn-premium" style="justify-content: center;">
+                <a href="{{ route('instructor.reporte', $proyecto->id) }}" class="btn-premium" style="justify-content: center;">
                     <i class="fas fa-chart-bar"></i> Dashboard de Métricas
                 </a>
-                <a href="{{ route('instructor.evidencias.ver', $proyecto->pro_id) }}" class="btn-premium" style="justify-content: center;">
+                <a href="{{ route('instructor.evidencias.ver', $proyecto->id) }}" class="btn-premium" style="justify-content: center;">
                     <i class="fas fa-tasks"></i> Calificar Entregas
                 </a>
             </div>
@@ -179,28 +179,28 @@
 
         <!-- Postulations Pool -->
         <div class="instructor-sidebar-card">
-            <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 1rem;">Solicitudes Pendientes ({{ $postulaciones->where('pos_estado', 'Pendiente')->count() }})</h4>
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 1rem;">Solicitudes Pendientes ({{ $postulaciones->where('estado', 'pendiente')->count() }})</h4>
             <div style="display: flex; flex-direction: column; gap: 4px;">
-                @forelse($postulaciones->where('pos_estado', 'Pendiente') as $p)
+                @forelse($postulaciones->where('estado', 'pendiente') as $p)
                     <div class="instructor-postulant-item">
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
                             <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; box-shadow: 0 4px 8px rgba(62,180,137,0.3);">
-                                {{ substr($p->aprendiz->apr_nombre ?? 'A', 0, 1) }}
+                                {{ substr($p->aprendiz->nombres ?? 'A', 0, 1) }}
                             </div>
                             <div style="overflow: hidden;">
-                                <p style="font-size: 0.85rem; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $p->aprendiz->apr_nombre }}</p>
-                                <p style="font-size: 0.7rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;">{{ $p->aprendiz->apr_programa }}</p>
+                                <p style="font-size: 0.85rem; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $p->aprendiz->nombres }}</p>
+                                <p style="font-size: 0.7rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;">{{ $p->aprendiz->programa_formacion }}</p>
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                            <form action="{{ route('instructor.postulaciones.estado', $p->pos_id) }}" method="POST">
+                            <form action="{{ route('instructor.postulaciones.estado', $p->id) }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="estado" value="Aprobada">
+                                <input type="hidden" name="estado" value="aceptada">
                                 <button type="submit" style="width: 100%; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border: none; padding: 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; cursor: pointer;">Aceptar</button>
                             </form>
-                            <form action="{{ route('instructor.postulaciones.estado', $p->pos_id) }}" method="POST">
+                            <form action="{{ route('instructor.postulaciones.estado', $p->id) }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="estado" value="Rechazada">
+                                <input type="hidden" name="estado" value="rechazada">
                                 <button type="submit" style="width: 100%; background: rgba(62,180,137,0.08); color: #3eb489; border: 1px solid rgba(62,180,137,0.2); padding: 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; cursor: pointer;">Omitir</button>
                             </form>
                         </div>
@@ -218,11 +218,11 @@
                 @forelse($integrantes as $i)
                     <div class="instructor-team-member">
                         <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem; border: 1px solid rgba(62,180,137,0.2);">
-                            {{ substr($i->aprendiz->apr_nombre, 0, 1) }}
+                            {{ substr($i->aprendiz->nombres, 0, 1) }}
                         </div>
                         <div style="overflow: hidden;">
-                            <p style="font-size: 0.8rem; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $i->aprendiz->apr_nombre }} {{ $i->aprendiz->apr_apellido }}</p>
-                            <p style="font-size: 0.65rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;">{{ $i->aprendiz->usuario->usr_correo }}</p>
+                            <p style="font-size: 0.8rem; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $i->aprendiz->nombres }} {{ $i->aprendiz->apellidos }}</p>
+                            <p style="font-size: 0.65rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;">{{ $i->aprendiz->usuario->correo }}</p>
                         </div>
                     </div>
                 @empty

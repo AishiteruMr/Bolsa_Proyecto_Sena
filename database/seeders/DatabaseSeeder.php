@@ -10,115 +10,112 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Roles
-        DB::table('rol')->insertOrIgnore([
-            ['rol_id' => 1, 'rol_nombre' => 'Aprendiz'],
-            ['rol_id' => 2, 'rol_nombre' => 'Instructor'],
-            ['rol_id' => 3, 'rol_nombre' => 'Empresa'],
-            ['rol_id' => 4, 'rol_nombre' => 'Administrador'],
-        ]);
+        // 1. Roles base del sistema
+        $this->call(RoleSeeder::class);
 
-        // Admin inicial
-        $usuarioAdmin = DB::table('usuario')->where('usr_correo', 'admin@gmail.com')->first();
-        
-        if (!$usuarioAdmin) {
-            $adminId = DB::table('usuario')->insertGetId([
-                'usr_documento'    => 1043178690,
-                'usr_correo'       => 'admin@gmail.com',
-                'usr_contrasena'   => Hash::make('admin123'),
-                'rol_id'           => 4,
-                'usr_fecha_creacion' => now(),
-            ]);
-        } else {
-            $adminId = $usuarioAdmin->usr_id;
-        }
+        $adminRoleId      = DB::table('roles')->where('nombre', 'administrador')->value('id');
+        $companyRoleId    = DB::table('roles')->where('nombre', 'empresa')->value('id');
+        $instructorRoleId = DB::table('roles')->where('nombre', 'instructor')->value('id');
+        $apprenticeRoleId = DB::table('roles')->where('nombre', 'aprendiz')->value('id');
 
-        DB::table('administrador')->insertOrIgnore([
-            'usr_id'      => $adminId,
-            'adm_nombre'  => 'Admin',
-            'adm_apellido'=> 'SENA',
-            'adm_correo'  => 'admin@gmail.com',
-            'adm_estado'  => 1,
-        ]);
-
-        // =============================
-        // EMPRESA
-        // =============================
-        $usuarioEmpresa = DB::table('usuario')->where('usr_correo', 'empresa@gmail.com')->first();
-        if (!$usuarioEmpresa) {
-            $empresaId = DB::table('usuario')->insertGetId([
-                'usr_documento'      => 12345475784,
-                'usr_correo'         => 'empresa@gmail.com',
-                'usr_contrasena'     => Hash::make('empresa123'),
-                'rol_id'             => 3,
-                'usr_fecha_creacion' => now(),
-            ]);
-        } else {
-            $empresaId = $usuarioEmpresa->usr_id;
-        }
-
-        DB::table('empresa')->insertOrIgnore([
-            'usr_id'            => $empresaId,
-            'emp_nit'           => 12345475784,
-            'emp_nombre'        => 'Empresa',
-            'emp_representante' => 'Representante',
-            'emp_correo'        => 'empresa@gmail.com',
-            'emp_contrasena'    => Hash::make('empresa123'),
-            'emp_estado'        => 1,
-        ]);
-
-        // =============================
-        // INSTRUCTOR
-        // =============================
-        $instructor = DB::table('usuario')->where('usr_correo', 'instructor@gmail.com')->first();
-        if (!$instructor) {
-            $instructorId = DB::table('usuario')->insertGetId([
-                'usr_documento'      => 20123,
-                'usr_correo'         => 'instructor@gmail.com',
-                'usr_contrasena'     => Hash::make('instructor123'),
-                'rol_id'             => 2,
-                'usr_fecha_creacion' => now(),
-            ]);
-
-            DB::table('instructor')->insertOrIgnore([
-                'usr_id'        => $instructorId,
-                'ins_nombre'    => 'Instructor',
-                'ins_apellido'  => 'INS',
-                'ins_especialidad' => 'Programador',
-                'ins_estado'    => 1,
-                'ins_estado_dis' => 'Disponible',
+        // 2. Administrador
+        $adminUserId = DB::table('usuarios')->where('correo', 'admin@gmail.com')->value('id');
+        if (!$adminUserId) {
+            $adminUserId = DB::table('usuarios')->insertGetId([
+                'numero_documento' => 1043178690,
+                'correo'           => 'admin@gmail.com',
+                'contrasena'       => Hash::make('admin123'),
+                'rol_id'           => $adminRoleId,
+                'created_at'       => now(),
+                'updated_at'       => now(),
             ]);
         }
+        DB::table('administradores')->updateOrInsert(
+            ['usuario_id' => $adminUserId],
+            ['nombres' => 'Admin', 'apellidos' => 'SENA', 'activo' => true, 'created_at' => now(), 'updated_at' => now()]
+        );
 
-        // =============================
-        // APRENDIZ 
-        // =============================
-        $aprendiz = DB::table('usuario')->where('usr_correo', 'aprendiz@gmail.com')->first();
-        if (!$aprendiz) {
-            $aprendizId = DB::table('usuario')->insertGetId([
-                'usr_documento'      => 1016555423,
-                'usr_correo'         => 'aprendiz@gmail.com',
-                'usr_contrasena'     => Hash::make('aprendiz123'),
-                'rol_id'             => 1,
-                'usr_fecha_creacion' => now(),
-            ]);
-
-            DB::table('aprendiz')->insertOrIgnore([
-                'apr_id'        => $aprendizId,
-                'usr_id'        => $aprendizId,
-                'apr_nombre'    => 'Aprendiz',
-                'apr_apellido'  => 'APP',
-                'apr_programa'   => 'Analasis',
-                'apr_estado'    => 1,
+        // 3. Empresa
+        $companyUserId = DB::table('usuarios')->where('correo', 'empresa@gmail.com')->value('id');
+        if (!$companyUserId) {
+            $companyUserId = DB::table('usuarios')->insertGetId([
+                'numero_documento' => 12345475784,
+                'correo'           => 'empresa@gmail.com',
+                'contrasena'       => Hash::make('empresa123'),
+                'rol_id'           => $companyRoleId,
+                'created_at'       => now(),
+                'updated_at'       => now(),
             ]);
         }
+        DB::table('empresas')->updateOrInsert(
+            ['nit' => 12345475784],
+            [
+                'usuario_id'      => $companyUserId,
+                'nombre'          => 'Empresa Demo',
+                'representante'   => 'Representante Legal',
+                'correo_contacto' => 'empresa@gmail.com',
+                'activo'          => true,
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]
+        );
 
-        $this->call(ProyectoSeeder::class);
+        // 4. Instructor
+        $instructorUserId = DB::table('usuarios')->where('correo', 'instructor@gmail.com')->value('id');
+        if (!$instructorUserId) {
+            $instructorUserId = DB::table('usuarios')->insertGetId([
+                'numero_documento' => 20123,
+                'correo'           => 'instructor@gmail.com',
+                'contrasena'       => Hash::make('instructor123'),
+                'rol_id'           => $instructorRoleId,
+                'created_at'       => now(),
+                'updated_at'       => now(),
+            ]);
+        }
+        DB::table('instructores')->updateOrInsert(
+            ['usuario_id' => $instructorUserId],
+            [
+                'nombres'        => 'Instructor',
+                'apellidos'      => 'Demo',
+                'especialidad'   => 'Desarrollo de Software',
+                'activo'         => true,
+                'disponibilidad' => 'disponible',
+                'created_at'     => now(),
+                'updated_at'     => now(),
+            ]
+        );
 
-        $this->command->info('    Datos iniciales insertados correctamente.');
-        $this->command->info('   Credenciales admin: admin@gmail.com / admin123');
-        $this->command->info('   Credenciales empresa: empresa@gmail.com / empresa123');
-        $this->command->info('   Credenciales instructor: instructor@gmail.com / instructor123');
-        $this->command->info('   Credenciales aprendiz: aprendiz@gmail.com / aprendiz123');
+        // 5. Aprendiz
+        $apprenticeUserId = DB::table('usuarios')->where('correo', 'aprendiz@gmail.com')->value('id');
+        if (!$apprenticeUserId) {
+            $apprenticeUserId = DB::table('usuarios')->insertGetId([
+                'numero_documento' => 1016555423,
+                'correo'           => 'aprendiz@gmail.com',
+                'contrasena'       => Hash::make('aprendiz123'),
+                'rol_id'           => $apprenticeRoleId,
+                'created_at'       => now(),
+                'updated_at'       => now(),
+            ]);
+        }
+        DB::table('aprendices')->updateOrInsert(
+            ['usuario_id' => $apprenticeUserId],
+            [
+                'nombres'            => 'Aprendiz',
+                'apellidos'          => 'Demo',
+                'programa_formacion' => 'Análisis y Desarrollo de Software',
+                'activo'             => true,
+                'created_at'         => now(),
+                'updated_at'         => now(),
+            ]
+        );
+
+        // 6. Proyectos de ejemplo
+        $this->call(ProjectSeeder::class);
+
+        $this->command->info('✅ Datos iniciales insertados correctamente.');
+        $this->command->info('   → admin@gmail.com        / admin123');
+        $this->command->info('   → empresa@gmail.com      / empresa123');
+        $this->command->info('   → instructor@gmail.com   / instructor123');
+        $this->command->info('   → aprendiz@gmail.com     / aprendiz123');
     }
 }

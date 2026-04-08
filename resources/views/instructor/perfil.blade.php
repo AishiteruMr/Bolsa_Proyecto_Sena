@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Mi Perfil - ' . ($instructor->ins_nombre ?? 'Instructor'))
+@section('title', 'Mi Perfil - ' . ($instructor->nombres ?? 'Instructor'))
 @section('page-title', 'Perfil Profesional')
 
 @section('sidebar-nav')
@@ -29,10 +29,10 @@
 @section('content')
 @php
     $camposCompletos = 0;
-    if(!empty($instructor->ins_nombre))      $camposCompletos++;
-    if(!empty($instructor->ins_apellido))    $camposCompletos++;
-    if(!empty($instructor->ins_especialidad))$camposCompletos++;
-    if(!empty($usuario->usr_correo))         $camposCompletos++;
+    if(!empty($instructor->nombres))      $camposCompletos++;
+    if(!empty($instructor->apellidos))    $camposCompletos++;
+    if(!empty($instructor->especialidad))$camposCompletos++;
+    if(!empty($usuario->correo))         $camposCompletos++;
     $progresoPerfil = ($camposCompletos / 4) * 100;
 @endphp
 
@@ -42,7 +42,7 @@
     <div class="ins-hero">
         <div style="position: relative; flex-shrink: 0; z-index: 1;">
             <div class="ins-avatar-hero">
-                {{ strtoupper(substr($instructor->ins_nombre ?? 'I', 0, 1)) }}
+                {{ strtoupper(substr($instructor->nombres ?? 'I', 0, 1)) }}
             </div>
             <div class="ins-avatar-badge"><i class="fas fa-check"></i></div>
         </div>
@@ -50,14 +50,14 @@
         <div class="ins-hero-meta">
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
                 <span style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.2); padding:4px 14px; border-radius:20px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Instructor SENA</span>
-                <span style="color:rgba(255,255,255,0.5); font-size:13px; font-weight:600;"><i class="fas fa-envelope" style="margin-right:4px;"></i>{{ $usuario->usr_correo }}</span>
+                <span style="color:rgba(255,255,255,0.5); font-size:13px; font-weight:600;"><i class="fas fa-envelope" style="margin-right:4px;"></i>{{ $usuario->correo }}</span>
             </div>
             <h2 style="font-size:34px; font-weight:900; letter-spacing:-0.5px; margin-bottom:4px;">
-                {{ $instructor->ins_nombre }} {{ $instructor->ins_apellido }}
+                {{ $instructor->nombres }} {{ $instructor->apellidos }}
             </h2>
             <div style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:8px 16px; display:inline-flex; align-items:center; gap:10px; margin-top:8px; font-size:14px; font-weight:600;">
                 <i class="fas fa-award" style="color:#a7f3d0;"></i>
-                {{ $instructor->ins_especialidad }}
+                {{ $instructor->especialidad }}
             </div>
         </div>
 
@@ -102,14 +102,14 @@
                         <label class="ins-form-label">Nombres</label>
                         <div class="instructor-input-wrapper">
                             <i class="fas fa-user-tag instructor-input-icon"></i>
-                            <input type="text" name="nombre" value="{{ old('nombre', $instructor->ins_nombre) }}" required class="instructor-input-control">
+                            <input type="text" name="nombre" value="{{ old('nombre', $instructor->nombres) }}" required class="instructor-input-control">
                         </div>
                     </div>
                     <div class="instructor-form-group">
                         <label class="ins-form-label">Apellidos</label>
                         <div class="instructor-input-wrapper">
                             <i class="fas fa-user-tag instructor-input-icon"></i>
-                            <input type="text" name="apellido" value="{{ old('apellido', $instructor->ins_apellido) }}" required class="instructor-input-control">
+                            <input type="text" name="apellido" value="{{ old('apellido', $instructor->apellidos) }}" required class="instructor-input-control">
                         </div>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                     <label class="ins-form-label">Especialidad / Área de Influencia</label>
                     <div class="instructor-input-wrapper">
                         <i class="fas fa-graduation-cap instructor-input-icon"></i>
-                        <input type="text" name="especialidad" value="{{ old('especialidad', $instructor->ins_especialidad) }}" required class="instructor-input-control">
+                        <input type="text" name="especialidad" value="{{ old('especialidad', $instructor->especialidad) }}" required class="instructor-input-control">
                     </div>
                 </div>
 
@@ -126,7 +126,7 @@
                     <label class="ins-form-label" style="color:#94a3b8;">Correo Electrónico (Solo Lectura)</label>
                     <div class="instructor-input-wrapper">
                         <i class="fas fa-envelope-open instructor-input-icon"></i>
-                        <input type="email" value="{{ $usuario->usr_correo }}" disabled class="instructor-input-control" style="background:#f1f5f9; color:#94a3b8; cursor:not-allowed; border-style:dashed;">
+                        <input type="email" value="{{ $usuario->correo }}" disabled class="instructor-input-control" style="background:#f1f5f9; color:#94a3b8; cursor:not-allowed; border-style:dashed;">
                     </div>
                 </div>
 
@@ -176,14 +176,14 @@
                         <div class="ins-contact-icon"><i class="fas fa-envelope"></i></div>
                         <div style="min-width:0;">
                             <div style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">Correo</div>
-                            <div style="font-size:13px; font-weight:700; color:var(--text); word-break:break-all;">{{ $usuario->usr_correo }}</div>
+                            <div style="font-size:13px; font-weight:700; color:var(--text); word-break:break-all;">{{ $usuario->correo }}</div>
                         </div>
                     </div>
                     <div class="ins-contact-row">
                         <div class="ins-contact-icon"><i class="fas fa-medal"></i></div>
                         <div>
                             <div style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase;">Especialidad</div>
-                            <div style="font-size:13px; font-weight:700; color:var(--text);">{{ $instructor->ins_especialidad }}</div>
+                            <div style="font-size:13px; font-weight:700; color:var(--text);">{{ $instructor->especialidad }}</div>
                         </div>
                     </div>
                 </div>

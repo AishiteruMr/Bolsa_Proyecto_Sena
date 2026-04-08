@@ -120,28 +120,28 @@
                                             @endif
                                         </div>
                                         <div>
-                                            <div style="font-weight: 700; color: var(--text); font-size: 14px;">{{ Str::limit($p->pro_titulo_proyecto, 40) }}</div>
+                                            <div style="font-weight: 700; color: var(--text); font-size: 14px;">{{ Str::limit($p->titulo, 40) }}</div>
                                             <div style="font-size: 12px; color: var(--text-lighter); font-weight: 500;">
-                                                Expira: {{ \Carbon\Carbon::parse($p->pro_fecha_finalizacion)->format('d/m/Y') }}
+                                                Expira: {{ \Carbon\Carbon::parse($p->fecha_finalizacion)->format('d/m/Y') }}
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td style="padding: 20px 24px;">
                                     <span style="background: #f1f5f9; color: var(--text-light); padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase;">
-                                        {{ $p->pro_categoria }}
+                                        {{ $p->categoria }}
                                     </span>
                                 </td>
                                 <td style="padding: 20px 24px;">
                                     @php
-                                        $statusClass = match($p->pro_estado) {
-                                            'Activo' => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a'],
-                                            'Pendiente' => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706'],
+                                        $statusClass = match($p->estado) {
+                                            'aprobado' => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a'],
+                                            'pendiente' => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706'],
                                             default => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444'],
                                         };
                                     @endphp
                                     <span style="background: {{ $statusClass['bg'] }}; border: 1px solid {{ $statusClass['border'] }}; color: {{ $statusClass['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">
-                                        {{ $p->pro_estado }}
+                                        {{ $p->estado }}
                                     </span>
                                 </td>
                                 <td style="padding: 20px 24px;">
@@ -149,7 +149,7 @@
                                         <div style="display: flex;">
                                             @foreach($p->postulaciones->take(3) as $post)
                                                 <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #3eb489, #2d9d74); border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 800; margin-left: -10px;">
-                                                    {{ substr($post->aprendiz->apr_nombre ?? 'A', 0, 1) }}
+                                                    {{ substr($post->aprendiz->nombres ?? 'A', 0, 1) }}
                                                 </div>
                                             @endforeach
                                         </div>

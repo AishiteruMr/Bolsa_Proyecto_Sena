@@ -7,32 +7,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Entrega extends Model
 {
-    protected $table = 'entrega_etapa';
-    protected $primaryKey = 'ene_id';
-    public $timestamps = false;
+    protected $table = 'entregas_etapa';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
 
     protected $fillable = [
-        'ene_apr_id',
-        'ene_eta_id',
-        'ene_pro_id',
-        'ene_archivo_url',
-        'ene_descripcion',
-        'ene_fecha',
-        'ene_estado',
+        'aprendiz_id',
+        'etapa_id',
+        'proyecto_id',
+        'url_archivo',
+        'descripcion',
+        'estado',
     ];
 
     public function aprendiz(): BelongsTo
     {
-        return $this->belongsTo(Aprendiz::class, 'ene_apr_id', 'apr_id');
+        return $this->belongsTo(Aprendiz::class, 'aprendiz_id', 'id');
     }
 
     public function etapa(): BelongsTo
     {
-        return $this->belongsTo(Etapa::class, 'ene_eta_id', 'eta_id');
+        return $this->belongsTo(Etapa::class, 'etapa_id', 'id');
     }
 
     public function proyecto(): BelongsTo
     {
-        return $this->belongsTo(Proyecto::class, 'ene_pro_id', 'pro_id');
+        return $this->belongsTo(Proyecto::class, 'proyecto_id', 'id');
     }
 }

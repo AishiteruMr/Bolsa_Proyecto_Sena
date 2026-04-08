@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <form action="{{ route('empresa.proyectos.update', $proyecto->pro_id) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('empresa.proyectos.update', $proyecto->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -61,14 +61,14 @@
                         <label class="empresa-form-label">Título del Proyecto *</label>
                         <div class="empresa-input-container">
                             <i class="fas fa-tag empresa-input-icon"></i>
-                            <input type="text" name="titulo" value="{{ old('titulo', $proyecto->pro_titulo_proyecto) }}" required class="empresa-form-control" placeholder="Título descriptivo de la convocatoria">
+                            <input type="text" name="titulo" value="{{ old('titulo', $proyecto->titulo) }}" required class="empresa-form-control" placeholder="Título descriptivo de la convocatoria">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="empresa-form-label">Categoría / Sector *</label>
                         <div class="empresa-input-container">
                             <i class="fas fa-layer-group empresa-input-icon"></i>
-                            <input type="text" name="categoria" value="{{ old('categoria', $proyecto->pro_categoria) }}" required class="empresa-form-control" placeholder="Ej: Tecnología, Salud...">
+                            <input type="text" name="categoria" value="{{ old('categoria', $proyecto->categoria) }}" required class="empresa-form-control" placeholder="Ej: Tecnología, Salud...">
                         </div>
                     </div>
                 </div>
@@ -83,17 +83,17 @@
 
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label class="empresa-form-label">Descripción Detallada *</label>
-                    <textarea name="descripcion" required class="empresa-textarea" rows="5" placeholder="Objetivos, alcance e impacto del proyecto...">{{ old('descripcion', $proyecto->pro_descripcion) }}</textarea>
+                    <textarea name="descripcion" required class="empresa-textarea" rows="5" placeholder="Objetivos, alcance e impacto del proyecto...">{{ old('descripcion', $proyecto->descripcion) }}</textarea>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
                         <label class="empresa-form-label">Perfil Técnico (Hardskills) *</label>
-                        <textarea name="requisitos" required class="empresa-textarea" rows="3" placeholder="Herramientas, lenguajes o conocimientos específicos...">{{ old('requisitos', $proyecto->pro_requisitos_especificos) }}</textarea>
+                        <textarea name="requisitos" required class="empresa-textarea" rows="3" placeholder="Herramientas, lenguajes o conocimientos específicos...">{{ old('requisitos', $proyecto->requisitos_especificos) }}</textarea>
                     </div>
                     <div class="form-group">
                         <label class="empresa-form-label">Cualidades de Equipo (Softskills) *</label>
-                        <textarea name="habilidades" required class="empresa-textarea" rows="3" placeholder="Liderazgo, comunicación, resolución de problemas...">{{ old('habilidades', $proyecto->pro_habilidades_requerida) }}</textarea>
+                        <textarea name="habilidades" required class="empresa-textarea" rows="3" placeholder="Liderazgo, comunicación, resolución de problemas...">{{ old('habilidades', $proyecto->habilidades_requeridas) }}</textarea>
                     </div>
                 </div>
             </section>
@@ -112,7 +112,7 @@
                             <label style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Apertura de Convocatoria *</label>
                             <div class="empresa-input-container" style="margin-top: 8px;">
                                 <i class="far fa-calendar-alt empresa-input-icon" style="top: 16px;"></i>
-                                <input type="date" name="fecha_publi" id="fecha_publi" value="{{ old('fecha_publi', $proyecto->pro_fecha_publi) }}" required class="empresa-form-control">
+                                <input type="date" name="fecha_publi" id="fecha_publi" value="{{ old('fecha_publi', $proyecto->fecha_publicacion) }}" required class="empresa-form-control">
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -147,8 +147,8 @@
                         </div>
                     </div>
 
-                    <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud', $proyecto->pro_latitud) }}">
-                    <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud', $proyecto->pro_longitud) }}">
+                    <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud', $proyecto->latitud) }}">
+                    <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud', $proyecto->longitud) }}">
 
                     <p style="font-size: 12px; color: var(--text-lighter); margin-top: 10px; font-weight: 600; text-align: center;">
                         <i class="fas fa-hand-pointer"></i> Haz clic en el mapa o arrastra el PIN para ajustar la ubicación.
@@ -164,8 +164,8 @@
                 </div>
 
                 <div style="display: flex; gap: 1.5rem; align-items: center;">
-                    @if($proyecto->pro_imagen_url)
-                        <img src="{{ $proyecto->pro_imagen_url }}" style="width: 120px; height: 120px; border-radius: 16px; object-fit: cover; border: 2px solid var(--border); flex-shrink: 0;">
+                    @if($proyecto->imagen_url)
+                        <img src="{{ $proyecto->imagen_url }}" style="width: 120px; height: 120px; border-radius: 16px; object-fit: cover; border: 2px solid var(--border); flex-shrink: 0;">
                     @endif
                     <div class="empresa-upload-box" style="flex: 1; position: relative; padding: 28px;">
                         <div class="empresa-upload-icon-wrapper">
@@ -198,8 +198,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     // ── MAP ──────────────────────────────────────────────────────
     const instancia = initEditorMap('map-editar', {
-        lat: {{ old('latitud', $proyecto->pro_latitud ?? 10.8642) }},
-        lng: {{ old('longitud', $proyecto->pro_longitud ?? -74.7777) }},
+        lat: {{ old('latitud', $proyecto->latitud ?? 10.8642) }},
+        lng: {{ old('longitud', $proyecto->longitud ?? -74.7777) }},
         canEdit: true,
         latInput: 'latitud',
         lngInput: 'longitud',

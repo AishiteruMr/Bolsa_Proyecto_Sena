@@ -19,9 +19,9 @@ class RegistroAprendizRequest extends FormRequest
         return [
             'nombre'    => 'required|string|max:50|regex:/^[a-zA-Z\s]+$/',
             'apellido'  => 'required|string|max:50|regex:/^[a-zA-Z\s]+$/',
-            'documento' => 'required|numeric|digits_between:6,12|unique:usuario,usr_documento',
+            'documento' => 'required|numeric|digits_between:6,12|unique:usuarios,numero_documento',
             'programa'  => 'required|string|max:100',
-            'correo'    => 'required|email|max:255|unique:usuario,usr_correo',
+            'correo'    => 'required|email|max:255|unique:usuarios,correo',
             'password'  => 'required|string|min:8|max:100|confirmed',
             'terminos'  => 'accepted',
         ];

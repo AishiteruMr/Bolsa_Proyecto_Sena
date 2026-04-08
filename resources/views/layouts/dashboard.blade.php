@@ -51,7 +51,25 @@
     <div class="main">
         <header class="topbar">
             <span class="topbar-title">@yield('page-title', 'Principal')</span>
-            <div class="topbar-right">
+            <div class="topbar-right" style="display: flex; align-items: center; gap: 24px;">
+                @php
+                    $unreadCount = 0;
+                    if(session()->has('usr_id')){
+                        $usr = \App\Models\User::find(session('usr_id'));
+                        if($usr) $unreadCount = $usr->unreadNotifications()->count();
+                    }
+                @endphp
+                <a href="{{ route('notificaciones.index') }}" title="Notificaciones" style="position:relative; color:var(--text); text-decoration:none;">
+                    <div style="width: 40px; height: 40px; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; border: 1px solid var(--border);">
+                        <i class="far fa-bell" style="font-size: 18px;"></i>
+                    </div>
+                    @if($unreadCount > 0)
+                        <span style="position: absolute; top: -4px; right: -4px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; border-radius: 20px; padding: 2px 6px; border: 2px solid #fff;">
+                            {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                        </span>
+                    @endif
+                </a>
+
                 <span style="font-size:13px; color: var(--text-light); font-weight: 600;">{{ now()->translatedFormat('d M, Y') }}</span>
             </div>
         </header>

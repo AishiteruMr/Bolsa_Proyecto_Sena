@@ -8,41 +8,38 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Empresa extends Model
 {
-    protected $table = 'empresa';
-    protected $primaryKey = 'emp_id';
-    public $timestamps = false;
+    protected $table = 'empresas';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
 
     protected $fillable = [
-        'usr_id',
-        'emp_nit',
-        'emp_nombre',
-        'emp_representante',
-        'emp_correo',
-        'emp_contrasena',
-        'emp_estado',
-    ];
-
-    protected $hidden = [
-        'emp_contrasena',
+        'usuario_id',
+        'nit',
+        'nombre',
+        'representante',
+        'correo_contacto',
+        'ubicacion',
+        'latitud',
+        'longitud',
+        'activo',
     ];
 
     protected $casts = [
-        'emp_estado' => 'integer',
-        'emp_contrasena' => 'hashed',
+        'activo' => 'boolean',
     ];
+
+    public function usuario(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'usuario_id', 'id');
+    }
 
     public function proyectos(): HasMany
     {
-        return $this->hasMany(Proyecto::class, 'emp_nit', 'emp_nit');
-    }
-
-    public function getAuthPassword(): string
-    {
-        return $this->emp_contrasena;
+        return $this->hasMany(Proyecto::class, 'empresa_nit', 'nit');
     }
 
     public function isActivo(): bool
     {
-        return $this->emp_estado === 1;
+        return $this->activo === true;
     }
 }

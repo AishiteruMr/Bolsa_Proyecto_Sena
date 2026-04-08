@@ -54,7 +54,7 @@
                 </div>
                 <div>
                     <div class="admin-stat-label">Empresas Activas</div>
-                    <div class="admin-stat-value" style="color: var(--primary-hover);">{{ $empresas->where('emp_estado', 1)->count() }}</div>
+                    <div class="admin-stat-value" style="color: var(--primary-hover);">{{ $empresas->where('activo', 1)->count() }}</div>
                 </div>
             </div>
 
@@ -64,7 +64,7 @@
                 </div>
                 <div>
                     <div class="admin-stat-label">En Espera</div>
-                    <div class="admin-stat-value" style="color: #f97316;">{{ $empresas->where('emp_estado', 0)->count() }}</div>
+                    <div class="admin-stat-value" style="color: #f97316;">{{ $empresas->where('activo', 0)->count() }}</div>
                 </div>
             </div>
         </div>
@@ -94,34 +94,34 @@
                     <tbody>
                         @forelse($empresas as $e)
                             <tr>
-                                <td style="font-weight: 800; color: var(--primary);">{{ $e->emp_nit }}</td>
+                                <td style="font-weight: 800; color: var(--primary);">{{ $e->nit }}</td>
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <div style="width: 40px; height: 40px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center;">
                                             <i class="fas fa-building" style="color: var(--text-light); font-size: 14px;"></i>
                                         </div>
-                                        <div class="admin-company-name">{{ $e->emp_nombre }}</div>
+                                        <div class="admin-company-name">{{ $e->nombre }}</div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="admin-company-rep"><i class="far fa-user-circle" style="margin-right: 6px; opacity: 0.5;"></i>{{ $e->emp_representante }}</div>
+                                    <div class="admin-company-rep"><i class="far fa-user-circle" style="margin-right: 6px; opacity: 0.5;"></i>{{ $e->representante }}</div>
                                 </td>
                                 <td class="admin-contact">
                                     <i class="far fa-envelope" style="margin-right: 6px; opacity: 0.5;"></i>
-                                    {{ $e->emp_correo }}
+                                    {{ $e->correo_contacto }}
                                 </td>
                                 <td>
-                                    <span class="status-badge {{ $e->emp_estado == 1 ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;">
-                                        {{ $e->emp_estado == 1 ? 'Activa' : 'Inactiva' }}
+                                    <span class="status-badge {{ $e->activo == 1 ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;">
+                                        {{ $e->activo == 1 ? 'Activa' : 'Inactiva' }}
                                     </span>
                                 </td>
                                 <td style="text-align: right;">
-                                    <form action="{{ route('admin.empresas.estado', $e->emp_id) }}" method="POST" style="display:inline;">
+                                    <form action="{{ route('admin.empresas.estado', $e->id) }}" method="POST" style="display:inline;">
                                         @csrf
-                                        <input type="hidden" name="estado" value="{{ $e->emp_estado == 1 ? 0 : 1 }}">
-                                        <button type="submit" class="btn-premium" style="padding: 10px 16px; font-size: 11px; background: {{ $e->emp_estado == 1 ? '#f8fafc' : 'var(--primary)' }}; color: {{ $e->emp_estado == 1 ? '#64748b' : 'white' }}; border: {{ $e->emp_estado == 1 ? '1px solid #e2e8f0' : 'none' }}; box-shadow: none;">
-                                            <i class="fas {{ $e->emp_estado == 1 ? 'fa-ban' : 'fa-check-circle' }}"></i>
-                                            {{ $e->emp_estado == 1 ? 'Inhabilitar' : 'Habilitar' }}
+                                        <input type="hidden" name="estado" value="{{ $e->activo == 1 ? 0 : 1 }}">
+                                        <button type="submit" class="btn-premium" style="padding: 10px 16px; font-size: 11px; background: {{ $e->activo == 1 ? '#f8fafc' : 'var(--primary)' }}; color: {{ $e->activo == 1 ? '#64748b' : 'white' }}; border: {{ $e->activo == 1 ? '1px solid #e2e8f0' : 'none' }}; box-shadow: none;">
+                                            <i class="fas {{ $e->activo == 1 ? 'fa-ban' : 'fa-check-circle' }}"></i>
+                                            {{ $e->activo == 1 ? 'Inhabilitar' : 'Habilitar' }}
                                         </button>
                                     </form>
                                 </td>

@@ -44,30 +44,30 @@
     <div class="instructor-catalog-card" style="background: rgba(255,255,255,0.9); border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s;">
         <div style="height: 180px; position: relative;">
             <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
-            <div class="instructor-project-image-badge" style="background: linear-gradient(135deg, #3eb489, #2d9d74);">{{ $p->pro_estado }}</div>
+            <div class="instructor-project-image-badge" style="background: linear-gradient(135deg, #3eb489, #2d9d74);">{{ $p->estado }}</div>
         </div>
         
         <div style="flex: 1; display: flex; flex-direction: column; padding: 24px;">
-            <h4 style="font-size:1.15rem; font-weight:700; margin-bottom:0.75rem; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $p->pro_titulo_proyecto }}</h4>
+            <h4 style="font-size:1.15rem; font-weight:700; margin-bottom:0.75rem; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $p->titulo }}</h4>
             
             <div style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-light);">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                     <i class="fas fa-building" style="color:#3eb489; width: 16px;"></i>
-                    <span style="font-weight: 600;">{{ $p->emp_nombre }}</span>
+                    <span style="font-weight: 600;">{{ $p->nombre }}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-tag" style="color:#3eb489; width: 16px;"></i>
-                    <span style="font-weight: 600;">{{ $p->pro_categoria }}</span>
+                    <span style="font-weight: 600;">{{ $p->categoria }}</span>
                 </div>
             </div>
 
             <div style="margin-top: auto;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--text-lighter);">
-                    <span style="font-weight: 600;"><i class="fas fa-calendar-alt"></i> {{ $p->pro_fecha_publi }}</span>
+                    <span style="font-weight: 600;"><i class="fas fa-calendar-alt"></i> {{ $p->fecha_publicacion }}</span>
                     <span style="background: rgba(62,180,137,0.1); border: 1px solid rgba(62,180,137,0.2); color: #3eb489; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;">{{ $p->pro_num_postulantes ?? 0 }} Aprendices</span>
                 </div>
                 
-                <a href="{{ route('instructor.proyecto.detalle', $p->pro_id) }}" class="btn-premium" style="width: 100%; justify-content: center; padding: 12px;">
+                <a href="{{ route('instructor.proyecto.detalle', $p->id) }}" class="btn-premium" style="width: 100%; justify-content: center; padding: 12px;">
                     Abrir Gestión <i class="fas fa-chevron-right" style="margin-left: 8px; font-size: 10px;"></i>
                 </a>
             </div>

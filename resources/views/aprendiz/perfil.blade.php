@@ -32,10 +32,10 @@
 @section('content')
 @php
     $camposCompletos = 0;
-    if(!empty($aprendiz->apr_nombre))  $camposCompletos++;
-    if(!empty($aprendiz->apr_apellido)) $camposCompletos++;
-    if(!empty($aprendiz->apr_programa)) $camposCompletos++;
-    if(!empty($usuario->usr_correo))    $camposCompletos++;
+    if(!empty($aprendiz->nombres))  $camposCompletos++;
+    if(!empty($aprendiz->apellidos)) $camposCompletos++;
+    if(!empty($aprendiz->programa_formacion)) $camposCompletos++;
+    if(!empty($usuario->correo))    $camposCompletos++;
     $progresoPerfil = ($camposCompletos / 4) * 100;
 
     $totalPost     = $aprendiz->postulaciones()->count();
@@ -51,7 +51,7 @@
         <div style="display: flex; align-items: center; gap: 32px; position: relative; z-index: 1;">
             <div style="position: relative; flex-shrink: 0;">
                 <div style="width: 96px; height: 96px; border-radius: 50%; background: rgba(255,255,255,0.18); border: 3px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 900; color: white;">
-                    {{ strtoupper(substr($aprendiz->apr_nombre ?? 'A', 0, 1)) }}
+                    {{ strtoupper(substr($aprendiz->nombres ?? 'A', 0, 1)) }}
                 </div>
                 <div style="position: absolute; bottom: -4px; right: -4px; width: 28px; height: 28px; border-radius: 50%; background: #fbbf24; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #78350f;">
                     <i class="fas fa-star"></i>
@@ -61,13 +61,13 @@
             <div style="flex: 1;">
                 <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
                     <span class="instructor-tag">Mi Perfil</span>
-                    @if($aprendiz->apr_estado)
+                    @if($aprendiz->activo)
                         <span style="background:rgba(251,191,36,0.2); border:1px solid rgba(251,191,36,0.35); color:#fde68a; padding:6px 14px; border-radius:20px; font-size:11px; font-weight:800;">En Formación</span>
                     @endif
                 </div>
-                <h1 class="instructor-title">Hola, <span style="color: var(--primary);">{{ $aprendiz->apr_nombre }}!</span></h1>
+                <h1 class="instructor-title">Hola, <span style="color: var(--primary);">{{ $aprendiz->nombres }}!</span></h1>
                 <p style="font-size:15px; color:rgba(255,255,255,0.7); font-weight:500;">
-                    <i class="fas fa-graduation-cap" style="margin-right:8px;"></i>{{ $aprendiz->apr_programa }}
+                    <i class="fas fa-graduation-cap" style="margin-right:8px;"></i>{{ $aprendiz->programa_formacion }}
                 </p>
 
                 <div style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:14px; padding:14px 18px; margin-top:16px; max-width:380px;">
@@ -123,14 +123,14 @@
                         <label class="aprendiz-form-label">Nombres</label>
                         <div class="aprendiz-input-wrapper">
                             <i class="fas fa-user aprendiz-input-icon"></i>
-                            <input type="text" name="nombre" value="{{ old('nombre', $aprendiz->apr_nombre) }}" required class="aprendiz-input-control" placeholder="Tu nombre">
+                            <input type="text" name="nombre" value="{{ old('nombre', $aprendiz->nombres) }}" required class="aprendiz-input-control" placeholder="Tu nombre">
                         </div>
                     </div>
                     <div class="aprendiz-form-group">
                         <label class="aprendiz-form-label">Apellidos</label>
                         <div class="aprendiz-input-wrapper">
                             <i class="fas fa-user-tie aprendiz-input-icon"></i>
-                            <input type="text" name="apellido" value="{{ old('apellido', $aprendiz->apr_apellido) }}" required class="aprendiz-input-control" placeholder="Tus apellidos">
+                            <input type="text" name="apellido" value="{{ old('apellido', $aprendiz->apellidos) }}" required class="aprendiz-input-control" placeholder="Tus apellidos">
                         </div>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                     <label class="aprendiz-form-label">Programa de Formación</label>
                     <div class="aprendiz-input-wrapper">
                         <i class="fas fa-graduation-cap aprendiz-input-icon"></i>
-                        <input type="text" name="programa" value="{{ old('programa', $aprendiz->apr_programa) }}" required class="aprendiz-input-control" placeholder="Tu programa SENA">
+                        <input type="text" name="programa" value="{{ old('programa', $aprendiz->programa_formacion) }}" required class="aprendiz-input-control" placeholder="Tu programa SENA">
                     </div>
                 </div>
 
@@ -147,7 +147,7 @@
                     <label class="aprendiz-form-label" style="color:#94a3b8;">Correo Institucional (Solo Lectura)</label>
                     <div class="aprendiz-input-wrapper">
                         <i class="fas fa-envelope aprendiz-input-icon"></i>
-                        <input type="email" value="{{ $usuario->usr_correo }}" disabled class="aprendiz-input-control aprendiz-input-disabled">
+                        <input type="email" value="{{ $usuario->correo }}" disabled class="aprendiz-input-control aprendiz-input-disabled">
                     </div>
                 </div>
 
@@ -202,7 +202,7 @@
             <div class="glass-card" style="padding:24px; background:linear-gradient(135deg, #3eb489, #2d9d74); color:white; border:none; position:relative; overflow:hidden;">
                 <div style="position:absolute; top:-20px; right:-20px; font-size:100px; color:rgba(255,255,255,0.08);"><i class="fas fa-graduation-cap"></i></div>
                 <h4 style="font-size:12px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; position:relative;">Programa Activo</h4>
-                <p style="font-size:17px; font-weight:800; line-height:1.4; position:relative; margin-bottom:16px;">{{ $aprendiz->apr_programa }}</p>
+                <p style="font-size:17px; font-weight:800; line-height:1.4; position:relative; margin-bottom:16px;">{{ $aprendiz->programa_formacion }}</p>
                 <span style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.25); padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; position:relative;">En Formación</span>
             </div>
 

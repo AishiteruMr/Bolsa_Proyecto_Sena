@@ -40,12 +40,10 @@
             @foreach($notificaciones as $notificacion)
                 @php
                     $leida = !is_null($notificacion->read_at);
-                    $isPostulacion = str_contains($notificacion->type, 'Postulacion');
-                    $estado = $notificacion->data['estado'] ?? null;
-                    $iconColor = $leida ? '#94a3b8' : ($estado === 'Aprobada' ? '#10b981' : ($estado === 'Rechazada' ? '#ef4444' : 'var(--primary)'));
-                    $iconBg   = $leida ? '#f8fafc' : ($estado === 'Aprobada' ? '#f0fdf4' : ($estado === 'Rechazada' ? '#fef2f2' : 'var(--primary-soft)'));
-                    $borderColor = $leida ? 'var(--border)' : ($estado === 'Aprobada' ? '#bbf7d0' : ($estado === 'Rechazada' ? '#fecaca' : 'var(--primary-soft)'));
-                    $icon = $isPostulacion ? 'fa-file-contract' : 'fa-tasks';
+                    $iconColor = $leida ? '#94a3b8' : 'var(--primary)';
+                    $iconBg   = $leida ? '#f8fafc' : 'var(--primary-soft)';
+                    $borderColor = $leida ? 'var(--border)' : 'var(--primary-soft)';
+                    $icon = $notificacion->data['icono'] ?? 'fa-bell';
                 @endphp
                 <div class="glass-card" style="padding: 20px 24px; border-color: {{ $borderColor }}; {{ $leida ? 'opacity: 0.75;' : '' }} display: flex; align-items: flex-start; gap: 16px; transition: all 0.2s;">
                     <div style="width: 44px; height: 44px; border-radius: 14px; background: {{ $iconBg }}; display: flex; align-items: center; justify-content: center; color: {{ $iconColor }}; font-size: 18px; flex-shrink: 0;">
@@ -54,27 +52,33 @@
                     <div style="flex: 1; min-width: 0;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 4px;">
                             <p style="font-size: 15px; font-weight: {{ $leida ? '600' : '700' }}; color: var(--text); margin: 0;">
-                                {{ $notificacion->data['mensaje'] ?? 'Notificación del sistema' }}
+                                {{ $notificacion->data['titulo'] ?? 'Notificación del sistema' }}
                             </p>
                             <span style="font-size: 11px; color: var(--text-lighter); white-space: nowrap; font-weight: 600; flex-shrink: 0;">
-                                {{ \Carbon\Carbon::parse($notificacion->data['fecha'] ?? $notificacion->created_at)->diffForHumans() }}
+                                {{ $notificacion->created_at->diffForHumans() }}
                             </span>
                         </div>
-                        <p style="font-size: 13px; color: var(--text-light); margin: 0 0 12px;">
-                            Proyecto: <strong>{{ $notificacion->data['proyecto'] ?? '—' }}</strong>
+                        <p style="font-size: 13px; color: var(--text-light); margin: 0 0 12px; line-height: 1.5;">
+                            {!! $notificacion->data['mensaje'] ?? 'Sin detalles.' !!}
                         </p>
-                        @if(!$leida)
-                            <form action="{{ route('notificaciones.leer', $notificacion->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" style="background: none; border: none; padding: 0; font-size: 12px; font-weight: 700; color: var(--primary); cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                                    <i class="fas fa-check"></i> Marcar como leída
-                                </button>
-                            </form>
-                        @else
-                            <span style="font-size: 11px; font-weight: 700; color: var(--text-lighter); display: flex; align-items: center; gap: 6px;">
-                                <i class="fas fa-check-double"></i> Leída
-                            </span>
-                        @endif
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            @if(isset($notificacion->data['url']) && $notificacion->data['url'])
+                                <a href="{{ $notificacion->data['url'] }}" style="font-size: 12px; font-weight: 700; color: var(--primary); text-decoration: none; padding: 4px 10px; background: var(--primary-soft); border-radius: 6px;">Ver Detalles</a>
+                            @endif
+                            
+                            @if(!$leida)
+                                <form action="{{ route('notificaciones.leer', $notificacion->id) }}" method="POST" style="margin:0;">
+                                    @csrf
+                                    <button type="submit" style="background: none; border: none; padding: 0; font-size: 12px; font-weight: 700; color: var(--primary); cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-check"></i> Marcar como leída
+                                    </button>
+                                </form>
+                            @else
+                                <span style="font-size: 11px; font-weight: 700; color: var(--text-lighter); display: flex; align-items: center; gap: 6px;">
+                                    <i class="fas fa-check-double"></i> Leída
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </div>
             @endforeach

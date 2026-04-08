@@ -13,8 +13,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'usuario';
-    protected $primaryKey = 'usr_id';
+    protected $table = 'usuarios';
+    protected $primaryKey = 'id';
 
     const ROL_APRENDIZ = 1;
     const ROL_INSTRUCTOR = 2;
@@ -22,72 +22,74 @@ class User extends Authenticatable
     const ROL_ADMIN = 4;
 
     protected $fillable = [
-        'usr_documento',
-        'usr_correo',
-        'usr_contrasena',
+        'numero_documento',
+        'correo',
+        'contrasena',
         'rol_id',
-        'usr_fecha_creacion',
     ];
 
     protected $hidden = [
-        'usr_contrasena',
+        'contrasena',
         'remember_token',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'usr_fecha_creacion' => 'datetime',
-        'usr_contrasena' => 'hashed',
+        'contrasena' => 'hashed',
     ];
 
-    public $timestamps = false;
+    // Ahora Laravel gestiona los timestamps (created_at y updated_at) por defecto.
+    public $timestamps = true;
 
     public function getAuthPassword(): string
     {
-        return $this->usr_contrasena;
+        return $this->contrasena;
     }
 
+    // Mantengo estos atributos simulados si las vistas lo necesitan, aunque conviene en vistas usar $user->correo directo.
     public function getEmailAttribute(): string
     {
-        return $this->usr_correo;
+        return $this->correo;
     }
 
     public function getNameAttribute(): string
     {
         return match ($this->rol_id) {
-            self::ROL_APRENDIZ => $this->aprendiz?->apr_nombre ?? '',
-            self::ROL_INSTRUCTOR => $this->instructor?->ins_nombre ?? '',
-            self::ROL_ADMIN => $this->administrador?->adm_nombre ?? '',
+            self::ROL_APRENDIZ => $this->aprendiz?->nombres ?? '',
+            self::ROL_INSTRUCTOR => $this->instructor?->nombres ?? '',
+            self::ROL_ADMIN => $this->administrador?->nombres ?? '',
+            self::ROL_EMPRESA => $this->empresa?->nombre ?? '',
             default => '',
         };
     }
 
     public function aprendiz(): HasOne
     {
-        return $this->hasOne(Aprendiz::class, 'usr_id', 'usr_id');
+        return $this->hasOne(Aprendiz::class, 'usuario_id', 'id');
     }
 
     public function instructor(): HasOne
     {
-        return $this->hasOne(Instructor::class, 'usr_id', 'usr_id');
+        return $this->hasOne(Instructor::class, 'usuario_id', 'id');
     }
 
     public function administrador(): HasOne
     {
-        return $this->hasOne(Administrador::class, 'usr_id', 'usr_id');
+        return $this->hasOne(Administrador::class, 'usuario_id', 'id');
     }
 
     public function empresa(): HasOne
     {
-        return $this->hasOne(Empresa::class, 'usr_id', 'usr_id');
+        return $this->hasOne(Empresa::class, 'usuario_id', 'id');
     }
 
     public function isActivo(): bool
     {
         return match ($this->rol_id) {
-            self::ROL_APRENDIZ => $this->aprendiz?->apr_estado === 1,
-            self::ROL_INSTRUCTOR => $this->instructor?->ins_estado === 1,
-            self::ROL_ADMIN => true,
+            self::ROL_APRENDIZ => $this->aprendiz?->activo === 1,
+            self::ROL_INSTRUCTOR => $this->instructor?->activo === 1,
+            self::ROL_ADMIN => $this->administrador?->activo === 1,
+            self::ROL_EMPRESA => $this->empresa?->activo === 1,
             default => false,
         };
     }
@@ -95,9 +97,10 @@ class User extends Authenticatable
     public function getNombreCompletoAttribute(): string
     {
         return match ($this->rol_id) {
-            self::ROL_APRENDIZ => trim(($this->aprendiz?->apr_nombre ?? '') . ' ' . ($this->aprendiz?->apr_apellido ?? '')),
-            self::ROL_INSTRUCTOR => trim(($this->instructor?->ins_nombre ?? '') . ' ' . ($this->instructor?->ins_apellido ?? '')),
-            self::ROL_ADMIN => trim(($this->administrador?->adm_nombre ?? '') . ' ' . ($this->administrador?->adm_apellido ?? '')),
+            self::ROL_APRENDIZ => trim(($this->aprendiz?->nombres ?? '') . ' ' . ($this->aprendiz?->apellidos ?? '')),
+            self::ROL_INSTRUCTOR => trim(($this->instructor?->nombres ?? '') . ' ' . ($this->instructor?->apellidos ?? '')),
+            self::ROL_ADMIN => trim(($this->administrador?->nombres ?? '') . ' ' . ($this->administrador?->apellidos ?? '')),
+            self::ROL_EMPRESA => $this->empresa?->nombre ?? '',
             default => '',
         };
     }
@@ -115,12 +118,12 @@ class User extends Authenticatable
 
     public static function findByEmail(string $email): ?self
     {
-        return static::where('usr_correo', $email)->first();
+        return static::where('correo', $email)->first();
     }
 
     public function setPasswordAttribute(string $password): void
     {
-        $this->attributes['usr_contrasena'] = Hash::make($password);
+        $this->attributes['contrasena'] = Hash::make($password);
     }
 
     public function tienePerfil(): bool
@@ -129,7 +132,7 @@ class User extends Authenticatable
             self::ROL_APRENDIZ => $this->aprendiz !== null,
             self::ROL_INSTRUCTOR => $this->instructor !== null,
             self::ROL_ADMIN => $this->administrador !== null,
-            self::ROL_EMPRESA => false,
+            self::ROL_EMPRESA => $this->empresa !== null,
             default => false,
         };
     }

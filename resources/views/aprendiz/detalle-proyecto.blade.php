@@ -42,9 +42,9 @@
             </a>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                 <span class="instructor-tag">Gestión</span>
-                <span style="background: rgba(59,130,246,0.2); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">{{ $proyecto->pro_categoria }}</span>
+                <span style="background: rgba(59,130,246,0.2); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">{{ $proyecto->categoria }}</span>
             </div>
-            <h1 class="instructor-title">{{ $proyecto->pro_titulo_proyecto }}</h1>
+            <h1 class="instructor-title">{{ $proyecto->titulo }}</h1>
             <p style="color: rgba(255,255,255,0.7); font-size: 15px; font-weight: 500;">Panel de seguimiento y entrega de productos del proyecto.</p>
         </div>
     </div>
@@ -57,7 +57,7 @@
             </div>
             <div>
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Estado del Proyecto</div>
-                <div style="font-size: 20px; font-weight: 800; color: var(--text);">{{ $proyecto->pro_estado }}</div>
+                <div style="font-size: 20px; font-weight: 800; color: var(--text);">{{ $proyecto->estado }}</div>
             </div>
         </div>
         
@@ -67,7 +67,7 @@
             </div>
             <div>
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Empresa Aliada</div>
-                <div style="font-size: 18px; font-weight: 800; color: var(--text);">{{ $proyecto->emp_nombre }}</div>
+                <div style="font-size: 18px; font-weight: 800; color: var(--text);">{{ $proyecto->nombre }}</div>
             </div>
         </div>
 
@@ -87,7 +87,7 @@
             </div>
             <div>
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Fecha Límite</div>
-                <div style="font-size: 18px; font-weight: 800; color: var(--text);">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d M, Y') }}</div>
+                <div style="font-size: 18px; font-weight: 800; color: var(--text);">{{ \Carbon\Carbon::parse($proyecto->fecha_finalizacion)->format('d M, Y') }}</div>
             </div>
         </div>
     </div>
@@ -103,7 +103,7 @@
                 </div>
                 
                 <p style="color: var(--text-light); line-height: 1.8; margin-bottom: 24px; font-weight: 500;">
-                    {{ $proyecto->pro_descripcion }}
+                    {{ $proyecto->descripcion }}
                 </p>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
@@ -111,13 +111,13 @@
                         <h4 style="font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <i class="fas fa-list-check" style="color: #3eb489; margin-right: 8px;"></i>Requisitos
                         </h4>
-                        <p style="font-size: 13px; color: var(--text-light); font-weight: 500; line-height: 1.6;">{{ $proyecto->pro_requisitos_especificos }}</p>
+                        <p style="font-size: 13px; color: var(--text-light); font-weight: 500; line-height: 1.6;">{{ $proyecto->requisitos_especificos }}</p>
                     </div>
                     <div style="background: #f8fafc; padding: 20px; border-radius: 16px;">
                         <h4 style="font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">
                             <i class="fas fa-star" style="color: #f59e0b; margin-right: 8px;"></i>Habilidades
                         </h4>
-                        <p style="font-size: 13px; color: var(--text-light); font-weight: 500; line-height: 1.6;">{{ $proyecto->pro_habilidades_requerida }}</p>
+                        <p style="font-size: 13px; color: var(--text-light); font-weight: 500; line-height: 1.6;">{{ $proyecto->habilidades_requeridas }}</p>
                     </div>
                 </div>
             </div>
@@ -130,16 +130,16 @@
 
                 <div style="display: grid; gap: 24px;">
                     @forelse($etapas as $etapa)
-                        @php $evidenciasEtapa = $evidencias->where('eta_id', $etapa->eta_id); @endphp
+                        @php $evidenciasEtapa = $evidencias->where('id', $etapa->id); @endphp
                         <div class="glass-card" style="padding: 28px; position: relative; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 32px rgba(62,180,137,0.12)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
-                            <div style="position: absolute; top: -20px; right: -10px; font-size: 100px; font-weight: 900; color: rgba(62,180,137,0.04); pointer-events: none; line-height: 1;">{{ $etapa->eta_orden }}</div>
+                            <div style="position: absolute; top: -20px; right: -10px; font-size: 100px; font-weight: 900; color: rgba(62,180,137,0.04); pointer-events: none; line-height: 1;">{{ $etapa->orden }}</div>
 
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; position: relative; z-index: 1;">
                                 <div style="display: flex; align-items: center; gap: 14px;">
                                     <span style="width: 40px; height: 40px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; box-shadow: 0 4px 12px rgba(62,180,137,0.3);">
-                                        {{ $etapa->eta_orden }}
+                                        {{ $etapa->orden }}
                                     </span>
-                                    <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin: 0;">{{ $etapa->eta_nombre }}</h4>
+                                    <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin: 0;">{{ $etapa->nombre }}</h4>
                                 </div>
                                 @if($evidenciasEtapa->count())
                                     <span style="background: rgba(62,180,137,0.1); color: #3eb489; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">
@@ -148,7 +148,7 @@
                                 @endif
                             </div>
 
-                            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 24px; font-weight: 500; line-height: 1.6; position: relative; z-index: 1;">{{ $etapa->eta_descripcion }}</p>
+                            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 24px; font-weight: 500; line-height: 1.6; position: relative; z-index: 1;">{{ $etapa->descripcion }}</p>
 
                             <!-- Evidencias Existentes -->
                             @if($evidenciasEtapa->count())
@@ -159,9 +159,9 @@
                                     <div style="display: grid; gap: 12px;">
                                         @foreach($evidenciasEtapa as $evid)
                                             @php
-                                                $stateColor = match($evid->evid_estado) {
-                                                    'Aprobada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
-                                                    'Rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#dc2626', 'icon' => 'fa-times-circle'],
+                                                $stateColor = match($evid->estado) {
+                                                    'aceptada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
+                                                    'rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#dc2626', 'icon' => 'fa-times-circle'],
                                                     default     => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-hourglass-half'],
                                                 };
                                             @endphp
@@ -171,18 +171,18 @@
                                                         <i class="fas fa-file-alt"></i>
                                                     </div>
                                                     <div>
-                                                        <p style="font-size: 13px; font-weight: 700; color: var(--text); margin: 0;">{{ \Carbon\Carbon::parse($evid->evid_fecha)->format('d M, Y - h:i A') }}</p>
-                                                        @if($evid->evid_comentario)
-                                                            <p style="font-size: 12px; color: var(--text-light); margin-top: 2px;"><i class="fas fa-comment" style="margin-right: 4px;"></i>{{ $evid->evid_comentario }}</p>
+                                                        <p style="font-size: 13px; font-weight: 700; color: var(--text); margin: 0;">{{ \Carbon\Carbon::parse($evid->fecha_subida)->format('d M, Y - h:i A') }}</p>
+                                                        @if($evid->comentarios_instructor)
+                                                            <p style="font-size: 12px; color: var(--text-light); margin-top: 2px;"><i class="fas fa-comment" style="margin-right: 4px;"></i>{{ $evid->comentarios_instructor }}</p>
                                                         @endif
                                                     </div>
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 12px;">
                                                     <span style="background: {{ $stateColor['bg'] }}; border: 1px solid {{ $stateColor['border'] }}; color: {{ $stateColor['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-                                                        <i class="fas {{ $stateColor['icon'] }}"></i> {{ $evid->evid_estado }}
+                                                        <i class="fas {{ $stateColor['icon'] }}"></i> {{ $evid->estado }}
                                                     </span>
-                                                    @if($evid->evid_archivo)
-                                                        <a href="{{ asset('storage/' . $evid->evid_archivo) }}" target="_blank" class="btn-premium" style="padding: 8px 14px; font-size: 12px;">
+                                                    @if($evid->archivo_url)
+                                                        <a href="{{ asset('storage/' . $evid->archivo_url) }}" target="_blank" class="btn-premium" style="padding: 8px 14px; font-size: 12px;">
                                                             <i class="fas fa-download"></i>
                                                         </a>
                                                     @endif
@@ -198,7 +198,7 @@
                                 <h5 style="font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
                                     <i class="fas fa-paper-plane" style="color: #3eb489;"></i> Enviar Nueva Evidencia
                                 </h5>
-                                <form action="{{ route('aprendiz.evidencia.enviar', [$proyecto->pro_id, $etapa->eta_id]) }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('aprendiz.evidencia.enviar', [$proyecto->id, $etapa->id]) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <div style="display: grid; gap: 16px;">
                                         <textarea name="descripcion" required placeholder="Escribe un breve comentario sobre tu entrega..." style="width: 100%; padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 500; min-height: 80px; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='#3eb489'" onblur="this.style.borderColor='#e2e8f0'"></textarea>
@@ -237,8 +237,8 @@
                 <h4 style="font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">
                     <i class="fas fa-image" style="color: #3eb489; margin-right: 8px;"></i>Imagen del Proyecto
                 </h4>
-                @if($proyecto->pro_imagen_url)
-                    <img src="{{ $proyecto->pro_imagen_url }}" style="width: 100%; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                @if($proyecto->imagen_url)
+                    <img src="{{ $proyecto->imagen_url }}" style="width: 100%; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                 @else
                     <div style="width: 100%; aspect-ratio: 16/10; background: linear-gradient(135deg, #3eb489, #2d9d74); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;">
                         <i class="fas fa-image" style="font-size: 40px; margin-bottom: 12px; opacity: 0.7;"></i>
@@ -259,7 +259,7 @@
                         </div>
                         <div>
                             <p style="font-size: 11px; color: var(--text-light); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Lanzamiento</p>
-                            <p style="font-size: 14px; font-weight: 800; color: var(--text);">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d M, Y') }}</p>
+                            <p style="font-size: 14px; font-weight: 800; color: var(--text);">{{ \Carbon\Carbon::parse($proyecto->fecha_publicacion)->format('d M, Y') }}</p>
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #fef2f2; border-radius: 12px;">
@@ -268,7 +268,7 @@
                         </div>
                         <div>
                             <p style="font-size: 11px; color: var(--text-light); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Fecha Límite</p>
-                            <p style="font-size: 14px; font-weight: 800; color: #ef4444;">{{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d M, Y') }}</p>
+                            <p style="font-size: 14px; font-weight: 800; color: #ef4444;">{{ \Carbon\Carbon::parse($proyecto->fecha_finalizacion)->format('d M, Y') }}</p>
                         </div>
                     </div>
                 </div>

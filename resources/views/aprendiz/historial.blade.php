@@ -46,9 +46,9 @@
 
     @php
         $total = collect($proyectos)->count();
-        $aprobadas = collect($proyectos)->where('pos_estado','Aprobada')->count();
-        $pendientes = collect($proyectos)->where('pos_estado','Pendiente')->count();
-        $rechazadas = collect($proyectos)->where('pos_estado','Rechazada')->count();
+        $aprobadas = collect($proyectos)->where('estado','aceptada')->count();
+        $pendientes = collect($proyectos)->where('estado','pendiente')->count();
+        $rechazadas = collect($proyectos)->where('estado','rechazada')->count();
     @endphp
 
     @if($total > 0)
@@ -94,19 +94,19 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
             @foreach($proyectos as $p)
                 @php
-                    $estadoColor = match($p->pos_estado) {
-                        'Aprobada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
-                        'Rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444', 'icon' => 'fa-times-circle'],
+                    $estadoColor = match($p->estado) {
+                        'aceptada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
+                        'rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444', 'icon' => 'fa-times-circle'],
                         default     => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-clock'],
                     };
-                    $diasRestantes = \Carbon\Carbon::parse($p->pro_fecha_finalizacion)->diffInDays(now(), false);
+                    $diasRestantes = \Carbon\Carbon::parse($p->fecha_finalizacion)->diffInDays(now(), false);
                     $esFinalizado  = $diasRestantes >= 0;
                 @endphp
                 <div class="glass-card" style="padding: 0; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 20px 40px rgba(62,180,137,0.15)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
                     <div style="height: 5px; background: linear-gradient(90deg, {{ $estadoColor['text'] }}, {{ $estadoColor['border'] }});"></div>
 
-                    @if($p->pro_imagen_url)
-                        <img src="{{ $p->pro_imagen_url }}" alt="Imagen del proyecto" style="width:100%; height:140px; object-fit:cover;">
+                    @if($p->imagen_url)
+                        <img src="{{ $p->imagen_url }}" alt="Imagen del proyecto" style="width:100%; height:140px; object-fit:cover;">
                     @else
                         <div style="height: 100px; background: linear-gradient(135deg, rgba(62,180,137,0.15), rgba(62,180,137,0.05)); display:flex; align-items:center; justify-content:center;">
                             <i class="fas fa-project-diagram" style="font-size:36px; color:#3eb489; opacity:0.5;"></i>
@@ -115,20 +115,20 @@
 
                     <div style="padding: 24px;">
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; gap:12px;">
-                            <h4 style="font-size:16px; font-weight:800; color:var(--text); line-height:1.3; flex:1;">{{ $p->pro_titulo_proyecto }}</h4>
+                            <h4 style="font-size:16px; font-weight:800; color:var(--text); line-height:1.3; flex:1;">{{ $p->titulo }}</h4>
                             <span style="background:{{ $estadoColor['bg'] }}; border:1.5px solid {{ $estadoColor['border'] }}; color:{{ $estadoColor['text'] }}; border-radius:20px; padding:6px 14px; font-size:11px; font-weight:800; white-space:nowrap; display:flex; align-items:center; gap:6px; flex-shrink:0;">
-                                <i class="fas {{ $estadoColor['icon'] }}"></i> {{ $p->pos_estado }}
+                                <i class="fas {{ $estadoColor['icon'] }}"></i> {{ $p->estado }}
                             </span>
                         </div>
 
                         <div style="display:grid; gap:10px; margin-bottom:20px;">
                             <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-light); font-weight:600;">
                                 <i class="fas fa-building" style="width:16px; color:#3eb489;"></i>
-                                <span>{{ $p->emp_nombre }}</span>
+                                <span>{{ $p->nombre }}</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-light); font-weight:600;">
                                 <i class="fas fa-tag" style="width:16px; color:#8b5cf6;"></i>
-                                <span>{{ $p->pro_categoria }}</span>
+                                <span>{{ $p->categoria }}</span>
                             </div>
                             <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-light); font-weight:600;">
                                 <i class="fas fa-chalkboard-teacher" style="width:16px; color:#0ea5e9;"></i>
@@ -136,7 +136,7 @@
                             </div>
                             <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-light); font-weight:600;">
                                 <i class="fas fa-calendar-alt" style="width:16px; color:#f59e0b;"></i>
-                                <span>Postulé el {{ \Carbon\Carbon::parse($p->pos_fecha)->format('d M, Y') }}</span>
+                                <span>Postulé el {{ \Carbon\Carbon::parse($p->fecha_postulacion)->format('d M, Y') }}</span>
                             </div>
                         </div>
 
@@ -147,7 +147,7 @@
                             </span>
                         </div>
 
-                        @if($p->pos_estado === 'Aprobada')
+                        @if($p->estado === 'aceptada')
                             <a href="{{ route('aprendiz.entregas') }}" class="btn-premium" style="width:100%; justify-content:center; padding:12px;">
                                 <i class="fas fa-upload"></i> Ir a Mis Entregas
                             </a>

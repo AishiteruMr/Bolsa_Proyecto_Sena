@@ -27,18 +27,18 @@
             <!-- Project Card -->
             <div style="background:#f8fbf5; border:1px solid #d4edcc; border-radius:12px; padding:24px; margin-bottom:24px;">
                 <h2 style="color:#2c3e50; font-size:18px; margin:0 0 16px; border-bottom:2px solid #39a900; padding-bottom:10px;">
-                    {{ $proyecto->pro_titulo_proyecto }}
+                    {{ $proyecto->titulo }}
                 </h2>
 
                 <table style="width:100%; border-collapse:collapse;">
                     <tr>
                         <td style="padding:7px 0; vertical-align:top;">
-                            <span style="display:inline-block; background:#39a900; color:#fff; border-radius:20px; padding:3px 12px; font-size:12px; font-weight:600;">{{ $proyecto->pro_categoria }}</span>
+                            <span style="display:inline-block; background:#39a900; color:#fff; border-radius:20px; padding:3px 12px; font-size:12px; font-weight:600;">{{ $proyecto->categoria }}</span>
                         </td>
                     </tr>
                     <tr>
                         <td style="padding:7px 0; color:#555; font-size:14px;">
-                            🏢 <strong>Empresa:</strong> {{ $proyecto->emp_nombre }}
+                            🏢 <strong>Empresa:</strong> {{ $proyecto->nombre }}
                         </td>
                     </tr>
                     @if(!empty($proyecto->pro_ubicacion))
@@ -50,20 +50,20 @@
                     @endif
                     <tr>
                         <td style="padding:7px 0; color:#555; font-size:14px;">
-                            📅 <strong>Fecha de publicación:</strong> {{ \Carbon\Carbon::parse($proyecto->pro_fecha_publi)->format('d/m/Y') }}
+                            📅 <strong>Fecha de publicación:</strong> {{ \Carbon\Carbon::parse($proyecto->fecha_publicacion)->format('d/m/Y') }}
                         </td>
                     </tr>
-                    @if(!empty($proyecto->pro_fecha_finalizacion))
+                    @if(!empty($proyecto->fecha_finalizacion))
                     <tr>
                         <td style="padding:7px 0; color:#555; font-size:14px;">
-                            🏁 <strong>Fecha de finalización:</strong> {{ \Carbon\Carbon::parse($proyecto->pro_fecha_finalizacion)->format('d/m/Y') }}
+                            🏁 <strong>Fecha de finalización:</strong> {{ \Carbon\Carbon::parse($proyecto->fecha_finalizacion)->format('d/m/Y') }}
                         </td>
                     </tr>
                     @endif
-                    @if(!empty($proyecto->pro_duracion_estimada))
+                    @if(!empty($proyecto->duracion_estimada_dias))
                     <tr>
                         <td style="padding:7px 0; color:#555; font-size:14px;">
-                            ⏳ <strong>Duración estimada:</strong> {{ $proyecto->pro_duracion_estimada }} días
+                            ⏳ <strong>Duración estimada:</strong> {{ $proyecto->duracion_estimada_dias }} días
                         </td>
                     </tr>
                     @endif
@@ -71,20 +71,20 @@
 
                 <div style="margin-top:16px; padding-top:16px; border-top:1px solid #d4edcc;">
                     <p style="font-size:13px; color:#555; margin:0 0 10px;"><strong>📝 Descripción:</strong></p>
-                    <p style="font-size:13px; color:#666; line-height:1.6; margin:0; background:#fff; padding:12px; border-radius:8px; border-left:3px solid #39a900;">{{ $proyecto->pro_descripcion }}</p>
+                    <p style="font-size:13px; color:#666; line-height:1.6; margin:0; background:#fff; padding:12px; border-radius:8px; border-left:3px solid #39a900;">{{ $proyecto->descripcion }}</p>
                 </div>
 
-                @if(!empty($proyecto->pro_requisitos_especificos))
+                @if(!empty($proyecto->requisitos_especificos))
                 <div style="margin-top:14px;">
                     <p style="font-size:13px; color:#555; margin:0 0 6px;"><strong>📌 Requisitos:</strong></p>
-                    <p style="font-size:13px; color:#666; margin:0;">{{ $proyecto->pro_requisitos_especificos }}</p>
+                    <p style="font-size:13px; color:#666; margin:0;">{{ $proyecto->requisitos_especificos }}</p>
                 </div>
                 @endif
 
-                @if(!empty($proyecto->pro_habilidades_requerida))
+                @if(!empty($proyecto->habilidades_requeridas))
                 <div style="margin-top:14px;">
                     <p style="font-size:13px; color:#555; margin:0 0 6px;"><strong>💡 Habilidades requeridas:</strong></p>
-                    <p style="font-size:13px; color:#666; margin:0;">{{ $proyecto->pro_habilidades_requerida }}</p>
+                    <p style="font-size:13px; color:#666; margin:0;">{{ $proyecto->habilidades_requeridas }}</p>
                 </div>
                 @endif
             </div>

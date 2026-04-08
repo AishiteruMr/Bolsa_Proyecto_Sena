@@ -11,7 +11,7 @@ class HomeController extends Controller
     public function index()
     {
         $totalProyectos = Proyecto::activos()->count();
-        $totalEmpresas = Empresa::where('emp_estado', 1)->count();
+        $totalEmpresas = Empresa::where('activo', 1)->count();
         $totalAprendices = Aprendiz::activos()->count();
 
         return view('index', compact(
