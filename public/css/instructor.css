@@ -103,7 +103,7 @@
     gap: 24px;
 }
 
-./* Cajas pequeñas de estadísticas dentro de las tarjetas de proyecto */
+/* Cajas pequeñas de estadísticas dentro de las tarjetas de proyecto */
 .instructor-small-stat {
     flex: 1; background: var(--surface, rgba(255,255,255,0.8)); padding: 10px; border-radius: 12px; text-align: center; border: 1px solid rgba(62,180,137,0.1);
     display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; min-width: 0; overflow: hidden;
@@ -221,7 +221,7 @@
     overflow-wrap: anywhere; word-break: break-word; min-height: 80px;
 }
 
-./* Asegurar que las tarjetas de proyecto mantengan el contenido dentro */
+/* Asegurar que las tarjetas de proyecto mantengan el contenido dentro */
 .instructor-project-card { min-height: 320px; display:flex; flex-direction:column; }
 .instructor-project-card img { display:block; }
 .instructor-project-card .instructor-project-image-badge { max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -447,20 +447,41 @@
 .instructor-grad-radio input[value="Rechazada"]:checked + .instructor-grad-box {
     border-color: #ef4444; background: #fef2f2; color: #ef4444; box-shadow: 0 4px 12px rgba(239,68,68,0.15);
 }
+.instructor-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.instructor-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.instructor-input-icon {
+    position: absolute;
+    left: 16px;
+    color: #94a3b8;
+    font-size: 15px;
+    pointer-events: none;
+    z-index: 2;
+}
 .instructor-input-control {
     width: 100%;
     border: 1.5px solid #e2e8f0;
     border-radius: 12px;
     background: #f8fafc;
+    padding: 14px 16px 14px 44px;
     font-family: inherit;
     font-size: 14px;
     transition: all 0.3s;
+    color: #0f172a;
 }
 .instructor-input-control:focus {
     outline: none;
-    border-color: var(--p-instructor);
+    border-color: #3eb489;
     background: white;
-    box-shadow: 0 0 0 4px var(--p-instructor-glow);
+    box-shadow: 0 0 0 4px rgba(62,180,137,0.1);
 }
 .instructor-deliverable-info {
     background: #f8fafc;
@@ -517,6 +538,11 @@
     background: #3eb489; border: 3px solid white;
     display: flex; align-items: center; justify-content: center;
     font-size: 11px; color: white;
+}
+@media (max-width: 768px) {
+    .ins-hero { flex-direction: column; text-align: center; gap: 24px; padding: 32px 24px; }
+    .stat-mini { flex: 1; }
+    .ins-hero-meta { text-align: center; display: flex; flex-direction: column; align-items: center; }
 }
 .ins-hero-meta { flex: 1; position: relative; z-index: 1; }
 .stat-mini {

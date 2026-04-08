@@ -144,7 +144,7 @@
                 </div>
 
                 <div style="display:flex; justify-content:flex-end;">
-                    <button type="submit" class="btn-instructor-save" style="padding:16px 44px; font-size:15px;">
+                    <button type="submit" class="btn-premium" style="padding:16px 44px; font-size:15px; border: none; cursor: pointer;">
                         <i class="fas fa-check-circle"></i> Actualizar Información
                     </button>
                 </div>

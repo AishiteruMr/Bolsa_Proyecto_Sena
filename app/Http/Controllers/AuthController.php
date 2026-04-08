@@ -74,7 +74,7 @@ class AuthController extends Controller
                 return back()->with('error', 'Tu cuenta está pendiente de activación por un administrador.');
             }
 
-            if (is_null($usuario->email_verified_at)) {
+            if (property_exists($usuario, 'email_verified_at') && is_null($usuario->email_verified_at)) {
                 $userModel = User::find($usuario->id);
                 if ($userModel) {
                     $userModel->sendEmailVerificationNotification();
