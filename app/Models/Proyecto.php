@@ -244,35 +244,158 @@ class Proyecto extends Model
         return asset('storage/'.$value);
     }
 
-    /**
-     * Evalúa la calidad del proyecto basándose en características específicas.
-     * Retorna un array con el puntaje y los puntos fallidos.
-     */
     public function calidadProyecto(): array
     {
+        $empresa = $this->empresa;
+        $empresaActiva = $empresa && $empresa->activo == 1;
+
+        $titulo = trim($this->titulo ?? '');
+        $descripcion = trim($this->descripcion ?? '');
+        $requisitos = trim($this->requisitos_especificos ?? '');
+        $habilidades = trim($this->habilidades_requeridas ?? '');
+
+        $tituloLongitud = strlen($titulo);
+        $descripcionLongitud = strlen($descripcion);
+        $requisitosLongitud = strlen($requisitos);
+        $habilidadesLongitud = strlen($habilidades);
+
+        $tituloPalabras = str_word_count($titulo);
+        $descripcionPalabras = str_word_count($descripcion);
+        $requisitosPalabras = str_word_count($requisitos);
+        $habilidadesPalabras = str_word_count($habilidades);
+
+        $tituloValido = $tituloLongitud >= 10 && $tituloLongitud <= 200;
+        $descripcionValida = $descripcionLongitud >= 80 && $descripcionLongitud <= 5000 && $descripcionPalabras >= 20;
+        $requisitosValidos = $requisitosLongitud >= 20 && $requisitosPalabras >= 3;
+        $habilidadesValidas = $habilidadesLongitud >= 15 && $habilidadesPalabras >= 2;
+
+        $tieneCoherencia = $requisitos && $habilidades
+            && $requisitosPalabras >= 3 && $habilidadesPalabras >= 2;
+
+        $duracionValida = $this->duracion_estimada_dias && $this->duracion_estimada_dias >= 7 && $this->duracion_estimada_dias <= 365;
+
+        $categoriaValida = ! empty(trim($this->categoria ?? ''));
+
+        $categoriasValidas = [
+            'tecnologia', 'ingenieria', 'salud', 'educacion', 'medioambiente',
+            'comercio', 'agricultura', 'construccion', 'energia', 'alimentacion',
+            'transporte', 'turismo', 'finanzas', 'marketing', 'administracion',
+            'diseño', 'comunicacion', 'investigacion', 'otro',
+        ];
+        $categoriaEnLista = in_array(strtolower($this->categoria ?? ''), $categoriasValidas);
+
         $detalles = [
-            'titulo' => strlen($this->titulo) >= 15,
-            'descripcion' => strlen($this->descripcion) >= 100,
-            'requisitos' => strlen($this->requisitos_especificos) >= 20,
-            'habilidades' => strlen($this->habilidades_requeridas) >= 15,
-            'ubicacion' => ! is_null($this->latitud) && ! is_null($this->longitud),
-            'imagen' => ! empty($this->getRawOriginal('imagen_url')),
+            'empresa_activa' => [
+                'ok' => $empresaActiva,
+                'peso' => 20,
+                'descripcion' => $empresa ? 'Empresa '.($empresaActiva ? 'verificada y activa' : 'en estado inactivo') : 'Empresa no encontrada',
+            ],
+            'titulo' => [
+                'ok' => $tituloValido,
+                'peso' => 15,
+                'descripcion' => $tituloLongitud < 10 ? 'Título muy corto (mín. 10 caracteres)' : ($tituloLongitud > 200 ? 'Título muy largo (máx. 200 caracteres)' : 'Título descriptivo y conciso'),
+                'valor' => $tituloLongitud,
+                'palabras' => $tituloPalabras,
+            ],
+            'descripcion' => [
+                'ok' => $descripcionValida,
+                'peso' => 25,
+                'descripcion' => $descripcionPalabras < 20 ? 'Descripción sin contenido real (mín. 20 palabras)' : ($descripcionLongitud > 5000 ? 'Descripción muy extensa' : 'Describe claramente el objetivo del proyecto'),
+                'valor' => $descripcionLongitud,
+                'palabras' => $descripcionPalabras,
+                'detalles' => [
+                    'tiene_objetivo' => preg_match('/(objetivo|meta|fin|proposito|desarrollar|crear|implementar)/i', $descripcion) === 1,
+                    'tiene_alcance' => preg_match('/(alcance|entregar|resultado|beneficio|impacto)/i', $descripcion) === 1,
+                ],
+            ],
+            'requisitos' => [
+                'ok' => $requisitosValidos,
+                'peso' => 15,
+                'descripcion' => $requisitosPalabras < 3 ? 'Requisitos poco específicos (mín. 3 palabras)' : 'Requisitos bien definidos',
+                'valor' => $requisitosLongitud,
+                'palabras' => $requisitosPalabras,
+            ],
+            'habilidades' => [
+                'ok' => $habilidadesValidas,
+                'peso' => 15,
+                'descripcion' => $habilidadesPalabras < 2 ? 'Habilidades no especificadas (mín. 2 palabras)' : 'Habilidades blandas definidas',
+                'valor' => $habilidadesLongitud,
+                'palabras' => $habilidadesPalabras,
+            ],
+            'coherencia' => [
+                'ok' => $tieneCoherencia,
+                'peso' => 5,
+                'descripcion' => $tieneCoherencia ? 'Requisitos y habilidades son coherentes' : 'Falta coherencia entre requisitos y habilidades',
+            ],
+            'categoria' => [
+                'ok' => $categoriaValida,
+                'peso' => 3,
+                'descripcion' => $categoriaValida ? 'Categoría definida' : 'Categoría no definida',
+            ],
+            'duracion' => [
+                'ok' => $duracionValida,
+                'peso' => 2,
+                'descripcion' => ! $this->duracion_estimada_dias ? 'Duración no especificada' : ($duracionValida ? "Duración adecuada ({$this->duracion_estimada_dias} días)" : 'Duración fuera de rango'),
+                'valor' => $this->duracion_estimada_dias,
+            ],
+            'ubicacion' => [
+                'ok' => true,
+                'peso' => 0,
+                'descripcion' => ! is_null($this->latitud) && ! is_null($this->longitud) && $this->latitud != 0 ? 'Coordenadas definidas' : 'Ubicación no requerida',
+                'opcional' => true,
+            ],
+            'imagen' => [
+                'ok' => true,
+                'peso' => 0,
+                'descripcion' => ! empty($this->imagen) ? 'Imagen de identidad cargada' : 'Imagen no requerida',
+                'opcional' => true,
+            ],
         ];
 
-        $puntos = 0;
-        $total = count($detalles);
-        foreach ($detalles as $ok) {
-            if ($ok) {
-                $puntos++;
+        $puntosObtenidos = 0;
+        $puntosTotales = 0;
+        foreach ($detalles as $item) {
+            $puntosTotales += $item['peso'];
+            if ($item['ok']) {
+                $puntosObtenidos += $item['peso'];
             }
         }
 
-        $porcentaje = ($puntos / $total) * 100;
+        $porcentaje = $puntosTotales > 0 ? ($puntosObtenidos / $puntosTotales) * 100 : 0;
+
+        $fallos = array_filter($detalles, fn ($item) => ! $item['ok']);
+        $warnings = [];
+        $erroresCriticos = [];
+
+        if ($empresa && $empresa->activo != 1) {
+            $erroresCriticos[] = 'La empresa proponente está inactiva';
+        }
+        if (! $descripcionValida) {
+            if ($descripcionPalabras < 20) {
+                $erroresCriticos[] = 'La descripción debe expresar claramente el objetivo y alcance del proyecto';
+            }
+        }
+        if (! $tituloValido) {
+            $erroresCriticos[] = 'El título debe ser descriptivo y conciso';
+        }
+        if (! $requisitosValidos) {
+            $warnings[] = 'Los requisitos técnicos deben estar mejor definidos';
+        }
+        if (! $habilidadesValidas) {
+            $warnings[] = 'Las habilidades blandas requeridas deben especificarse';
+        }
 
         return [
             'porcentaje' => round($porcentaje),
+            'puntos_obtenidos' => $puntosObtenidos,
+            'puntos_totales' => $puntosTotales,
             'detalles' => $detalles,
-            'es_apto' => $porcentaje >= 80, // Consideramos apto si tiene 80% o más
+            'es_apto' => $porcentaje >= 75,
+            'fallos' => array_keys($fallos),
+            'warnings' => $warnings,
+            'errores_criticos' => $erroresCriticos,
+            'puede_publicarse' => $porcentaje >= 75 && $empresaActiva && $descripcionValida,
+            'razon_rechazo' => ! $empresaActiva ? 'Empresa inactiva' : (! $descripcionValida ? 'La descripción no expresa claramente el objetivo del proyecto' : ($porcentaje < 75 ? 'No cumple con los criterios mínimos de calidad' : null)),
         ];
     }
 }
