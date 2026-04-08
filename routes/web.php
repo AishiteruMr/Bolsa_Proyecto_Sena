@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorController;
+use App\Http\Controllers\NotificacionController;
 use Illuminate\Support\Facades\Route;
 
 /*

@@ -76,7 +76,7 @@
                 @if($proyecto->imagen_url)
                 <div style="margin-top: 32px;">
                     <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Identidad Visual</label>
-                    <img src="{{ $proyecto->getImagenUrlAttribute() }}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+                    <img src="{{ $proyecto->imagen_url }}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
                 </div>
                 @endif
             </div>

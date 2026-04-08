@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Builder;
-use Carbon\Carbon;
 
 class Proyecto extends Model
 {
     protected $table = 'proyectos';
+
     protected $primaryKey = 'id';
+
     public $timestamps = true;
 
     protected $fillable = [
@@ -100,9 +102,9 @@ class Proyecto extends Model
 
     public function scopeBusqueda(Builder $query, $termino): Builder
     {
-        return $query->where(function($q) use ($termino) {
+        return $query->where(function ($q) use ($termino) {
             $q->where('titulo', 'like', "%{$termino}%")
-              ->orWhere('descripcion', 'like', "%{$termino}%");
+                ->orWhere('descripcion', 'like', "%{$termino}%");
         });
     }
 
@@ -204,10 +206,15 @@ class Proyecto extends Model
      */
     public function isVencido(): bool
     {
-        if ($this->estado == 'cerrado') return true;
-        if (!$this->fecha_publicacion || !$this->duracion_estimada_dias) return false;
-        
+        if ($this->estado == 'cerrado') {
+            return true;
+        }
+        if (! $this->fecha_publicacion || ! $this->duracion_estimada_dias) {
+            return false;
+        }
+
         $fechaFinEstimada = Carbon::parse($this->fecha_publicacion)->addDays($this->duracion_estimada_dias);
+
         return now()->isAfter($fechaFinEstimada);
     }
 
@@ -222,20 +229,19 @@ class Proyecto extends Model
     /**
      * Accesor para la URL de la imagen del proyecto
      */
-    public function getImagenUrlAttribute($value): string
+    public function getImagenUrlAttribute(): string
     {
-        // En Eloquent, recibir el $value original de la BD si usamos el mutator:
+        $value = $this->imagen;
+
         if (empty($value)) {
             return asset('assets/default-project.jpg');
         }
 
-        // Si la URL ya es completa o empieza por /storage, la devolvemos tal cual
         if (str_starts_with($value, 'http') || str_starts_with($value, '/storage')) {
             return $value;
         }
 
-        // De lo contrario, asumimos que está en el disco public de storage
-        return asset('storage/' . $value);
+        return asset('storage/'.$value);
     }
 
     /**
@@ -245,26 +251,28 @@ class Proyecto extends Model
     public function calidadProyecto(): array
     {
         $detalles = [
-            'titulo'      => strlen($this->titulo) >= 15,
+            'titulo' => strlen($this->titulo) >= 15,
             'descripcion' => strlen($this->descripcion) >= 100,
-            'requisitos'  => strlen($this->requisitos_especificos) >= 20,
+            'requisitos' => strlen($this->requisitos_especificos) >= 20,
             'habilidades' => strlen($this->habilidades_requeridas) >= 15,
-            'ubicacion'   => !is_null($this->latitud) && !is_null($this->longitud),
-            'imagen'      => !empty($this->getRawOriginal('imagen_url'))
+            'ubicacion' => ! is_null($this->latitud) && ! is_null($this->longitud),
+            'imagen' => ! empty($this->getRawOriginal('imagen_url')),
         ];
 
         $puntos = 0;
         $total = count($detalles);
         foreach ($detalles as $ok) {
-            if ($ok) $puntos++;
+            if ($ok) {
+                $puntos++;
+            }
         }
 
         $porcentaje = ($puntos / $total) * 100;
 
         return [
             'porcentaje' => round($porcentaje),
-            'detalles'   => $detalles,
-            'es_apto'    => $porcentaje >= 80 // Consideramos apto si tiene 80% o más
+            'detalles' => $detalles,
+            'es_apto' => $porcentaje >= 80, // Consideramos apto si tiene 80% o más
         ];
     }
 }
