@@ -71,7 +71,7 @@
                         <tbody>
                             @forelse($aprendices as $a)
                             <tr style="transition:background 0.2s;" onmouseover="this.style.background='#f0f5f2'" onmouseout="this.style.background='white'">
-                                <td style="padding:18px 20px;font-weight:700;color:#0a3d2a;border-bottom:1px solid #e8f5e9;">{{ $a->numero_documento }}</td>
+                                <td style="padding:18px 20px;font-weight:700;color:#0a3d2a;border-bottom:1px solid #e8f5e9;">{{ $a->usuario->numero_documento ?? '-' }}</td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
                                     <div style="display:flex;align-items:center;gap:12px;">
                                         <div style="width:36px;height:36px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;">{{ strtoupper(substr($a->nombres,0,1)) }}</div>
@@ -81,7 +81,7 @@
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
                                     <span style="background:#e8f5e9;color:#1a5c30;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;border:1px solid #a5d6a7;">{{ $a->programa_formacion }}</span>
                                 </td>
-                                <td style="padding:18px 20px;color:#1a5c30;font-size:13px;border-bottom:1px solid #e8f5e9;">{{ $a->correo }}</td>
+                                <td style="padding:18px 20px;color:#1a5c30;font-size:13px;border-bottom:1px solid #e8f5e9;">{{ $a->usuario->correo ?? '-' }}</td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
                                     <span style="display:inline-flex;align-items:center;gap:6px;background:{{ $a->activo == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $a->activo == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $a->activo == 1 ? '#a5d6a7' : '#ef9a9a' }};">
                                         <span style="width:6px;height:6px;border-radius:50%;background:{{ $a->activo == 1 ? '#2e7d46' : '#e53935' }};"></span>

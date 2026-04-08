@@ -55,7 +55,7 @@
                                 {{ $notificacion->data['titulo'] ?? 'Notificación del sistema' }}
                             </p>
                             <span style="font-size: 11px; color: var(--text-lighter); white-space: nowrap; font-weight: 600; flex-shrink: 0;">
-                                {{ $notificacion->created_at->diffForHumans() }}
+                                {{ $notificacion->created_at ? $notificacion->created_at->diffForHumans() : '' }}
                             </span>
                         </div>
                         <p style="font-size: 13px; color: var(--text-light); margin: 0 0 12px; line-height: 1.5;">
