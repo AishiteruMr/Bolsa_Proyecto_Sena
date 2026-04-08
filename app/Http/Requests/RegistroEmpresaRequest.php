@@ -18,26 +18,40 @@ class RegistroEmpresaRequest extends FormRequest
     {
         return [
             'nombre_empresa' => 'required|string|max:150',
-            'nit'            => 'required|numeric|digits_between:6,15|unique:empresas,nit|unique:usuarios,numero_documento',
-            'representante'  => 'required|string|max:100',
-            'correo'         => 'required|email|max:255|unique:empresas,correo_contacto|unique:usuarios,correo',
-            'password'       => 'required|string|min:8|max:100|confirmed',
-            'terminos'       => 'accepted',
+            'nit' => 'required|numeric|digits_between:6,15|unique:empresas,nit|unique:usuarios,numero_documento',
+            'representante' => [
+                'required',
+                'string',
+                'max:100',
+                'min:10',
+                'regex:/^[a-zA-ZÀ-ÿ\s]+$/u',
+                function ($attribute, $value, $fail) {
+                    $palabras = count(array_filter(explode(' ', trim($value))));
+                    if ($palabras < 2) {
+                        $fail('El nombre del representante debe incluir nombre y apellido (mínimo 2 palabras).');
+                    }
+                },
+            ],
+            'correo' => 'required|email|max:255|unique:empresas,correo_contacto|unique:usuarios,correo',
+            'password' => 'required|string|min:8|max:100|confirmed',
+            'terminos' => 'accepted',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'required'           => 'El campo :attribute es obligatorio.',
-            'email'              => 'Ingresa un correo electrónico válido.',
-            'unique'             => 'Este :attribute ya está registrado.',
-            'min'                => 'El campo :attribute debe tener al menos :min caracteres.',
-            'max'                => 'El campo :attribute no puede exceder :max caracteres.',
-            'numeric'            => 'El campo :attribute debe ser numérico.',
-            'digits_between'     => 'El documento debe tener entre :min y :max dígitos.',
-            'accepted'           => 'Debes aceptar los términos y condiciones.',
+            'required' => 'El campo :attribute es obligatorio.',
+            'email' => 'Ingresa un correo electrónico válido.',
+            'unique' => 'Este :attribute ya está registrado.',
+            'min' => 'El campo :attribute debe tener al menos :min caracteres.',
+            'max' => 'El campo :attribute no puede exceder :max caracteres.',
+            'numeric' => 'El campo :attribute debe ser numérico.',
+            'digits_between' => 'El documento debe tener entre :min y :max dígitos.',
+            'accepted' => 'Debes aceptar los términos y condiciones.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
+            'representante.regex' => 'El nombre del representante solo puede contener letras y espacios (sin números).',
+            'representante.min' => 'El nombre del representante debe tener al menos 10 caracteres.',
         ];
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Etapa;
 use App\Models\Evidencia;
 use App\Models\Postulacion;
 use App\Models\Proyecto;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -31,7 +32,7 @@ class EmpresaController extends Controller
 
         $totalProyectos = $proyectos->count();
         $proyectosActivos = $proyectos->where('estado', 'aprobado')->count(); // 'aprobado' o 'en_progreso' según semántica
-        
+
         // Mejor contamos activos como 'aprobado' para coincidir con `Activo` viejo
         // En proyecto model isActivo() checkea ['aprobado', 'en_progreso']
         $proyectosActivos = $empresa->proyectos()->whereIn('estado', ['aprobado', 'en_progreso'])->count();
@@ -261,9 +262,11 @@ class EmpresaController extends Controller
     {
         // En blade tienen nombres 'Pendiente', 'Aprobada', 'Rechazada', asi que por ahora aceptamos o capitalizamos
         $estadoInput = strtolower($request->estado);
-        if ($estadoInput === 'aprobada') $estadoInput = 'aceptada';
+        if ($estadoInput === 'aprobada') {
+            $estadoInput = 'aceptada';
+        }
 
-        //$request->validate(['estado' => 'required|in:pendiente,aceptada,rechazada']);
+        // $request->validate(['estado' => 'required|in:pendiente,aceptada,rechazada']);
 
         $nit = session('nit');
 
@@ -312,7 +315,19 @@ class EmpresaController extends Controller
 
         $request->validate([
             'nombre_empresa' => 'required|string|max:150',
-            'representante' => 'required|string|max:100',
+            'representante' => [
+                'required',
+                'string',
+                'max:100',
+                'min:10',
+                'regex:/^[a-zA-ZÀ-ÿ\s]+$/u',
+                function ($attribute, $value, $fail) {
+                    $palabras = count(array_filter(explode(' ', trim($value))));
+                    if ($palabras < 2) {
+                        $fail('El nombre del representante debe incluir nombre y apellido (mínimo 2 palabras).');
+                    }
+                },
+            ],
             'password' => 'nullable|string|min:6',
         ]);
 
@@ -324,9 +339,9 @@ class EmpresaController extends Controller
         if ($request->filled('password')) {
             // Empresa uses password on User now ideally, but table may have it
             // Assuming it's still being replicated or purely in User table:
-            $usuario = \App\Models\User::find($empresa->usuario_id);
-            if($usuario) {
-               $usuario->update(['contrasena' => Hash::make($request->password)]);
+            $usuario = User::find($empresa->usuario_id);
+            if ($usuario) {
+                $usuario->update(['contrasena' => Hash::make($request->password)]);
             }
         }
 

@@ -31,7 +31,7 @@
         </div>
         <div class="form-group input-icon">
             <i class="fa-solid fa-user-tie"></i>
-            <input type="text" name="representante" value="{{ old('representante') }}" placeholder="Representante legal" required>
+            <input type="text" name="representante" value="{{ old('representante') }}" placeholder="Nombre y apellido del representante" pattern="[a-zA-ZÀ-ÿ\s]+" title="Solo letras y espacios" required>
         </div>
         <div class="form-group input-icon">
             <i class="fa-solid fa-envelope"></i>
