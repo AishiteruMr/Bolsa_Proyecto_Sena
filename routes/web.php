@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AprendizController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ExportController;
@@ -157,3 +158,9 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
 });
 
 Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats', [StatsController::class, 'dashboard'])->name('api.admin.stats');
+
+Route::middleware(['auth.custom'])->group(function () {
+    Route::get('/api/infinite/proyectos', [InfiniteScrollController::class, 'proyectos'])->name('api.infinite.proyectos');
+    Route::get('/api/infinite/aprendices', [InfiniteScrollController::class, 'aprendices'])->name('api.infinite.aprendices');
+    Route::middleware(['auth.custom', 'rol:3'])->get('/api/infinite/proyectos-empresa', [InfiniteScrollController::class, 'proyectosEmpresa'])->name('api.infinite.proyectos-empresa');
+});
