@@ -41,54 +41,49 @@
 
         <div class="admin-project-grid">
             @forelse($proyectos as $p)
-            <div class="glass-card admin-project-card">
-                {{-- Header Decorativo --}}
-                <div class="admin-project-card-header">
-                    <div style="position:relative; z-index:1;">
-                        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                            @php
-                                $statusStyles = match($p->estado) {
-                                    'aprobado' => ['bg' => 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)', 'color' => '#fff', 'icon' => 'fa-check-circle'],
-                                    'pendiente' => ['bg' => '#fff7ed', 'color' => '#ea580c', 'icon' => 'fa-clock'],
-                                    'rechazado' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'icon' => 'fa-times-circle'],
-                                    default => ['bg' => '#f8fafc', 'color' => '#64748b', 'icon' => 'fa-info-circle']
-                                };
-                            @endphp
-                            <span class="admin-project-badge" style="background: {{ $statusStyles['bg'] }}; color: {{ $statusStyles['color'] }};">
-                                <i class="fas {{ $statusStyles['icon'] }}"></i>
-                                {{ $p->estado }}
-                            </span>
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px -5px rgba(0,0,0,0.05)'" onmouseout="this.style.transform='none'; this.style.boxShadow='none'">
+                <div style="padding: 24px; border-bottom: 1px solid #f8fafc;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                        @php
+                            $statusStyles = match($p->estado) {
+                                'aprobado' => ['bg' => '#ecfdf5', 'color' => '#059669', 'icon' => 'fa-check-circle', 'label' => 'Aprobado'],
+                                'pendiente' => ['bg' => '#fff7ed', 'color' => '#ea580c', 'icon' => 'fa-clock', 'label' => 'Revisión Pendiente'],
+                                'rechazado' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'icon' => 'fa-times-circle', 'label' => 'Rechazado'],
+                                default => ['bg' => '#f8fafc', 'color' => '#475569', 'icon' => 'fa-info-circle', 'label' => ucfirst($p->estado)]
+                            };
+                        @endphp
+                        <span style="background: {{ $statusStyles['bg'] }}; color: {{ $statusStyles['color'] }}; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fas {{ $statusStyles['icon'] }}"></i> {{ $statusStyles['label'] }}
+                        </span>
+                        
+                        <div style="width: 36px; height: 36px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                            <i class="fas fa-building" style="font-size: 14px;"></i>
                         </div>
-                        <h3 class="admin-project-title" style="font-size:1.25rem; font-weight:800; line-height:1.3; letter-spacing: -0.5px;">{{ Str::limit($p->titulo, 50) }}</h3>
                     </div>
-                    <i class="fas fa-rocket" style="position:absolute; right:-20px; bottom:-20px; font-size:120px; color:rgba(255,255,255,0.05); transform: rotate(-15deg);"></i>
+                    
+                    <h3 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0; line-height: 1.4; letter-spacing: -0.3px;">{{ Str::limit($p->titulo, 55) }}</h3>
+                    <p style="font-size: 13px; color: #64748b; margin: 0; font-weight: 500; display: flex; align-items: center; gap: 6px;">
+                        <span style="width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1;"></span>
+                        {{ $p->empresa_nombre }}
+                    </p>
                 </div>
 
-                <div class="admin-project-card-body">
-                    <div style="display:flex; align-items:center; gap:16px;">
-                        <div style="width:52px; height:52px; background:#f8fafc; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border: 1px solid var(--border);">
-                            <i class="fas fa-building" style="color:var(--primary); font-size: 1.3rem;"></i>
-                        </div>
-                        <div>
-                            <span style="display:block; font-size:11px; font-weight:800; color:var(--text-lighter); text-transform:uppercase; letter-spacing: 1px; margin-bottom: 4px;">Empresa Proponente</span>
-                            <span style="font-size:1rem; font-weight:800; color: var(--text);">{{ $p->empresa_nombre }}</span>
-                        </div>
-                    </div>
-
-                    <div class="admin-mentor-box">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                            <span style="font-size:12px; font-weight:800; color:var(--text-light);"><i class="fas fa-user-shield" style="margin-right:6px; color:var(--primary);"></i> Mentor Asignado</span>
+                <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
+                    
+                    <div style="margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <label style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Mentor Asignado</label>
                             @if($p->instructor_nombre)
-                                <span class="aprendiz-badge-portal" style="background: var(--primary-soft); color: var(--primary); border-color: transparent; padding: 4px 12px; border-radius: 20px; font-size: 11px;">{{ $p->instructor_nombre }}</span>
+                                <span style="font-size: 10px; color: var(--primary); font-weight: 700; background: var(--primary-soft); padding: 2px 8px; border-radius: 10px;">Asignado</span>
                             @else
-                                <span class="aprendiz-badge-portal inline-pill inline-pill--muted" style="background:#fff7ed;color:#f97316;border-color:transparent;padding:4px 12px;border-radius:20px;font-size:11px;">SIN ASIGNAR</span>
+                                <span style="font-size: 10px; color: #f97316; font-weight: 700; background: #fff7ed; padding: 2px 8px; border-radius: 10px;">Pendiente</span>
                             @endif
                         </div>
-
+                        
                         <form action="{{ route('admin.proyectos.asignar', $p->id) }}" method="POST">
                             @csrf
-                            <div style="display:flex; gap:10px;">
-                                <select name="instructor_usuario_id" class="admin-mentor-select" required>
+                            <div style="display: flex; gap: 8px;">
+                                <select name="instructor_usuario_id" style="flex: 1; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; font-weight: 600; color: #334155; background: #f8fafc; outline: none; transition: border-color 0.2s; cursor: pointer;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e2e8f0'" required>
                                     <option value="" disabled selected>Seleccionar Instructor...</option>
                                     @foreach($instructores as $ins)
                                         <option value="{{ $ins->usuario->id ?? '' }}" {{ $p->instructor_usuario_id == ($ins->usuario->id ?? '') ? 'selected' : '' }}>
@@ -96,24 +91,24 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <button type="submit" class="btn-premium" style="width: 48px; height: 48px; min-width: 48px; padding: 0; justify-content: center; background: #fff; color: var(--primary); border: 2px solid var(--primary-soft); box-shadow: none;" title="Actualizar Asignación">
+                                <button type="submit" style="width: 42px; border: 1px solid #e2e8f0; border-radius: 10px; background: white; color: var(--primary); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='var(--primary-soft)'; this.style.borderColor='var(--primary-soft)';" onmouseout="this.style.background='white'; this.style.borderColor='#e2e8f0';" title="Actualizar">
                                     <i class="fas fa-save"></i>
                                 </button>
                             </div>
                         </form>
                     </div>
 
-                    <div style="margin-top:auto; display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
-                        <a href="{{ route('admin.proyectos.revisar', $p->id) }}" class="btn-premium" style="justify-content:center; padding: 12px; background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; font-size: 13px; box-shadow: none;">
-                            <i class="fas fa-file-shield" style="margin-right: 8px; color: var(--primary);"></i> Auditoría
+                    <div style="margin-top: auto; display: grid; grid-template-columns: {{ $p->estado == 'aprobado' ? '1fr 1fr' : '1fr' }}; gap: 10px;">
+                        <a href="{{ route('admin.proyectos.revisar', $p->id) }}" style="text-align: center; padding: 10px; background: white; color: #334155; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 12px; font-weight: 700; text-decoration: none; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f8fafc'; this.style.color='#0f172a';" onmouseout="this.style.background='white'; this.style.color='#334155';">
+                            Ver Detalles <i class="fas fa-arrow-right" style="margin-left: 4px; font-size: 10px; opacity: 0.7;"></i>
                         </a>
 
                         @if($p->estado == 'aprobado')
-                        <form action="{{ route('admin.proyectos.estado', $p->id) }}" method="POST" style="width: 100%;">
+                        <form action="{{ route('admin.proyectos.estado', $p->id) }}" method="POST" style="width: 100%; margin: 0;">
                             @csrf
                             <input type="hidden" name="estado" value="cerrado">
-                            <button type="submit" class="btn-premium" style="width:100%; justify-content:center; background:#fef2f2; color: #dc2626; box-shadow: none; font-size: 13px; border: 1px solid #fee2e2;">
-                                <i class="fas fa-ban" style="margin-right: 8px;"></i> Pausar
+                            <button type="submit" style="width: 100%; text-align: center; padding: 10px; background: white; color: #dc2626; border: 1px solid #fee2e2; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#fef2f2';" onmouseout="this.style.background='white';">
+                                Pausar Proyecto <i class="fas fa-ban" style="margin-left: 4px; font-size: 10px; opacity: 0.7;"></i>
                             </button>
                         </form>
                         @endif

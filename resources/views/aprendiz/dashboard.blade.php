@@ -66,7 +66,7 @@
                     </div>
                     <span style="font-size: 12px; color: var(--text-light); font-weight: 700; text-transform: uppercase;">Próximo Cierre</span>
                 </div>
-                @if($proximoCierre)
+                @if($proximoCierre && $proximoCierre->fecha_finalizacion)
                     <h4 style="font-size: 20px; font-weight: 800; color: #ef4444; margin: 0;">{{ \Carbon\Carbon::parse($proximoCierre->fecha_finalizacion)->diffForHumans() }}</h4>
                     <p style="font-size: 12px; color: var(--text-light); margin: 0; font-weight: 500;">{{ Str::limit($proximoCierre->titulo, 30) }}</p>
                 @else

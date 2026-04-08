@@ -133,7 +133,7 @@
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <span style="font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;">{{ $u->nombre_rol }}</span>
                                     <span style="width: 3px; height: 3px; background: #cbd5e1; border-radius: 50%;"></span>
-                                    <span style="font-size: 10px; color: #94a3b8; font-weight: 600;">{{ \Carbon\Carbon::parse($u->created_at)->diffForHumans() }}</span>
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: 600;">{{ $u->created_at ? \Carbon\Carbon::parse($u->created_at)->diffForHumans() : 'N/A' }}</span>
                                 </div>
                             </div>
                         </div>

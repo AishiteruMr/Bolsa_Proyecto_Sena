@@ -138,6 +138,22 @@
 .admin-table-header {
     background: hsla(var(--h-current), 20%, 98%, 0.8);
     backdrop-filter: blur(10px);
+    padding: 20px 24px;
+}
+
+.user-incorporation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.user-incorporation-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 14px;
+    transition: all 0.3s ease;
 }
 
 .user-incorporation-item:hover {
@@ -246,12 +262,34 @@
     text-overflow: ellipsis;
 }
 
-/* Tablas y celdas: permitir quiebre de palabras y ajuste natural */
-.premium-table td,
+.premium-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
 .premium-table th {
+    padding: 16px 20px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--border);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.premium-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
     word-break: break-word;
     overflow-wrap: anywhere;
     white-space: normal;
+    font-size: 14px;
+}
+
+.premium-table tr:hover td {
+    background-color: #f8fafc;
 }
 
 /* Incorporaciones: el correo ya tiene inline ellipsis; reforzamos comportamiento seguro */
