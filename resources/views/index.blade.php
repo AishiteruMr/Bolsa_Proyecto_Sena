@@ -16,13 +16,11 @@
 
         <div class="hero-layout">
             <div class="hero-content">
-                <div class="hero-badge">
-                    <i class="fas fa-sparkles" style="margin-right: 8px;"></i> Portal de Innovación SENA
+                <div class="hero-badge" style="font-size: 11px; padding: 6px 12px;">
+                    <i class="fas fa-bolt" style="margin-right: 6px;"></i> Portal de Innovación
                 </div>
                 <h1 class="hero-title">
-                    Conectamos <span>Talento</span>,<br>
-                    Liderazgo y<br>
-                    <span>Empresa</span>
+                    Conectamos <span>Talento</span> con<br><span>Empresa</span>
                 </h1>
                 <p class="hero-desc">
                     La plataforma definitiva donde aprendices e instructores colaboran en proyectos reales que transforman el ecosistema empresarial de Colombia.
@@ -65,44 +63,61 @@
     </section>
 
     <section class="bento-grid">
-        <div class="bento-item">
-            <div class="bento-icon"><i class="fas fa-briefcase"></i></div>
-            <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 16px;">Empresas</h3>
-            <p style="color: var(--text-light); line-height: 1.6; margin-bottom: 32px;">
+        <div class="bento-item bento-stats" style="grid-column: span 3; display: flex; justify-content: center; gap: 120px; padding: 40px 0; border: none; background: linear-gradient(135deg, var(--primary-soft) 0%, rgba(255,255,255,0.8) 100%); box-shadow: inset 0 2px 20px rgba(62,180,137,0.1);">
+            <div style="text-align: center;">
+                <div style="font-size: 64px; font-weight: 900; color: var(--primary); line-height: 1; text-shadow: 0 4px 20px rgba(62,180,137,0.3);">{{ $totalProyectos }}</div>
+                <div style="color: var(--text-light); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-top: 12px; padding-top: 12px; border-top: 3px solid var(--primary); display: inline-block;">Proyectos</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 64px; font-weight: 900; color: var(--secondary); line-height: 1; text-shadow: 0 4px 20px rgba(26,46,26,0.2);">{{ $totalEmpresas }}</div>
+                <div style="color: var(--text-light); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-top: 12px; padding-top: 12px; border-top: 3px solid var(--secondary); display: inline-block;">Empresas</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 64px; font-weight: 900; color: var(--primary); line-height: 1; text-shadow: 0 4px 20px rgba(62,180,137,0.3);">{{ $totalAprendices }}</div>
+                <div style="color: var(--text-light); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-top: 12px; padding-top: 12px; border-top: 3px solid var(--primary); display: inline-block;">Aprendices</div>
+            </div>
+        </div>
+        <div class="bento-item" style="background: linear-gradient(145deg, #ffffff 0%, #f0fdf4 100%);">
+            <div class="bento-icon" style="background: linear-gradient(135deg, var(--primary), #059669); color: #fff;"><i class="fas fa-building"></i></div>
+            <h3 style="font-size: 26px; font-weight: 800; margin-bottom: 16px; color: var(--secondary);">Empresas</h3>
+            <p style="color: var(--text-light); line-height: 1.7; margin-bottom: 32px; font-size: 15px;">
                 Encuentra soluciones innovadoras para tus desafíos técnicos encargando proyectos a equipos de aprendices calificados.
             </p>
-            <a href="{{ route('registro.empresa') }}" style="color: var(--primary); font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <a href="{{ route('registro.empresa') }}" style="background: linear-gradient(135deg, var(--primary), #059669); color: #fff; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: 14px; box-shadow: 0 8px 25px rgba(62,180,137,0.35);">
                 Registrar empresa <i class="fas fa-arrow-right"></i>
             </a>
         </div>
-        <div class="bento-item">
-            <div class="bento-icon" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);"><i class="fas fa-chalkboard-teacher"></i></div>
-            <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 16px;">Instructores</h3>
-            <p style="color: var(--text-light); line-height: 1.6; margin-bottom: 32px;">
+        <div class="bento-item" style="background: linear-gradient(145deg, #ffffff 0%, #fffbeb 100%);">
+            <div class="bento-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff;"><i class="fas fa-chalkboard-teacher"></i></div>
+            <h3 style="font-size: 26px; font-weight: 800; margin-bottom: 16px; color: var(--secondary);">Instructores</h3>
+            <p style="color: var(--text-light); line-height: 1.7; margin-bottom: 32px; font-size: 15px;">
                 Lidera el desarrollo de competencias prácticas guiando a los aprendices en la ejecución de proyectos de alto valor.
             </p>
-            <a href="{{ route('registro.instructor') }}" style="color: #f59e0b; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <a href="{{ route('registro.instructor') }}" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: 14px; box-shadow: 0 8px 25px rgba(245,158,11,0.35);">
                 Unirme como guía <i class="fas fa-arrow-right"></i>
             </a>
         </div>
-        <div class="bento-item">
-            <div class="bento-icon" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);"><i class="fas fa-user-graduate"></i></div>
-            <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 16px;">Aprendices</h3>
-            <p style="color: var(--text-light); line-height: 1.6; margin-bottom: 32px;">
+        <div class="bento-item" style="background: linear-gradient(145deg, #ffffff 0%, #eff6ff 100%);">
+            <div class="bento-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff;"><i class="fas fa-user-graduate"></i></div>
+            <h3 style="font-size: 26px; font-weight: 800; margin-bottom: 16px; color: var(--secondary);">Aprendices</h3>
+            <p style="color: var(--text-light); line-height: 1.7; margin-bottom: 32px; font-size: 15px;">
                 Participa en retos reales, adquiere experiencia certificable y conecta directamente con empresas aliadas.
             </p>
-            <a href="{{ route('registro.aprendiz') }}" style="color: #3b82f6; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <a href="{{ route('registro.aprendiz') }}" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: 14px; box-shadow: 0 8px 25px rgba(59,130,246,0.35);">
                 Postular talento <i class="fas fa-arrow-right"></i>
             </a>
         </div>
     </section>
 
-    <section style="padding: 100px 8%; background: var(--secondary); border-radius: 60px; margin: 0 40px 80px; text-align: center; position :relative; overflow: hidden;">
-        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(62, 180, 137, 0.1), transparent); pointer-events: none;"></div>
-        <h2 style="color: #fff; font-size: 48px; font-weight: 900; letter-spacing: -2px; margin-bottom: 24px;">¿Listo para transformar el futuro?</h2>
-        <p style="color: rgba(255,255,255,0.6); font-size: 19px; max-width: 600px; margin: 0 auto 48px;">Únete hoy a la mayor comunidad de innovación técnica y comienza a generar valor real en la industria.</p>
-        <a href="{{ route('login') }}" class="btn btn-primary" style="padding: 20px 60px; font-size: 18px;">
-            Comenzar Ahora <i class="fas fa-rocket" style="margin-left: 12px;"></i>
-        </a>
+    <section style="padding: 80px 8%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); border-radius: 32px; margin: 0 8% 80px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -50%; right: -20%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);"></div>
+        <div style="position: absolute; bottom: -30%; left: -10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%);"></div>
+        <div style="position: relative; z-index: 1;">
+            <h2 style="color: #fff; font-size: 44px; font-weight: 900; letter-spacing: -1px; margin-bottom: 20px;">¿Listo para transformar el futuro?</h2>
+            <p style="color: rgba(255,255,255,0.85); font-size: 18px; max-width: 500px; margin: 0 auto 40px;">Únete hoy a la mayor comunidad de innovación técnica y comienza a generar valor real en la industria.</p>
+            <a href="{{ route('login') }}" style="background: #fff; color: var(--primary); padding: 20px 50px; font-size: 17px; font-weight: 700; text-decoration: none; border-radius: 16px; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                Comenzar Ahora <i class="fas fa-rocket" style="margin-left: 12px;"></i>
+            </a>
+        </div>
     </section>
 @endsection

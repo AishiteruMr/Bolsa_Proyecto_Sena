@@ -62,7 +62,7 @@
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
 
-    <div class="login-container">
+    <div class="login-container" style="max-width: 1100px;">
         <div class="login-brand">
             <div class="brand-header">
                 <img src="{{ asset('assets/logo.png') }}" alt="SENA">
@@ -79,7 +79,7 @@
             </div>
         </div>
 
-        <div class="login-content">
+        <div class="login-content" style="padding: 64px;">
             <div class="content-header">
                 <h3>Bienvenido de nuevo</h3>
                 <p>Ingresa tus credenciales para continuar.</p>

@@ -182,7 +182,7 @@ class AuthController extends Controller
 
     public function showRegistroEmpresa()
     {
-        return view('auth.registro-empresa-wizard');
+        return view('auth.registro-empresa');
     }
 
     public function showRegistroInstructor()

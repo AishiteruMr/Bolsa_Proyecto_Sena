@@ -1,177 +1,136 @@
 @extends('layouts.app')
 
 @section('title', 'Registro Instructor')
-
 @section('styles')
-<link rel="stylesheet" href="{{ asset('css/auth_forms.css') }}">
+<link rel="stylesheet" href="{{ asset('css/login.css') }}">
 <style>
-    .form-hint {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        color: #64748b;
-        margin-top: 4px;
-        font-weight: 500;
-    }
-    .hint-icon {
-        color: var(--primary, #3eb489);
-        cursor: help;
-        position: relative;
-    }
+    .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .input-row { grid-template-columns: 1fr; } }
+    .form-hint { font-size: 11px; color: #64748b; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+    .hint-icon { color: var(--primary); cursor: help; position: relative; }
     .hint-icon:hover::after {
         content: attr(data-hint);
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #1a1a2e;
-        color: #fff;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 11px;
-        font-weight: 500;
-        white-space: nowrap;
-        max-width: 220px;
-        white-space: normal;
-        z-index: 100;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+        background: #1a2e1a; color: #fff; padding: 8px 12px; border-radius: 8px;
+        font-size: 11px; font-weight: 500; white-space: nowrap; z-index: 100;
     }
-    .input-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-    }
-    @media (max-width: 640px) {
-        .input-row { grid-template-columns: 1fr; }
-    }
-    .password-requirements {
-        background: #f8fafc;
-        border-radius: 8px;
-        padding: 12px;
-        margin-top: 8px;
-        font-size: 11px;
-        color: #64748b;
-    }
-    .password-requirements li {
-        margin: 4px 0;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .password-requirements li.valid { color: #22c55e; }
-    .password-requirements li.valid i { color: #22c55e; }
 </style>
 @endsection
 
 @section('content')
-<main class="auth-main">
-<div class="registro-container">
-    <a href="{{ route('home') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
-    <div class="reg-header">
-        <img src="{{ asset('assets/logo.png') }}" alt="SENA">
-        <h2>Registro Instructor</h2>
+<div class="login-page-wrapper">
+    <a href="{{ route('home') }}" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Volver al Inicio
+    </a>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="login-container">
+        <div class="login-brand">
+            <div class="brand-header">
+                <img src="{{ asset('assets/logo.png') }}" alt="SENA">
+                <span>Inspírate<br>SENA</span>
+            </div>
+            
+            <div class="brand-quote">
+                <h2>¡Guía el <span style="color: var(--primary-light);">Futuro!</span></h2>
+                <p>Lidera proyectos con aprendices y conecta con empresas.</p>
+            </div>
+
+            <div class="brand-footer">
+                Bolsa de Proyectos & Talentos
+            </div>
+        </div>
+
+        <div class="login-content">
+            <div class="content-header">
+                <h3>Registro Instructor</h3>
+                <p>Crea tu cuenta de instructor</p>
+            </div>
+
+            @if($errors->any())
+                <div class="alert alert-error">
+                    @foreach($errors->all() as $error) <span>{{ $error }}</span><br> @endforeach
+                </div>
+            @endif
+
+            <form action="{{ route('registro.instructor.post') }}" method="POST">
+                @csrf
+                <div class="input-row">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="nombre" value="{{ old('nombre') }}" placeholder="Tu nombre" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Apellidos</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="apellido" value="{{ old('apellido') }}" placeholder="Tus apellidos" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Documento de Identidad</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" name="documento" value="{{ old('documento') }}" placeholder="Número de documento" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Especialización SENA</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-chalkboard-user"></i>
+                        <input type="text" name="especialidad" value="{{ old('especialidad') }}" placeholder="Área de especialización" required>
+                    </div>
+                    <div class="form-hint">Ej: Desarrollo de Software, Electricidad</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="correo" value="{{ old('correo') }}" placeholder="tu@email.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" placeholder="Mín. 6 caracteres" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="terminos" name="terminos" required style="width: 16px; height: 16px; accent-color: var(--primary);">
+                        <label for="terminos" style="margin: 0; font-size: 13px; color: var(--text-light);">Acepto los Términos y Condiciones</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Crear Cuenta</button>
+            </form>
+
+            <div class="divider">¿Ya tienes cuenta?</div>
+
+            <a href="{{ route('login') }}" class="btn-submit" style="text-align: center; text-decoration: none;">
+                Iniciar Sesión
+            </a>
+        </div>
     </div>
-
-    @if($errors->any())
-        <div class="error-msg">@foreach($errors->all() as $e){{ $e }}<br>@endforeach</div>
-    @endif
-
-    <form action="{{ route('registro.instructor.post') }}" method="POST">
-        @csrf
-        <div class="input-row">
-            <div class="form-group input-icon">
-                <i class="fa-solid fa-user"></i>
-                <input type="text" name="nombre" value="{{ old('nombre') }}" placeholder="Nombres completos" required>
-                <div class="form-hint">
-                    <i class="fas fa-info-circle hint-icon" data-hint="Nombres tal como aparecen en tu documento de identidad"></i>
-                    Ej: María del Pilar
-                </div>
-            </div>
-            <div class="form-group input-icon">
-                <i class="fa-solid fa-user"></i>
-                <input type="text" name="apellido" value="{{ old('apellido') }}" placeholder="Apellidos completos" required>
-                <div class="form-hint">
-                    <i class="fas fa-info-circle hint-icon" data-hint="Ambos apellidos"></i>
-                    Ej: Rodríguez Mendoza
-                </div>
-            </div>
-        </div>
-        <div class="form-group input-icon">
-            <i class="fa-solid fa-id-card"></i>
-            <input type="text" name="documento" value="{{ old('documento') }}" placeholder="Número de documento (CC)" required>
-            <div class="form-hint">
-                <i class="fas fa-info-circle hint-icon" data-hint="Número sin puntos ni comas. Mínimo 8 dígitos."></i>
-                Cédula de ciudadanía
-            </div>
-        </div>
-        <div class="form-group input-icon">
-            <i class="fa-solid fa-chalkboard-user"></i>
-            <input type="text" name="especialidad" value="{{ old('especialidad') }}" placeholder="Área de especialización SENA" required>
-            <div class="form-hint">
-                <i class="fas fa-info-circle hint-icon" data-hint="Área técnica o profesional en la que te especializas"></i>
-                Ej: Desarrollo de Software, Electricidad, Mecánica
-            </div>
-        </div>
-        <div class="form-group input-icon">
-            <i class="fa-solid fa-envelope"></i>
-            <input type="email" name="correo" value="{{ old('correo') }}" placeholder="Correo electrónico institucional" required>
-            <div class="form-hint">
-                <i class="fas fa-info-circle hint-icon" data-hint="Correo del SENA o institucional activo"></i>
-                Recibirás un enlace de verificación
-            </div>
-        </div>
-        <div class="form-group input-icon">
-            <i class="fa-solid fa-lock"></i>
-            <input type="password" id="password" name="password" placeholder="Contraseña" required>
-            <div class="password-requirements" id="passwordReq" style="display: none;">
-                La contraseña debe tener:
-                <ul style="list-style: none; padding: 0; margin: 8px 0 0;">
-                    <li id="req-length"><i class="fas fa-circle"></i> Mínimo 8 caracteres</li>
-                    <li id="req-upper"><i class="fas fa-circle"></i> Al menos una mayúscula</li>
-                    <li id="req-lower"><i class="fas fa-circle"></i> Al menos una minúscula</li>
-                    <li id="req-number"><i class="fas fa-circle"></i> Al menos un número</li>
-                </ul>
-            </div>
-        </div>
-        <div class="form-group input-icon">
-            <i class="fa-solid fa-lock"></i>
-            <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" required>
-        </div>
-        <div class="checkbox-group">
-            <input type="checkbox" id="terminos" name="terminos" required>
-            <label for="terminos">Acepto los <a href="#" style="color: var(--primary);">Términos y Condiciones</a></label>
-        </div>
-        <button type="submit" class="btn-registro">Registrarse</button>
-    </form>
-    <p class="link-text">¿Ya tienes cuenta? <a href="{{ route('login') }}">Inicia Sesión</a></p>
 </div>
-</main>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const passwordInput = document.getElementById('password');
-    const passwordReq = document.getElementById('passwordReq');
-    
-    passwordInput.addEventListener('focus', function() {
-        passwordReq.style.display = 'block';
-    });
-    
-    passwordInput.addEventListener('input', function() {
-        const val = this.value;
-        
-        document.getElementById('req-length').className = val.length >= 8 ? 'valid' : '';
-        document.getElementById('req-length').querySelector('i').className = val.length >= 8 ? 'fas fa-check-circle' : 'fas fa-circle';
-        
-        document.getElementById('req-upper').className = /[A-Z]/.test(val) ? 'valid' : '';
-        document.getElementById('req-upper').querySelector('i').className = /[A-Z]/.test(val) ? 'fas fa-check-circle' : 'fas fa-circle';
-        
-        document.getElementById('req-lower').className = /[a-z]/.test(val) ? 'valid' : '';
-        document.getElementById('req-lower').querySelector('i').className = /[a-z]/.test(val) ? 'fas fa-check-circle' : 'fas fa-circle';
-        
-        document.getElementById('req-number').className = /\d/.test(val) ? 'valid' : '';
-        document.getElementById('req-number').querySelector('i').className = /\d/.test(val) ? 'fas fa-check-circle' : 'fas fa-circle';
-    });
-});
-</script>
 @endsection
