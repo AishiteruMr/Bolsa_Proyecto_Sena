@@ -3,6 +3,7 @@
 @section('title', 'Notificaciones')
 @section('page-title', 'Mis Notificaciones')
 
+
 @section('content')
 <div class="animate-fade-in" style="max-width: 800px; margin: 0 auto;">
 
@@ -24,6 +25,11 @@
                 </button>
             </form>
         @endif
+    </div>
+    <div style="text-align:right; margin-top: 8px;">
+        <a href="{{ url()->previous() }}" class="btn-premium" style="background:#e2e8f0; color: var(--text); box-shadow: none; border: 1px solid var(--border); font-size: 13px; padding: 10px 20px;">
+            <i class="fas fa-arrow-left"></i> Regresar
+        </a>
     </div>
 
     {{-- LIST --}}

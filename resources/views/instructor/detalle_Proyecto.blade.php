@@ -252,7 +252,7 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                             <form action="{{ route('instructor.postulaciones.estado', $p->id) }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="estado" value="aceptada">
+                                <input type="hidden" name="estado" value="aprobada">
                                 <button type="submit" style="width: 100%; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border: none; padding: 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; cursor: pointer;">Aceptar</button>
                             </form>
                             <form action="{{ route('instructor.postulaciones.estado', $p->id) }}" method="POST">

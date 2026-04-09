@@ -2,29 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use App\Mail\PostulacionEstadoCambiado;
-use App\Models\Instructor;
-use App\Models\Proyecto;
-use App\Models\Postulacion;
 use App\Models\Aprendiz;
 use App\Models\Etapa;
 use App\Models\Evidencia;
+use App\Models\Instructor;
+use App\Models\Postulacion;
+use App\Models\Proyecto;
 use App\Models\User;
+use App\Notifications\AppNotification;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class InstructorController extends Controller
 {
     public function dashboard()
     {
         $usrId = session('usr_id');
-        
+
         $instructor = Instructor::where('usuario_id', $usrId)->first();
 
-        if (!$instructor) {
+        if (! $instructor) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de instructor.');
         }
 
@@ -66,12 +68,13 @@ class InstructorController extends Controller
         $proximosProyectos = Proyecto::where('instructor_usuario_id', $usrId)
             ->whereIn('estado', ['aprobado', 'en_progreso'])
             ->get();
-            
-        $proximoCierre = $proximosProyectos->filter(function($p) {
-            $fechaFin = \Carbon\Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
+
+        $proximoCierre = $proximosProyectos->filter(function ($p) {
+            $fechaFin = Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
+
             return $fechaFin->isFuture(); // solo proyectos aún vigentes
-        })->sortBy(function($p) {
-            return \Carbon\Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
+        })->sortBy(function ($p) {
+            return Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
         })->first();
 
         return view('instructor.dashboard', compact(
@@ -96,16 +99,16 @@ class InstructorController extends Controller
     public function aprendices()
     {
         $usrId = session('usr_id');
-        
-        $aprendices = Aprendiz::whereHas('postulaciones', function($query) use ($usrId) {
+
+        $aprendices = Aprendiz::whereHas('postulaciones', function ($query) use ($usrId) {
             $query->where('estado', 'aceptada')
-                ->whereHas('proyecto', function($subQuery) use ($usrId) {
+                ->whereHas('proyecto', function ($subQuery) use ($usrId) {
                     $subQuery->where('instructor_usuario_id', $usrId)
                         ->whereIn('estado', ['aprobado', 'en_progreso']);
                 });
-        })->with(['usuario', 'postulaciones' => function($q) use ($usrId) {
+        })->with(['usuario', 'postulaciones' => function ($q) use ($usrId) {
             $q->where('estado', 'aceptada')
-                ->whereHas('proyecto', function($sq) use ($usrId) {
+                ->whereHas('proyecto', function ($sq) use ($usrId) {
                     $sq->where('instructor_usuario_id', $usrId);
                 });
         }])->get();
@@ -118,7 +121,7 @@ class InstructorController extends Controller
         $usrId = session('usr_id');
         $instructor = Instructor::where('usuario_id', $usrId)->first();
 
-        if (!$instructor) {
+        if (! $instructor) {
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de instructor.');
         }
 
@@ -126,7 +129,7 @@ class InstructorController extends Controller
 
         // 🆕 Estadísticas reales para el perfil
         $proyectosCount = Proyecto::where('instructor_usuario_id', $usrId)->count();
-        
+
         $aprendicesCount = Postulacion::whereIn('proyecto_id',
             Proyecto::where('instructor_usuario_id', $usrId)->pluck('id')
         )->where('estado', 'aceptada')
@@ -139,7 +142,7 @@ class InstructorController extends Controller
             ->count();
 
         return view('instructor.perfil', compact(
-            'instructor', 'usuario', 'proyectosCount', 
+            'instructor', 'usuario', 'proyectosCount',
             'aprendicesCount', 'evidenciasPendientesCount'
         ));
     }
@@ -151,16 +154,16 @@ class InstructorController extends Controller
         $usuario = User::findOrFail($usrId);
 
         $request->validate([
-            'nombre'       => 'required|string|max:50',
-            'apellido'     => 'required|string|max:50',
+            'nombre' => 'required|string|max:50',
+            'apellido' => 'required|string|max:50',
             'especialidad' => 'required|string|max:100',
-            'password'     => 'nullable|string|min:6',
+            'password' => 'nullable|string|min:6',
         ]);
 
         $instructor->update([
-            'nombres'      => $request->nombre,
-            'apellidos'    => $request->apellido,
-            'especialidad'=> $request->especialidad,
+            'nombres' => $request->nombre,
+            'apellidos' => $request->apellido,
+            'especialidad' => $request->especialidad,
         ]);
 
         if ($request->filled('password')) {
@@ -170,6 +173,7 @@ class InstructorController extends Controller
         }
 
         session(['nombre' => $request->nombre, 'apellido' => $request->apellido]);
+
         return back()->with('success', 'Perfil actualizado correctamente.');
     }
 
@@ -177,26 +181,26 @@ class InstructorController extends Controller
     public function historial()
     {
         $usrId = session('usr_id');
-        
+
         // El historial muestra proyectos asignados, sin importar si están activos o inactivos
         $proyectos = Proyecto::where('instructor_usuario_id', $usrId)
             ->with(['empresa', 'postulaciones'])
             ->orderByDesc('fecha_publicacion')
             ->get()
-            ->map(function($proyecto) {
+            ->map(function ($proyecto) {
                 $totalAprendices = $proyecto->postulaciones->count();
                 $aprendicesAprobados = $proyecto->postulaciones
                     ->where('estado', 'aceptada')
                     ->count();
-                
-                return (object)[
+
+                return (object) [
                     'id' => $proyecto->id,
                     'titulo' => $proyecto->titulo,
                     'categoria' => $proyecto->categoria,
                     'estado' => $proyecto->estado,
                     'fecha_publicacion' => $proyecto->fecha_publicacion,
-                    'pro_fecha_finalizacion' => $proyecto->fecha_publicacion 
-                        ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias) 
+                    'pro_fecha_finalizacion' => $proyecto->fecha_publicacion
+                        ? Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias)
                         : null,
                     'nombre' => $proyecto->empresa->nombre ?? 'No designada',
                     'total_aprendices' => $totalAprendices,
@@ -211,7 +215,7 @@ class InstructorController extends Controller
     public function reporteSeguimiento($proId)
     {
         $usrId = session('usr_id');
-        
+
         // Verificar que el proyecto pertenece al instructor
         $proyecto = Proyecto::where('id', $proId)
             ->where('instructor_usuario_id', $usrId)
@@ -224,7 +228,7 @@ class InstructorController extends Controller
             ->get();
 
         // Obtener aprendices aprobados
-        $aprendices = Aprendiz::whereHas('postulaciones', function($query) use ($proId) {
+        $aprendices = Aprendiz::whereHas('postulaciones', function ($query) use ($proId) {
             $query->where('proyecto_id', $proId)
                 ->where('estado', 'aceptada');
         })->with('usuario')->get();
@@ -279,36 +283,40 @@ class InstructorController extends Controller
     {
         // View might send 'Aprobada', 'Rechazada', 'Pendiente'
         $estadoInput = strtolower($request->estado);
-        if ($estadoInput === 'aprobada') $estadoInput = 'aceptada';
+        if ($estadoInput === 'aprobada') {
+            $estadoInput = 'aprobada';
+        }
 
-        //$request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
+        // $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
 
         $usrId = session('usr_id');
 
         // Verificar que la postulación pertenece a un proyecto del instructor
         $postulacion = Postulacion::where('id', $id)
-            ->whereHas('proyecto', function($query) use($usrId) {
+            ->whereHas('proyecto', function ($query) use ($usrId) {
                 $query->where('instructor_usuario_id', $usrId);
             })->firstOrFail();
 
         $postulacion->update(['estado' => $estadoInput]);
 
         // Enviar correo al aprendiz si se aprueba o rechaza
-        if (in_array($estadoInput, ['aceptada', 'rechazada'])) {
+        if (in_array($estadoInput, ['aprobada', 'rechazada'])) {
             try {
                 $aprendiz = $postulacion->aprendiz()->with('usuario')->first();
                 $proyecto = $postulacion->proyecto;
-                
+
                 if ($aprendiz && $proyecto) {
+                    // Pass the entire Proyecto object as the second parameter (expects object)
+                    // instead of just the title string to satisfy the type hint in PostulacionEstadoCambiado
                     Mail::to($aprendiz->usuario->correo)
                         ->send(new PostulacionEstadoCambiado(
                             $aprendiz->nombres,
-                            $proyecto->titulo,
+                            $proyecto,
                             ucfirst($estadoInput)
                         ));
                 }
             } catch (\Exception $e) {
-                Log::error('Error al enviar correo de estado de postulación: ' . $e->getMessage());
+                Log::error('Error al enviar correo de estado de postulación: '.$e->getMessage());
             }
         }
 
@@ -326,16 +334,16 @@ class InstructorController extends Controller
             ->firstOrFail();
 
         $request->validate([
-            'nombre'       => 'required|string|max:200',
-            'descripcion'  => 'required|string|max:1000',
-            'orden'        => 'required|integer|min:1',
+            'nombre' => 'required|string|max:200',
+            'descripcion' => 'required|string|max:1000',
+            'orden' => 'required|integer|min:1',
         ]);
 
         Etapa::create([
-            'proyecto_id'     => $proId,
-            'orden'           => $request->orden,
-            'nombre'          => $request->nombre,
-            'descripcion'     => $request->descripcion,
+            'proyecto_id' => $proId,
+            'orden' => $request->orden,
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
         ]);
 
         return back()->with('success', 'Etapa creada correctamente.');
@@ -348,20 +356,20 @@ class InstructorController extends Controller
 
         // Verificar que la etapa pertenece a un proyecto del instructor
         $etapa = Etapa::where('id', $etaId)
-            ->whereHas('proyecto', function($query) use ($usrId) {
+            ->whereHas('proyecto', function ($query) use ($usrId) {
                 $query->where('instructor_usuario_id', $usrId);
             })->firstOrFail();
 
         $request->validate([
-            'nombre'       => 'required|string|max:200',
-            'descripcion'  => 'required|string|max:1000',
-            'orden'        => 'required|integer|min:1',
+            'nombre' => 'required|string|max:200',
+            'descripcion' => 'required|string|max:1000',
+            'orden' => 'required|integer|min:1',
         ]);
 
         $etapa->update([
-            'orden'           => $request->orden,
-            'nombre'          => $request->nombre,
-            'descripcion'     => $request->descripcion,
+            'orden' => $request->orden,
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
         ]);
 
         return back()->with('success', 'Etapa actualizada correctamente.');
@@ -374,7 +382,7 @@ class InstructorController extends Controller
 
         // Verificar que la etapa pertenece a un proyecto del instructor
         $etapa = Etapa::where('id', $etaId)
-            ->whereHas('proyecto', function($query) use ($usrId) {
+            ->whereHas('proyecto', function ($query) use ($usrId) {
                 $query->where('instructor_usuario_id', $usrId);
             })->firstOrFail();
 
@@ -435,38 +443,48 @@ class InstructorController extends Controller
     // ✅ MÉTODO PARA CALIFICAR EVIDENCIA
     public function calificarEvidencia(Request $request, int $evidId)
     {
+        // Recibimos el estado directamente como uno de: 'pendiente', 'aprobada', 'rechazada'
         $estadoInput = strtolower($request->estado);
-        if ($estadoInput === 'aprobada') $estadoInput = 'aceptada';
-        
+        // Validaremos que sea un estado válido para evidencias
+
         $usrId = session('usr_id');
 
         // Verificar que la evidencia pertenece a un proyecto del instructor
         $evidencia = Evidencia::where('id', $evidId)
-            ->whereHas('proyecto', function($query) use ($usrId) {
+            ->whereHas('proyecto', function ($query) use ($usrId) {
                 $query->where('instructor_usuario_id', $usrId);
             })->firstOrFail();
 
         $request->validate([
-            'comentario'  => 'nullable|string|max:1000',
+            'estado' => 'required|in:pendiente,aprobada,rechazada',
+            'comentario' => 'nullable|string|max:1000',
         ]);
 
         $evidencia->update([
-            'estado'                 => $estadoInput,
-            'comentario_instructor'  => $request->comentario,
+            'estado' => $estadoInput,
+            'comentario_instructor' => $request->comentario,
         ]);
 
         try {
             $evidencia->load(['aprendiz.usuario', 'proyecto']);
             $aprendizUsr = $evidencia->aprendiz->usuario ?? null;
             if ($aprendizUsr) {
-                $statusColor = $estadoInput === 'aceptada' ? 'fa-check-circle' : ($estadoInput === 'rechazada' ? 'fa-times-circle' : 'fa-info-circle');
-                $aprendizUsr->notify(new \App\Notifications\AppNotification(
-                    'Evidencia ' . ucfirst($estadoInput),
-                    'El instructor ha calificado tu evidencia en el proyecto "' . \Illuminate\Support\Str::limit($evidencia->proyecto->titulo ?? '', 30) . '".',
-                    $statusColor
+                // Mapear estado a iconos/colores
+                $stateColor = match ($estadoInput) {
+                    'aprobada' => 'fa-check-circle',
+                    'rechazada' => 'fa-times-circle',
+                    'pendiente' => 'fa-info-circle',
+                    default => 'fa-info-circle',
+                };
+                $aprendizUsr->notify(new AppNotification(
+                    'Evidencia '.ucfirst($estadoInput),
+                    'El instructor ha calificado tu evidencia en el proyecto "'.Str::limit($evidencia->proyecto->titulo ?? '', 30).'".',
+                    $stateColor
                 ));
             }
-        } catch (\Exception $e) { \Illuminate\Support\Facades\Log::error($e->getMessage()); }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+        }
 
         return back()->with('success', 'Evidencia calificada correctamente.');
     }

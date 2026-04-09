@@ -75,9 +75,12 @@
         
         <div style="display: flex; flex-direction: column; gap: 2.5rem;">
             <!-- Apprentice Management Table -->
-            <div class="glass-card" style="padding: 2.5rem;">
-                <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin-bottom: 2rem; display: flex; align-items: center; gap: 12px;">
-                    <i class="fas fa-id-card-alt" style="color: var(--primary);"></i> Matriz de Rendimiento
+            <div class="glass-card" style="padding: 2.5rem; border-top: 5px solid #3b82f6; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1); border-radius: 20px;">
+                <h3 style="font-size: 1.4rem; font-weight: 900; color: var(--text-main); margin-bottom: 2rem; display: flex; align-items: center; gap: 15px;">
+                    <span style="background: rgba(59, 130, 246, 0.1); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; color: #3b82f6;">
+                        <i class="fas fa-chart-line" style="font-size: 1.2rem;"></i> 
+                    </span>
+                    Matriz de Rendimiento Global
                 </h3>
                 <div style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
@@ -126,8 +129,13 @@
             </div>
 
             <!-- Detailed Stage Progress -->
-            <div class="glass-card" style="padding: 2.5rem;">
-                <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin-bottom: 2rem;">Bitácora por Etapas</h3>
+            <div class="glass-card" style="padding: 2.5rem; border-top: 5px solid #8b5cf6; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1); border-radius: 20px;">
+                <h3 style="font-size: 1.4rem; font-weight: 900; color: var(--text-main); margin-bottom: 2rem; display: flex; align-items: center; gap: 15px;">
+                     <span style="background: rgba(139, 92, 246, 0.1); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; color: #8b5cf6;">
+                        <i class="fas fa-layer-group" style="font-size: 1.2rem;"></i> 
+                    </span>
+                    Bitácora Detallada por Etapas
+                </h3>
                 <div style="display: grid; gap: 1.5rem;">
                     @foreach($etapas as $etapa)
                         <div class="stage-accordion-rep">
@@ -179,22 +187,44 @@
 
         <!-- Meta Info Sidebar -->
         <div style="display: flex; flex-direction: column; gap: 1.5rem; position: sticky; top: 2rem;">
-            <div class="glass-card" style="padding: 1.5rem;">
-                <h4 style="font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 1.25rem;">Ficha Técnica</h4>
-                <div style="display: grid; gap: 1rem;">
+            <div class="glass-card" style="padding: 2rem; border-radius: 20px; border-top: 4px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                <h4 style="font-size: 1.1rem; font-weight: 900; color: var(--text-main); text-transform: uppercase; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-clipboard-list" style="color: var(--primary);"></i> Ficha Técnica
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
                     <div>
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">ESTADO</p>
-                        <span class="badge" style="background: var(--primary); color: white; border: none; width: 100%; text-align: center;">{{ $proyecto->estado }}</span>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Estado Actual</p>
+                        <span style="display: inline-block; padding: 6px 14px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 10px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 6px; vertical-align: middle;"></i>{{ $proyecto->estado }}
+                        </span>
+                    </div>
+                    <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Empresa Patrocinadora</p>
+                        <p style="font-weight: 800; color: var(--text-main); font-size: 0.95rem;">
+                            <i class="fas fa-building" style="color: var(--primary); margin-right: 8px;"></i>{{ $proyecto->empresa->nombre ?? 'No asignada' }}
+                        </p>
+                    </div>
+                    <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Categoría del Proyecto</p>
+                        <p style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">
+                            {{ $proyecto->categoria ?? 'General' }}
+                        </p>
                     </div>
                     <div>
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">EMPRESA</p>
-                        <p style="font-weight: 700; color: var(--text-main);">{{ $proyecto->nombre }}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">CRONOGRAMA</p>
-                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
-                            <span style="color: var(--text-muted);">Cierre:</span>
-                            <span style="font-weight: 700; color: var(--text-main);">{{ \Carbon\Carbon::parse($proyecto->fecha_finalizacion)->format('d/m/Y') }}</span>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 800; text-transform: uppercase;">Cronograma de Ejecución</p>
+                        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; background: var(--bg-main); padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: var(--text-muted); font-weight: 700;"><i class="fas fa-play-circle" style="margin-right: 6px;"></i>Inicio:</span>
+                                <span style="font-weight: 800; color: var(--text-main);">{{ $proyecto->fecha_publicacion ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->format('d/m/Y') : 'Por definir' }}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: var(--text-muted); font-weight: 700;"><i class="fas fa-flag-checkered" style="margin-right: 6px;"></i>Cierre:</span>
+                                <span style="font-weight: 800; color: var(--primary);">{{ $proyecto->fecha_publicacion && $proyecto->duracion_estimada_dias ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias)->format('d/m/Y') : 'Por definir' }}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: var(--text-muted); font-weight: 700;"><i class="far fa-clock" style="margin-right: 6px;"></i>Duración:</span>
+                                <span style="font-weight: 800; color: var(--text-main);">{{ $proyecto->duracion_estimada_dias ?? 0 }} Días</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -237,16 +267,21 @@
     .stage-accordion-rep { border-radius: 16px; overflow: hidden; margin-bottom: 10px; }
     .accordion-header-rep {
         padding: 1.25rem 2rem;
-        background: var(--bg-main);
-        border: 1px solid var(--border);
+        background: white;
+        border: 2px solid var(--border);
         display: flex;
         justify-content: space-between;
         align-items: center;
         cursor: pointer;
         transition: all 0.2s;
         border-radius: 16px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.02);
     }
-    .accordion-header-rep:hover { background: white; border-color: var(--primary-light); }
+    .accordion-header-rep:hover { 
+        border-color: #8b5cf6; 
+        box-shadow: 0 6px 16px rgba(139, 92, 246, 0.15); 
+        transform: translateY(-2px);
+    }
     .stage-num-rep {
         width: 32px;
         height: 32px;
