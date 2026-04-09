@@ -28,10 +28,7 @@
         </div>
         <div class="about-image">
             <img src="{{ asset('assets/web1.jpg') }}" alt="SENA" onerror="this.src='https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80'">
-            <div class="about-badge">
-                <div style="font-size: 36px; font-weight: 900; color: var(--secondary);">+200</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text-light);">Proyectos Exitosos</div>
-            </div>
+        
         </div>
     </section>
 
