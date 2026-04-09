@@ -156,11 +156,18 @@
                     <h4 style="font-size:15px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; margin-bottom:20px;">
                         <i class="fas fa-shield-alt" style="color:#3eb489;"></i> Seguridad
                     </h4>
-                    <div class="aprendiz-form-group" style="margin-bottom:0;">
+                    <div class="aprendiz-form-group" style="margin-bottom:16px;">
                         <label class="aprendiz-form-label">Nueva Contraseña (Opcional)</label>
                         <div class="aprendiz-input-wrapper">
-                            <i class="fas fa-lock apprentiz-input-icon"></i>
+                            <i class="fas fa-lock aprendiz-input-icon"></i>
                             <input type="password" name="password" placeholder="Mínimo 6 caracteres (vacío = sin cambio)" class="aprendiz-input-control">
+                        </div>
+                    </div>
+                    <div class="aprendiz-form-group" style="margin-bottom:0;">
+                        <label class="aprendiz-form-label">Confirmar Contraseña</label>
+                        <div class="aprendiz-input-wrapper">
+                            <i class="fas fa-lock aprendiz-input-icon"></i>
+                            <input type="password" name="password_confirmation" placeholder="Repite la contraseña" class="aprendiz-input-control">
                         </div>
                     </div>
                 </div>

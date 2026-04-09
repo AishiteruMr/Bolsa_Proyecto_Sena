@@ -59,7 +59,7 @@
                         <i class="fas fa-check-circle"></i> Postulación Aprobada
                     </span>
                     <div style="font-size:12px; color:#3eb489; font-weight: 700;">
-                        <i class="fas fa-briefcase" style="margin-right:4px;"></i>{{ $a->titulo ?? 'Sin proyecto' }}
+                        <i class="fas fa-briefcase" style="margin-right:4px;"></i>{{ $a->postulaciones->first()?->proyecto?->titulo ?? 'Sin proyecto' }}
                     </div>
                 </div>
             </div>
