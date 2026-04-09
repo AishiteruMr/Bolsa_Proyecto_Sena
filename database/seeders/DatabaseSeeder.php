@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
                 'correo'           => 'admin@gmail.com',
                 'contrasena'       => Hash::make('admin123'),
                 'rol_id'           => $adminRoleId,
+                'email_verified_at' => now(),
                 'created_at'       => now(),
                 'updated_at'       => now(),
             ]);
@@ -43,6 +44,7 @@ class DatabaseSeeder extends Seeder
                 'correo'           => 'empresa@gmail.com',
                 'contrasena'       => Hash::make('empresa123'),
                 'rol_id'           => $companyRoleId,
+                'email_verified_at' => now(),
                 'created_at'       => now(),
                 'updated_at'       => now(),
             ]);
@@ -68,6 +70,7 @@ class DatabaseSeeder extends Seeder
                 'correo'           => 'instructor@gmail.com',
                 'contrasena'       => Hash::make('instructor123'),
                 'rol_id'           => $instructorRoleId,
+                'email_verified_at' => now(),
                 'created_at'       => now(),
                 'updated_at'       => now(),
             ]);
@@ -93,6 +96,7 @@ class DatabaseSeeder extends Seeder
                 'correo'           => 'aprendiz@gmail.com',
                 'contrasena'       => Hash::make('aprendiz123'),
                 'rol_id'           => $apprenticeRoleId,
+                'email_verified_at' => now(),
                 'created_at'       => now(),
                 'updated_at'       => now(),
             ]);
