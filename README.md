@@ -103,5 +103,3 @@ public/
 
 Este proyecto está bajo la licencia MIT.
 
-
----
