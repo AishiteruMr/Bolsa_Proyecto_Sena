@@ -81,6 +81,16 @@
     background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     opacity: 0.5;
 }
+.login-brand::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(62,180,137,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 40%),
+        linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.2) 100%);
+    pointer-events: none;
+}
 
 .brand-header {
     display: flex;
@@ -88,26 +98,79 @@
     gap: 14px;
     position: relative;
     z-index: 1;
+    padding: 20px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 .brand-header img {
-    width: 48px; height: 48px;
-    background: #fff; padding: 8px;
+    width: 56px; height: 56px;
+    background: #fff; padding: 10px;
     border-radius: 14px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 .brand-header span {
-    font-size: 24px; font-weight: 900; color: #fff;
+    font-size: 26px; font-weight: 900; color: #fff;
     letter-spacing: -1px; line-height: 1.1;
 }
 
-.brand-quote { margin: 40px 0; position: relative; z-index: 1; }
+.brand-quote { 
+    margin: 40px 0; 
+    position: relative; 
+    z-index: 1; 
+    padding: 30px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+}
 .brand-quote h2 {
-    font-size: 30px; font-weight: 900; color: #fff;
+    font-size: 32px; font-weight: 900; color: #fff;
     line-height: 1.2; letter-spacing: -1px; margin-bottom: 16px;
 }
 .brand-quote p {
-    font-size: 14px; color: rgba(255,255,255,0.7);
+    font-size: 15px; color: rgba(255,255,255,0.75);
     line-height: 1.6; font-weight: 500;
+    font-style: italic;
+}
+
+.brand-features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 30px 0;
+    position: relative;
+    z-index: 1;
+}
+.brand-feature {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+.brand-feature:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+}
+.brand-feature i {
+    width: 40px; height: 40px;
+    background: rgba(62,180,137,0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #3eb489;
+}
+.brand-feature span {
+    font-size: 14px; font-weight: 600; color: #fff;
+    letter-spacing: 0.3px;
 }
 
 .brand-footer {
@@ -116,6 +179,8 @@
     text-transform: uppercase;
     position: relative;
     z-index: 1;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
 }
 
 .login-content {
@@ -229,3 +294,6 @@
 .login-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
 .login-content::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
 .login-content::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .input-row { grid-template-columns: 1fr; } }

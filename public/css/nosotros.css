@@ -2,6 +2,7 @@
     padding: 120px 8% 80px;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
     text-align: center;
+    color:#fff
 }
 .hero-nosotros h1 {
     font-size: clamp(40px, 5vw, 64px);
@@ -9,7 +10,7 @@
     letter-spacing: -2px;
     line-height: 1.1;
     margin-bottom: 24px;
-    color: var(--secondary);
+    color:#fff;
 }
 .hero-nosotros p {
     font-size: 19px;
@@ -17,6 +18,7 @@
     max-width: 700px;
     margin: 0 auto;
     line-height: 1.6;
+    color:#fff
 }
 
 .section-header { text-align: center; margin-bottom: 60px; }

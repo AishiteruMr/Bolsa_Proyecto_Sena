@@ -74,6 +74,21 @@
                 <p>"La innovación es el camino que transforma el conocimiento en soluciones reales para el mundo."</p>
             </div>
 
+            <div class="brand-features">
+                <div class="brand-feature">
+                    <i class="fas fa-rocket"></i>
+                    <span>Proyectos Innovadores</span>
+                </div>
+                <div class="brand-feature">
+                    <i class="fas fa-handshake"></i>
+                    <span>Red de Contactos</span>
+                </div>
+                <div class="brand-feature">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Seguimiento Profesional</span>
+                </div>
+            </div>
+
             <div class="brand-footer">
                 Bolsa de Proyectos & Talentos v2.0
             </div>

@@ -39,25 +39,8 @@
                 <div class="hero-image-wrapper">
                     <img src="{{ asset('assets/sena1.png') }}" alt="SENA" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80'">
                 </div>
-                <!-- Mini Floatings -->
-                <div class="floating-card" style="top: 10%; right: -20px; animation-delay: 0s;">
-                    <div style="width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div>
-                        <div style="font-weight: 800; font-size: 16px; color: var(--secondary);">+150 Casos</div>
-                        <div style="font-size: 11px; color: var(--text-light);">Proyectos Validados</div>
-                    </div>
-                </div>
-                <div class="floating-card" style="bottom: 15%; left: -40px; animation-delay: 1s;">
-                    <div style="width: 44px; height: 44px; background: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #3b82f6;">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div>
-                        <div style="font-weight: 800; font-size: 16px; color: var(--secondary);">500+ Alumnos</div>
-                        <div style="font-size: 11px; color: var(--text-light);">Talento Certificado</div>
-                    </div>
-                </div>
+               
+              
             </div>
         </div>
     </section>
