@@ -133,12 +133,12 @@
                                             </div>
                                             <div style="font-size: 13px; color: var(--text-light); font-weight: 600; margin-bottom: 10px;">
                                                 <i class="far fa-clock" style="margin-right: 8px;"></i>
-                                                Entregado: {{ \Carbon\Carbon::parse($evidencia->fecha_subida)->translatedFormat('d M Y, H:i') }}
+                                                Entregado: {{ \Carbon\Carbon::parse($evidencia->fecha_envio)->translatedFormat('d M Y, H:i') }}
                                             </div>
-                                            @if($evidencia->comentarios_instructor)
+                                            @if($evidencia->comentario_instructor)
                                                 <div style="background: rgba(255,255,255,0.8); border-radius: 10px; padding: 12px 16px; border: 1px solid rgba(0,0,0,0.05);">
                                                     <p style="font-size: 13px; color: var(--text); font-weight: 600; margin: 0;">
-                                                        <i class="fas fa-comment-dots" style="color: #3eb489; margin-right: 8px;"></i>{{ $evidencia->comentarios_instructor }}
+                                                        <i class="fas fa-comment-dots" style="color: #3eb489; margin-right: 8px;"></i>{{ $evidencia->comentario_instructor }}
                                                     </p>
                                                 </div>
                                             @endif
@@ -147,8 +147,8 @@
                                             <span style="background: white; color: {{ $stateColor['text'] }}; border: 1.5px solid {{ $stateColor['border'] }}; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; white-space: nowrap; display: flex; align-items: center; gap: 8px;">
                                                 <i class="fas {{ $stateColor['icon'] }}"></i> {{ $evidencia->estado }}
                                             </span>
-                                            @if($evidencia->archivo_url)
-                                                <a href="{{ asset('storage/' . $evidencia->archivo_url) }}" target="_blank"
+                                            @if($evidencia->ruta_archivo)
+                                                <a href="{{ asset('storage/' . $evidencia->ruta_archivo) }}" target="_blank"
                                                    class="btn-premium" style="padding: 8px 16px; font-size: 12px;">
                                                     <i class="fas fa-file-download"></i> Ver Archivo
                                                 </a>

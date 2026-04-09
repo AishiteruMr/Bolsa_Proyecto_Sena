@@ -282,6 +282,7 @@
 
 @if($proyecto->latitud && $proyecto->longitud)
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="{{ asset('js/maps.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {

@@ -50,7 +50,7 @@
             
             <div style="font-size:0.85rem; color: var(--text-light); margin-bottom: 1rem;">
                 <div style="margin-bottom: 4px;"><i class="fas fa-graduation-cap" style="color:#3eb489; margin-right:6px;"></i>{{ $a->programa_formacion ?? 'Sin programa' }}</div>
-                <div><i class="fas fa-envelope" style="color:#3eb489; margin-right:6px;"></i>{{ $a->correo ?? 'Sin correo' }}</div>
+                <div><i class="fas fa-envelope" style="color:#3eb489; margin-right:6px;"></i>{{ $a->usuario->correo ?? 'Sin correo' }}</div>
             </div>
 
             <div style="margin-top: auto; width: 100%; border-top: 1px solid rgba(62,180,137,0.1); padding-top: 1rem;">
@@ -59,7 +59,7 @@
                         <i class="fas fa-check-circle"></i> Postulación Aprobada
                     </span>
                     <div style="font-size:12px; color:#3eb489; font-weight: 700;">
-                        <i class="fas fa-briefcase" style="margin-right:4px;"></i>{{ $a->titulo ?? 'Sin proyecto' }}
+                        <i class="fas fa-briefcase" style="margin-right:4px;"></i>{{ $a->postulaciones->first()?->proyecto?->titulo ?? 'Sin proyecto' }}
                     </div>
                 </div>
             </div>

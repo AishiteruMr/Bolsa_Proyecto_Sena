@@ -63,20 +63,52 @@
             </div>
 
             <div style="padding: 2rem;">
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
-                    <div style="background: rgba(62,180,137,0.05); padding: 1.25rem; border-radius: 14px; border: 1px solid rgba(62,180,137,0.1);">
-                        <p style="font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700;">Publicación</p>
-                        <p style="font-weight: 800; color: var(--text);">{{ \Carbon\Carbon::parse($proyecto->fecha_publicacion)->format('d M, Y') }}</p>
+                {{-- Stats row: 3 clean chips --}}
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="background: rgba(62,180,137,0.05); padding: 1.25rem; border-radius: 14px; border: 1px solid rgba(62,180,137,0.1); display:flex; align-items:center; gap:12px;">
+                        <div style="width:36px;height:36px;border-radius:10px;background:rgba(62,180,137,0.1);color:#3eb489;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="fas fa-rocket" style="font-size:14px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size:0.65rem;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;font-weight:700;">Publicación</p>
+                            <p style="font-weight:800;color:var(--text);font-size:0.9rem;">{{ $proyecto->fecha_publicacion ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->format('d M, Y') : 'No definida' }}</p>
+                        </div>
                     </div>
-                    <div style="background: rgba(62,180,137,0.05); padding: 1.25rem; border-radius: 14px; border: 1px solid rgba(62,180,137,0.1);">
-                        <p style="font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700;">Duración</p>
-                        <p style="font-weight: 800; color: var(--text);">{{ $proyecto->duracion_estimada_dias }} días</p>
+                    <div style="background:rgba(62,180,137,0.05);padding:1.25rem;border-radius:14px;border:1px solid rgba(62,180,137,0.1);display:flex;align-items:center;gap:12px;">
+                        <div style="width:36px;height:36px;border-radius:10px;background:rgba(62,180,137,0.1);color:#3eb489;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="fas fa-hourglass-half" style="font-size:14px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size:0.65rem;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;font-weight:700;">Duración</p>
+                            <p style="font-weight:800;color:var(--text);font-size:0.9rem;">{{ $proyecto->duracion_estimada_dias }} días</p>
+                        </div>
                     </div>
-                    <div style="background: rgba(62,180,137,0.05); padding: 1.25rem; border-radius: 14px; border: 1px solid rgba(62,180,137,0.1);">
-                        <p style="font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 700;">Ubicación</p>
-                        <p style="font-weight: 800; color: var(--text);">{{ $proyecto->pro_ubicacion }}</p>
+                    <div style="background:#fef2f2;padding:1.25rem;border-radius:14px;border:1px solid #fecaca;display:flex;align-items:center;gap:12px;">
+                        <div style="width:36px;height:36px;border-radius:10px;background:#fee2e2;color:#ef4444;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="fas fa-flag-checkered" style="font-size:14px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size:0.65rem;color:#ef4444;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;font-weight:700;">Cierre estimado</p>
+                            <p style="font-weight:800;color:#ef4444;font-size:0.9rem;">{{ $proyecto->fecha_publicacion ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias ?? 0)->format('d M, Y') : 'No estimado' }}</p>
+                        </div>
                     </div>
                 </div>
+
+                {{-- Mapa de ubicación --}}
+                @if($proyecto->latitud && $proyecto->longitud)
+                <div style="margin-bottom:1.5rem;border-radius:16px;overflow:hidden;border:1px solid rgba(62,180,137,0.2);">
+                    <div style="background:rgba(62,180,137,0.05);padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(62,180,137,0.1);">
+                        <i class="fas fa-map-marker-alt" style="color:#ef4444;font-size:13px;"></i>
+                        <span style="font-size:0.7rem;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;">Ubicación de la empresa</span>
+                    </div>
+                    <div id="instructor-map" style="width:100%;height:220px;"></div>
+                </div>
+                @else
+                <div style="margin-bottom:1.5rem;display:flex;align-items:center;gap:10px;background:#f8fafc;border:1px dashed #e2e8f0;border-radius:12px;padding:12px 16px;">
+                    <i class="fas fa-map-marker-alt" style="color:#94a3b8;"></i>
+                    <span style="font-size:0.85rem;color:var(--text-light);font-weight:500;">Ubicación geográfica no registrada para este proyecto.</span>
+                </div>
+                @endif
 
                 <div style="color: var(--text-light); line-height: 1.7; font-size: 0.95rem;">
                     <h4 style="color: var(--text); font-weight: 800; margin-bottom: 0.75rem;">Descripción Técnica</h4>
@@ -104,7 +136,7 @@
                         <input type="number" name="orden" placeholder="N°" required class="aprendiz-input-control">
                         <input type="text" name="nombre" placeholder="Título de la etapa..." required class="aprendiz-input-control">
                     </div>
-                    <textarea name="description" placeholder="¿Qué deben entregar los aprendices en esta fase?" required class="aprendiz-input-control" style="min-height: 100px; margin-bottom: 1.5rem;"></textarea>
+                    <textarea name="descripcion" placeholder="¿Qué deben entregar los aprendices en esta fase?" required class="aprendiz-input-control" style="min-height: 100px; margin-bottom: 1.5rem;"></textarea>
                     <div style="display: flex; justify-content: flex-end; gap: 1rem;">
                         <button type="button" onclick="document.getElementById('stageForm').classList.toggle('active')" style="background: transparent; border: none; font-weight: 700; color: var(--text-light); cursor: pointer;">Cancelar</button>
                         <button type="submit" class="btn-premium" style="width: auto; padding: 10px 32px;">Lanzar Etapa</button>
@@ -114,21 +146,46 @@
 
             <div style="display: flex; flex-direction: column; gap: 1rem;">
                 @forelse($etapas as $index => $etapa)
-                    <div class="instructor-stage-card">
-                        <div class="instructor-stage-number" style="background: {{ $index == 0 ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : 'rgba(62,180,137,0.08)' }}; color: {{ $index == 0 ? 'white' : '#3eb489' }};">
-                            {{ $etapa->orden }}
-                        </div>
-                        <div style="flex: 1;">
-                            <h4 style="font-weight: 800; color: var(--text); margin-bottom: 6px; font-size: 1.1rem;">{{ $etapa->nombre }}</h4>
-                            <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6; font-weight: 500;">{{ $etapa->descripcion }}</p>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <form action="{{ route('instructor.etapas.eliminar', $etapa->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar esta etapa?')" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" class="btn-del-hover">
-                                    <i class="fas fa-trash-alt"></i>
+                    <div class="instructor-stage-card" id="stage-card-{{ $etapa->id }}">
+                        {{-- Vista normal de la etapa --}}
+                        <div class="instructor-stage-view" id="stage-view-{{ $etapa->id }}">
+                            <div class="instructor-stage-number" style="background: {{ $index == 0 ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : 'rgba(62,180,137,0.08)' }}; color: {{ $index == 0 ? 'white' : '#3eb489' }};">
+                                {{ $etapa->orden }}
+                            </div>
+                            <div style="flex: 1;">
+                                <h4 style="font-weight: 800; color: var(--text); margin-bottom: 6px; font-size: 1.1rem;">{{ $etapa->nombre }}</h4>
+                                <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6; font-weight: 500;">{{ $etapa->descripcion }}</p>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button type="button" onclick="toggleEditStage({{ $etapa->id }})" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Editar etapa">
+                                    <i class="fas fa-pen"></i>
                                 </button>
+                                <form action="{{ route('instructor.etapas.eliminar', $etapa->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar esta etapa?')" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" class="btn-del-hover">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        {{-- Formulario inline de edición (oculto por defecto) --}}
+                        <div id="stage-edit-{{ $etapa->id }}" style="display: none; width: 100%;">
+                            <form action="{{ route('instructor.etapas.editar', $etapa->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div style="display: grid; grid-template-columns: 80px 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                    <input type="number" name="orden" value="{{ $etapa->orden }}" placeholder="N°" required class="aprendiz-input-control">
+                                    <input type="text" name="nombre" value="{{ $etapa->nombre }}" placeholder="Título de la etapa..." required class="aprendiz-input-control">
+                                </div>
+                                <textarea name="descripcion" placeholder="Descripción de la etapa..." required class="aprendiz-input-control" style="min-height: 80px; margin-bottom: 1rem;">{{ $etapa->descripcion }}</textarea>
+                                <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                                    <button type="button" onclick="toggleEditStage({{ $etapa->id }})" style="background: transparent; border: none; font-weight: 700; color: var(--text-light); cursor: pointer; padding: 8px 16px;">Cancelar</button>
+                                    <button type="submit" class="btn-premium" style="width: auto; padding: 10px 24px;">
+                                        <i class="fas fa-save" style="margin-right: 6px;"></i>Guardar Cambios
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -233,4 +290,30 @@
     </div>
 </div>
 
+<script>
+function toggleEditStage(id) {
+    const viewEl = document.getElementById('stage-view-' + id);
+    const editEl = document.getElementById('stage-edit-' + id);
+    if (editEl.style.display === 'none') {
+        viewEl.style.display = 'none';
+        editEl.style.display = 'block';
+    } else {
+        viewEl.style.display = 'flex';
+        editEl.style.display = 'none';
+    }
+}
+</script>
+@endsection
+
+@section('scripts')
+@if($proyecto->latitud && $proyecto->longitud)
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ asset('js/maps.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    initViewMap('instructor-map', {{ $proyecto->latitud }}, {{ $proyecto->longitud }}, '{{ $proyecto->nombre }}');
+});
+</script>
+@endif
 @endsection

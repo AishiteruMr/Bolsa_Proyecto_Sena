@@ -155,7 +155,7 @@
                         <div style="flex: 1;">
                             <div style="font-size: 13px; color: var(--text-light); font-weight: 600;">Próximo Hito</div>
                             <div style="font-size: 16px; font-weight: 800; color: var(--text);">
-                                {{ ($proximoCierre && $proximoCierre->fecha_finalizacion) ? \Carbon\Carbon::parse($proximoCierre->fecha_finalizacion)->diffForHumans() : 'Sin eventos' }}
+                                {{ ($proximoCierre && $proximoCierre->fecha_publicacion) ? \Carbon\Carbon::parse($proximoCierre->fecha_publicacion)->addDays($proximoCierre->duracion_estimada_dias ?? 0)->diffForHumans() : 'Sin eventos' }}
                             </div>
                         </div>
                     </div>

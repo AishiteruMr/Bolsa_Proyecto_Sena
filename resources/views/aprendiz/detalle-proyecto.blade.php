@@ -171,9 +171,9 @@
                                                         <i class="fas fa-file-alt"></i>
                                                     </div>
                                                     <div>
-                                                        <p style="font-size: 13px; font-weight: 700; color: var(--text); margin: 0;">{{ \Carbon\Carbon::parse($evid->fecha_subida)->format('d M, Y - h:i A') }}</p>
-                                                        @if($evid->comentarios_instructor)
-                                                            <p style="font-size: 12px; color: var(--text-light); margin-top: 2px;"><i class="fas fa-comment" style="margin-right: 4px;"></i>{{ $evid->comentarios_instructor }}</p>
+                                                        <p style="font-size: 13px; font-weight: 700; color: var(--text); margin: 0;">{{ \Carbon\Carbon::parse($evid->fecha_envio)->format('d M, Y - h:i A') }}</p>
+                                                        @if($evid->comentario_instructor)
+                                                            <p style="font-size: 12px; color: var(--text-light); margin-top: 2px;"><i class="fas fa-comment" style="margin-right: 4px;"></i>{{ $evid->comentario_instructor }}</p>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -181,8 +181,8 @@
                                                     <span style="background: {{ $stateColor['bg'] }}; border: 1px solid {{ $stateColor['border'] }}; color: {{ $stateColor['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
                                                         <i class="fas {{ $stateColor['icon'] }}"></i> {{ $evid->estado }}
                                                     </span>
-                                                    @if($evid->archivo_url)
-                                                        <a href="{{ asset('storage/' . $evid->archivo_url) }}" target="_blank" class="btn-premium" style="padding: 8px 14px; font-size: 12px;">
+                                                    @if($evid->ruta_archivo)
+                                                        <a href="{{ asset('storage/' . $evid->ruta_archivo) }}" target="_blank" class="btn-premium" style="padding: 8px 14px; font-size: 12px;">
                                                             <i class="fas fa-download"></i>
                                                         </a>
                                                     @endif
@@ -278,7 +278,32 @@
                     </p>
                 </div>
             </div>
+            
+            <!-- Ubicación -->
+            @if($proyecto->latitud && $proyecto->longitud)
+            <div class="glass-card" style="padding: 24px;">
+                <h4 style="font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <i class="fas fa-map-marker-alt" style="color: #ef4444; margin-right: 8px;"></i>Ubicación
+                </h4>
+                <div style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border);">
+                    <div id="ubicacion-map" style="width: 100%; height: 200px;"></div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+@if($proyecto->latitud && $proyecto->longitud)
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ asset('js/maps.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    initViewMap('ubicacion-map', {{ $proyecto->latitud }}, {{ $proyecto->longitud }}, '{{ $proyecto->nombre }}');
+});
+</script>
+@endif
 @endsection

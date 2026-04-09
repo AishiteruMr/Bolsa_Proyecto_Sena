@@ -68,9 +68,10 @@ class InstructorController extends Controller
             ->get();
             
         $proximoCierre = $proximosProyectos->filter(function($p) {
-            return !$p->isVencido();
+            $fechaFin = \Carbon\Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
+            return $fechaFin->isFuture(); // solo proyectos aún vigentes
         })->sortBy(function($p) {
-            return \Carbon\Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias);
+            return \Carbon\Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
         })->first();
 
         return view('instructor.dashboard', compact(
@@ -229,16 +230,18 @@ class InstructorController extends Controller
         })->with('usuario')->get();
 
         // Obtener evidencias
-        $evidencias = Evidencia::where('proyecto_id', $proId)
+        $evidencias = Evidencia::where('evidencias.proyecto_id', $proId)
             ->with(['etapa', 'aprendiz'])
             ->join('etapas', 'evidencias.etapa_id', '=', 'etapas.id')
             ->orderBy('etapas.orden', 'asc')
-            ->orderByDesc('fecha_subida')
+            ->orderByDesc('evidencias.fecha_envio')
             ->select('evidencias.*')
             ->get();
 
+        $entregas = $evidencias;
+
         return view('instructor.reporte-seguimiento', compact(
-            'proyecto', 'etapas', 'aprendices', 'evidencias'
+            'proyecto', 'etapas', 'aprendices', 'evidencias', 'entregas'
         ));
     }
 
@@ -418,11 +421,11 @@ class InstructorController extends Controller
             ->firstOrFail();
 
         // Obtener evidencias del proyecto con detalles del aprendiz y etapa
-        $evidencias = Evidencia::where('proyecto_id', $proId)
+        $evidencias = Evidencia::where('evidencias.proyecto_id', $proId)
             ->with(['aprendiz.usuario', 'etapa'])
             ->join('etapas', 'evidencias.etapa_id', '=', 'etapas.id')
             ->orderBy('etapas.orden')
-            ->orderByDesc('fecha_subida')
+            ->orderByDesc('evidencias.fecha_envio')
             ->select('evidencias.*')
             ->get();
 
@@ -448,8 +451,8 @@ class InstructorController extends Controller
         ]);
 
         $evidencia->update([
-            'estado'     => $estadoInput,
-            'comentarios_instructor' => $request->comentario,
+            'estado'                 => $estadoInput,
+            'comentario_instructor'  => $request->comentario,
         ]);
 
         try {
