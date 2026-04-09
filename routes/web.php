@@ -55,7 +55,7 @@ Route::post('/registro/instructor', [AuthController::class, 'registrarInstructor
 
 Route::middleware(['auth.custom'])->group(function () {
     Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
-    Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'leer_todas'])->name('notificaciones.leer_todas');
+    Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'leerTodas'])->name('notificaciones.leer_todas');
     Route::post('/notificaciones/{id}/leer', [NotificacionController::class, 'leer'])->name('notificaciones.leer');
 });
 
