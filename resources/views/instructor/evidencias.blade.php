@@ -59,12 +59,12 @@
                         <div class="instructor-evidence-header-icon">
                             <i class="fas fa-file-invoice" style="font-size: 1.4rem;"></i>
                             <span class="instructor-evidence-step-badge">
-                                {{ $evidencia->orden }}
+                                {{ $evidencia->etapa->orden ?? '-' }}
                             </span>
                         </div>
                         <div>
-                            <h4 style="font-size: 1.15rem; font-weight: 800; color: var(--text);">Etapa: {{ $evidencia->nombre }}</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-light); font-weight: 600;"><i class="fas fa-user-graduate" style="margin-right: 6px;"></i>{{ $evidencia->nombres }} {{ $evidencia->apellidos }}</p>
+                            <h4 style="font-size: 1.15rem; font-weight: 800; color: var(--text);">Etapa: {{ $evidencia->etapa->nombre ?? 'Desconocida' }}</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-light); font-weight: 600;"><i class="fas fa-user-graduate" style="margin-right: 6px;"></i>{{ $evidencia->aprendiz->nombres ?? '' }} {{ $evidencia->aprendiz->apellidos ?? '' }}</p>
                         </div>
                     </div>
                     
@@ -87,7 +87,7 @@
                                 <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 1.25rem; letter-spacing: 0.5px;">Resolución de la Entrega</label>
                                 <div style="display: flex; gap: 1rem;">
                                     <label class="instructor-grad-radio">
-                                        <input type="radio" name="estado" value="aceptada" {{ $evidencia->estado === 'aceptada' ? 'checked' : '' }} required>
+                                        <input type="radio" name="estado" value="aprobada" {{ $evidencia->estado === 'aprobada' ? 'checked' : '' }} required>
                                         <div class="instructor-grad-box">
                                             <i class="fas fa-check-double"></i>
                                             <span>Aprobado</span>

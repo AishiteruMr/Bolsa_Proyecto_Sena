@@ -67,7 +67,7 @@
             </div>
             <div>
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Empresa Aliada</div>
-                <div style="font-size: 18px; font-weight: 800; color: var(--text);">{{ $proyecto->nombre }}</div>
+            <div style="font-size: 18px; font-weight: 800; color: var(--text);">{{ $proyecto->emp_nombre ?? $proyecto->empresa->nombre ?? 'No asignada' }}</div>
             </div>
         </div>
 
@@ -160,7 +160,7 @@
                                         @foreach($evidenciasEtapa as $evid)
                                             @php
                                                 $stateColor = match($evid->estado) {
-                                                    'aceptada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
+                                                    'aprobada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
                                                     'rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#dc2626', 'icon' => 'fa-times-circle'],
                                                     default     => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-hourglass-half'],
                                                 };

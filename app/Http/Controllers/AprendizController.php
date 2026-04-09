@@ -233,19 +233,19 @@ class AprendizController extends Controller
                 $proyecto = $postulacion->proyecto;
 
                 return (object) [
-                    'pos_id' => $postulacion->id,
-                    'pos_estado' => $postulacion->estado,
-                    'pos_fecha' => $postulacion->fecha_postulacion,
+                    'id' => $postulacion->id,
+                    'estado' => $postulacion->estado,
+                    'fecha_postulacion' => $postulacion->fecha_postulacion,
                     'pro_id' => $proyecto->id,
-                    'pro_titulo_proyecto' => $proyecto->titulo,
-                    'pro_categoria' => $proyecto->categoria,
+                    'titulo' => $proyecto->titulo,
+                    'categoria' => $proyecto->categoria,
                     'pro_estado' => $proyecto->estado,
-                    'pro_fecha_publi' => $proyecto->fecha_publicacion,
-                    'pro_fecha_finalizacion' => $proyecto->fecha_publicacion 
+                    'fecha_publi' => $proyecto->fecha_publicacion,
+                    'fecha_finalizacion' => $proyecto->fecha_publicacion 
                         ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias) 
                         : null,
-                    'pro_imagen_url' => $proyecto->imagen_url,
-                    'emp_nombre' => $proyecto->empresa->nombre ?? 'No asignada',
+                    'imagen_url' => $proyecto->imagen_url,
+                    'nombre' => $proyecto->empresa->nombre ?? 'No asignada',
                     'instructor_nombre' => $proyecto->instructor
                         ? $proyecto->instructor->nombres.' '.$proyecto->instructor->apellidos
                         : 'No asignado',

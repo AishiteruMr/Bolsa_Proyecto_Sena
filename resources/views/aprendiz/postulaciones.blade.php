@@ -97,8 +97,8 @@
             @endphp
             <div class="glass-card" style="padding: 0; overflow: hidden; display: flex; align-items: center; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 32px rgba(62,180,137,0.12)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
                 <div style="width: 140px; height: 120px; flex-shrink: 0;">
-                    @if($post->imagen_url)
-                        <img src="{{ $post->imagen_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                    @if($post->proyecto && $post->proyecto->imagen_url)
+                        <img src="{{ $post->proyecto->imagen_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
                         <div style="width: 100%; height: 100%; background: linear-gradient(135deg, rgba(62,180,137,0.1), rgba(62,180,137,0.05)); display: flex; align-items: center; justify-content: center; color: #3eb489; font-size: 2.5rem;">
                             <i class="fas fa-rocket"></i>
@@ -108,14 +108,14 @@
 
                 <div style="flex: 1; padding: 24px; min-width: 0;">
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
-                        <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin: 0;">{{ $post->titulo }}</h4>
-                        <span style="background: rgba(62,180,137,0.1); color: #3eb489; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">{{ $post->categoria }}</span>
+                        <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin: 0;">{{ $post->proyecto->titulo ?? 'Sin título' }}</h4>
+                        <span style="background: rgba(62,180,137,0.1); color: #3eb489; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">{{ $post->proyecto->categoria ?? 'General' }}</span>
                     </div>
                     
                     <div style="display: flex; flex-wrap: wrap; gap: 20px; font-size: 13px; color: var(--text-light);">
                         <div style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
                             <i class="fas fa-building" style="color: #3eb489; width: 16px;"></i>
-                            {{ $post->nombre }}
+                            {{ $post->proyecto->empresa->nombre ?? 'Empresa no asignada' }}
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
                             <i class="far fa-calendar-check" style="width: 16px;"></i>
@@ -133,7 +133,7 @@
                     </div>
 
                     @if($post->estado === 'aceptada')
-                        <a href="{{ route('aprendiz.proyecto.detalle', $post->id) }}" class="btn-premium" style="padding: 12px 20px;">
+                        <a href="{{ route('aprendiz.proyecto.detalle', $post->proyecto_id) }}" class="btn-premium" style="padding: 12px 20px;">
                             Gestionar <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
                         </a>
                     @endif
