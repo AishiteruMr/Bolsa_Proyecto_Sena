@@ -496,7 +496,7 @@ class InstructorController extends Controller
                 ));
             }
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            Log::error('Error al notificar calificación de evidencia: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
         }
 
         return back()->with('success', 'Evidencia calificada correctamente.');

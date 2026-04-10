@@ -26,15 +26,14 @@ class EmpresaController extends Controller
             return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
         }
 
-        // Obtener proyectos de la empresa
-        $proyectos = $empresa->proyectos();
+        // Obtener proyectos de la empresa (una sola consulta)
+        $empresaProyectos = $empresa->proyectos();
+        $proyectoIds = $empresaProyectos->pluck('id');
 
-        $totalProyectos = $proyectos->count();
-        $proyectosActivos = $proyectos->where('estado', 'aprobado')->count(); // 'aprobado' o 'en_progreso' según semántica
-
-        // Mejor contamos activos como 'aprobado' para coincidir con `Activo` viejo
-        // En proyecto model isActivo() checkea ['aprobado', 'en_progreso']
-        $proyectosActivos = $empresa->proyectos()->whereIn('estado', ['aprobado', 'en_progreso'])->count();
+        // Optimizado: usar una sola colección para todos los conteos
+        $todosProyectos = $empresaProyectos->get();
+        $totalProyectos = $todosProyectos->count();
+        $proyectosActivos = $todosProyectos->whereIn('estado', ['aprobado', 'en_progreso'])->count();
 
         // Proyectos recientes con eager loading y conteo de postulaciones
         $proyectosRecientes = $empresa->proyectos()
@@ -44,13 +43,13 @@ class EmpresaController extends Controller
             ->limit(5)
             ->get();
 
-        $totalPostulaciones = Postulacion::whereIn('proyecto_id',
-            $empresa->proyectos()->pluck('id')
-        )->count();
+        // Optimizado: una sola consulta para postulaciones
+        $postulacionCounts = Postulacion::whereIn('proyecto_id', $proyectoIds)
+            ->selectRaw('COUNT(*) as total, SUM(CASE WHEN estado = "pendiente" THEN 1 ELSE 0 END) as pendientes')
+            ->first();
 
-        $postulacionesPendientes = Postulacion::whereIn('proyecto_id',
-            $empresa->proyectos()->pluck('id')
-        )->where('estado', 'pendiente')->count();
+        $totalPostulaciones = $postulacionCounts->total ?? 0;
+        $postulacionesPendientes = $postulacionCounts->pendientes ?? 0;
 
         return view('empresa.dashboard', compact(
             'totalProyectos', 'proyectosActivos', 'totalPostulaciones',
