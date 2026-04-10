@@ -1,0 +1,49 @@
+# Walkthrough - Automated Backup Setup
+
+I have successfully set up automated backups for the database and application files.
+
+## Changes Made
+
+### 1. Implemented Console Command
+I completed the `app:create-backup` command in [CreateBackup.php](file:///c:/laragon/www/Bolsa_Proyecto_Sena/app/Console/Commands/CreateBackup.php).
+- It uses the `BackupService` to perform full backups.
+- It includes a cleanup step to remove old backups based on a retention policy (Hourly: 1 day, Daily: 7 days, Weekly: 28 days, Monthly: 365 days).
+- It provides progress feedback in the terminal.
+
+### 2. Scheduled the Backup
+I added the scheduling logic to [console.php](file:///c:/laragon/www/Bolsa_Proyecto_Sena/routes/console.php).
+- The backup is scheduled to run daily at **01:00 AM**.
+
+### 3. Enhanced Backup Reliability
+I improved [BackupService.php](file:///c:/laragon/www/Bolsa_Proyecto_Sena/app/Services/BackupService.php) to be more robust:
+- **Database Config**: Now uses `config()` instead of `env()` for consistent behavior even when config is cached.
+- **Missing Directories**: The file backup now filters out non-existent directories instead of failing.
+- **Compression**: Improved the `gzip` command to force overwrite (`-f`) and ensure temporary files are cleaned up.
+
+## Verification Results
+
+### Manual Command Execution
+I ran the command manually to verify success:
+```bash
+php artisan app:create-backup
+```
+**Output:**
+> Starting automated backup process...
+> Creating database and file backups...
+> Backup created successfully!
+> - Database: backup_database_20260410141008.sql.gz
+> - Files: backup_files_20260410141008.tar.gz
+> Cleaning up old backups based on retention policy...
+> No old backups required deletion.
+
+### Storage Verification
+Checked `storage/backups` and confirmed the files are correctly created and compressed:
+- [Database backups](file:///c:/laragon/www/Bolsa_Proyecto_Sena/storage/backups/database)
+- [File backups](file:///c:/laragon/www/Bolsa_Proyecto_Sena/storage/backups/files)
+
+### Scheduling Verification
+The command is properly registered and scheduled:
+```bash
+php artisan schedule:list
+```
+> 01:00  php artisan app:create-backup .................... Next Run: 15 hours from now
