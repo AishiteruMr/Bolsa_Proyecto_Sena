@@ -24,7 +24,7 @@ class VerifyEmailNotification extends Notification
             now()->addMinutes(60),
             [
                 'id' => $notifiable->getKey(),
-                'hash' => hash('sha256', $notifiable->getEmailForVerification()),
+                'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
 

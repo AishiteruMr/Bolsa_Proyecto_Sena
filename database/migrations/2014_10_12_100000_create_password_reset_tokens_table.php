@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (! Schema::hasTable('password_reset_tokens')) {
+        if (!Schema::hasTable('password_reset_tokens')) {
             Schema::create('password_reset_tokens', function (Blueprint $table) {
                 $table->string('email')->primary();
                 $table->string('token');
                 $table->timestamp('created_at')->nullable();
-                $table->timestamp('expires_at')->nullable();
 
-                // Índices para limpiar tokens expirados y consultas rápidas
+                // Índice para limpiar tokens expirados
                 $table->index('created_at');
-                $table->index('expires_at');
             });
         }
     }
