@@ -6,14 +6,6 @@
 <style>
     .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 600px) { .input-row { grid-template-columns: 1fr; } }
-    .form-hint { font-size: 11px; color: #64748b; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
-    .hint-icon { color: var(--primary); cursor: help; position: relative; }
-    .hint-icon:hover::after {
-        content: attr(data-hint);
-        position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
-        background: #1a2e1a; color: #fff; padding: 8px 12px; border-radius: 8px;
-        font-size: 11px; font-weight: 500; white-space: nowrap; z-index: 100;
-    }
 </style>
 @endsection
 
@@ -74,15 +66,14 @@
                 @csrf
                 <div class="input-row">
                     <div class="form-group">
-                        <label>Nombre</label>
+                        <label>Nombre <i class="fas fa-question-circle hint-icon" data-hint="Como aparece en tu documento de identidad"></i></label>
                         <div class="input-wrapper">
                             <i class="fas fa-user"></i>
                             <input type="text" name="nombre" value="{{ old('nombre') }}" placeholder="Tu nombre" required>
                         </div>
-                        <div class="form-hint"><i class="fas fa-info-circle hint-icon" data-hint="Como aparece en tu documento"></i></div>
                     </div>
                     <div class="form-group">
-                        <label>Apellidos</label>
+                        <label>Apellidos <i class="fas fa-question-circle hint-icon" data-hint="Como aparece en tu documento de identidad"></i></label>
                         <div class="input-wrapper">
                             <i class="fas fa-user"></i>
                             <input type="text" name="apellido" value="{{ old('apellido') }}" placeholder="Tus apellidos" required>
@@ -91,25 +82,23 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Documento de Identidad</label>
+                    <label>Documento de Identidad <i class="fas fa-question-circle hint-icon" data-hint="Cédula de ciudadanía (sin puntos ni guión)"></i></label>
                     <div class="input-wrapper">
                         <i class="fas fa-id-card"></i>
                         <input type="text" name="documento" value="{{ old('documento') }}" placeholder="Número de documento" required>
                     </div>
-                    <div class="form-hint">Cédula de ciudadanía</div>
                 </div>
 
                 <div class="form-group">
-                    <label>Programa de Formación SENA</label>
+                    <label>Programa de Formación SENA <i class="fas fa-question-circle hint-icon" data-hint="Nombre oficial del programa: Análisis y Desarrollo de Software, Contabilidad, etc."></i></label>
                     <div class="input-wrapper">
                         <i class="fas fa-graduation-cap"></i>
                         <input type="text" name="programa" value="{{ old('programa') }}" placeholder="Programa técnico o tecnológico" required>
                     </div>
-                    <div class="form-hint">Ej: Análisis y Desarrollo de Software</div>
                 </div>
 
                 <div class="form-group">
-                    <label>Correo Electrónico</label>
+                    <label>Correo Electrónico <i class="fas fa-question-circle hint-icon" data-hint="Correo personal o institucional activo"></i></label>
                     <div class="input-wrapper">
                         <i class="fas fa-envelope"></i>
                         <input type="email" name="correo" value="{{ old('correo') }}" placeholder="tu@email.com" required>
@@ -117,7 +106,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Contraseña</label>
+                    <label>Contraseña <i class="fas fa-question-circle hint-icon" data-hint="Mínimo 6 caracteres, usa letras y números"></i></label>
                     <div class="input-wrapper">
                         <i class="fas fa-lock"></i>
                         <input type="password" name="password" placeholder="Mín. 6 caracteres" required>
@@ -125,7 +114,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Confirmar Contraseña</label>
+                    <label>Confirmar Contraseña <i class="fas fa-question-circle hint-icon" data-hint="Debe ser idéntica a la contraseña"></i></label>
                     <div class="input-wrapper">
                         <i class="fas fa-lock"></i>
                         <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" required>
@@ -150,4 +139,8 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script src="{{ asset('js/login.js') }}"></script>
 @endsection
