@@ -22,9 +22,9 @@ class DatabaseSeeder extends Seeder
         $adminUserId = DB::table('usuarios')->where('correo', 'admin@gmail.com')->value('id');
         if (!$adminUserId) {
             $adminUserId = DB::table('usuarios')->insertGetId([
-                'numero_documento' => 1043178690,
-                'correo'           => 'admin@gmail.com',
-                'contrasena'       => Hash::make('admin123'),
+                'numero_documento' => 1043277456,
+                'correo'           => 'geniszully@gmail.com',
+                'contrasena'       => Hash::make('Admin123@'),
                 'rol_id'           => $adminRoleId,
                 'email_verified_at' => now(),
                 'created_at'       => now(),
@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
             $companyUserId = DB::table('usuarios')->insertGetId([
                 'numero_documento' => 12345475784,
                 'correo'           => 'empresa@gmail.com',
-                'contrasena'       => Hash::make('empresa123'),
+                'contrasena'       => Hash::make('Empresa123.'),
                 'rol_id'           => $companyRoleId,
                 'email_verified_at' => now(),
                 'created_at'       => now(),
@@ -68,7 +68,7 @@ class DatabaseSeeder extends Seeder
             $instructorUserId = DB::table('usuarios')->insertGetId([
                 'numero_documento' => 20123,
                 'correo'           => 'instructor@gmail.com',
-                'contrasena'       => Hash::make('instructor123'),
+                'contrasena'       => Hash::make('Instructor123.'),
                 'rol_id'           => $instructorRoleId,
                 'email_verified_at' => now(),
                 'created_at'       => now(),
@@ -94,7 +94,7 @@ class DatabaseSeeder extends Seeder
             $apprenticeUserId = DB::table('usuarios')->insertGetId([
                 'numero_documento' => 1016555423,
                 'correo'           => 'aprendiz@gmail.com',
-                'contrasena'       => Hash::make('aprendiz123'),
+                'contrasena'       => Hash::make('Aprendiz123.'),
                 'rol_id'           => $apprenticeRoleId,
                 'email_verified_at' => now(),
                 'created_at'       => now(),
@@ -117,9 +117,9 @@ class DatabaseSeeder extends Seeder
         $this->call(ProjectSeeder::class);
 
         $this->command->info('✅ Datos iniciales insertados correctamente.');
-        $this->command->info('   → admin@gmail.com        / admin123');
-        $this->command->info('   → empresa@gmail.com      / empresa123');
-        $this->command->info('   → instructor@gmail.com   / instructor123');
-        $this->command->info('   → aprendiz@gmail.com     / aprendiz123');
+        $this->command->info('   → geniszully@gmail.com        / Admin123@');
+        $this->command->info('   → empresa@gmail.com      / Empresa123.');
+        $this->command->info('   → instructor@gmail.com   / Instructor123.');
+        $this->command->info('   → aprendiz@gmail.com     / Aprendiz123.');
     }
 }

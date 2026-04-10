@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
@@ -39,9 +40,20 @@ class AuthController extends Controller
 
         $rateLimitKey = 'login_attempts:'.$request->ip();
         $attempts = cache()->get($rateLimitKey, 0);
+        $lockedUntil = cache()->get($rateLimitKey.'_locked_until');
 
-        if ($attempts >= 5) {
-            return back()->with('error', 'Demasiados intentos. Intenta de nuevo en 15 minutos.')->withInput(['correo' => $correo]);
+        if ($attempts >= 5 && $lockedUntil) {
+            $remainingSeconds = now()->diffInSeconds($lockedUntil);
+            $minutes = ceil($remainingSeconds / 60);
+
+            if ($minutes < 1) {
+                $minutes = 1;
+            }
+
+            $message = 'Has superado el límite de intentos (5). ';
+            $message .= "Por favor, espera {$minutes} minuto".($minutes > 1 ? 's' : '').' para intentar de nuevo.';
+
+            return back()->with('error', $message)->withInput(['correo' => $correo]);
         }
 
         $usuario = DB::table('usuarios')->where('correo', $correo)->first();
@@ -51,15 +63,15 @@ class AuthController extends Controller
 
             if (! empty($usuario->contrasena) && Hash::check($password, $usuario->contrasena)) {
                 $loginOk = true;
-            } elseif ($usuario->contrasena === $password) { // Migración suave
-                DB::table('usuarios')
-                    ->where('id', $usuario->id)
-                    ->update(['contrasena' => Hash::make($password)]);
-                $loginOk = true;
             }
 
             if (! $loginOk) {
-                cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
+                $newAttempts = $attempts + 1;
+                cache()->put($rateLimitKey, $newAttempts, now()->addMinutes(15));
+
+                if ($newAttempts >= 5) {
+                    cache()->put($rateLimitKey.'_locked_until', now()->addMinutes(15), now()->addMinutes(15));
+                }
 
                 return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
             }
@@ -139,7 +151,7 @@ class AuthController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (! hash_equals(sha1($user->getAttribute('correo')), $hash)) {
+        if (! hash_equals(hash('sha256', $user->getAttribute('correo')), $hash)) {
             return redirect()->route('login')->with('error', 'Enlace de verificación inválido.');
         }
 
@@ -382,11 +394,12 @@ class AuthController extends Controller
         // Eliminar tokens antiguos
         DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
-        // Guardar nuevo token
+        // Guardar nuevo token con expiración
         DB::table('password_reset_tokens')->insert([
             'email' => $correo,
             'token' => hash('sha256', $token),
             'created_at' => now(),
+            'expires_at' => now()->addMinutes(30),
         ]);
 
         // Enviar correo
@@ -419,8 +432,8 @@ class AuthController extends Controller
             return redirect()->route('login')->with('error', 'El enlace de recuperación es inválido o ha expirado.');
         }
 
-        // Verificar que no haya expirado (30 minutos)
-        if (Carbon::parse($registro->created_at)->addMinutes(30)->isPast()) {
+        // Verificar que no haya expirado usando expires_at
+        if ($registro->expires_at && Carbon::parse($registro->expires_at)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
             return redirect()->route('login')->with('error', 'El enlace de recuperación ha expirado. Solicita uno nuevo.');
@@ -434,10 +447,20 @@ class AuthController extends Controller
         $request->validate([
             'token' => 'required|string',
             'correo' => 'required|email|max:255',
-            'password' => 'required|string|min:6|max:100|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'max:100',
+                'confirmed',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
+            ],
         ], [
             'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 

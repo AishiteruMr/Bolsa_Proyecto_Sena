@@ -118,7 +118,7 @@ class AdminController extends Controller
         $query = Proyecto::with(['empresa', 'instructor.usuario']);
 
         if ($request->filled('buscar')) {
-            $buscar = $request->buscar;
+            $buscar = str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $request->buscar);
             $query->where(function ($q) use ($buscar) {
                 $q->where('titulo', 'like', "%{$buscar}%")
                     ->orWhere('descripcion', 'like', "%{$buscar}%")

@@ -5,12 +5,11 @@ namespace App\Http\Controllers;
 use App\Mail\PostulacionEstadoCambiado;
 use App\Models\Aprendiz;
 use App\Models\Empresa;
-use App\Models\Etapa;
-use App\Models\Evidencia;
 use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -96,8 +95,21 @@ class EmpresaController extends Controller
         $imagenUrl = null;
 
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('proyectos', 'public');
-            $imagenUrl = $path; // Se guarda path relativo a public
+            $file = $request->file('imagen');
+
+            // Validar MIME real
+            $mime = $file->getMimeType();
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+
+            if (! in_array($mime, $allowedMimes)) {
+                return back()->with('error', 'Tipo de imagen no permitido.');
+            }
+
+            // Nombre seguro
+            $extension = $file->getClientOriginalExtension();
+            $safeFilename = 'proyecto_'.$nit.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
+            $path = $file->storeAs('proyectos', $safeFilename, 'public');
+            $imagenUrl = $path;
         }
 
         // Calcular fecha de finalización (6 meses desde la fecha de publicación)
@@ -166,7 +178,20 @@ class EmpresaController extends Controller
         ];
 
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('proyectos', 'public');
+            $file = $request->file('imagen');
+
+            // Validar MIME real
+            $mime = $file->getMimeType();
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+
+            if (! in_array($mime, $allowedMimes)) {
+                return back()->with('error', 'Tipo de imagen no permitido.');
+            }
+
+            // Nombre seguro
+            $extension = $file->getClientOriginalExtension();
+            $safeFilename = 'proyecto_'.$nit.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
+            $path = $file->storeAs('proyectos', $safeFilename, 'public');
             $datos['imagen_url'] = $path;
         }
 
@@ -179,28 +204,21 @@ class EmpresaController extends Controller
     {
         $nit = session('nit');
 
-        // Verificar que el proyecto pertenece a la empresa
-        $proyecto = Proyecto::where('id', $id)
-            ->where('empresa_nit', $nit)
-            ->first();
+        try {
+            // Verificar que el proyecto pertenece a la empresa
+            $proyecto = Proyecto::where('id', $id)
+                ->where('empresa_nit', $nit)
+                ->firstOrFail();
 
-        if (! $proyecto) {
+            // Solo cerrar el proyecto (no eliminar)
+            $proyecto->update(['estado' => 'cerrado']);
+
+            return redirect()->route('empresa.proyectos')->with('success', 'Proyecto cerrado correctamente. Ya no será visible para nuevos aprendices.');
+        } catch (ModelNotFoundException $e) {
             return redirect()->route('empresa.proyectos')->with('error', 'Proyecto no encontrado.');
+        } catch (\Exception $e) {
+            return redirect()->route('empresa.proyectos')->with('error', 'Error al cerrar el proyecto.');
         }
-
-        // Eliminar evidencias del proyecto
-        Evidencia::where('proyecto_id', $id)->delete();
-
-        // Eliminar etapas del proyecto
-        Etapa::where('proyecto_id', $id)->delete();
-
-        // Eliminar postulaciones del proyecto
-        Postulacion::where('proyecto_id', $id)->delete();
-
-        // Finalmente eliminar el proyecto
-        $proyecto->delete();
-
-        return redirect()->route('empresa.proyectos')->with('success', 'Proyecto eliminado correctamente.');
     }
 
     public function verPostulantes(int $id)
@@ -330,7 +348,7 @@ class EmpresaController extends Controller
                     }
                 },
             ],
-            'password' => 'nullable|string|min:6',
+            'password' => 'nullable|string|min:8',
         ]);
 
         $datos = [

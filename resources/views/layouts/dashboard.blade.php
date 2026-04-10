@@ -121,7 +121,15 @@
             animation:slideInToast 0.4s cubic-bezier(0.34,1.56,0.64,1);
             font-family:'Outfit',sans-serif; font-weight:600; font-size:14px;
         `;
-        toast.innerHTML = `<i class="fas ${icons[type]}" style="font-size:20px;color:${colors[type]};flex-shrink:0;"></i><span style="flex:1;">${message}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:16px;padding:0;"><i class="fas fa-xmark"></i></button>`;
+        
+        // Sanitize message to prevent XSS
+        const sanitize = (str) => {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        };
+        
+        toast.innerHTML = `<i class="fas ${icons[type]}" style="font-size:20px;color:${colors[type]};flex-shrink:0;"></i><span style="flex:1;">${sanitize(message)}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:16px;padding:0;"><i class="fas fa-xmark"></i></button>`;
         document.getElementById('toast-container').appendChild(toast);
         setTimeout(() => {
             toast.style.opacity = '0';

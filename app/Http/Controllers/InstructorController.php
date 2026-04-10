@@ -157,7 +157,7 @@ class InstructorController extends Controller
             'nombre' => 'required|string|max:50',
             'apellido' => 'required|string|max:50',
             'especialidad' => 'required|string|max:100',
-            'password' => 'nullable|string|min:6',
+            'password' => 'nullable|string|min:8',
         ]);
 
         $instructor->update([
@@ -406,8 +406,21 @@ class InstructorController extends Controller
         ]);
 
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('proyectos', 'public');
-            $imagenUrl = $path; // storage path is relative
+            $file = $request->file('imagen');
+
+            // Validar MIME real
+            $mime = $file->getMimeType();
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg'];
+
+            if (! in_array($mime, $allowedMimes)) {
+                return back()->with('error', 'Tipo de imagen no permitido.');
+            }
+
+            // Nombre seguro
+            $extension = $file->getClientOriginalExtension();
+            $safeFilename = 'proyecto_'.$proId.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
+            $path = $file->storeAs('proyectos', $safeFilename, 'public');
+            $imagenUrl = $path;
 
             $proyecto->update(['imagen_url' => $imagenUrl]);
 
