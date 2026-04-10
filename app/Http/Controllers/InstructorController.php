@@ -283,8 +283,10 @@ class InstructorController extends Controller
     {
         // View might send 'Aprobada', 'Rechazada', 'Pendiente'
         $estadoInput = strtolower($request->estado);
-        if ($estadoInput === 'aprobada') {
-            $estadoInput = 'aprobada';
+        if (in_array($estadoInput, ['aprobada', 'aprobado', 'aceptada', 'aceptado'])) {
+            $estadoInput = 'aceptada';
+        } elseif (in_array($estadoInput, ['rechazada', 'rechazado'])) {
+            $estadoInput = 'rechazada';
         }
 
         // $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
@@ -300,7 +302,7 @@ class InstructorController extends Controller
         $postulacion->update(['estado' => $estadoInput]);
 
         // Enviar correo al aprendiz si se aprueba o rechaza
-        if (in_array($estadoInput, ['aprobada', 'rechazada'])) {
+        if (in_array($estadoInput, ['aceptada', 'rechazada'])) {
             try {
                 $aprendiz = $postulacion->aprendiz()->with('usuario')->first();
                 $proyecto = $postulacion->proyecto;

@@ -103,14 +103,16 @@
                     
                     @if($p->pos_estado == 'pendiente')
                         <div style="display: flex; gap: 8px;">
-                            <form action="{{ route('empresa.postulacion.estado', [$p->pos_id, 'aceptada']) }}" method="POST">
+                            <form action="{{ route('empresa.postulaciones.estado', $p->pos_id) }}" method="POST">
                                 @csrf
+                                <input type="hidden" name="estado" value="aceptada">
                                 <button type="submit" class="btn-premium" style="width: 44px; height: 44px; padding: 0; justify-content: center; background: #10b981; box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25);" title="Aprobar">
                                     <i class="fas fa-check"></i>
                                 </button>
                             </form>
-                            <form action="{{ route('empresa.postulacion.estado', [$p->pos_id, 'rechazada']) }}" method="POST">
+                            <form action="{{ route('empresa.postulaciones.estado', $p->pos_id) }}" method="POST">
                                 @csrf
+                                <input type="hidden" name="estado" value="rechazada">
                                 <button type="submit" class="btn-premium" style="width: 44px; height: 44px; padding: 0; justify-content: center; background: #ef4444; box-shadow: 0 8px 16px rgba(239, 68, 68, 0.25);" title="Rechazar">
                                     <i class="fas fa-times"></i>
                                 </button>

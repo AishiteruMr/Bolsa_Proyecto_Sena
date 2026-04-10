@@ -1,93 +1,55 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar Contraseña</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; }
-        .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .header { background: linear-gradient(135deg, #005a87 0%, #003d5c 100%); padding: 30px 20px; text-align: center; color: white; }
-        .header h1 { font-size: 24px; margin-bottom: 5px; }
-        .header p { font-size: 14px; opacity: 0.9; }
-        .content { padding: 30px 20px; }
-        .greeting { font-size: 16px; color: #333; margin-bottom: 15px; }
-        .message { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 20px; }
-        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin: 20px 0; border-radius: 4px; font-size: 13px; color: #856404; }
-        .button-container { text-align: center; margin: 30px 0; }
-        .button { display: inline-block; background: #005a87; color: white; text-decoration: none; padding: 12px 30px; border-radius: 5px; font-weight: 600; font-size: 14px; transition: background 0.3s; }
-        .button:hover { background: #003d5c; }
-        .code { background: #f5f5f5; padding: 15px; border-radius: 4px; text-align: center; margin: 20px 0; }
-        .code p { font-size: 12px; color: #999; margin-bottom: 5px; }
-        .code-text { font-family: monospace; font-size: 14px; color: #005a87; font-weight: bold; word-break: break-all; }
-        .link { background: #f5f5f5; padding: 15px; border-radius: 4px; margin: 20px 0; }
-        .link p { font-size: 12px; color: #999; margin-bottom: 5px; }
-        .link-text { font-size: 12px; color: #005a87; word-break: break-all; }
-        .footer { background: #f9f9f9; padding: 20px; text-align: center; border-top: 1px solid #eee; font-size: 12px; color: #999; }
-        .footer a { color: #005a87; text-decoration: none; }
-        .expiry { color: #dc3545; font-weight: 600; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🔐 Recuperar Contraseña</h1>
-            <p>Bolsa de Proyectos SENA</p>
-        </div>
+@extends('emails.layouts.master')
 
-        <!-- Content -->
-        <div class="content">
-            <p class="greeting">¡Hola <strong>{{ $nombre }}</strong>!</p>
+@section('title', 'Recuperar Contraseña - SENA')
+@section('header_icon', '🔐')
+@section('header_title', 'Recuperar Contraseña')
+@section('header_subtitle', 'Bolsa de Proyectos SENA')
 
-            <p class="message">
-                Recibimos una solicitud para recuperar la contraseña de tu cuenta. Si no realizaste esta solicitud, puedes ignorar este correo con seguridad.
-            </p>
+@section('content')
+<p style="font-size: 16px; color: #334155; margin: 0 0 20px 0;">
+    ¡Hola <strong style="color: #0f172a;">{{ $nombre }}</strong>!
+</p>
 
-            <div class="warning">
-                ⏳ Este enlace de recuperación expirará en <strong>30 minutos</strong>. Asegúrate de actuar rápidamente.
-            </div>
+<p style="font-size: 15px; color: #475569; line-height: 1.6; margin: 0 0 16px 0;">
+    Recibimos una solicitud para recuperar la contraseña de tu cuenta. Si no realizaste esta solicitud, puedes ignorar este correo con seguridad y tu contraseña no cambiará.
+</p>
 
-            <p class="message">
-                Para restablecer tu contraseña, haz clic en el botón de abajo:
-            </p>
+<div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+    <p style="margin: 0; font-size: 14px; color: #b45309; line-height: 1.5;">
+        ⏳ Este enlace de recuperación expirará en <strong>30 minutos</strong>. Asegúrate de actuar rápidamente.
+    </p>
+</div>
 
-            <div class="button-container">
-                <a href="{{ $enlaceRecuperacion }}" class="button">Recuperar Contraseña</a>
-            </div>
+<p style="font-size: 15px; color: #475569; line-height: 1.6; margin: 0 0 30px 0;">
+    Para restablecer tu contraseña nueva, haz clic en el botón de abajo:
+</p>
 
-            <p class="message">
-                O copia y pega este enlace en tu navegador:
-            </p>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 30px;">
+    <tr>
+        <td align="center">
+            <a href="{{ $enlaceRecuperacion }}" style="display: inline-block; background: linear-gradient(135deg, #047857 0%, #10b981 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 30px; font-weight: 600; font-size: 15px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);">
+                🔑 Recuperar Contraseña
+            </a>
+        </td>
+    </tr>
+</table>
 
-            <div class="link">
-                <p>Enlace:</p>
-                <p class="link-text">{{ $enlaceRecuperacion }}</p>
-            </div>
+<div style="background-color: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 24px;">
+    <p style="font-size: 13px; color: #64748b; margin: 0 0 8px 0; font-weight: 600;">O copia y pega este enlace en tu navegador:</p>
+    <a href="{{ $enlaceRecuperacion }}" style="color: #047857; text-decoration: underline; word-break: break-all; display: inline-block; font-size: 13px;">{{ $enlaceRecuperacion }}</a>
+</div>
 
-            <div class="code">
-                <p>Código de recuperación:</p>
-                <p class="code-text">{{ $token }}</p>
-            </div>
+<div style="border: 1px dashed #cbd5e1; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
+    <p style="font-size: 13px; color: #64748b; margin: 0 0 8px 0;">Código de recuperación manual:</p>
+    <p style="font-family: monospace; font-size: 16px; color: #0f172a; font-weight: 700; background: #e2e8f0; display: inline-block; padding: 4px 12px; border-radius: 6px; margin: 0;">{{ $token }}</p>
+</div>
 
-            <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; font-size: 13px; color: #666; line-height: 1.6;">
-                <p><strong>Consejos de seguridad:</strong></p>
-                <ul style="margin-left: 20px; margin-top: 8px;">
-                    <li>Nunca compartas este correo o el enlace con nadie</li>
-                    <li>Los enlaces de recuperación son de un solo uso</li>
-                    <li>Si tuviste problemas para recuperar tu contraseña, <a href="mailto:bolsadeproyectossena@gmail.com" style="color: #005a87;">contacta al administrador</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <p>© 2026 Bolsa de Proyectos SENA. Todos los derechos reservados.</p>
-            <p style="margin-top: 10px;">
-                Este es un correo automático. Por favor no respondas a este mensaje.
-            </p>
-        </div>
-    </div>
-</body>
-</html>
+<div style="border-top: 1px solid #f1f5f9; padding-top: 20px;">
+    <p style="font-size: 14px; font-weight: 600; color: #334155; margin: 0 0 12px 0;">🛡️ Consejos de seguridad:</p>
+    <ul style="margin: 0 0 0 20px; padding: 0; color: #64748b; font-size: 13px; line-height: 1.6;">
+        <li style="margin-bottom: 4px;">Nunca compartas este correo o el enlace con nadie.</li>
+        <li style="margin-bottom: 4px;">Los enlaces de recuperación son de un solo uso.</li>
+        <li>Si tuviste problemas, contáctanos a <a href="mailto:bolsadeproyectossena@gmail.com" style="color: #047857;">bolsadeproyectossena@gmail.com</a>.</li>
+    </ul>
+</div>
+@endsection
