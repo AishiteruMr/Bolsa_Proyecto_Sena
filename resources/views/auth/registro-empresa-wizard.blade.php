@@ -124,31 +124,6 @@
         margin-bottom: 8px;
     }
     
-    .form-label .hint-icon {
-        color: var(--primary, #3eb489);
-        cursor: help;
-        position: relative;
-    }
-    
-    .form-label .hint-icon:hover::after {
-        content: attr(data-hint);
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #1a1a2e;
-        color: #fff;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: 500;
-        white-space: nowrap;
-        max-width: 250px;
-        white-space: normal;
-        z-index: 100;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    
     .form-input {
         width: 100%;
         padding: 14px 16px;
@@ -597,4 +572,5 @@ document.addEventListener('DOMContentLoaded', function() {
     updateUI();
 });
 </script>
+<script src="{{ asset('js/login.js') }}"></script>
 @endsection

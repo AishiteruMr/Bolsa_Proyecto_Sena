@@ -4,53 +4,6 @@
 
 @section('styles')
 <link rel="stylesheet" href="{{ asset('css/login.css') }}">
-<style>
-    .form-hint {
-        font-size: 11px;
-        color: #64748b;
-        margin-top: 4px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-    .hint-icon {
-        color: var(--primary, #3eb489);
-        cursor: help;
-        position: relative;
-    }
-    .hint-icon:hover::after {
-        content: attr(data-hint);
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #1a1a2e;
-        color: #fff;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 11px;
-        font-weight: 500;
-        white-space: nowrap;
-        max-width: 250px;
-        white-space: normal;
-        z-index: 100;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .resend-link {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        margin-top: 12px;
-        font-size: 12px;
-        color: var(--primary, #3eb489);
-        text-decoration: none;
-        font-weight: 600;
-    }
-    .resend-link:hover {
-        text-decoration: underline;
-    }
-</style>
 @endsection
 
 @section('content')
@@ -128,7 +81,7 @@
                 <div class="form-group">
                     <label>
                         Correo Electrónico
-                        <i class="fas fa-info-circle hint-icon" data-hint="Correo con el que te registraste en la plataforma" style="margin-left: 4px;"></i>
+                        <i class="fas fa-question-circle hint-icon" data-hint="Correo con el que te registraste en la plataforma" style="margin-left: 4px;"></i>
                     </label>
                     <div class="input-wrapper">
                         <i class="fas fa-envelope"></i>
@@ -139,7 +92,7 @@
                 <div class="form-group">
                     <label>
                         Contraseña
-                        <i class="fas fa-info-circle hint-icon" data-hint="Mínimo 8 caracteres, con mayúsculas, minúsculas y números" style="margin-left: 4px;"></i>
+                        <i class="fas fa-question-circle hint-icon" data-hint="Mínimo 6 caracteres" style="margin-left: 4px;"></i>
                     </label>
                     <div class="input-wrapper">
                         <i class="fas fa-lock"></i>

@@ -283,10 +283,8 @@ class InstructorController extends Controller
     {
         // View might send 'Aprobada', 'Rechazada', 'Pendiente'
         $estadoInput = strtolower($request->estado);
-        if (in_array($estadoInput, ['aprobada', 'aprobado', 'aceptada', 'aceptado'])) {
-            $estadoInput = 'aceptada';
-        } elseif (in_array($estadoInput, ['rechazada', 'rechazado'])) {
-            $estadoInput = 'rechazada';
+        if ($estadoInput === 'aprobada') {
+            $estadoInput = 'aceptada'; // Map to accepted for postulaciones enum
         }
 
         // $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
@@ -308,13 +306,13 @@ class InstructorController extends Controller
                 $proyecto = $postulacion->proyecto;
 
                 if ($aprendiz && $proyecto) {
-                    // Pass the entire Proyecto object as the second parameter (expects object)
-                    // instead of just the title string to satisfy the type hint in PostulacionEstadoCambiado
+                    // Display: "Aprobada" for user, but save "aceptada" to DB
+                    $displayEstado = $estadoInput === 'aceptada' ? 'Aprobada' : ucfirst($estadoInput);
                     Mail::to($aprendiz->usuario->correo)
                         ->send(new PostulacionEstadoCambiado(
                             $aprendiz->nombres,
                             $proyecto,
-                            ucfirst($estadoInput)
+                            $displayEstado
                         ));
                 }
             } catch (\Exception $e) {
