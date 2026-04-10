@@ -103,10 +103,3 @@ public/
 
 Este proyecto está bajo la licencia MIT.
 
----
-
-## 👤 Autor
-
-* GitHub: https://github.com/AishiteruMr
-
----

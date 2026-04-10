@@ -86,18 +86,18 @@
 
         @if($aprendices->count() > 0)
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px;">
-                @foreach($aprendices as $aprendiz)
+                @foreach($aprendices as $a)
                     <div class="glass-card" style="padding: 24px; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 32px rgba(62,180,137,0.12)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
                         <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
                             <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; flex-shrink: 0; box-shadow: 0 6px 16px rgba(59,130,246,0.3);">
-                                {{ strtoupper(substr($aprendiz->nombres, 0, 1)) }}
+                                {{ strtoupper(substr($a->apr_nombre, 0, 1)) }}
                             </div>
                             <div style="flex: 1; min-width: 0;">
                                 <h4 style="font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 4px;">
-                                    {{ $aprendiz->nombres }} {{ $aprendiz->apellidos }}
+                                    {{ $a->apr_nombre ?? '' }} {{ $a->apr_apellido ?? '' }}
                                 </h4>
                                 <p style="font-size: 13px; color: #3eb489; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                                    <i class="fas fa-graduation-cap"></i> {{ $aprendiz->programa_formacion }}
+                                    <i class="fas fa-graduation-cap"></i> {{ $a->apr_programa ?? 'Programa SENA' }}
                                 </p>
                             </div>
                         </div>
@@ -105,7 +105,7 @@
                         <div style="background: #f8fafc; border-radius: 12px; padding: 14px 16px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <i class="fas fa-envelope" style="color: #94a3b8; width: 16px;"></i>
-                                <span style="font-size: 13px; color: var(--text-light); font-weight: 600; word-break: break-all;">{{ $aprendiz->correo }}</span>
+                                <span style="font-size: 13px; color: var(--text-light); font-weight: 600; word-break: break-all;">{{ $a->usr_correo ?? '' }}</span>
                             </div>
                         </div>
                     </div>
