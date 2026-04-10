@@ -24,7 +24,7 @@ class PostulacionEstadoCambiado extends Mailable
 
     public function envelope(): Envelope
     {
-        $estadoEmoji = $this->nuevoEstado === 'Aprobada' ? '✅' : '❌';
+        $estadoEmoji = in_array($this->nuevoEstado, ['Aprobada', 'Aceptada']) ? '✅' : '❌';
 
         return new Envelope(
             subject: "{$estadoEmoji} Postulación {$this->nuevoEstado} - {$this->proyectoTitulo}",

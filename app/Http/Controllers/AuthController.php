@@ -215,9 +215,14 @@ class AuthController extends Controller
             ]);
 
             $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
+
+            $user = User::find($usrId);
+            if ($user) {
+                $user->sendEmailVerificationNotification();
+            }
         });
 
-        return redirect()->route('login')->with('success', '✅ Registro exitoso. Ya puedes iniciar sesión.');
+        return redirect()->route('login')->with('success', '✅ Registro exitoso. Por favor revisa tu bandeja de entrada y verifica tu correo electrónico antes de iniciar sesión.');
     }
 
     // ─── REGISTRO INSTRUCTOR ─────────────────────────────────────────────────────
@@ -246,9 +251,14 @@ class AuthController extends Controller
             ]);
 
             $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
+
+            $user = User::find($usrId);
+            if ($user) {
+                $user->sendEmailVerificationNotification();
+            }
         });
 
-        return redirect()->route('login')->with('success', '✅ Registro exitoso. Ya puedes iniciar sesión.');
+        return redirect()->route('login')->with('success', '✅ Registro exitoso. Por favor revisa tu bandeja de entrada y verifica tu correo electrónico antes de iniciar sesión.');
     }
 
     // ─── REGISTRO EMPRESA ────────────────────────────────────────────────────────
@@ -277,9 +287,14 @@ class AuthController extends Controller
             ]);
 
             $this->enviarCorreoBienvenida($request->correo, $request->nombre_empresa, '');
+
+            $user = User::find($usrId);
+            if ($user) {
+                $user->sendEmailVerificationNotification();
+            }
         });
 
-        return redirect()->route('login')->with('success', '✅ Empresa registrada exitosamente. Ya puedes iniciar sesión.');
+        return redirect()->route('login')->with('success', '✅ Empresa registrada exitosamente. Por favor revisa tu bandeja de entrada y verifica tu correo electrónico antes de iniciar sesión.');
     }
 
     // ─── HELPERS PRIVADOS ────────────────────────────────────────────────────────

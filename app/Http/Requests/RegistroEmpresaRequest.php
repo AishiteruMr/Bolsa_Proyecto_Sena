@@ -32,7 +32,7 @@ class RegistroEmpresaRequest extends FormRequest
                     }
                 },
             ],
-            'correo' => 'required|email|max:255|unique:empresas,correo_contacto|unique:usuarios,correo',
+            'correo' => 'required|email:rfc,dns|max:255|unique:empresas,correo_contacto|unique:usuarios,correo',
             'password' => 'required|string|min:8|max:100|confirmed',
             'terminos' => 'accepted',
         ];
@@ -42,7 +42,7 @@ class RegistroEmpresaRequest extends FormRequest
     {
         return [
             'required' => 'El campo :attribute es obligatorio.',
-            'email' => 'Ingresa un correo electrónico válido.',
+            'email' => 'Ingresa un correo electrónico válido y existente.',
             'unique' => 'Este :attribute ya está registrado.',
             'min' => 'El campo :attribute debe tener al menos :min caracteres.',
             'max' => 'El campo :attribute no puede exceder :max caracteres.',

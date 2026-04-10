@@ -29,12 +29,11 @@ class VerifyEmailNotification extends Notification
         );
 
         return (new MailMessage)
-            ->subject(Lang::get('Verifica tu correo electrónico'))
-            ->greeting('¡Hola!')
-            ->line('Gracias por registrarte. Por favor, verifica tu correo electrónico haciendo clic en el botón de abajo.')
-            ->action(Lang::get('Verificar Correo Electrónico'), $verificationUrl)
-            ->line('Este enlace expira en 60 minutos.')
-            ->line('Si no creaste esta cuenta, puedes ignorar este mensaje.');
+            ->subject(Lang::get('Verifica tu correo electrónico - Bolsa de Proyecto SENA'))
+            ->view('emails.verificar-correo', [
+                'verificationUrl' => $verificationUrl,
+                'nombre' => $notifiable->nombre_completo ?? 'Usuario',
+            ]);
     }
 
     public function toArray(object $notifiable): array

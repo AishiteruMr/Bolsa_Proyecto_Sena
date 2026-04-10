@@ -26,8 +26,21 @@
             </form>
         @endif
     </div>
+    @php
+        $defaultDashboard = route('home');
+        if (auth()->check()) {
+            $defaultDashboard = match(auth()->user()->rol_id) {
+                1 => route('aprendiz.dashboard'),
+                2 => route('instructor.dashboard'),
+                3 => route('empresa.dashboard'),
+                4 => route('admin.dashboard'),
+                default => route('home'),
+            };
+        }
+        $returnUrl = session('notificaciones_return_url', $defaultDashboard);
+    @endphp
     <div style="text-align:right; margin-top: 8px;">
-        <a href="{{ url()->previous() }}" class="btn-premium" style="background:#e2e8f0; color: var(--text); box-shadow: none; border: 1px solid var(--border); font-size: 13px; padding: 10px 20px;">
+        <a href="{{ $returnUrl }}" class="btn-premium" style="background:#e2e8f0; color: var(--text); box-shadow: none; border: 1px solid var(--border); font-size: 13px; padding: 10px 20px;">
             <i class="fas fa-arrow-left"></i> Regresar
         </a>
     </div>

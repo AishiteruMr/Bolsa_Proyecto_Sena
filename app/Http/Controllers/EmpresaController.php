@@ -262,8 +262,10 @@ class EmpresaController extends Controller
     {
         // En blade tienen nombres 'Pendiente', 'Aprobada', 'Rechazada', asi que por ahora aceptamos o capitalizamos
         $estadoInput = strtolower($request->estado);
-        if ($estadoInput === 'aprobada') {
+        if (in_array($estadoInput, ['aprobada', 'aprobado', 'aceptada', 'aceptado'])) {
             $estadoInput = 'aceptada';
+        } elseif (in_array($estadoInput, ['rechazada', 'rechazado'])) {
+            $estadoInput = 'rechazada';
         }
 
         // $request->validate(['estado' => 'required|in:pendiente,aceptada,rechazada']);

@@ -27,6 +27,12 @@
 @endsection
 
 @section('content')
+<div style="margin-bottom: 24px;">
+    <a href="{{ route('instructor.proyectos') }}" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-light); text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; padding: 8px 16px; background: white; border-radius: 12px; border: 1px solid rgba(62,180,137,0.1); box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onmouseover="this.style.color='#3eb489'; this.style.borderColor='rgba(62,180,137,0.3)'; this.style.transform='translateX(-4px)'" onmouseout="this.style.color='var(--text-light)'; this.style.borderColor='rgba(62,180,137,0.1)'; this.style.transform='translateX(0)'">
+        <i class="fas fa-arrow-left"></i> Regresar a Mis Proyectos
+    </a>
+</div>
+
 <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem; align-items: start;">
     
     <!-- Main Management Pillar -->
@@ -252,7 +258,7 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                             <form action="{{ route('instructor.postulaciones.estado', $p->id) }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="estado" value="aprobada">
+                                <input type="hidden" name="estado" value="aceptada">
                                 <button type="submit" style="width: 100%; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border: none; padding: 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; cursor: pointer;">Aceptar</button>
                             </form>
                             <form action="{{ route('instructor.postulaciones.estado', $p->id) }}" method="POST">
