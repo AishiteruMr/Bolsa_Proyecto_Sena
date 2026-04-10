@@ -230,6 +230,24 @@
 }
 .input-wrapper input:focus + i { color: #3eb489; }
 
+/* --- Hint Icon (Minimal - JS handles tooltips) --- */
+.hint-icon,
+label .hint-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    color: #64748b;
+    font-size: 9px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-left: 6px;
+    flex-shrink: 0;
+}
+
 .forgot-link {
     display: block; text-align: right; margin-top: -8px; margin-bottom: 24px;
     font-size: 12px; font-weight: 700; color: #3eb489;

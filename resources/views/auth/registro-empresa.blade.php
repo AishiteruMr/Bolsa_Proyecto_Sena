@@ -61,7 +61,7 @@
             <form action="{{ route('registro.empresa.post') }}" method="POST">
                 @csrf
                 <div class="form-group">
-                    <label>Nombre de la Empresa</label>
+                    <label>Nombre de la Empresa <i class="fas fa-question-circle hint-icon" data-hint="Nombre oficialRegistered de tu empresa según documento legal"></i></label>
                     <div class="input-wrapper">
                         <i class="fas fa-building"></i>
                         <input type="text" name="nombre_empresa" value="{{ old('nombre_empresa') }}" placeholder="Nombre de la empresa" required>
@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>NIT</label>
+                    <label>NIT <i class="fas fa-question-circle hint-icon" data-hint="Número de Identificación Tributaria (sin puntos ni guión)"></i></label>
                     <div class="input-wrapper">
                         <i class="fas fa-id-card"></i>
                         <input type="text" name="nit" value="{{ old('nit') }}" placeholder="Número de identificación" required>
@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Representante Legal</label>
+                    <label>Representante Legal <i class="fas fa-question-circle hint-icon" data-hint="Nombre completo del representante legal (nombre y apellido)"></i></label>
                     <div class="input-wrapper">
                         <i class="fas fa-user-tie"></i>
                         <input type="text" name="representante" value="{{ old('representante') }}" placeholder="Nombre completo" required>
@@ -85,7 +85,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Correo Electrónico</label>
+                    <label>Correo Electrónico <i class="fas fa-question-circle hint-icon" data-hint="Correo institucional o empresarial activo para notificaciones"></i></label>
                     <div class="input-wrapper">
                         <i class="fas fa-envelope"></i>
                         <input type="email" name="correo" value="{{ old('correo') }}" placeholder="correo@empresa.com" required>
@@ -94,14 +94,14 @@
 
                 <div class="input-row">
                     <div class="form-group">
-                        <label>Contraseña</label>
+                        <label>Contraseña <i class="fas fa-question-circle hint-icon" data-hint="Mínimo 6 caracteres, usa letras y números"></i></label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
                             <input type="password" name="password" placeholder="Mín. 6 caracteres" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Confirmar</label>
+                        <label>Confirmar <i class="fas fa-question-circle hint-icon" data-hint="Debe ser idéntica a la contraseña"></i></label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
                             <input type="password" name="password_confirmation" placeholder="Confirmar" required>
@@ -127,4 +127,8 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script src="{{ asset('js/login.js') }}"></script>
 @endsection
