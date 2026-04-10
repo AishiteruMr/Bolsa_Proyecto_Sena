@@ -77,7 +77,7 @@ class AdminController extends Controller
                 ));
             }
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            Log::error('Error al notificar estado de usuario: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
         }
 
         return back()->with('success', 'Estado del usuario actualizado.');
@@ -107,7 +107,7 @@ class AdminController extends Controller
                 ));
             }
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            Log::error('Error al notificar estado de empresa: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
         }
 
         return back()->with('success', 'Estado de la empresa actualizado.');
@@ -217,7 +217,7 @@ class AdminController extends Controller
                         ));
                     }
                 } catch (\Exception $e) {
-                    Log::error($e->getMessage());
+                    Log::error('Error al actualizar estado de usuario: '.$e->getCode());
                 }
             }
         } else {
