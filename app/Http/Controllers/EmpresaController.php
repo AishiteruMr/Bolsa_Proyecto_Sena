@@ -89,15 +89,30 @@ class EmpresaController extends Controller
             'requisitos' => 'required|string|max:200',
             'habilidades' => 'required|string|max:200',
             'fecha_publi' => 'required|date',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'imagen' => [
+                'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048',
+                'dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+            ],
+        ], [
+            'imagen.mimes' => 'La imagen debe ser JPG, JPEG, PNG o WEBP.',
+            'imagen.max' => 'La imagen no puede ser mayor a 2MB.',
+            'imagen.dimensions' => 'La imagen debe tener al menos 100x100px y máximo 2000x2000px.',
         ]);
 
         $nit = session('nit');
         $imagenUrl = null;
 
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('proyectos', 'public');
-            $imagenUrl = $path; // Se guarda path relativo a public
+            $file = $request->file('imagen');
+
+            // Validar MIME type real
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (! in_array($file->getMimeType(), $allowedMimes)) {
+                return back()->with('error', 'El archivo de imagen no es válido.');
+            }
+
+            $path = $file->store('proyectos', 'public');
+            $imagenUrl = $path;
         }
 
         // Calcular fecha de finalización (6 meses desde la fecha de publicación)
@@ -141,7 +156,14 @@ class EmpresaController extends Controller
             'requisitos' => 'required|string|max:200',
             'habilidades' => 'required|string|max:200',
             'fecha_publi' => 'required|date',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'imagen' => [
+                'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048',
+                'dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+            ],
+        ], [
+            'imagen.mimes' => 'La imagen debe ser JPG, JPEG, PNG o WEBP.',
+            'imagen.max' => 'La imagen no puede ser mayor a 2MB.',
+            'imagen.dimensions' => 'La imagen debe tener al menos 100x100px y máximo 2000x2000px.',
         ]);
 
         $nit = session('nit');
@@ -166,7 +188,15 @@ class EmpresaController extends Controller
         ];
 
         if ($request->hasFile('imagen')) {
-            $path = $request->file('imagen')->store('proyectos', 'public');
+            $file = $request->file('imagen');
+
+            // Validar MIME type real
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (! in_array($file->getMimeType(), $allowedMimes)) {
+                return back()->with('error', 'El archivo de imagen no es válido.');
+            }
+
+            $path = $file->store('proyectos', 'public');
             $datos['imagen_url'] = $path;
         }
 
@@ -330,7 +360,14 @@ class EmpresaController extends Controller
                     }
                 },
             ],
-            'password' => 'nullable|string|min:6',
+            'password' => [
+                'nullable', 'string', 'min:8', 'max:100', 'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/',
+            ],
+        ], [
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.regex' => 'La contraseña debe tener mayúsculas, minúsculas y números.',
         ]);
 
         $datos = [

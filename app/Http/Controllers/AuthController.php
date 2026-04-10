@@ -51,15 +51,13 @@ class AuthController extends Controller
 
             if (! empty($usuario->contrasena) && Hash::check($password, $usuario->contrasena)) {
                 $loginOk = true;
-            } elseif ($usuario->contrasena === $password) { // Migración suave
-                DB::table('usuarios')
-                    ->where('id', $usuario->id)
-                    ->update(['contrasena' => Hash::make($password)]);
-                $loginOk = true;
             }
 
             if (! $loginOk) {
                 cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
+
+                // Log failed login attempt (Phase 3)
+                AuditService::logFailedLoginAttempt($correo);
 
                 return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
             }
@@ -116,6 +114,9 @@ class AuthController extends Controller
             session($sessionData);
             $request->session()->regenerate();
 
+            // Log successful login (Phase 3)
+            AuditService::logLogin($usuario->id, success: true);
+
             return $this->redirectByRol($usuario->rol_id);
         }
 
@@ -128,9 +129,16 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $usrId = session('usr_id');
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         $request->session()->flush();
+
+        // Log logout (Phase 3)
+        if ($usrId) {
+            AuditService::logLogout($usrId);
+        }
 
         return redirect()->route('login')->with('success', 'Sesión cerrada correctamente.');
     }
@@ -139,7 +147,7 @@ class AuthController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (! hash_equals(sha1($user->getAttribute('correo')), $hash)) {
+        if (! hash_equals(hash('sha256', $user->getAttribute('correo')), $hash)) {
             return redirect()->route('login')->with('error', 'Enlace de verificación inválido.');
         }
 
@@ -148,6 +156,9 @@ class AuthController extends Controller
         }
 
         $user->markEmailAsVerified();
+
+        // Log email verification (Phase 3)
+        AuditService::logEmailVerification($user->id, $user->correo);
 
         return redirect()->route('login')->with('success', '¡Correo verificado exitosamente! Ya puedes iniciar sesión.');
     }
@@ -387,6 +398,7 @@ class AuthController extends Controller
             'email' => $correo,
             'token' => hash('sha256', $token),
             'created_at' => now(),
+            'expires_at' => now()->addMinutes(30),
         ]);
 
         // Enviar correo
@@ -419,8 +431,8 @@ class AuthController extends Controller
             return redirect()->route('login')->with('error', 'El enlace de recuperación es inválido o ha expirado.');
         }
 
-        // Verificar que no haya expirado (30 minutos)
-        if (Carbon::parse($registro->created_at)->addMinutes(30)->isPast()) {
+        // Verificar que no haya expirado usando expires_at
+        if ($registro->expires_at && Carbon::parse($registro->expires_at)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
             return redirect()->route('login')->with('error', 'El enlace de recuperación ha expirado. Solicita uno nuevo.');
@@ -434,50 +446,67 @@ class AuthController extends Controller
         $request->validate([
             'token' => 'required|string',
             'correo' => 'required|email|max:255',
-            'password' => 'required|string|min:6|max:100|confirmed',
+            'password' => 'required|string|min:8|max:100|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]+$/',
         ], [
             'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.regex' => 'La contraseña debe contener mayúsculas, minúsculas, números y caracteres especiales.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
         $correo = strip_tags(trim($request->correo));
         $token = $request->token;
 
-        // Verificar token
-        $registro = DB::table('password_reset_tokens')
-            ->where('email', $correo)
-            ->where('token', hash('sha256', $token))
-            ->first();
+        // Verificar token con transacción para evitar race conditions
+        DB::beginTransaction();
+        try {
+            $registro = DB::table('password_reset_tokens')
+                ->where('email', $correo)
+                ->where('token', hash('sha256', $token))
+                ->lockForUpdate()  // Lock para evitar reuso
+                ->first();
 
-        if (! $registro) {
-            return back()->with('error', 'El enlace de recuperación es inválido o ha expirado.');
-        }
+            if (! $registro) {
+                DB::rollback();
 
-        // Verificar que no haya expirado (30 minutos)
-        if (Carbon::parse($registro->created_at)->addMinutes(30)->isPast()) {
+                return back()->with('error', 'El enlace de recuperación es inválido o ha expirado.');
+            }
+
+            // Verificar que no haya expirado usando expires_at
+            if ($registro->expires_at && Carbon::parse($registro->expires_at)->isPast()) {
+                DB::table('password_reset_tokens')->where('email', $correo)->delete();
+                DB::rollback();
+
+                return back()->with('error', 'El enlace de recuperación ha expirado.');
+            }
+
+            // Buscar usuario
+            $usuario = DB::table('usuarios')->where('correo', $correo)->first();
+
+            if (! $usuario) {
+                DB::rollback();
+
+                return back()->with('error', 'Cuenta no encontrada.');
+            }
+
+            // Eliminar token ANTES de actualizar contraseña
             DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
-            return back()->with('error', 'El enlace de recuperación ha expirado.');
-        }
-
-        // Buscar usuario
-        $usuario = DB::table('usuarios')->where('correo', $correo)->first();
-
-        if ($usuario) {
             // Actualizar contraseña de usuario
             DB::table('usuarios')
                 ->where('id', $usuario->id)
                 ->update(['contrasena' => Hash::make($request->password)]);
 
-            $mensaje = 'Usuario';
-        } else {
-            return back()->with('error', 'Cuenta no encontrada.');
+            DB::commit();
+
+            Log::info('Contraseña restablecida exitosamente', ['email' => $correo]);
+
+            return redirect()->route('login')->with('success', '✅ Contraseña actualizada correctamente. Ya puedes iniciar sesión.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Error restableciendo contraseña: '.$e->getMessage());
+
+            return back()->with('error', 'Error al actualizar la contraseña. Intenta de nuevo.');
         }
-
-        // Eliminar token usado
-        DB::table('password_reset_tokens')->where('email', $correo)->delete();
-
-        return redirect()->route('login')->with('success', '✅ Contraseña actualizada correctamente. Ya puedes iniciar sesión.');
     }
 }

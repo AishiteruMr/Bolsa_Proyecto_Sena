@@ -33,7 +33,14 @@ class RegistroEmpresaRequest extends FormRequest
                 },
             ],
             'correo' => 'required|email:rfc,dns|max:255|unique:empresas,correo_contacto|unique:usuarios,correo',
-            'password' => 'required|string|min:8|max:100|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'max:100',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+            ],
             'terminos' => 'accepted',
         ];
     }
@@ -50,6 +57,7 @@ class RegistroEmpresaRequest extends FormRequest
             'digits_between' => 'El documento debe tener entre :min y :max dígitos.',
             'accepted' => 'Debes aceptar los términos y condiciones.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.regex' => 'La contraseña debe tener mayúsculas, minúsculas y números.',
             'representante.regex' => 'El nombre del representante solo puede contener letras y espacios (sin números).',
             'representante.min' => 'El nombre del representante debe tener al menos 10 caracteres.',
         ];

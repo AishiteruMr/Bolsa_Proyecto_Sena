@@ -154,10 +154,25 @@ class InstructorController extends Controller
         $usuario = User::findOrFail($usrId);
 
         $request->validate([
-            'nombre' => 'required|string|max:50',
-            'apellido' => 'required|string|max:50',
+            'nombre' => [
+                'required', 'string', 'max:50',
+                'regex:/^[a-zA-ZÀ-ÿÑñ\s]+$/',
+            ],
+            'apellido' => [
+                'required', 'string', 'max:50',
+                'regex:/^[a-zA-ZÀ-ÿÑñ\s]+$/',
+            ],
             'especialidad' => 'required|string|max:100',
-            'password' => 'nullable|string|min:6',
+            'password' => [
+                'nullable', 'string', 'min:8', 'max:100', 'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/',
+            ],
+        ], [
+            'nombre.regex' => 'El nombre solo puede contener letras y espacios.',
+            'apellido.regex' => 'El apellido solo puede contener letras y espacios.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.regex' => 'La contraseña debe tener mayúsculas, minúsculas y números.',
         ]);
 
         $instructor->update([
