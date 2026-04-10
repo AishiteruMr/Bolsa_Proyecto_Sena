@@ -9,11 +9,14 @@ use App\Models\Evidencia;
 use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
+use App\Notifications\AppNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AprendizController extends Controller
 {
@@ -54,11 +57,12 @@ class AprendizController extends Controller
         // Para DB, si necesitamos fecha, usamos DB raw o tomamos en memoria si son pocos:
         $proyectosAsociados = Proyecto::whereIn('id', $proyectosAprobados)->get();
         // Ordenarlos por la estimación (fecha_publicacion + duracion_estimada_dias) que esté en el futuro
-        $proximoCierre = $proyectosAsociados->filter(function($p) {
-            $fechaFin = \Carbon\Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
+        $proximoCierre = $proyectosAsociados->filter(function ($p) {
+            $fechaFin = Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
+
             return $fechaFin->isFuture();
-        })->sortBy(function($p) {
-            return \Carbon\Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
+        })->sortBy(function ($p) {
+            return Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
         })->first();
 
         return view('aprendiz.dashboard', compact(
@@ -165,9 +169,9 @@ class AprendizController extends Controller
 
         // ── Notificación en BD ────────────────────────────────────
         try {
-            $aprendizUsr = \App\Models\User::find($aprendiz->usuario_id);
+            $aprendizUsr = User::find($aprendiz->usuario_id);
             if ($aprendizUsr) {
-                $aprendizUsr->notify(new \App\Notifications\AppNotification(
+                $aprendizUsr->notify(new AppNotification(
                     '🎉 Postulación enviada',
                     'Tu postulación al proyecto fue registrada. Pronto recibirás una respuesta.',
                     'fa-paper-plane'
@@ -175,11 +179,11 @@ class AprendizController extends Controller
             }
 
             if ($proyecto && $proyecto->instructor_usuario_id) {
-                $instUsr = \App\Models\User::find($proyecto->instructor_usuario_id);
+                $instUsr = User::find($proyecto->instructor_usuario_id);
                 if ($instUsr) {
-                    $instUsr->notify(new \App\Notifications\AppNotification(
+                    $instUsr->notify(new AppNotification(
                         'Nueva Postulación',
-                        'El aprendiz ' . $aprendiz->nombres . ' se ha postulado a tu proyecto: ' . \Illuminate\Support\Str::limit($proyecto->titulo, 30),
+                        'El aprendiz '.$aprendiz->nombres.' se ha postulado a tu proyecto: '.Str::limit($proyecto->titulo, 30),
                         'fa-user-plus'
                     ));
                 }
@@ -241,8 +245,8 @@ class AprendizController extends Controller
                     'categoria' => $proyecto->categoria,
                     'pro_estado' => $proyecto->estado,
                     'fecha_publi' => $proyecto->fecha_publicacion,
-                    'fecha_finalizacion' => $proyecto->fecha_publicacion 
-                        ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias) 
+                    'fecha_finalizacion' => $proyecto->fecha_publicacion
+                        ? Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias)
                         : null,
                     'imagen_url' => $proyecto->imagen_url,
                     'nombre' => $proyecto->empresa->nombre ?? 'No asignada',
@@ -274,13 +278,14 @@ class AprendizController extends Controller
         })->with('empresa')->get()
             ->map(function ($p) {
                 $p->emp_nombre = $p->empresa->nombre ?? 'No asignada';
+
                 return $p;
             });
 
         // Entregas por proyecto (entregas de etapas del instructor, aunque antes decia $aprendiz->entregas(), lo revisaremos)
         // El aprendiz no tiene "entregas()" genericas, era Evidencia.
-        $entregas = collect([]); 
-        
+        $entregas = collect([]);
+
         // Evidencias (estas son las entregas del aprendiz)
         $evidencias = $aprendiz->evidencias()
             ->with(['etapa', 'proyecto'])
@@ -365,30 +370,53 @@ class AprendizController extends Controller
         // Validar datos
         $request->validate([
             'descripcion' => 'required|string|max:1000',
-            'archivo' => 'nullable|file|max:5120', // 5MB máximo
+            'archivo' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx', // 5MB, tipos permitidos
         ], [
             'descripcion.required' => 'La descripción es obligatoria.',
             'descripcion.max' => 'La descripción no puede exceder 1000 caracteres.',
             'archivo.max' => 'El archivo no puede ser mayor a 5MB.',
+            'archivo.mimes' => 'Tipo de archivo no permitido. Solo: PDF, imágenes, Word, Excel.',
         ]);
 
         // Guardar archivo si existe
         $archivoUrl = null;
         if ($request->hasFile('archivo')) {
-            $path = $request->file('archivo')->store('evidencias', 'public');
+            $file = $request->file('archivo');
+
+            // Validar MIME real del archivo
+            $mime = $file->getMimeType();
+            $allowedMimes = [
+                'application/pdf',
+                'image/jpeg',
+                'image/png',
+                'image/jpg',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ];
+
+            if (! in_array($mime, $allowedMimes)) {
+                return back()->with('error', 'Tipo de archivo no permitido.');
+            }
+
+            // Generar nombre seguro (sin path traversal)
+            $extension = $file->getClientOriginalExtension();
+            $safeFilename = 'evidencia_'.$aprendiz->id.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
+            $path = $file->storeAs('evidencias', $safeFilename, 'public');
             $archivoUrl = $path;
         }
 
         DB::table('evidencias')->insert([
-            'aprendiz_id'           => $aprendiz->id,
-            'etapa_id'              => $etaId,
-            'proyecto_id'           => $proId,
-            'ruta_archivo'          => $archivoUrl,
-            'fecha_envio'           => now(),
-            'estado'                => 'pendiente',
+            'aprendiz_id' => $aprendiz->id,
+            'etapa_id' => $etaId,
+            'proyecto_id' => $proId,
+            'ruta_archivo' => $archivoUrl,
+            'fecha_envio' => now(),
+            'estado' => 'pendiente',
             'comentario_instructor' => null,
-            'created_at'            => now(),
-            'updated_at'            => now()
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return back()->with('success', '✅ Evidencia enviada correctamente. El instructor la revisará.');
@@ -426,7 +454,7 @@ class AprendizController extends Controller
             'nombre' => 'required|string|max:50',
             'apellido' => 'required|string|max:50',
             'programa' => 'required|string|max:100',
-            'password' => 'nullable|string|min:6|confirmed',
+            'password' => 'nullable|string|min:8|confirmed',
         ], [
             'nombre.required' => 'El nombre es obligatorio.',
             'nombre.max' => 'El nombre no puede exceder 50 caracteres.',

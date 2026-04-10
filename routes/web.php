@@ -41,17 +41,17 @@ Route::get('/email/resend-verification', [AuthController::class, 'resendVerifica
 
 // Recuperación de contraseña
 Route::get('/olvide-contraseña', [AuthController::class, 'showOlvideContraseña'])->name('auth.olvide-contraseña');
-Route::post('/enviar-recuperacion', [AuthController::class, 'enviarEnlaceRecuperacion'])->name('auth.enviar-recuperacion');
+Route::post('/enviar-recuperacion', [AuthController::class, 'enviarEnlaceRecuperacion'])->name('auth.enviar-recuperacion')->middleware('throttle:3,1');
 Route::get('/recuperar-contraseña/{token}', [AuthController::class, 'mostrarFormularioRestablecerContraseña'])->name('auth.mostrar-restablecer');
-Route::post('/restablecer-contraseña', [AuthController::class, 'restablecerContraseña'])->name('auth.restablecer-contraseña');
+Route::post('/restablecer-contraseña', [AuthController::class, 'restablecerContraseña'])->name('auth.restablecer-contraseña')->middleware('throttle:5,1');
 
 // Registros
 Route::get('/registro/aprendiz', [AuthController::class, 'showRegistroAprendiz'])->name('registro.aprendiz');
 Route::get('/registro/empresa', [AuthController::class, 'showRegistroEmpresa'])->name('registro.empresa');
 Route::get('/registro/instructor', [AuthController::class, 'showRegistroInstructor'])->name('registro.instructor');
-Route::post('/registro/aprendiz', [AuthController::class, 'registrarAprendiz'])->name('registro.aprendiz.post');
-Route::post('/registro/empresa', [AuthController::class, 'registrarEmpresa'])->name('registro.empresa.post');
-Route::post('/registro/instructor', [AuthController::class, 'registrarInstructor'])->name('registro.instructor.post');
+Route::post('/registro/aprendiz', [AuthController::class, 'registrarAprendiz'])->name('registro.aprendiz.post')->middleware('throttle:5,1');
+Route::post('/registro/empresa', [AuthController::class, 'registrarEmpresa'])->name('registro.empresa.post')->middleware('throttle:5,1');
+Route::post('/registro/instructor', [AuthController::class, 'registrarInstructor'])->name('registro.instructor.post')->middleware('throttle:5,1');
 
 Route::middleware(['auth.custom'])->group(function () {
     Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
