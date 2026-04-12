@@ -233,13 +233,17 @@ class InstructorController extends Controller
                 ->where('estado', 'aceptada');
         })->with('usuario')->get();
 
-        // Obtener evidencias
+        // Obtener evidencias con datos del aprendiz
         $evidencias = Evidencia::where('evidencias.proyecto_id', $proId)
-            ->with(['etapa', 'aprendiz'])
             ->join('etapas', 'evidencias.etapa_id', '=', 'etapas.id')
+            ->join('aprendices', 'evidencias.aprendiz_id', '=', 'aprendices.id')
             ->orderBy('etapas.orden', 'asc')
             ->orderByDesc('evidencias.fecha_envio')
-            ->select('evidencias.*')
+            ->select(
+                'evidencias.*',
+                'aprendices.nombres as aprendiz_nombres',
+                'aprendices.apellidos as aprendiz_apellidos'
+            )
             ->get();
 
         $entregas = $evidencias;

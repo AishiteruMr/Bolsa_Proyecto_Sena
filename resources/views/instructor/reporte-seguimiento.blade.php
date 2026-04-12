@@ -34,7 +34,13 @@
             <h2 style="font-size:28px; font-weight:800; color:var(--primary-hover)">Auditoría de Progreso</h2>
             <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Análisis detallado para: <span style="color: var(--primary); font-weight: 700;">{{ $proyecto->titulo }}</span></p>
         </div>
-        <button onclick="window.print()" class="btn-ver" style="background: #64748b; padding: 10px 24px; border-radius: 12px; width: auto;">
+        <!-- 
+            BOTÓN EXPORTAR PDF
+            Llama a la función exportarPDF() en JavaScript.
+            NO usa window.print() directamente porque necesitamos 
+            expandir los acordeones primero.
+        -->
+        <button onclick="exportarPDF()" class="btn-ver" style="background: #64748b; padding: 10px 24px; border-radius: 12px; width: auto;">
             <i class="fas fa-print" style="margin-right: 8px;"></i> Exportar PDF
         </button>
     </div>
@@ -97,6 +103,7 @@
                                     $e_count = $entregas->where('aprendiz_id', $aprendiz->id)->count();
                                     $a_count = $evidencias->where('aprendiz_id', $aprendiz->id)->where('estado', 'aceptada')->count();
                                     $progreso = $etapas->count() > 0 ? ($a_count / $etapas->count()) * 100 : 0;
+                                    $correoAprendiz = $aprendiz->usuario->correo ?? 'N/A';
                                 @endphp
                                 <tr style="background: var(--bg-main); border-radius: 14px;">
                                     <td style="padding: 16px; border-radius: 14px 0 0 14px;">
@@ -105,8 +112,8 @@
                                                 {{ substr($aprendiz->nombres, 0, 1) }}
                                             </div>
                                             <div>
-                                                <p style="font-weight: 700; color: var(--text-main); font-size: 0.9rem;">{{ $aprendiz->nombres }}</p>
-                                                <p style="font-size: 0.75rem; color: var(--text-muted);">{{ $aprendiz->correo }}</p>
+                                                <p style="font-weight: 700; color: var(--text-main); font-size: 0.9rem;">{{ $aprendiz->nombres }} {{ $aprendiz->apellidos }}</p>
+                                                <p style="font-size: 0.75rem; color: var(--text-muted);">{{ $correoAprendiz }}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -158,7 +165,7 @@
                                             <h5 class="sub-label-rep" style="--c: #3b82f6;">Entregas Formales</h5>
                                             @forelse($entregas->where('etapa_id', $etapa->id) as $e)
                                                 <div class="mini-card-rep">
-                                                    <span style="font-weight: 700; color: var(--text-main);">{{ $e->nombres }}</span>
+                                                    <span style="font-weight: 700; color: var(--text-main);">{{ $e->aprendiz_nombres ?? '' }} {{ $e->aprendiz_apellidos ?? '' }}</span>
                                                     <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: none; font-size: 0.65rem;">ENVIADO</span>
                                                 </div>
                                             @empty
@@ -169,7 +176,7 @@
                                             <h5 class="sub-label-rep" style="--c: #10b981;">Calificaciones</h5>
                                             @forelse($evidencias->where('etapa_id', $etapa->id) as $ev)
                                                 <div class="mini-card-rep">
-                                                    <span style="font-weight: 700; color: var(--text-main);">{{ $ev->nombres }}</span>
+                                                    <span style="font-weight: 700; color: var(--text-main);">{{ $ev->aprendiz_nombres ?? '' }} {{ $ev->aprendiz_apellidos ?? '' }}</span>
                                                     <span class="badge" style="background: {{ $ev->estado === 'aceptada' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)' }}; color: {{ $ev->estado === 'aceptada' ? '#10b981' : '#ef4444' }}; border: none; font-size: 0.65rem;">{{ strtoupper($ev->estado) }}</span>
                                                 </div>
                                             @empty
@@ -325,10 +332,117 @@
     }
 
     @media print {
-        .sidebar-nav, .top-bar, .btn-ver, .nav-item { display: none !important; }
-        .glass-card { box-shadow: none !important; border: 1px solid #ddd !important; }
+        .sidebar, .topbar, .btn-ver, .nav-item { display: none !important; }
+        .main { margin-left: 0 !important; }
+        .glass-card { 
+            box-shadow: none !important; 
+            border: 1px solid #ddd !important;
+            backdrop-filter: none !important;
+            background: white !important;
+        }
         body { background: white !important; }
         .accordion-content-rep { display: block !important; }
+        .accordion-header-rep { cursor: default !important; }
+        .stage-accordion-rep { page-break-inside: avoid; }
+        .stat-card-rep { border: 1px solid #ddd !important; }
+        .mini-card-rep { background: #f8fafc !important; }
+        :root {
+            --primary: hsl(158, 49%, 47%);
+            --primary-hover: hsl(158, 49%, 37%);
+            --primary-light: hsl(158, 49%, 57%);
+            --text-main: #1a2e1a;
+            --text-muted: #64748b;
+            --border: rgba(0, 0, 0, 0.1);
+            --bg-main: #f8fafc;
+        }
+    }
+</style>
+@endsection
+
+@section('scripts')
+<script>
+    /**
+     * ================================================
+     * ESTILOS PARA IMPRESIÓN / EXPORTAR PDF
+     * ================================================
+     * 
+     * Estos estilos se aplican SOLO cuando se imprime o exporta a PDF.
+     * Su objetivo es generar un documento limpio y profesional.
+     * 
+     * CAMBIOS REALIZADOS:
+     * 
+     * 1. OCULTAR ELEMENTOS DE NAVEGACIÓN:
+     *    - .sidebar, .topbar, .btn-ver, .nav-item = display: none
+     *    - Eliminamos el menú lateral y el encabezado para que no aparezcan en el PDF
+     * 
+     * 2. AJUSTAR LAYOUT PRINCIPAL:
+     *    - .main { margin-left: 0 } = El contenido ocupa todo el ancho (sin sidebar)
+     * 
+     * 3. SIMPLIFICAR TARJETAS (glass-card):
+     *    - backdrop-filter: none = Eliminar efecto glass/blur que no se imprime bien
+     *    - background: white = Fondo sólido blanco
+     *    - border: 1px solid #ddd = Borde simple gris
+     *    - box-shadow: none = Sin sombras
+     * 
+     * 4. VARIABLES CSS:
+     *    - Definimos :root dentro de @media print porque las variables
+     *      se heredan del layout principal y necesitamos valores directos
+     *      para que los colores funcionen en el PDF.
+     * 
+     * 5. ACORDEONES EXPANDIDOS:
+     *    - .accordion-content-rep { display: block !important }
+     *    - FUERZA que todo el contenido de los acordeones sea visible
+     * 
+     * 6. EVITAR CORTES DE PÁGINA:
+     *    - .stage-accordion-rep { page-break-inside: avoid }
+     *    - Evita que un acordeón se corte entre dos páginas
+     * 
+     * 7. COLORES DE ESTADO:
+     *    - .stat-card-rep, .mini-card-rep = Bordes y fondos simples
+     */
+    @media print {
+        /* Ocultar navegación */
+        .sidebar, .topbar, .btn-ver, .nav-item { display: none !important; }
+        
+        /* Contenido ocupa todo el ancho */
+        .main { margin-left: 0 !important; }
+        
+        /* Tarjetas con estilo simple para impresión */
+        .glass-card { 
+            box-shadow: none !important; 
+            border: 1px solid #ddd !important;
+            backdrop-filter: none !important;
+            background: white !important;
+        }
+        
+        /* Fondo blanco general */
+        body { background: white !important; }
+        
+        /* Mostrar contenido oculto de acordeones */
+        .accordion-content-rep { display: block !important; }
+        
+        /* Quitar cursor pointer de headers de acordeón */
+        .accordion-header-rep { cursor: default !important; }
+        
+        /* Evitar que los acordeones se corten entre páginas */
+        .stage-accordion-rep { page-break-inside: avoid; }
+        
+        /* Estilos simples para tarjetas de estadísticas */
+        .stat-card-rep { border: 1px solid #ddd !important; }
+        
+        /* Fondo simple para mini-cards */
+        .mini-card-rep { background: #f8fafc !important; }
+        
+        /* Definir variables CSS directamente para impresión */
+        :root {
+            --primary: hsl(158, 49%, 47%);
+            --primary-hover: hsl(158, 49%, 37%);
+            --primary-light: hsl(158, 49%, 57%);
+            --text-main: #1a2e1a;
+            --text-muted: #64748b;
+            --border: rgba(0, 0, 0, 0.1);
+            --bg-main: #f8fafc;
+        }
     }
 </style>
 @endsection
