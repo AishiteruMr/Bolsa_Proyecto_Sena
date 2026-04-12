@@ -1,25 +1,34 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Reporte de Seguimiento | ' . $proyecto->titulo)
-@section('page-title', 'Reporte de Seguimiento')
+@section('title', 'Reporte de Proyecto | ' . $proyecto->titulo)
+@section('page-title', 'Reporte de Proyecto')
 
 @section('sidebar-nav')
-    <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-home"></i> Principal
+    <span class="nav-label">Portal Empresa</span>
+    <a href="{{ route('empresa.dashboard') }}" class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}">
+        <i class="fas fa-th-large"></i> Principal
     </a>
-    <a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos*') ? 'active' : '' }}">
+    <a href="{{ route('empresa.proyectos') }}" class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}">
         <i class="fas fa-project-diagram"></i> Mis Proyectos
     </a>
-    <a href="{{ route('instructor.historial') }}" class="nav-item {{ request()->routeIs('instructor.historial') ? 'active' : '' }}">
-        <i class="fas fa-history"></i> Historial
+    <span class="nav-label">Configuración</span>
+    <a href="{{ route('empresa.perfil') }}" class="nav-item {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}">
+        <i class="fas fa-building"></i> Perfil Empresa
     </a>
-    <a href="{{ route('instructor.aprendices') }}" class="nav-item {{ request()->routeIs('instructor.aprendices') ? 'active' : '' }}">
-        <i class="fas fa-users"></i> Aprendices
-    </a>
-    <span class="nav-label">Cuenta</span>
-    <a href="{{ route('instructor.perfil') }}" class="nav-item {{ request()->routeIs('instructor.perfil') ? 'active' : '' }}">
-        <i class="fas fa-user-circle"></i> Mi Perfil
-    </a>
+@endsection
+
+@section('styles')
+<style>
+    :root {
+        --primary: hsl(158, 49%, 47%);
+        --primary-hover: hsl(158, 49%, 37%);
+        --primary-light: hsl(158, 49%, 57%);
+        --text-main: #1a2e1a;
+        --text-muted: #64748b;
+        --border: rgba(158, 49%, 47%, 0.1);
+        --bg-main: #f8fafc;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -27,14 +36,20 @@
     <div style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                <a href="{{ route('instructor.proyecto.detalle', $proyecto->id) }}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
-                    <i class="fas fa-arrow-left"></i> Volver a la Gestión
+                <a href="{{ route('empresa.proyectos') }}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
+                    <i class="fas fa-arrow-left"></i> Volver a Mis Proyectos
                 </a>
             </div>
             <h2 style="font-size:28px; font-weight:800; color:var(--primary-hover)">Auditoría de Progreso</h2>
             <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Análisis detallado para: <span style="color: var(--primary); font-weight: 700;">{{ $proyecto->titulo }}</span></p>
         </div>
-        <button id="btnExportarPDF" class="btn-ver" style="background: #64748b; padding: 10px 24px; border-radius: 12px; width: auto; position: relative; z-index: 100;">
+        <!-- 
+            BOTÓN EXPORTAR PDF
+            Llama a la función exportarPDF() en JavaScript.
+            NO usa window.print() directamente porque necesitamos 
+            expandir los acordeones primero.
+        -->
+        <button onclick="exportarPDF()" class="btn-ver" style="background: #64748b; padding: 10px 24px; border-radius: 12px; width: auto; position: relative; z-index: 100;">
             <i class="fas fa-print" style="margin-right: 8px;"></i> Exportar PDF
         </button>
     </div>
@@ -200,9 +215,9 @@
                         </span>
                     </div>
                     <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Empresa Patrocinadora</p>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Instructor Responsable</p>
                         <p style="font-weight: 800; color: var(--text-main); font-size: 0.95rem;">
-                            <i class="fas fa-building" style="color: var(--primary); margin-right: 8px;"></i>{{ $proyecto->empresa->nombre ?? 'No asignada' }}
+                            <i class="fas fa-chalkboard-teacher" style="color: var(--primary); margin-right: 8px;"></i>{{ $proyecto->instructor->nombres ?? 'No asignado' }} {{ $proyecto->instructor->apellidos ?? '' }}
                         </p>
                     </div>
                     <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
@@ -325,21 +340,79 @@
         font-size: 0.85rem;
     }
 
+    /**
+     * ================================================
+     * ESTILOS PARA IMPRESIÓN / EXPORTAR PDF
+     * ================================================
+     * 
+     * Estos estilos se aplican SOLO cuando se imprime o exporta a PDF.
+     * Su objetivo es generar un documento limpio y profesional.
+     * 
+     * CAMBIOS REALIZADOS:
+     * 
+     * 1. OCULTAR ELEMENTOS DE NAVEGACIÓN:
+     *    - .sidebar, .topbar, .btn-ver, .nav-item = display: none
+     *    - Eliminamos el menú lateral y el encabezado para que no aparezcan en el PDF
+     * 
+     * 2. AJUSTAR LAYOUT PRINCIPAL:
+     *    - .main { margin-left: 0 } = El contenido ocupa todo el ancho (sin sidebar)
+     * 
+     * 3. SIMPLIFICAR TARJETAS (glass-card):
+     *    - backdrop-filter: none = Eliminar efecto glass/blur que no se imprime bien
+     *    - background: white = Fondo sólido blanco
+     *    - border: 1px solid #ddd = Borde simple gris
+     *    - box-shadow: none = Sin sombras
+     * 
+     * 4. VARIABLES CSS:
+     *    - Definimos :root dentro de @media print porque las variables
+     *      se heredan del layout principal y necesitamos valores directos
+     *      para que los colores funcionen en el PDF.
+     * 
+     * 5. ACORDEONES EXPANDIDOS:
+     *    - .accordion-content-rep { display: block !important }
+     *    - FUERZA que todo el contenido de los acordeones sea visible
+     * 
+     * 6. EVITAR CORTES DE PÁGINA:
+     *    - .stage-accordion-rep { page-break-inside: avoid }
+     *    - Evita que un acordeón se corte entre dos páginas
+     * 
+     * 7. COLORES DE ESTADO:
+     *    - .stat-card-rep, .mini-card-rep = Bordes y fondos simples
+     */
     @media print {
+        /* Ocultar navegación */
         .sidebar, .topbar, .btn-ver, .nav-item { display: none !important; }
+        
+        /* Contenido ocupa todo el ancho */
         .main { margin-left: 0 !important; }
+        
+        /* Tarjetas con estilo simple para impresión */
         .glass-card { 
             box-shadow: none !important; 
             border: 1px solid #ddd !important;
             backdrop-filter: none !important;
             background: white !important;
         }
+        
+        /* Fondo blanco general */
         body { background: white !important; }
+        
+        /* Mostrar contenido oculto de acordeones */
         .accordion-content-rep { display: block !important; }
+        
+        /* Quitar cursor pointer de headers de acordeón */
         .accordion-header-rep { cursor: default !important; }
+        
+        /* Evitar que los acordeones se corten entre páginas */
         .stage-accordion-rep { page-break-inside: avoid; }
+        
+        /* Estilos simples para tarjetas de estadísticas */
         .stat-card-rep { border: 1px solid #ddd !important; }
+        
+        /* Fondo simple para mini-cards */
         .mini-card-rep { background: #f8fafc !important; }
+        
+        /* Definir variables CSS directamente para impresión */
         :root {
             --primary: hsl(158, 49%, 47%);
             --primary-hover: hsl(158, 49%, 37%);
@@ -355,23 +428,39 @@
 
 @section('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('btnExportarPDF');
-    if (btn) {
-        btn.addEventListener('click', function() {
+/**
+ * Función para exportar a PDF
+ * 
+ * PROBLEMA ORIGINAL:
+ * Los acordeones (Bitácora Detallada por Etapas) estaban colapsados por defecto
+ * y al imprimir solo salía el contenido visible en pantalla (encabezados de los acordeones).
+ * 
+ * SOLUCIÓN:
+ * 1. Antes de imprimir: Agregamos la clase 'active' a todos los acordeones para expandirlos
+ * 2. Esperamos 100ms para que el navegador renderice el contenido expandido
+ * 3. Ejecutamos window.print() para abrir el diálogo de impresión
+ * 4. Después de imprimir (o cancelar): Removemos la clase 'active' para dejar todo como estaba
+ * 
+ * La clase 'active' cambia el display de 'none' a 'block' mostrando todo el contenido.
+ */
+function exportarPDF() {
+    // PASO 1: Expandir todos los acordeones antes de imprimir
+    document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
+        el.classList.add('active');
+    });
+    
+    // PASO 2: Esperar a que se renderice el contenido expandido
+    setTimeout(function() {
+        // PASO 3: Abrir diálogo de impresión del navegador
+        window.print();
+        
+        // PASO 4: Después de imprimir, restaurar estado original (acordeones cerrados)
+        setTimeout(function() {
             document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
-                el.classList.add('active');
+                el.classList.remove('active');
             });
-            setTimeout(function() {
-                window.print();
-                setTimeout(function() {
-                    document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
-                        el.classList.remove('active');
-                    });
-                }, 100);
-            }, 100);
-        });
-    }
-});
+        }, 100);
+    }, 100);
+}
 </script>
 @endsection

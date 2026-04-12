@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Mail\PostulacionEstadoCambiado;
 use App\Models\Aprendiz;
 use App\Models\Empresa;
+use App\Models\Etapa;
+use App\Models\Evidencia;
 use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
@@ -273,6 +275,47 @@ class EmpresaController extends Controller
             });
 
         return view('empresa.participantes', compact('proyecto', 'aprendices'));
+    }
+
+    /**
+     * Ver reporte de proyecto para exportar PDF
+     */
+    public function verReporte(int $id)
+    {
+        $nit = session('nit');
+
+        $proyecto = Proyecto::where('id', $id)
+            ->where('empresa_nit', $nit)
+            ->where('estado', 'aprobado')
+            ->with(['instructor', 'empresa'])
+            ->firstOrFail();
+
+        $etapas = Etapa::where('proyecto_id', $id)
+            ->orderBy('orden')
+            ->get();
+
+        $aprendices = Aprendiz::whereHas('postulaciones', function ($query) use ($id) {
+            $query->where('proyecto_id', $id)
+                ->where('estado', 'aceptada');
+        })->with('usuario')->get();
+
+        $evidencias = Evidencia::where('evidencias.proyecto_id', $id)
+            ->join('etapas', 'evidencias.etapa_id', '=', 'etapas.id')
+            ->join('aprendices', 'evidencias.aprendiz_id', '=', 'aprendices.id')
+            ->orderBy('etapas.orden', 'asc')
+            ->orderByDesc('evidencias.fecha_envio')
+            ->select(
+                'evidencias.*',
+                'aprendices.nombres as aprendiz_nombres',
+                'aprendices.apellidos as aprendiz_apellidos'
+            )
+            ->get();
+
+        $entregas = $evidencias;
+
+        return view('empresa.reporte-proyecto', compact(
+            'proyecto', 'etapas', 'aprendices', 'evidencias', 'entregas'
+        ));
     }
 
     public function cambiarEstadoPostulacion(Request $request, int $id)

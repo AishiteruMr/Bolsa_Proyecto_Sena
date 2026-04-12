@@ -158,6 +158,9 @@
                                         <a href="{{ route('empresa.proyectos.postulantes', $proyecto->id) }}" style="width: 36px; height: 36px; border-radius: 10px; background: #eff6ff; color: #3b82f6; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.2s;" title="Ver Postulantes" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
                                             <i class="fas fa-users-viewfinder"></i>
                                         </a>
+                                        <a href="{{ route('empresa.proyectos.reporte', $proyecto->id) }}" target="_blank" style="width: 36px; height: 36px; border-radius: 10px; background: #f0fdf4; color: #16a34a; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.2s;" title="Exportar PDF">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
                                         @endif
                                         <a href="{{ route('empresa.proyectos.edit', $proyecto->id) }}" style="width: 36px; height: 36px; border-radius: 10px; background: #f8fafc; color: var(--text-light); display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.2s;" title="Editar" onmouseover="this.style.background='#3eb489'; this.style.color='white'" onmouseout="this.style.background='#f8fafc'; this.style.color='var(--text-light)'">
                                             <i class="fas fa-pen-to-square"></i>
