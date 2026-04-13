@@ -39,7 +39,7 @@ class AprendizController extends Controller
             ->count();
         $proyectosDisponibles = Proyecto::activos()->count();
 
-        $proyectosRecientes = Proyecto::with('empresa')
+        $proyectosRecientes = Proyecto::with(['empresa', 'instructor.usuario'])
             ->activos()
             ->recientes()
             ->limit(6)
