@@ -39,12 +39,12 @@
         }
         $returnUrl = session('notificaciones_return_url', $defaultDashboard);
     @endphp
-    <div style="text-align:right; margin-top: 8px;">
+    <div style="text-align:right; margin-top: 20px;">
         <a href="{{ $returnUrl }}" class="btn-premium" style="background:#e2e8f0; color: var(--text); box-shadow: none; border: 1px solid var(--border); font-size: 13px; padding: 10px 20px;">
             <i class="fas fa-arrow-left"></i> Regresar
         </a>
     </div>
-
+<br>
     {{-- LIST --}}
     @if($notificaciones->isEmpty())
         <div class="glass-card" style="text-align: center; padding: 80px 20px;">
