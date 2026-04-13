@@ -39,7 +39,7 @@ class AprendizController extends Controller
             ->count();
         $proyectosDisponibles = Proyecto::activos()->count();
 
-        $proyectosRecientes = Proyecto::with('empresa')
+        $proyectosRecientes = Proyecto::with(['empresa', 'instructor.usuario'])
             ->activos()
             ->recientes()
             ->limit(6)
@@ -308,13 +308,15 @@ class AprendizController extends Controller
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
-        // Verificar que el aprendiz está aprobado en este proyecto
+        // ✅ VALIDACIÓN: Verificar que el aprendiz está ACEPTADO en este proyecto
+        // Esto previene IDOR (Insecure Direct Object Reference)
         $postulacion = Postulacion::where('aprendiz_id', $aprendiz->id)
             ->where('proyecto_id', $proId)
+            ->where('estado', 'aceptada')  // ← Solo postulaciones ACEPTADAS
             ->first();
 
         if (! $postulacion) {
-            return back()->with('error', 'No tienes acceso a este proyecto o no has sido aprobado.');
+            return back()->with('error', 'No tienes acceso a este proyecto. Solo postulaciones aceptadas pueden ver los detalles.');
         }
 
         // Obtener el proyecto con sus relaciones
@@ -356,10 +358,11 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->firstOrFail();
 
-        // Verificar que está aprobado en el proyecto
+        // ✅ VALIDACIÓN: Verificar que está ACEPTADO en el proyecto (prevenir IDOR)
         $postulacion = DB::table('postulaciones')
             ->where('aprendiz_id', $aprendiz->id)
             ->where('proyecto_id', $proId)
+            ->where('estado', 'aceptada')  // ← Solo postulaciones ACEPTADAS
             ->firstOrFail();
 
         // Validar que la etapa pertenece al proyecto

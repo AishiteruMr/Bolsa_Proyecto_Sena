@@ -41,8 +41,10 @@ Route::get('/email/resend-verification', [AuthController::class, 'resendVerifica
 
 // Recuperación de contraseña
 Route::get('/olvide-contraseña', [AuthController::class, 'showOlvideContraseña'])->name('auth.olvide-contraseña');
-Route::post('/enviar-recuperacion', [AuthController::class, 'enviarEnlaceRecuperacion'])->name('auth.enviar-recuperacion')->middleware('throttle:3,1');
-Route::get('/recuperar-contraseña/{token}', [AuthController::class, 'mostrarFormularioRestablecerContraseña'])->name('auth.mostrar-restablecer');
+// ✅ SEGURIDAD: Rate limiting más restrictivo (3 por 5 min) para prevenir enumeración
+Route::post('/enviar-recuperacion', [AuthController::class, 'enviarEnlaceRecuperacion'])->name('auth.enviar-recuperacion')->middleware('throttle:3,5');
+// ✅ SEGURIDAD: Nueva ruta sin email en query parameters
+Route::get('/recuperar-contraseña/{token}', [AuthController::class, 'mostrarFormularioRestablecerContraseña'])->name('auth.mostrar-restablecer-seguro');
 Route::post('/restablecer-contraseña', [AuthController::class, 'restablecerContraseña'])->name('auth.restablecer-contraseña')->middleware('throttle:5,1');
 
 // Registros
@@ -68,10 +70,12 @@ Route::middleware(['auth.custom'])->group(function () {
 Route::middleware(['auth.custom', 'rol:1'])->prefix('aprendiz')->name('aprendiz.')->group(function () {
     Route::get('/dashboard', [AprendizController::class, 'dashboard'])->name('dashboard');
     Route::get('/proyectos', [AprendizController::class, 'proyectos'])->name('proyectos');
-    Route::post('/proyectos/{id}/postular', [AprendizController::class, 'postular'])->name('postular');
+    // ✅ SEGURIDAD: Rate limiting en postulación (máx 10/minuto)
+    Route::post('/proyectos/{id}/postular', [AprendizController::class, 'postular'])->name('postular')->middleware('throttle:10,1');
     Route::get('/mis-postulaciones', [AprendizController::class, 'misPostulaciones'])->name('postulaciones');
     Route::get('/proyectos/{id}/detalle', [AprendizController::class, 'verDetalleProyecto'])->name('proyecto.detalle');
-    Route::post('/proyectos/{proId}/etapas/{etaId}/evidencia', [AprendizController::class, 'enviarEvidencia'])->name('evidencia.enviar');
+    // ✅ SEGURIDAD: Rate limiting más estricto en envío de evidencia (máx 5/minuto)
+    Route::post('/proyectos/{proId}/etapas/{etaId}/evidencia', [AprendizController::class, 'enviarEvidencia'])->name('evidencia.enviar')->middleware('throttle:5,1');
     Route::get('/historial', [AprendizController::class, 'historial'])->name('historial');
     Route::get('/mis-entregas', [AprendizController::class, 'misEntregas'])->name('entregas');
     Route::get('/perfil', [AprendizController::class, 'perfil'])->name('perfil');
@@ -95,7 +99,8 @@ Route::middleware(['auth.custom', 'rol:3'])->prefix('empresa')->name('empresa.')
     Route::get('/proyectos/{id}/postulantes', [EmpresaController::class, 'verPostulantes'])->name('proyectos.postulantes');
     Route::get('/proyectos/{id}/participantes', [EmpresaController::class, 'verParticipantes'])->name('proyectos.participantes');
     Route::get('/proyectos/{id}/reporte', [EmpresaController::class, 'verReporte'])->name('proyectos.reporte');
-    Route::post('/postulaciones/{id}/estado', [EmpresaController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado');
+    // ✅ SEGURIDAD: Rate limiting en cambio de estado (máx 30/minuto)
+    Route::post('/postulaciones/{id}/estado', [EmpresaController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado')->middleware('throttle:30,1');
     Route::get('/perfil', [EmpresaController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [EmpresaController::class, 'actualizarPerfil'])->name('perfil.update');
 });
@@ -109,11 +114,11 @@ Route::middleware(['auth.custom', 'rol:3'])->prefix('empresa')->name('empresa.')
 Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instructor.')->group(function () {
     Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
     Route::get('/proyectos', [InstructorController::class, 'proyectos'])->name('proyectos');
-    // 🔥 ESTA ES LA QUE FALTABA
     Route::get('/proyectos/{id}', [InstructorController::class, 'detalleProyecto'])->name('proyecto.detalle');
     Route::get('/historial', [InstructorController::class, 'historial'])->name('historial');
     Route::get('/proyectos/{id}/reporte', [InstructorController::class, 'reporteSeguimiento'])->name('reporte');
-    Route::post('/postulaciones/{id}/estado', [InstructorController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado');
+    // ✅ SEGURIDAD: Rate limiting en cambio de estado (máx 30/minuto)
+    Route::post('/postulaciones/{id}/estado', [InstructorController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado')->middleware('throttle:30,1');
 
     // RUTAS PARA ETAPAS
     Route::post('/proyectos/{id}/etapas', [InstructorController::class, 'crearEtapa'])->name('etapas.crear');
@@ -125,7 +130,8 @@ Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instruc
 
     // RUTAS PARA EVIDENCIAS
     Route::get('/proyectos/{id}/evidencias', [InstructorController::class, 'verEvidencias'])->name('evidencias.ver');
-    Route::put('/evidencias/{id}', [InstructorController::class, 'calificarEvidencia'])->name('evidencias.calificar');
+    // ✅ SEGURIDAD: Rate limiting en calificación (máx 20/minuto)
+    Route::put('/evidencias/{id}', [InstructorController::class, 'calificarEvidencia'])->name('evidencias.calificar')->middleware('throttle:20,1');
 
     Route::get('/aprendices', [InstructorController::class, 'aprendices'])->name('aprendices');
     Route::get('/perfil', [InstructorController::class, 'perfil'])->name('perfil');
@@ -141,26 +147,32 @@ Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instruc
 Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/usuarios', [AdminController::class, 'usuarios'])->name('usuarios');
-    Route::post('/usuarios/{id}/estado', [AdminController::class, 'cambiarEstadoUsuario'])->name('usuarios.estado');
+    // ✅ SEGURIDAD: Rate limiting en cambio de estado (máx 30/minuto)
+    Route::post('/usuarios/{id}/estado', [AdminController::class, 'cambiarEstadoUsuario'])->name('usuarios.estado')->middleware('throttle:30,1');
     Route::get('/empresas', [AdminController::class, 'empresas'])->name('empresas');
-    Route::post('/empresas/{id}/estado', [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado');
+    // ✅ SEGURIDAD: Rate limiting en cambio de estado (máx 30/minuto)
+    Route::post('/empresas/{id}/estado', [AdminController::class, 'cambiarEstadoEmpresa'])->name('empresas.estado')->middleware('throttle:30,1');
     Route::get('/proyectos', [AdminController::class, 'proyectos'])->name('proyectos');
     Route::get('/proyectos/{id}/revisar', [AdminController::class, 'revisarProyecto'])->name('proyectos.revisar');
-    Route::post('/proyectos/{id}/estado', [AdminController::class, 'cambiarEstadoProyecto'])->name('proyectos.estado');
-    Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])->name('proyectos.asignar');
+    // ✅ SEGURIDAD: Rate limiting en cambio de estado (máx 20/minuto)
+    Route::post('/proyectos/{id}/estado', [AdminController::class, 'cambiarEstadoProyecto'])->name('proyectos.estado')->middleware('throttle:20,1');
+    // ✅ SEGURIDAD: Rate limiting en asignación (máx 20/minuto)
+    Route::post('/proyectos/{id}/asignar', [AdminController::class, 'asignarInstructor'])->name('proyectos.asignar')->middleware('throttle:20,1');
 
-    Route::get('/exportar/proyectos', [ExportController::class, 'proyectos'])->name('exportar.proyectos');
-    Route::get('/exportar/usuarios', [ExportController::class, 'usuarios'])->name('exportar.usuarios');
-    Route::get('/exportar/empresas', [ExportController::class, 'empresas'])->name('exportar.empresas');
-    Route::get('/exportar/aprendices', [ExportController::class, 'aprendices'])->name('exportar.aprendices');
-    Route::get('/exportar/instructores', [ExportController::class, 'instructores'])->name('exportar.instructores');
+    // ✅ SEGURIDAD: Rate limiting en exportaciones (máx 10/minuto por seguridad)
+    Route::get('/exportar/proyectos', [ExportController::class, 'proyectos'])->name('exportar.proyectos')->middleware('throttle:10,1');
+    Route::get('/exportar/usuarios', [ExportController::class, 'usuarios'])->name('exportar.usuarios')->middleware('throttle:10,1');
+    Route::get('/exportar/empresas', [ExportController::class, 'empresas'])->name('exportar.empresas')->middleware('throttle:10,1');
+    Route::get('/exportar/aprendices', [ExportController::class, 'aprendices'])->name('exportar.aprendices')->middleware('throttle:10,1');
+    Route::get('/exportar/instructores', [ExportController::class, 'instructores'])->name('exportar.instructores')->middleware('throttle:10,1');
 
     Route::get('/audit', [AuditLogController::class, 'index'])->name('audit');
 });
 
 Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats', [StatsController::class, 'dashboard'])->name('api.admin.stats');
 
-Route::middleware(['auth.custom'])->group(function () {
+// ✅ SEGURIDAD: Rate limiting en APIs de infinite scroll (60/min)
+Route::middleware(['auth.custom', 'throttle:60,1'])->group(function () {
     Route::get('/api/infinite/proyectos', [InfiniteScrollController::class, 'proyectos'])->name('api.infinite.proyectos');
     Route::get('/api/infinite/aprendices', [InfiniteScrollController::class, 'aprendices'])->name('api.infinite.aprendices');
     Route::middleware(['auth.custom', 'rol:3'])->get('/api/infinite/proyectos-empresa', [InfiniteScrollController::class, 'proyectosEmpresa'])->name('api.infinite.proyectos-empresa');

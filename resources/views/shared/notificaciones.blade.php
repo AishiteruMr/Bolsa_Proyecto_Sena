@@ -78,7 +78,7 @@
                             </span>
                         </div>
                         <p style="font-size: 13px; color: var(--text-light); margin: 0 0 12px; line-height: 1.5;">
-                            {!! $notificacion->data['mensaje'] ?? 'Sin detalles.' !!}
+                            {{ $notificacion->data['mensaje'] ?? 'Sin detalles.' }}
                         </p>
                         <div style="display: flex; gap: 12px; align-items: center;">
                             @if(isset($notificacion->data['url']) && $notificacion->data['url'])

@@ -39,16 +39,12 @@
     <a href="{{ $enlaceRecuperacion }}" style="color: #047857; text-decoration: underline; word-break: break-all; display: inline-block; font-size: 13px;">{{ $enlaceRecuperacion }}</a>
 </div>
 
-<div style="border: 1px dashed #cbd5e1; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
-    <p style="font-size: 13px; color: #64748b; margin: 0 0 8px 0;">Código de recuperación manual:</p>
-    <p style="font-family: monospace; font-size: 16px; color: #0f172a; font-weight: 700; background: #e2e8f0; display: inline-block; padding: 4px 12px; border-radius: 6px; margin: 0;">{{ $token }}</p>
-</div>
-
 <div style="border-top: 1px solid #f1f5f9; padding-top: 20px;">
     <p style="font-size: 14px; font-weight: 600; color: #334155; margin: 0 0 12px 0;">🛡️ Consejos de seguridad:</p>
     <ul style="margin: 0 0 0 20px; padding: 0; color: #64748b; font-size: 13px; line-height: 1.6;">
         <li style="margin-bottom: 4px;">Nunca compartas este correo o el enlace con nadie.</li>
-        <li style="margin-bottom: 4px;">Los enlaces de recuperación son de un solo uso.</li>
+        <li style="margin-bottom: 4px;">Los enlaces de recuperación son de un solo uso y expiran en 30 minutos.</li>
+        <li style="margin-bottom: 4px;">✅ Nota de seguridad: Este enlace no incluye tu correo en la URL para mayor seguridad.</li>
         <li>Si tuviste problemas, contáctanos a <a href="mailto:bolsadeproyectossena@gmail.com" style="color: #047857;">bolsadeproyectossena@gmail.com</a>.</li>
     </ul>
 </div>
