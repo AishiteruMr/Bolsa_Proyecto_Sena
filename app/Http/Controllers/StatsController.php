@@ -30,7 +30,7 @@ class StatsController extends Controller
                     Aprendiz::count(),
                     Instructor::count(),
                     Empresa::count(),
-                    User::where('rol', 4)->count(),
+                    User::where('rol_id', 4)->count(),
                 ],
             ];
 

@@ -57,7 +57,7 @@
                     <i class="fas fa-file-signature" style="color: #3eb489;"></i>
                     Especificaciones del Proyecto
                 </h3>
-                <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px; font-weight: 500;">Completa todos los campos marcados con (*)</p>
+                <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px; font-weight: 500;">Completa los campos</p>
             </div>
 
             <div style="padding: 48px; display: grid; gap: 48px;">
@@ -71,14 +71,14 @@
                     
                     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
                         <div>
-                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Título Descriptivo *</label>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Título Descriptivo</label>
                             <div style="position: relative;">
                                 <i class="fas fa-tag" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
                                 <input type="text" name="titulo" value="{{ old('titulo') }}" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Ej: Rediseño de Plataforma Logística">
                             </div>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Sector Económico *</label>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Sector Económico</label>
                             <div style="position: relative;">
                                 <i class="fas fa-layer-group" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
                                 <select name="categoria" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; background: white; appearance: none;">
@@ -104,17 +104,17 @@
                     </div>
 
                     <div style="margin-bottom: 24px;">
-                        <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Memoria Descriptiva *</label>
+                        <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Memoria Descriptiva</label>
                         <textarea name="descripcion" required rows="5" style="width: 100%; padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 500; outline: none; resize: vertical;" placeholder="Describe los objetivos, alcance y el impacto esperado...">{{ old('descripcion') }}</textarea>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                         <div>
-                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Perfil Técnico (Hardskills) *</label>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Perfil Técnico (Hardskills)</label>
                             <textarea name="requisitos" required rows="3" style="width: 100%; padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 500; outline: none; resize: vertical;" placeholder="Herramientas, lenguajes o conocimientos específicos...">{{ old('requisitos') }}</textarea>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Cualidades de Equipo (Softskills) *</label>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Cualidades de Equipo (Softskills)</label>
                             <textarea name="habilidades" required rows="3" style="width: 100%; padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 500; outline: none; resize: vertical;" placeholder="Liderazgo, comunicación, resolución de problemas...">{{ old('habilidades') }}</textarea>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                         
                         <div style="background: #f8fafc; padding: 28px; border-radius: 20px; border: 1.5px solid #e2e8f0; display: grid; gap: 20px;">
                             <div>
-                                <label style="display: block; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Fecha de Apertura *</label>
+                                <label style="display: block; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Fecha de Apertura</label>
                                 <div style="position: relative;">
                                     <i class="far fa-calendar-alt" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
                                     <input type="date" name="fecha_publi" id="fecha_publi" value="{{ old('fecha_publi', date('Y-m-d')) }}" required style="width: 100%; padding: 12px 16px 12px 48px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; background: white;">

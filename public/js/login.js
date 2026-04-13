@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
         toggleBtn.style.cssText = `
             position: absolute;
-            right: 18px;
+            right: 30px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
