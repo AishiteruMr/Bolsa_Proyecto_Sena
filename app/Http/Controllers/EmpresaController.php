@@ -320,25 +320,26 @@ class EmpresaController extends Controller
 
     public function cambiarEstadoPostulacion(Request $request, int $id)
     {
-        // En blade tienen nombres 'Pendiente', 'Aprobada', 'Rechazada', asi que por ahora aceptamos o capitalizamos
-        $estadoInput = strtolower($request->estado);
-        if (in_array($estadoInput, ['aprobada', 'aprobado', 'aceptada', 'aceptado'])) {
-            $estadoInput = 'aceptada';
-        } elseif (in_array($estadoInput, ['rechazada', 'rechazado'])) {
-            $estadoInput = 'rechazada';
-        }
-
-        // $request->validate(['estado' => 'required|in:pendiente,aceptada,rechazada']);
+        // ✅ SEGURIDAD: Validación explícita de estados permitidos
+        $request->validate([
+            'estado' => 'required|string|in:pendiente,aceptada,rechazada',
+        ], [
+            'estado.required' => 'El estado es obligatorio.',
+            'estado.in' => 'El estado debe ser: pendiente, aceptada o rechazada.',
+        ]);
 
         $nit = session('nit');
 
-        // SEGURIDAD: Validar que la postulación pertenece a un proyecto de esta empresa
+        // ✅ SEGURIDAD: Validar que la postulación pertenece a un proyecto de esta empresa
         $postulacion = Postulacion::with('proyecto')
             ->where('id', $id)
             ->whereHas('proyecto', function ($query) use ($nit) {
                 $query->where('empresa_nit', $nit);
             })
             ->firstOrFail();
+
+        // ✅ SEGURIDAD: El estado es validado en el validator, se puede usar directamente
+        $estadoInput = strtolower($request->estado);
 
         $postulacion->update(['estado' => $estadoInput]);
 

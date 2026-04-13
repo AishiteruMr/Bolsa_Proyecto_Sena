@@ -44,7 +44,7 @@
                 <div class="admin-stat-icon" style="background: var(--primary-soft); color: var(--primary); margin-bottom: 24px;">
                     <i class="fas fa-project-diagram"></i>
                 </div>
-                <div class="admin-stat-value" style="font-size: 38px;">{{ $stats['proyectos'] }}</div>
+                <div class="admin-stat-value" style="font-size: 38px; color: var(--primary);">{{ $stats['proyectos'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Banco de Proyectos</div>
                 <div class="inline-pill inline-pill--warning" style="margin-top:16px; width:fit-content;">
                     <i class="fas fa-clock-rotate-left"></i> {{ $stats['pendientes'] }} Pendientes
@@ -55,7 +55,7 @@
                 <div class="admin-stat-icon" style="background: #f8fafc; color: #64748b; margin-bottom: 24px;">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="admin-stat-value" style="font-size: 38px;">{{ $stats['usuarios'] }}</div>
+                <div class="admin-stat-value" style="font-size: 38px; color: var(--text);">{{ $stats['usuarios'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Cuentas Totales</div>
             </div>
 
@@ -92,7 +92,9 @@
                         Proyectos por Estado
                     </h3>
                 </div>
-                <canvas id="chartProyectosEstado" height="200"></canvas>
+                <div style="height: 250px; position: relative;">
+                    <canvas id="chartProyectosEstado"></canvas>
+                </div>
             </div>
 
             <div class="glass-card" style="padding: 28px; background: white;">
@@ -102,7 +104,9 @@
                         Usuarios por Tipo
                     </h3>
                 </div>
-                <canvas id="chartUsuariosTipo" height="200"></canvas>
+                <div style="height: 250px; position: relative;">
+                    <canvas id="chartUsuariosTipo"></canvas>
+                </div>
             </div>
 
             <div class="glass-card" style="padding: 28px; background: white;">
@@ -124,7 +128,9 @@
                         Proyectos Creados (Últimos 6 Meses)
                     </h3>
                 </div>
-                <canvas id="chartProyectosMensual" height="100"></canvas>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="chartProyectosMensual"></canvas>
+                </div>
             </div>
         </div>
 
@@ -148,7 +154,7 @@
                             @forelse($proyectosRecientes as $p)
                                 <tr>
                                     <td style="font-weight: 800; color: var(--text);">{{ Str::limit($p->titulo, 40) }}</td>
-                                    <td style="color: var(--text-light); font-weight: 600;">{{ $p->nombre }}</td>
+                                    <td style="color: var(--text-light); font-weight: 600;">{{ $p->empresa_nombre }}</td>
                                     <td>
                                         <span class="status-badge {{ $p->estado == 'aprobado' ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800;">
                                             {{ $p->estado }}
@@ -194,89 +200,157 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('{{ route('api.admin.stats') }}')
+            fetch('/api/admin/stats')
                 .then(r => r.json())
                 .then(data => {
-                    const chartColors = {
-                        pendiente: '#f59e0b',
-                        aprobado: '#22c55e',
-                        rechazado: '#ef4444',
-                        en_progreso: '#3b82f6',
-                        cerrado: '#6b7280'
+                    // Modern Palette
+                    const colors = {
+                        emerald: '#10b981',
+                        amber: '#f59e0b',
+                        rose: '#f43f5e',
+                        blue: '#3b82f6',
+                        indigo: '#6366f1',
+                        gray: '#64748b'
                     };
 
+                    // Proyectos por Estado - Ultra Modern Doughnut
                     new Chart(document.getElementById('chartProyectosEstado'), {
                         type: 'doughnut',
                         data: {
                             labels: data.proyectos_por_estado.labels,
                             datasets: [{
                                 data: data.proyectos_por_estado.data,
-                                backgroundColor: ['#f59e0b', '#22c55e', '#ef4444', '#3b82f6', '#6b7280'],
-                                borderWidth: 0
+                                backgroundColor: [colors.amber, colors.emerald, colors.rose, colors.blue, colors.gray],
+                                hoverOffset: 15,
+                                weight: 2,
+                                borderWidth: 0,
+                                borderRadius: 6,
+                                spacing: 4
                             }]
                         },
                         options: {
+                            cutout: '78%',
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
-                                legend: { position: 'bottom', labels: { padding: 20, font: { size: 11 } } }
+                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 25, font: { family: 'Outfit', size: 11, weight: '600' } } },
+                                tooltip: {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                    titleColor: '#1e293b',
+                                    bodyColor: '#1e293b',
+                                    padding: 12,
+                                    borderColor: '#e2e8f0',
+                                    borderWidth: 1,
+                                    displayColors: true,
+                                    usePointStyle: true,
+                                    boxPadding: 6,
+                                    cornerRadius: 12
+                                }
                             }
                         }
                     });
 
+                    // Usuarios por Tipo - Polar Area
                     new Chart(document.getElementById('chartUsuariosTipo'), {
                         type: 'polarArea',
                         data: {
                             labels: data.usuarios_por_tipo.labels,
                             datasets: [{
                                 data: data.usuarios_por_tipo.data,
-                                backgroundColor: ['#f472b6', '#a78bfa', '#fbbf24', '#34d399'],
-                                borderWidth: 0
+                                backgroundColor: [
+                                    'rgba(244, 114, 182, 0.65)', 
+                                    'rgba(167, 139, 250, 0.65)', 
+                                    'rgba(251, 191, 36, 0.65)', 
+                                    'rgba(52, 211, 153, 0.65)'
+                                ],
+                                borderWidth: 2,
+                                borderColor: '#fff'
                             }]
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
+                            scales: { r: { grid: { color: '#f1f5f9' }, ticks: { display: false } } },
                             plugins: {
-                                legend: { position: 'bottom', labels: { padding: 15, font: { size: 11 } } }
+                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Outfit', size: 11, weight: '600' } } }
                             }
                         }
                     });
 
+                    // Top Empresas
                     const rankingContainer = document.getElementById('rankingEmpresas');
                     if (data.ranking_empresas.length > 0) {
                         rankingContainer.innerHTML = data.ranking_empresas.map((emp, i) => `
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px; background: ${i === 0 ? '#fef3c7' : '#f8fafc'}; border-radius: 12px; border: 1px solid ${i === 0 ? '#fde68a' : '#e2e8f0'};">
-                                <div style="width: 32px; height: 32px; border-radius: 8px; background: ${i === 0 ? '#f59e0b' : '#94a3b8'}; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px; background: ${i === 0 ? 'hsla(45, 100%, 96%, 1)' : '#f8fafc'}; border-radius: 16px; border: 1px solid ${i === 0 ? 'hsla(45, 100%, 90%, 1)' : '#e2e8f0'}; transition: all 0.3s ease; transform: scale(1);" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.05)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+                                <div style="width: 36px; height: 36px; border-radius: 10px; background: ${i === 0 ? colors.amber : '#94a3b8'}; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 4px 10px ${i === 0 ? 'rgba(245, 158, 11, 0.3)' : 'transparent'};">
                                     ${i + 1}
                                 </div>
                                 <div style="flex: 1; overflow: hidden;">
                                     <div style="font-weight: 800; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${emp.nombre}</div>
-                                    <div style="font-size: 11px; color: var(--text-light);">${emp.total} proyecto${emp.total !== 1 ? 's' : ''}</div>
+                                    <div style="font-size: 11px; color: var(--text-light); font-weight: 500;">${emp.total} proyecto${emp.total !== 1 ? 's' : ''}</div>
                                 </div>
-                                ${i === 0 ? '<i class="fas fa-trophy" style="color: #f59e0b;"></i>' : ''}
+                                ${i === 0 ? '<i class="fas fa-crown" style="color: #f59e0b; font-size: 14px;"></i>' : ''}
                             </div>
                         `).join('');
                     } else {
-                        rankingContainer.innerHTML = '<p style="text-align: center; color: var(--text-light); font-size: 13px; font-weight: 600;">Sin datos aún</p>';
+                        rankingContainer.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-inbox" style="font-size: 24px; color: #cbd5e1; margin-bottom: 10px; display: block;"></i><p style="color: #94a3b8; font-size: 13px; font-weight: 600;">Sin datos aún</p></div>';
                     }
 
-                    new Chart(document.getElementById('chartProyectosMensual'), {
-                        type: 'bar',
+                    // Proyectos Creados - Gradient Area Chart
+                    const ctx = document.getElementById('chartProyectosMensual').getContext('2d');
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                    gradient.addColorStop(0, 'rgba(16, 185, 129, 0.4)');
+                    gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
+                    new Chart(ctx, {
+                        type: 'line',
                         data: {
                             labels: data.metricas_mensuales.labels,
                             datasets: [{
                                 label: 'Proyectos',
                                 data: data.metricas_mensuales.data,
-                                backgroundColor: 'rgba(62, 180, 137, 0.8)',
-                                borderRadius: 8
+                                borderColor: colors.emerald,
+                                borderWidth: 3,
+                                fill: true,
+                                backgroundColor: gradient,
+                                tension: 0.45,
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: colors.emerald,
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
                             }]
                         },
                         options: {
                             responsive: true,
-                            plugins: { legend: { display: false } },
-                            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                            maintainAspectRatio: false,
+                            plugins: { 
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                    titleColor: '#1e293b',
+                                    bodyColor: colors.emerald,
+                                    padding: 12,
+                                    borderColor: '#e2e8f0',
+                                    borderWidth: 1,
+                                    displayColors: false,
+                                    cornerRadius: 12
+                                }
+                            },
+                            scales: { 
+                                y: { 
+                                    beginAtZero: true, 
+                                    grid: { color: '#f1f5f9', drawBorder: false },
+                                    ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 10 }, stepSize: 1 } 
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 10 } }
+                                }
+                            }
                         }
                     });
                 })

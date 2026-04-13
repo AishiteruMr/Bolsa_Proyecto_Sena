@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
@@ -388,23 +389,27 @@ class AuthController extends Controller
             return back()->with('warning', 'Si existe una cuenta con este correo, recibirás un enlace de recuperación.');
         }
 
-        // Generar token único
+        // ✅ SEGURIDAD: Generar token único y seguro
         $token = Str::random(64);
 
-        // Eliminar tokens antiguos
+        // Eliminar tokens antiguos para este email
         DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
-        // Guardar nuevo token con expiración
+        // ✅ SEGURIDAD: Guardar token hasheado con expiración
         DB::table('password_reset_tokens')->insert([
             'email' => $correo,
             'token' => hash('sha256', $token),
             'created_at' => now(),
-            'expires_at' => now()->addMinutes(30),
+            'expires_at' => now()->addMinutes(30),  // Expira en 30 minutos
         ]);
+
+        // ✅ SEGURIDAD: Generar URL SIN email en query parameters
+        // Solo el token va en la URL, el email se recupera de la BD
+        $enlaceRecuperacion = route('auth.mostrar-restablecer-seguro', ['token' => $token]);
 
         // Enviar correo
         try {
-            Mail::to($correo)->send(new RecuperarContraseña($nombre, $token, $correo));
+            Mail::to($correo)->send(new RecuperarContraseña($nombre, $enlaceRecuperacion));
 
             return back()->with('success', '✅ Se envió un enlace de recuperación a tu correo. Revisa tu bandeja de entrada.');
         } catch (\Exception $e) {
@@ -414,17 +419,14 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * ✅ SEGURIDAD: Mostrar formulario de restablecimiento sin email en URL
+     * El token es el único parámetro, y el email se obtiene de la BD
+     */
     public function mostrarFormularioRestablecerContraseña($token)
     {
-        $correo = request('email');
-
-        if (! $correo) {
-            return redirect()->route('login')->with('error', 'Enlace inválido o expirado.');
-        }
-
-        // Verificar token
+        // ✅ BUSCAR: Encontrar el email desde el token (sin pasar email en URL)
         $registro = DB::table('password_reset_tokens')
-            ->where('email', $correo)
             ->where('token', hash('sha256', $token))
             ->first();
 
@@ -432,7 +434,9 @@ class AuthController extends Controller
             return redirect()->route('login')->with('error', 'El enlace de recuperación es inválido o ha expirado.');
         }
 
-        // Verificar que no haya expirado usando expires_at
+        $correo = $registro->email;
+
+        // ✅ VERIFICAR: Que el enlace no haya expirado
         if ($registro->expires_at && Carbon::parse($registro->expires_at)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $correo)->delete();
 

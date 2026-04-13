@@ -285,21 +285,24 @@ class InstructorController extends Controller
     // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN (SOLO EL INSTRUCTOR)
     public function cambiarEstadoPostulacion(Request $request, int $id)
     {
-        // View might send 'Aprobada', 'Rechazada', 'Pendiente'
-        $estadoInput = strtolower($request->estado);
-        if ($estadoInput === 'aprobada') {
-            $estadoInput = 'aceptada'; // Map to accepted for postulaciones enum
-        }
-
-        // $request->validate(['estado' => 'required|in:Pendiente,Aprobada,Rechazada']);
+        // ✅ SEGURIDAD: Validación explícita de estados permitidos
+        $request->validate([
+            'estado' => 'required|string|in:pendiente,aceptada,rechazada',
+        ], [
+            'estado.required' => 'El estado es obligatorio.',
+            'estado.in' => 'El estado debe ser: pendiente, aceptada o rechazada.',
+        ]);
 
         $usrId = session('usr_id');
 
-        // Verificar que la postulación pertenece a un proyecto del instructor
+        // ✅ SEGURIDAD: Verificar que la postulación pertenece a un proyecto del instructor
         $postulacion = Postulacion::where('id', $id)
             ->whereHas('proyecto', function ($query) use ($usrId) {
                 $query->where('instructor_usuario_id', $usrId);
             })->firstOrFail();
+
+        // ✅ SEGURIDAD: El estado es validado en el validator, se puede usar directamente
+        $estadoInput = strtolower($request->estado);
 
         $postulacion->update(['estado' => $estadoInput]);
 
@@ -460,22 +463,26 @@ class InstructorController extends Controller
     // ✅ MÉTODO PARA CALIFICAR EVIDENCIA
     public function calificarEvidencia(Request $request, int $evidId)
     {
-        // Recibimos el estado directamente como uno de: 'pendiente', 'aprobada', 'rechazada'
-        $estadoInput = strtolower($request->estado);
-        // Validaremos que sea un estado válido para evidencias
+        // ✅ SEGURIDAD: Validar ANTES de procesar
+        $request->validate([
+            'estado' => 'required|string|in:pendiente,aprobada,rechazada',
+            'comentario' => 'nullable|string|max:1000',
+        ], [
+            'estado.required' => 'El estado es obligatorio.',
+            'estado.in' => 'El estado debe ser: pendiente, aprobada o rechazada.',
+            'comentario.max' => 'El comentario no puede exceder 1000 caracteres.',
+        ]);
 
         $usrId = session('usr_id');
 
-        // Verificar que la evidencia pertenece a un proyecto del instructor
+        // ✅ SEGURIDAD: Verificar que la evidencia pertenece a un proyecto del instructor
         $evidencia = Evidencia::where('id', $evidId)
             ->whereHas('proyecto', function ($query) use ($usrId) {
                 $query->where('instructor_usuario_id', $usrId);
             })->firstOrFail();
 
-        $request->validate([
-            'estado' => 'required|in:pendiente,aprobada,rechazada',
-            'comentario' => 'nullable|string|max:1000',
-        ]);
+        // ✅ SEGURIDAD: El estado es validado en el validator, se puede usar directamente
+        $estadoInput = strtolower($request->estado);
 
         $evidencia->update([
             'estado' => $estadoInput,

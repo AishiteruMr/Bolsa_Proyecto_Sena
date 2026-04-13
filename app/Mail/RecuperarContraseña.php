@@ -12,15 +12,19 @@ class RecuperarContraseña extends Mailable
 {
     use Queueable, SerializesModels;
 
+    /**
+     * ✅ SEGURIDAD: Solo almacenar nombre y enlace (NO email ni token)
+     * El email se obtiene del destinatario del correo
+     * El token ya está incluido en la URL
+     */
     public $nombre;
-    public $token;
-    public $correo;
 
-    public function __construct($nombre, $token, $correo)
+    public $enlaceRecuperacion;
+
+    public function __construct($nombre, $enlaceRecuperacion)
     {
         $this->nombre = $nombre;
-        $this->token = $token;
-        $this->correo = $correo;
+        $this->enlaceRecuperacion = $enlaceRecuperacion;
     }
 
     public function envelope(): Envelope
@@ -32,14 +36,11 @@ class RecuperarContraseña extends Mailable
 
     public function content(): Content
     {
-        $enlaceRecuperacion = url("/recuperar-contraseña/{$this->token}?email=" . urlencode($this->correo));
-
         return new Content(
             view: 'emails.recuperar-contraseña',
             with: [
                 'nombre' => $this->nombre,
-                'enlaceRecuperacion' => $enlaceRecuperacion,
-                'token' => $this->token,
+                'enlaceRecuperacion' => $this->enlaceRecuperacion,
             ],
         );
     }
