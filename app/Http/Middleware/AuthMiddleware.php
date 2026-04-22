@@ -146,25 +146,28 @@ class AuthMiddleware
      */
     private function isValidIpTransition(string $savedIp, string $currentIp): bool
     {
-        // Misma subred /24 (misma red local)
+        // Por defecto: IP exacta requerida (más seguro)
+        // Configurar SESSION_ALLOW_IP_CHANGE=true para permitir cambio de red
+        if (config('session.allow_ip_change', false)) {
+            return $this->isSameSubnet($savedIp, $currentIp);
+        }
+
+        // Validación estricta: IP exacta
+        return $savedIp === $currentIp;
+    }
+
+    /**
+     * Verificar si dos IPs están en la misma subred /24 (solo redes confiables)
+     */
+    private function isSameSubnet(string $savedIp, string $currentIp): bool
+    {
         $savedParts = explode('.', $savedIp);
         $currentParts = explode('.', $currentIp);
 
         if (count($savedParts) === 4 && count($currentParts) === 4) {
-            // Mismo /24 subnet = misma red local
             if ($savedParts[0] === $currentParts[0] &&
                 $savedParts[1] === $currentParts[1] &&
                 $savedParts[2] === $currentParts[2]) {
-                return true;
-            }
-        }
-
-        // IPv6: verificar prefix similar
-        if (strpos($savedIp, ':') !== false && strpos($currentIp, ':') !== false) {
-            // Mismo /64 prefix
-            $savedPrefix = substr($savedIp, 0, strpos($savedIp, '::') !== false ? strpos($savedIp, '::') : 4);
-            $currentPrefix = substr($currentIp, 0, strpos($currentIp, '::') !== false ? strpos($currentIp, '::') : 4);
-            if ($savedPrefix === $currentPrefix) {
                 return true;
             }
         }

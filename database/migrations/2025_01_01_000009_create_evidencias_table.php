@@ -35,7 +35,7 @@ return new class extends Migration
                   ->cascadeOnUpdate();
 
             $table->string('ruta_archivo', 255);                      // Ruta del archivo cargado
-            $table->enum('estado', ['pendiente', 'aprobada', 'rechazada'])->default('pendiente');
+            $table->enum('estado', ['pendiente', 'aceptada', 'rechazada'])->default('pendiente');
             $table->text('comentario_instructor')->nullable();        // Feedback del instructor
             $table->timestamp('fecha_envio')->useCurrent();
 

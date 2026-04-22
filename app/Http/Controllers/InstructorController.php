@@ -495,7 +495,7 @@ class InstructorController extends Controller
             if ($aprendizUsr) {
                 // Mapear estado a iconos/colores
                 $stateColor = match ($estadoInput) {
-                    'aprobada' => 'fa-check-circle',
+                    'aceptada' => 'fa-check-circle',
                     'rechazada' => 'fa-times-circle',
                     'pendiente' => 'fa-info-circle',
                     default => 'fa-info-circle',

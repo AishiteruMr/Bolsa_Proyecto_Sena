@@ -39,41 +39,16 @@ class AuthController extends Controller
         $correo = strip_tags(trim($request->correo));
         $password = $request->password;
 
-        $rateLimitKey = 'login_attempts:'.$request->ip();
-        $attempts = cache()->get($rateLimitKey, 0);
-        $lockedUntil = cache()->get($rateLimitKey.'_locked_until');
-
-        if ($attempts >= 5 && $lockedUntil) {
-            $remainingSeconds = now()->diffInSeconds($lockedUntil);
-            $minutes = ceil($remainingSeconds / 60);
-
-            if ($minutes < 1) {
-                $minutes = 1;
-            }
-
-            $message = 'Has superado el límite de intentos (5). ';
-            $message .= "Por favor, espera {$minutes} minuto".($minutes > 1 ? 's' : '').' para intentar de nuevo.';
-
-            return back()->with('error', $message)->withInput(['correo' => $correo]);
-        }
-
         $usuario = DB::table('usuarios')->where('correo', $correo)->first();
 
         if ($usuario) {
             $loginOk = false;
 
-            if (! empty($usuario->contrasena) && Hash::check($password, $usuario->contrasena)) {
+            if (! empty($password) && ! empty($usuario->contrasena) && Hash::check($password, $usuario->contrasena)) {
                 $loginOk = true;
             }
 
             if (! $loginOk) {
-                $newAttempts = $attempts + 1;
-                cache()->put($rateLimitKey, $newAttempts, now()->addMinutes(15));
-
-                if ($newAttempts >= 5) {
-                    cache()->put($rateLimitKey.'_locked_until', now()->addMinutes(15), now()->addMinutes(15));
-                }
-
                 return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
             }
 
@@ -92,12 +67,9 @@ class AuthController extends Controller
                 if ($userModel) {
                     $userModel->sendEmailVerificationNotification();
                 }
-                cache()->forget($rateLimitKey);
 
                 return back()->with('error', 'Debes verificar tu correo electrónico antes de iniciar sesión. Se ha enviado un nuevo enlace de verificación.')->withInput(['correo' => $correo]);
             }
-
-            cache()->forget($rateLimitKey);
 
             $sessionData = [
                 'usr_id' => $usuario->id,
@@ -131,8 +103,6 @@ class AuthController extends Controller
 
             return $this->redirectByRol($usuario->rol_id);
         }
-
-        cache()->put($rateLimitKey, $attempts + 1, now()->addMinutes(15));
 
         return back()->with('error', 'Usuario no registrado.')->withInput(['correo' => $correo]);
     }

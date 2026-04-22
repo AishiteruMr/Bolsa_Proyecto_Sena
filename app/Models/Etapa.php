@@ -41,7 +41,7 @@ class Etapa extends Model
      */
     public function evidenciasAprobadas()
     {
-        return $this->evidencias()->where('estado', 'aprobada');
+        return $this->evidencias()->where('estado', 'aceptada');
     }
 
     /**
