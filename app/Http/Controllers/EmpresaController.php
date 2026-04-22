@@ -82,15 +82,42 @@ class EmpresaController extends Controller
 
     public function guardarProyecto(Request $request)
     {
+        // Validación básica
         $request->validate([
-            'titulo' => 'required|string|max:200',
+            'titulo' => 'required|string|min:10|max:200',
             'categoria' => 'required|string|max:100',
-            'descripcion' => 'required|string|max:500',
-            'requisitos' => 'required|string|max:200',
-            'habilidades' => 'required|string|max:200',
+            'descripcion' => 'required|string|min:80|max:5000',
+            'requisitos' => 'required|string|min:20|max:200',
+            'habilidades' => 'required|string|min:15|max:200',
             'fecha_publi' => 'required|date',
             'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
+
+        // Validar calidad del proyecto
+        $proyectoFake = new Proyecto([
+            'titulo' => $request->titulo,
+            'descripcion' => $request->descripcion,
+            'categoria' => $request->categoria,
+            'requisitos_especificos' => $request->requisitos,
+            'habilidades_requeridas' => $request->habilidades,
+            'duracion_estimada_dias' => Carbon::parse($request->fecha_publi)->addMonths(6)->diffInDays(Carbon::parse($request->fecha_publi)),
+        ]);
+
+        $calidad = $proyectoFake->calidadProyecto();
+
+        // Verificar empresa activa
+        $nit = session('nit');
+        $empresa = Empresa::where('nit', $nit)->first();
+        if (!$empresa || $empresa->activo != 1) {
+            return back()->with('error', 'Tu empresa debe estar activa para crear proyectos.')->withInput();
+        }
+
+        // Fallos mínimos requeridos
+        $fallos = array_filter($calidad['detalles'], fn($d) => !$d['ok'] && !($d['opcional'] ?? false));
+        if (count($fallos) > 0) {
+            $mensajes = array_column($fallos, 'descripcion');
+            return back()->with('error', 'El proyecto no cumple los requisitos mínimos de calidad: '.implode(', ', $mensajes))->withInput();
+        }
 
         $nit = session('nit');
         $imagenUrl = null;

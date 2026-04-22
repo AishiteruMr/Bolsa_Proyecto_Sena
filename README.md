@@ -89,13 +89,17 @@ public/
 
 ---
 
-## 🤝 Contribución
+## ⚠️ Notas de Seguridad 
 
-1. Haz un fork del proyecto
-2. Crea una rama (`git checkout -b feature/nueva-feature`)
-3. Haz commit de tus cambios (`git commit -m 'Agrega nueva feature'`)
-4. Haz push (`git push origin feature/nueva-feature`)
-5. Abre un Pull Request
+### Autenticación
+- Implementar Laravel Fortify para autenticación robusta
+- Usar Redis para rate limiting en producción
+- Habilitar 2FA para administradores
+
+### Base de Datos
+- Usar PostgreSQL en producción para mejor rendimiento
+- Configurar read replicas si hay alta carga
+- Implementar backup automático
 
 ---
 

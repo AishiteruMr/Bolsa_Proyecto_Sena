@@ -10,6 +10,7 @@ use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use App\Notifications\AppNotification;
+use App\Services\FileProcessingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -134,6 +135,27 @@ class AprendizController extends Controller
 
         if (! $aprendiz) {
             return back()->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
+
+        $proyecto = Proyecto::withTrashed()->find($id);
+        if (!$proyecto) {
+            return back()->with('error', 'Proyecto no encontrado.');
+        }
+
+        // Validar fecha límite de postulación
+        $fechaFinEstimada = Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias);
+        if (now()->greaterThan($fechaFinEstimada)) {
+            return back()->with('error', 'El período de postulación para este proyecto ha vencido.');
+        }
+
+        // Verificar límite máximo de postulaciones (5 por defecto)
+        $maxPostulaciones = 5;
+        $totalPostulaciones = DB::table('postulaciones')
+            ->where('aprendiz_id', $aprendiz->id)
+            ->whereIn('estado', ['pendiente', 'en_revision'])
+            ->count();
+        if ($totalPostulaciones >= $maxPostulaciones) {
+            return back()->with('error', "Has alcanzado el límite máximo de {$maxPostulaciones} postulaciones activas.");
         }
 
         $yaPostulado = DB::table('postulaciones')
@@ -379,34 +401,49 @@ class AprendizController extends Controller
             'descripcion.max' => 'La descripción no puede exceder 1000 caracteres.',
             'archivo.max' => 'El archivo no puede ser mayor a 5MB.',
             'archivo.mimes' => 'Tipo de archivo no permitido. Solo: PDF, imágenes, Word, Excel.',
+            'archivo.mines' => 'Extensión no permitida.',
         ]);
 
-        // Guardar archivo si existe
         $archivoUrl = null;
         if ($request->hasFile('archivo')) {
             $file = $request->file('archivo');
 
-            // Validar MIME real del archivo
             $mime = $file->getMimeType();
+            $extension = strtolower($file->getClientOriginalExtension());
             $allowedMimes = [
-                'application/pdf',
-                'image/jpeg',
-                'image/png',
-                'image/jpg',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.ms-excel',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/pdf' => 'pdf',
+                'image/jpeg' => ['jpg', 'jpeg'],
+                'image/png' => 'png',
+                'application/msword' => 'doc',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+                'application/vnd.ms-excel' => 'xls',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
             ];
 
-            if (! in_array($mime, $allowedMimes)) {
-                return back()->with('error', 'Tipo de archivo no permitido.');
+            $allowedExts = array_unique(array_merge(...array_values($allowedMimes)));
+            if (! in_array($extension, $allowedExts)) {
+                return back()->with('error', 'Extensión de archivo no permitida: .'.$extension);
             }
 
-            // Generar nombre seguro (sin path traversal)
-            $extension = $file->getClientOriginalExtension();
-            $safeFilename = 'evidencia_'.$aprendiz->id.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
-            $path = $file->storeAs('evidencias', $safeFilename, 'public');
+            if (! isset($allowedMimes[$mime])) {
+                return back()->with('error', 'Tipo MIME no permitido: '.$mime);
+            }
+
+            $validExts = is_array($allowedMimes[$mime]) ? $allowedMimes[$mime] : [$allowedMimes[$mime]];
+            if (! in_array($extension, $validExts)) {
+                return back()->with('error', 'El archivo no coincide con su tipo MIME. Extensión: .'.$extension.', Tipo: '.$mime);
+            }
+
+            $fileService = new FileProcessingService();
+            $path = $fileService->processUpload($file, 'evidencias', [
+                'watermark' => true,
+                'scan_virus' => config('app.env') === 'production',
+            ]);
+
+            if (!$path) {
+                return back()->with('error', 'Error al procesar el archivo. Verifique que no contenga malware.');
+            }
+
             $archivoUrl = $path;
         }
 
