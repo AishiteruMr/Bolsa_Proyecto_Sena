@@ -39,7 +39,11 @@ class AdminController extends Controller
             ->limit(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'proyectosRecientes', 'usuariosRecientes'));
+        return Inertia::render('Admin/Dashboard', [
+            'stats' => $stats,
+            'proyectosRecientes' => $proyectosRecientes,
+            'usuariosRecientes' => $usuariosRecientes
+        ]);
     }
 
     public function usuarios()
@@ -48,7 +52,11 @@ class AdminController extends Controller
         $instructores = Instructor::with('usuario')->get();
         $empresas = Empresa::orderByDesc('id')->get();
 
-        return view('admin.usuarios', compact('aprendices', 'instructores', 'empresas'));
+        return Inertia::render('Admin/Usuarios', [
+            'aprendices' => $aprendices,
+            'instructores' => $instructores,
+            'empresas' => $empresas
+        ]);
     }
 
     public function cambiarEstadoUsuario(Request $request, int $id)
@@ -114,7 +122,9 @@ class AdminController extends Controller
     {
         $empresas = Empresa::orderByDesc('id')->get();
 
-        return view('admin.empresas', compact('empresas'));
+        return Inertia::render('Admin/Empresas', [
+            'empresas' => $empresas
+        ]);
     }
 
     public function cambiarEstadoEmpresa(Request $request, int $id)
@@ -223,7 +233,11 @@ class AdminController extends Controller
             ->sort()
             ->values();
 
-        return view('admin.proyectos', compact('proyectos', 'instructores', 'categorias'));
+        return Inertia::render('Admin/Proyectos', [
+            'proyectos' => $proyectos,
+            'instructores' => $instructores,
+            'categorias' => $categorias
+        ]);
     }
 
     public function cambiarEstadoProyecto(Request $request, int $id)
@@ -334,6 +348,9 @@ class AdminController extends Controller
         $proyecto = Proyecto::with('empresa')->findOrFail($id);
         $calidad = $proyecto->calidadProyecto();
 
-        return view('admin.revisar-proyecto', compact('proyecto', 'calidad'));
+        return Inertia::render('Admin/RevisarProyecto', [
+            'proyecto' => $proyecto,
+            'calidad' => $calidad
+        ]);
     }
 }

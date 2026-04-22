@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
 
 class AuthController extends Controller
 {
@@ -29,7 +30,7 @@ class AuthController extends Controller
             return $this->redirectByRol(session('rol'));
         }
 
-        return view('auth.login');
+        return Inertia::render('Auth/Login');
     }
 
     // ─── PROCESO DE LOGIN ────────────────────────────────────────────────────────
@@ -160,17 +161,17 @@ class AuthController extends Controller
 
     public function showRegistroAprendiz()
     {
-        return view('auth.registro-aprendiz');
+        return Inertia::render('Auth/RegistroAprendiz');
     }
 
     public function showRegistroEmpresa()
     {
-        return view('auth.registro-empresa');
+        return Inertia::render('Auth/RegistroEmpresa');
     }
 
     public function showRegistroInstructor()
     {
-        return view('auth.registro-instructor');
+        return Inertia::render('Auth/RegistroInstructor');
     }
 
     // ─── REGISTRO APRENDIZ ───────────────────────────────────────────────────────
@@ -329,7 +330,7 @@ class AuthController extends Controller
 
     public function showOlvideContraseña()
     {
-        return view('auth.olvide-contraseña');
+        return Inertia::render('Auth/OlvideContrasena');
     }
 
     public function enviarEnlaceRecuperacion(Request $request)
@@ -413,7 +414,10 @@ class AuthController extends Controller
             return redirect()->route('login')->with('error', 'El enlace de recuperación ha expirado. Solicita uno nuevo.');
         }
 
-        return view('auth.restablecer-contraseña', compact('token', 'correo'));
+        return Inertia::render('Auth/RestablecerContrasena', [
+            'token' => $token,
+            'correo' => $correo
+        ]);
     }
 
     public function restablecerContraseña(Request $request)

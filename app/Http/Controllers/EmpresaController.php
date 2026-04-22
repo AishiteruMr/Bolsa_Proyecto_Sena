@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
 
 class EmpresaController extends Controller
 {
@@ -28,16 +29,13 @@ class EmpresaController extends Controller
             return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
         }
 
-        // Obtener proyectos de la empresa (una sola consulta)
         $empresaProyectos = $empresa->proyectos();
         $proyectoIds = $empresaProyectos->pluck('id');
 
-        // Optimizado: usar una sola colección para todos los conteos
         $todosProyectos = $empresaProyectos->get();
         $totalProyectos = $todosProyectos->count();
         $proyectosActivos = $todosProyectos->whereIn('estado', ['aprobado', 'en_progreso'])->count();
 
-        // Proyectos recientes con eager loading y conteo de postulaciones
         $proyectosRecientes = $empresa->proyectos()
             ->with(['instructor'])
             ->withCount('postulaciones')
@@ -45,7 +43,6 @@ class EmpresaController extends Controller
             ->limit(5)
             ->get();
 
-        // Optimizado: una sola consulta para postulaciones
         $postulacionCounts = Postulacion::whereIn('proyecto_id', $proyectoIds)
             ->selectRaw('COUNT(*) as total, SUM(CASE WHEN estado = "pendiente" THEN 1 ELSE 0 END) as pendientes')
             ->first();
@@ -53,10 +50,13 @@ class EmpresaController extends Controller
         $totalPostulaciones = $postulacionCounts->total ?? 0;
         $postulacionesPendientes = $postulacionCounts->pendientes ?? 0;
 
-        return view('empresa.dashboard', compact(
-            'totalProyectos', 'proyectosActivos', 'totalPostulaciones',
-            'postulacionesPendientes', 'proyectosRecientes'
-        ));
+        return Inertia::render('Empresa/Dashboard', [
+            'totalProyectos' => $totalProyectos,
+            'proyectosActivos' => $proyectosActivos,
+            'totalPostulaciones' => $totalPostulaciones,
+            'postulacionesPendientes' => $postulacionesPendientes,
+            'proyectosRecientes' => $proyectosRecientes,
+        ]);
     }
 
     public function proyectos()
@@ -72,25 +72,54 @@ class EmpresaController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        return view('empresa.proyectos', compact('proyectos'));
+        return Inertia::render('Empresa/Proyectos', [
+            'proyectos' => $proyectos,
+        ]);
     }
 
     public function crearProyecto()
     {
-        return view('empresa.crear-proyecto');
+        return Inertia::render('Empresa/CrearProyecto');
     }
 
     public function guardarProyecto(Request $request)
     {
+        // Validación básica
         $request->validate([
-            'titulo' => 'required|string|max:200',
+            'titulo' => 'required|string|min:10|max:200',
             'categoria' => 'required|string|max:100',
-            'descripcion' => 'required|string|max:500',
-            'requisitos' => 'required|string|max:200',
-            'habilidades' => 'required|string|max:200',
+            'descripcion' => 'required|string|min:80|max:5000',
+            'requisitos' => 'required|string|min:20|max:200',
+            'habilidades' => 'required|string|min:15|max:200',
             'fecha_publi' => 'required|date',
             'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
+
+        // Validar calidad del proyecto
+        $proyectoFake = new Proyecto([
+            'titulo' => $request->titulo,
+            'descripcion' => $request->descripcion,
+            'categoria' => $request->categoria,
+            'requisitos_especificos' => $request->requisitos,
+            'habilidades_requeridas' => $request->habilidades,
+            'duracion_estimada_dias' => Carbon::parse($request->fecha_publi)->addMonths(6)->diffInDays(Carbon::parse($request->fecha_publi)),
+        ]);
+
+        $calidad = $proyectoFake->calidadProyecto();
+
+        // Verificar empresa activa
+        $nit = session('nit');
+        $empresa = Empresa::where('nit', $nit)->first();
+        if (!$empresa || $empresa->activo != 1) {
+            return back()->with('error', 'Tu empresa debe estar activa para crear proyectos.')->withInput();
+        }
+
+        // Fallos mínimos requeridos
+        $fallos = array_filter($calidad['detalles'], fn($d) => !$d['ok'] && !($d['opcional'] ?? false));
+        if (count($fallos) > 0) {
+            $mensajes = array_column($fallos, 'descripcion');
+            return back()->with('error', 'El proyecto no cumple los requisitos mínimos de calidad: '.implode(', ', $mensajes))->withInput();
+        }
 
         $nit = session('nit');
         $imagenUrl = null;
@@ -142,7 +171,9 @@ class EmpresaController extends Controller
             ->where('empresa_nit', $nit)
             ->firstOrFail();
 
-        return view('empresa.editar-proyecto', compact('proyecto'));
+        return Inertia::render('Empresa/EditarProyecto', [
+            'proyecto' => $proyecto,
+        ]);
     }
 
     public function actualizarProyecto(Request $request, int $id)
@@ -230,7 +261,6 @@ class EmpresaController extends Controller
             ->where('empresa_nit', $nit)
             ->firstOrFail();
 
-        // Obtener postulantes con relaciones eager loaded
         $postulantes = $proyecto->postulaciones()
             ->with(['aprendiz.usuario'])
             ->orderByDesc('fecha_postulacion')
@@ -247,7 +277,10 @@ class EmpresaController extends Controller
                 ];
             });
 
-        return view('empresa.postulantes', compact('proyecto', 'postulantes'));
+        return Inertia::render('Empresa/Postulantes', [
+            'proyecto' => $proyecto,
+            'postulantes' => $postulantes,
+        ]);
     }
 
     public function verParticipantes(int $id)
@@ -259,7 +292,6 @@ class EmpresaController extends Controller
             ->where('empresa_nit', $nit)
             ->firstOrFail();
 
-        // Aprendices aprobados
         $aprendices = Postulacion::where('proyecto_id', $id)
             ->where('estado', 'aceptada')
             ->with(['aprendiz.usuario'])
@@ -274,7 +306,10 @@ class EmpresaController extends Controller
                 ];
             });
 
-        return view('empresa.participantes', compact('proyecto', 'aprendices'));
+        return Inertia::render('Empresa/Participantes', [
+            'proyecto' => $proyecto,
+            'aprendices' => $aprendices,
+        ]);
     }
 
     /**
@@ -313,9 +348,13 @@ class EmpresaController extends Controller
 
         $entregas = $evidencias;
 
-        return view('empresa.reporte-proyecto', compact(
-            'proyecto', 'etapas', 'aprendices', 'evidencias', 'entregas'
-        ));
+        return Inertia::render('Empresa/ReporteProyecto', [
+            'proyecto' => $proyecto,
+            'etapas' => $etapas,
+            'aprendices' => $aprendices,
+            'evidencias' => $evidencias,
+            'entregas' => $entregas
+        ]);
     }
 
     public function cambiarEstadoPostulacion(Request $request, int $id)
@@ -368,7 +407,9 @@ class EmpresaController extends Controller
         $empId = session('emp_id');
         $empresa = Empresa::findOrFail($empId);
 
-        return view('empresa.perfil', compact('empresa'));
+        return Inertia::render('Empresa/Perfil', [
+            'empresa' => $empresa,
+        ]);
     }
 
     public function actualizarPerfil(Request $request)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Inertia\Inertia;
 
 class NotificacionController extends Controller
 {
@@ -12,13 +13,14 @@ class NotificacionController extends Controller
         $usuario = User::findOrFail(cuser_id());
         $notificaciones = $usuario->notifications()->orderByDesc('created_at')->paginate(20);
         
-        // Guardar la URL de retorno si no venimos de la misma página de notificaciones
         $previous = url()->previous();
         if (strpos($previous, '/notificaciones') === false && !empty($previous)) {
             session(['notificaciones_return_url' => $previous]);
         }
         
-        return view('shared.notificaciones', compact('notificaciones'));
+        return Inertia::render('Shared/Notificaciones', [
+            'notificaciones' => $notificaciones
+        ]);
     }
 
     public function leer(string $id)
