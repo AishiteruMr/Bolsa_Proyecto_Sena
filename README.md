@@ -101,6 +101,18 @@ public/
 - Configurar read replicas si hay alta carga
 - Implementar backup automático
 
+### Redis (Producción)
+```bash
+# Instalar y configurar Redis
+CACHE_DRIVER=redis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=tu_password
+REDIS_PORT=6379
+
+# Para cola asíncrona
+QUEUE_CONNECTION=redis
+```
+
 ---
 
 ## 📄 Licencia

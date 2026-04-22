@@ -30,10 +30,10 @@ class PostulacionService
 
             // Crear postulación
             Postulacion::create([
-                'apr_id'     => $aprendizId,
-                'pro_id'     => $proyectoId,
-                'pos_fecha'  => now(),
-                'pos_estado' => 'Pendiente',
+                'aprendiz_id'     => $aprendizId,
+                'proyecto_id'     => $proyectoId,
+                'fecha_postulacion'  => now(),
+                'estado' => 'pendiente',
             ]);
 
             return [true, '✅ Postulación enviada correctamente. Espera la revisión del instructor.'];
@@ -54,7 +54,7 @@ class PostulacionService
         return Postulacion::with(['proyecto' => function ($query) {
             $query->with('empresa');
         }])
-        ->where('apr_id', $aprendizId)
+        ->where('aprendiz_id', $aprendizId)
         ->recientes()
         ->paginate($paginate);
     }
@@ -70,7 +70,7 @@ class PostulacionService
         return Postulacion::with(['proyecto' => function ($query) {
             $query->with('empresa');
         }])
-        ->where('apr_id', $aprendizId)
+        ->where('aprendiz_id', $aprendizId)
         ->aprobadas()
         ->recientes()
         ->get();
@@ -87,13 +87,13 @@ class PostulacionService
         return Postulacion::with(['proyecto' => function ($query) {
             $query->with(['empresa', 'instructor']);
         }])
-        ->where('apr_id', $aprendizId)
+        ->where('aprendiz_id', $aprendizId)
         ->recientes()
         ->get()
         ->map(function ($postulacion) {
             $proyecto = $postulacion->proyecto;
-            $proyecto->pos_estado = $postulacion->pos_estado;
-            $proyecto->pos_fecha = $postulacion->pos_fecha;
+            $proyecto->pos_estado = $postulacion->estado;
+            $proyecto->pos_fecha = $postulacion->fecha_postulacion;
             $proyecto->instructor_nombre = $proyecto->instructor?->getFullNameAttribute() ?? 'No asignado';
             return $proyecto;
         });
@@ -108,8 +108,8 @@ class PostulacionService
      */
     public function contarPostulacionesPorEstado(int $aprendizId, string $estado): int
     {
-        return Postulacion::where('apr_id', $aprendizId)
-            ->where('pos_estado', $estado)
+        return Postulacion::where('aprendiz_id', $aprendizId)
+            ->where('estado', $estado)
             ->count();
     }
 

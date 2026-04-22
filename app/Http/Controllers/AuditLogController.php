@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AuditLogController extends Controller
 {
@@ -36,6 +37,10 @@ class AuditLogController extends Controller
         $modulos = AuditLog::select('modulo')->distinct()->pluck('modulo');
         $acciones = AuditLog::select('accion')->distinct()->pluck('accion');
 
-        return view('admin.audit-logs', compact('logs', 'modulos', 'acciones'));
+        return Inertia::render('Admin/AuditLogs', [
+            'logs' => $logs,
+            'modulos' => $modulos,
+            'acciones' => $acciones
+        ]);
     }
 }

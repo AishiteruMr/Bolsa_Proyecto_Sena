@@ -18,15 +18,25 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class AprendizController extends Controller
 {
+    private function validarRol(int $rolEsperado): bool
+    {
+        return session('rol') === $rolEsperado;
+    }
+
     // ══════════════════════════════════════════════════════════════
     // DASHBOARD
     // ══════════════════════════════════════════════════════════════
 
     public function dashboard()
     {
+        if (!$this->validarRol(1)) {
+            return redirect()->route('login')->with('error', 'Acceso denegado.');
+        }
+
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
 
@@ -46,35 +56,29 @@ class AprendizController extends Controller
             ->limit(6)
             ->get();
 
-        // Obtener IDs de proyectos con postulación aprobada
         $proyectosAprobadosQuery = DB::table('postulaciones')
             ->where('aprendiz_id', $aprendiz?->id ?? 0)
             ->where('estado', 'aceptada');
 
         $proyectosAprobados = (clone $proyectosAprobadosQuery)->pluck('proyecto_id')->toArray();
 
-        // Próxima fecha de cierre de sus proyectos (recalculada por duración + publicacion)
-        // Ya no hay `fecha_finalizacion` en DB, lo traemos por Colección (ya que usamos append isVencido o similar)
-        // Para DB, si necesitamos fecha, usamos DB raw o tomamos en memoria si son pocos:
         $proyectosAsociados = Proyecto::whereIn('id', $proyectosAprobados)->get();
-        // Ordenarlos por la estimación (fecha_publicacion + duracion_estimada_dias) que esté en el futuro
+
         $proximoCierre = $proyectosAsociados->filter(function ($p) {
             $fechaFin = Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
-
             return $fechaFin->isFuture();
         })->sortBy(function ($p) {
             return Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
         })->first();
 
-        return view('aprendiz.dashboard', compact(
-            'aprendiz',
-            'totalPostulaciones',
-            'postulacionesAprobadas',
-            'proyectosDisponibles',
-            'proyectosRecientes',
-            'proyectosAprobados',
-            'proximoCierre'
-        ));
+        return Inertia::render('Aprendiz/Dashboard', [
+            'aprendiz' => $aprendiz,
+            'totalPostulaciones' => $totalPostulaciones,
+            'postulacionesAprobadas' => $postulacionesAprobadas,
+            'proyectosDisponibles' => $proyectosDisponibles,
+            'proyectosRecientes' => $proyectosRecientes,
+            'proximoCierre' => $proximoCierre,
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -121,7 +125,11 @@ class AprendizController extends Controller
             ->pluck('categoria')
             ->toArray();
 
-        return view('aprendiz.proyectos', compact('proyectos', 'postulados', 'categorias'));
+        return Inertia::render('Aprendiz/Proyectos', [
+            'proyectos' => $proyectos,
+            'postulados' => $postulados,
+            'categorias' => $categorias
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -224,10 +232,16 @@ class AprendizController extends Controller
     public function misPostulaciones()
     {
         $usrId = session('usr_id');
+        $rolId = session('rol');
+
+        if ($rolId != 1) {
+            return redirect()->route('login')->with('error', 'Acceso denegado.');
+        }
+
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
 
         if (! $aprendiz) {
-            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendizaje.');
         }
 
         $postulaciones = Postulacion::where('aprendiz_id', $aprendiz->id)
@@ -235,7 +249,9 @@ class AprendizController extends Controller
             ->orderByDesc('fecha_postulacion')
             ->paginate(10);
 
-        return view('aprendiz.postulaciones', compact('postulaciones'));
+        return Inertia::render('Aprendiz/Postulaciones', [
+            'postulaciones' => $postulaciones
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -278,7 +294,9 @@ class AprendizController extends Controller
                 ];
             });
 
-        return view('aprendiz.historial', compact('proyectos'));
+        return Inertia::render('Aprendiz/Historial', [
+            'proyectos' => $proyectos
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -314,7 +332,11 @@ class AprendizController extends Controller
             ->orderBy('proyecto_id')
             ->get();
 
-        return view('aprendiz.mis-entregas', compact('proyectos', 'entregas', 'evidencias'));
+        return Inertia::render('Aprendiz/Entregas', [
+            'proyectos' => $proyectos,
+            'entregas' => $entregas,
+            'evidencias' => $evidencias
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -368,7 +390,12 @@ class AprendizController extends Controller
             ->orderByDesc('evidencias.fecha_envio')
             ->get();
 
-        return view('aprendiz.detalle-proyecto', compact('proyecto', 'etapas', 'evidencias', 'aprendiz'));
+        return Inertia::render('Aprendiz/DetalleProyecto', [
+            'proyecto' => $proyecto,
+            'etapas' => $etapas,
+            'evidencias' => $evidencias,
+            'aprendiz' => $aprendiz
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -477,7 +504,10 @@ class AprendizController extends Controller
 
         $usuario = User::findOrFail($usrId);
 
-        return view('aprendiz.perfil', compact('aprendiz', 'usuario'));
+        return Inertia::render('Aprendiz/Perfil', [
+            'aprendiz' => $aprendiz,
+            'usuario' => $usuario
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════

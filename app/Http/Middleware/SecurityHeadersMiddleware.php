@@ -27,12 +27,13 @@ class SecurityHeadersMiddleware
 
         // FIXED: Removed 'unsafe-eval' - was critical vulnerability
         // Removed 'unsafe-inline' from script-src and using data: carefully
+        $viteHosts = "http://localhost:5173 http://127.0.0.1:5173 http://localhost:5174 http://127.0.0.1:5174 ws://localhost:5173 ws://127.0.0.1:5173 ws://localhost:5174 ws://127.0.0.1:5174";
         $csp = "default-src 'self'; ".
-                "script-src 'self' https://unpkg.com https://cdn.jsdelivr.net; ".
-                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; ".
+                "script-src 'self' {$viteHosts} 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net; ".
+                "style-src 'self' 'unsafe-inline' {$viteHosts} https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; ".
                 "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; ".
-                "img-src 'self' data: https:; ".
-                "connect-src 'self'; ".
+                "img-src 'self' data: https: {$viteHosts}; ".
+                "connect-src 'self' {$viteHosts}; ".
                 "object-src 'none'; ".
                 "frame-ancestors 'none'; ".
                 "base-uri 'self'; ".
