@@ -45,7 +45,7 @@ class Evidencia extends Model
     // ── SCOPES ──
     public function scopeAprobadas(Builder $query): Builder
     {
-        return $query->where('estado', 'aprobada');
+        return $query->where('estado', 'aceptada');
     }
 
     public function scopePendientes(Builder $query): Builder
@@ -61,7 +61,7 @@ class Evidencia extends Model
     // ── MÉTODOS ──
     public function isAprobada(): bool
     {
-        return $this->estado === 'aprobada';
+        return $this->estado === 'aceptada';
     }
 
     public function isPendiente(): bool
@@ -96,7 +96,7 @@ class Evidencia extends Model
     public function getEstadoEspañol(): string
     {
         return match($this->estado) {
-            'aprobada' => '✅ Aprobada',
+            'aceptada' => '✅ Aprobada',
             'rechazada' => '❌ Rechazada',
             'pendiente' => '⏳ Pendiente',
             default => ucfirst($this->estado),

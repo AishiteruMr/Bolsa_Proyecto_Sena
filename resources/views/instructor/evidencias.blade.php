@@ -87,7 +87,7 @@
                                 <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 1.25rem; letter-spacing: 0.5px;">Resolución de la Entrega</label>
                                 <div style="display: flex; gap: 1rem;">
                                     <label class="instructor-grad-radio">
-                                        <input type="radio" name="estado" value="aprobada" {{ $evidencia->estado === 'aprobada' ? 'checked' : '' }} required>
+                                        <input type="radio" name="estado" value="aceptada" {{ $evidencia->estado === 'aceptada' ? 'checked' : '' }} required>
                                         <div class="instructor-grad-box">
                                             <i class="fas fa-check-double"></i>
                                             <span>Aprobado</span>

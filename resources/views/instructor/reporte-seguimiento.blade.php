@@ -58,7 +58,7 @@
         <div class="glass-card stat-card-rep" style="--c: #f59e0b;">
             <div class="stat-icon-rep"><i class="fas fa-award"></i></div>
             <div class="stat-info-rep">
-                <p class="stat-value-rep">{{ $evidencias->where('estado', 'aprobada')->count() }}</p>
+                <p class="stat-value-rep">{{ $evidencias->where('estado', 'aceptada')->count() }}</p>
                 <p class="stat-label-rep">Aprobados</p>
             </div>
         </div>
@@ -95,7 +95,7 @@
                             @foreach($aprendices as $aprendiz)
                                 @php
                                     $e_count = $entregas->where('aprendiz_id', $aprendiz->id)->count();
-                                    $a_count = $evidencias->where('aprendiz_id', $aprendiz->id)->where('estado', 'aprobada')->count();
+                                    $a_count = $evidencias->where('aprendiz_id', $aprendiz->id)->where('estado', 'aceptada')->count();
                                     $progreso = $etapas->count() > 0 ? ($a_count / $etapas->count()) * 100 : 0;
                                     $correoAprendiz = $aprendiz->usuario ? $aprendiz->usuario->correo : 'N/A';
                                 @endphp
@@ -171,7 +171,7 @@
                                             @forelse($evidencias->where('etapa_id', $etapa->id) as $ev)
                                                 <div class="mini-card-rep">
                                                     <span style="font-weight: 700; color: var(--text-main);">{{ $ev->aprendiz_nombres ?? '' }} {{ $ev->aprendiz_apellidos ?? '' }}</span>
-                                                    <span class="badge" style="background: {{ $ev->estado === 'aprobada' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)' }}; color: {{ $ev->estado === 'aprobada' ? '#10b981' : '#ef4444' }}; border: none; font-size: 0.65rem;">{{ strtoupper($ev->estado) }}</span>
+                                                    <span class="badge" style="background: {{ $ev->estado === 'aceptada' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)' }}; color: {{ $ev->estado === 'aceptada' ? '#10b981' : '#ef4444' }}; border: none; font-size: 0.65rem;">{{ strtoupper($ev->estado) }}</span>
                                                 </div>
                                             @empty
                                                 <p style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Pendiente evaluar.</p>

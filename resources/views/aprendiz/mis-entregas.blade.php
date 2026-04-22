@@ -61,7 +61,7 @@
                     <i class="fas fa-check-double"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $evidencias->where('estado', 'aprobada')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $evidencias->where('estado', 'aceptada')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Aprobadas</div>
                 </div>
             </div>
@@ -115,7 +115,7 @@
                             @foreach($evidencias_proyecto as $evidencia)
                                 @php
                                     $stateColor = match($evidencia->estado) {
-                                        'aprobada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
+                                        'aceptada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
                                         'rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#dc2626', 'icon' => 'fa-times-circle'],
                                         default     => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-hourglass-half'],
                                     };
