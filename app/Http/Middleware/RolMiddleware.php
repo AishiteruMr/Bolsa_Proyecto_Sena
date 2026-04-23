@@ -18,7 +18,7 @@ class RolMiddleware
         }
 
         // Si el rol en sesión no coincide con el exigido por la ruta
-        if ($rolSesion != $rol) {
+        if ($rolSesion !== $rol) {
             abort(403, 'No tienes permiso para acceder a esta sección.');
         }
 

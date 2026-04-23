@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Proyecto;
 use App\Models\Empresa;
 use App\Models\Aprendiz;
+use Inertia\Inertia;
 
 class HomeController extends Controller
 {
@@ -14,10 +15,10 @@ class HomeController extends Controller
         $totalEmpresas = Empresa::where('activo', 1)->count();
         $totalAprendices = Aprendiz::activos()->count();
 
-        return view('index', compact(
-            'totalProyectos',
-            'totalEmpresas',
-            'totalAprendices'
-        ));
+        return Inertia::render('Home/Index', [
+            'totalProyectos' => $totalProyectos,
+            'totalEmpresas' => $totalEmpresas,
+            'totalAprendices' => $totalAprendices,
+        ]);
     }
 }

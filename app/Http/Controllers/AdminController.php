@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\InstructorAsignado;
 use App\Mail\InstructorDesasignado;
 use App\Models\Aprendiz;
+use App\Models\AuditLog;
 use App\Models\Empresa;
 use App\Models\Instructor;
 use App\Models\Postulacion;
@@ -38,7 +39,11 @@ class AdminController extends Controller
             ->limit(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'proyectosRecientes', 'usuariosRecientes'));
+        return Inertia::render('Admin/Dashboard', [
+            'stats' => $stats,
+            'proyectosRecientes' => $proyectosRecientes,
+            'usuariosRecientes' => $usuariosRecientes
+        ]);
     }
 
     public function usuarios()
@@ -47,7 +52,11 @@ class AdminController extends Controller
         $instructores = Instructor::with('usuario')->get();
         $empresas = Empresa::orderByDesc('id')->get();
 
-        return view('admin.usuarios', compact('aprendices', 'instructores', 'empresas'));
+        return Inertia::render('Admin/Usuarios', [
+            'aprendices' => $aprendices,
+            'instructores' => $instructores,
+            'empresas' => $empresas
+        ]);
     }
 
     public function cambiarEstadoUsuario(Request $request, int $id)
@@ -57,14 +66,40 @@ class AdminController extends Controller
             'estado' => 'required|in:0,1',
         ]);
 
+        $usrId = session('usr_id');
+
         if ($request->tipo === 'aprendiz') {
             $aprendiz = Aprendiz::with('usuario')->findOrFail($id);
+            $anterior = ['activo' => $aprendiz->activo];
             $aprendiz->update(['activo' => $request->estado]);
             $usrToNotify = $aprendiz->usuario;
+
+            // Audit log
+            AuditLog::registrar(
+                $usrId,
+                'cambiar_estado',
+                'usuarios',
+                'aprendices',
+                $id,
+                $anterior,
+                ['activo' => $request->estado]
+            );
         } else {
             $instructor = Instructor::with('usuario')->findOrFail($id);
+            $anterior = ['activo' => $instructor->activo];
             $instructor->update(['activo' => $request->estado]);
             $usrToNotify = $instructor->usuario;
+
+            // Audit log
+            AuditLog::registrar(
+                $usrId,
+                'cambiar_estado',
+                'usuarios',
+                'instructores',
+                $id,
+                $anterior,
+                ['activo' => $request->estado]
+            );
         }
 
         try {
@@ -87,15 +122,31 @@ class AdminController extends Controller
     {
         $empresas = Empresa::orderByDesc('id')->get();
 
-        return view('admin.empresas', compact('empresas'));
+        return Inertia::render('Admin/Empresas', [
+            'empresas' => $empresas
+        ]);
     }
 
     public function cambiarEstadoEmpresa(Request $request, int $id)
     {
         $request->validate(['estado' => 'required|in:0,1']);
 
+        $usrId = session('usr_id');
         $empresa = Empresa::with('usuario')->findOrFail($id);
+
+        $anterior = ['activo' => $empresa->activo];
         $empresa->update(['activo' => $request->estado]);
+
+        // Audit log
+        AuditLog::registrar(
+            $usrId,
+            'cambiar_estado',
+            'empresas',
+            'empresas',
+            $id,
+            $anterior,
+            ['activo' => $request->estado]
+        );
 
         try {
             if ($empresa->usuario) {
@@ -115,10 +166,20 @@ class AdminController extends Controller
 
     public function proyectos(Request $request)
     {
-        $query = Proyecto::with(['empresa', 'instructor.usuario']);
+        $validated = $request->validate([
+            'buscar' => 'nullable|string|max:100',
+            'estado' => 'nullable|string|in:pendiente,aprobado,rechazado,cerrado,en_progreso',
+            'categoria' => 'nullable|string|max:50',
+            'fecha_inicio' => 'nullable|date',
+            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
+            'instructor_id' => 'nullable|integer|exists:usuarios,id',
+        ]);
 
-        if ($request->filled('buscar')) {
-            $buscar = str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $request->buscar);
+        $query = Proyecto::with(['empresa', 'instructor.usuario'])
+            ->withCount('postulaciones');
+
+        if (! empty($validated['buscar'])) {
+            $buscar = str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $validated['buscar']);
             $query->where(function ($q) use ($buscar) {
                 $q->where('titulo', 'like', "%{$buscar}%")
                     ->orWhere('descripcion', 'like', "%{$buscar}%")
@@ -128,24 +189,24 @@ class AdminController extends Controller
             });
         }
 
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
+        if (! empty($validated['estado'])) {
+            $query->where('estado', $validated['estado']);
         }
 
-        if ($request->filled('categoria')) {
-            $query->where('categoria', $request->categoria);
+        if (! empty($validated['categoria'])) {
+            $query->where('categoria', $validated['categoria']);
         }
 
-        if ($request->filled('fecha_inicio')) {
-            $query->whereDate('fecha_publicacion', '>=', $request->fecha_inicio);
+        if (! empty($validated['fecha_inicio'])) {
+            $query->whereDate('fecha_publicacion', '>=', $validated['fecha_inicio']);
         }
 
-        if ($request->filled('fecha_fin')) {
-            $query->whereDate('fecha_publicacion', '<=', $request->fecha_fin);
+        if (! empty($validated['fecha_fin'])) {
+            $query->whereDate('fecha_publicacion', '<=', $validated['fecha_fin']);
         }
 
-        if ($request->filled('instructor_id')) {
-            $query->where('instructor_usuario_id', $request->instructor_id);
+        if (! empty($validated['instructor_id'])) {
+            $query->where('instructor_usuario_id', $validated['instructor_id']);
         }
 
         $proyectos = $query->orderByDesc('id')->get()->map(function ($proyecto) {
@@ -172,7 +233,11 @@ class AdminController extends Controller
             ->sort()
             ->values();
 
-        return view('admin.proyectos', compact('proyectos', 'instructores', 'categorias'));
+        return Inertia::render('Admin/Proyectos', [
+            'proyectos' => $proyectos,
+            'instructores' => $instructores,
+            'categorias' => $categorias
+        ]);
     }
 
     public function cambiarEstadoProyecto(Request $request, int $id)
@@ -283,6 +348,9 @@ class AdminController extends Controller
         $proyecto = Proyecto::with('empresa')->findOrFail($id);
         $calidad = $proyecto->calidadProyecto();
 
-        return view('admin.revisar-proyecto', compact('proyecto', 'calidad'));
+        return Inertia::render('Admin/RevisarProyecto', [
+            'proyecto' => $proyecto,
+            'calidad' => $calidad
+        ]);
     }
 }

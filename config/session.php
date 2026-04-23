@@ -211,4 +211,16 @@ return [
 
     'partitioned' => false,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Allow IP Change
+    |--------------------------------------------------------------------------
+    |
+    | If true, allows session to persist when user changes network (e.g., WiFi to mobile).
+    | WARNING: Reduces security against session hijacking. Keep false for high-security apps.
+    |
+    */
+
+    'allow_ip_change' => env('SESSION_ALLOW_IP_CHANGE', false),
+
 ];

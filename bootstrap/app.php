@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Inertia\Inertia;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,12 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Appending to the web group
         $middleware->web(append: [
             \App\Http\Middleware\SecurityHeadersMiddleware::class,
+            \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
 
-        // Registrar middlewares personalizados con alias
         $middleware->alias([
             'auth.custom' => \App\Http\Middleware\AuthMiddleware::class,
             'rol'         => \App\Http\Middleware\RolMiddleware::class,

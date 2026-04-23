@@ -69,43 +69,51 @@ class AuthMiddleware
 
     /**
      * Validar integridad de la sesión para prevenir session hijacking
+     * FIXED: Enabled IP validation to prevent session hijacking
      */
     private function validateSessionIntegrity(Request $request): void
     {
         $session = $request->session();
 
-        // Verificar IP del sesiión (opcional - puede causar problemas con IPs dinámicas)
-        // $savedIp = $session->get('session_ip');
-        // $currentIp = $request->ip();
-        // if ($savedIp && $savedIp !== $currentIp && !$this->isValidIpTransition($savedIp, $currentIp)) {
-        //     $this->invalidateSession($request, 'Sesión iniciada desde otra ubicación.');
-        // }
+        // Validar IP de sesión - previene session hijacking
+        $savedIp = $session->get('session_ip');
+        $currentIp = $this->getClientIp($request);
+
+        if ($savedIp && $currentIp && ! $this->isValidIpTransition($savedIp, $currentIp)) {
+            Log::warning('IP change detected - possible session hijacking', [
+                'saved_ip' => $savedIp,
+                'current_ip' => $currentIp,
+                'user_id' => $session->get('usr_id'),
+            ]);
+            // Invalidar sesión por seguridad
+            $this->invalidateSession($request, 'Sesión iniciada desde otra ubicación.');
+
+            return;
+        }
 
         // Validar User Agent
         $savedAgent = $session->get('session_user_agent');
         $currentAgent = $request->userAgent();
 
-        // Si guardamos user agent y no coincide, podría ser sesión robada
         if ($savedAgent && ! $this->isSimilarUserAgent($savedAgent, $currentAgent)) {
-            // Log warning pero no invalidar inmediatamente (user agents varían mucho)
             Log::warning('User agent mismatch - possible session anomaly', [
                 'saved' => $savedAgent,
                 'current' => $currentAgent,
-                'ip' => $request->ip(),
+                'ip' => $currentIp,
                 'user_id' => $session->get('usr_id'),
             ]);
         }
 
-        // Regenerar ID de sesión periódicamente (cada 30 minutos)
+        // Regenerar ID de sesión periódicamente - cada 5 minutos (antes 30)
         $lastRegen = $session->get('last_session_regen');
-        if ($lastRegen && now()->diffInMinutes($lastRegen) > 30) {
+        if (! $lastRegen || now()->diffInMinutes($lastRegen) > 5) {
             $session->regenerate();
             $session->put('last_session_regen', now());
         }
 
-        // Guardar información de seguridad si no existe
+        // Guardar información de seguridad
         if (! $session->has('session_ip')) {
-            $session->put('session_ip', $request->ip());
+            $session->put('session_ip', $currentIp);
         }
         if (! $session->has('session_user_agent')) {
             $session->put('session_user_agent', $currentAgent);
@@ -113,6 +121,58 @@ class AuthMiddleware
         if (! $session->has('last_session_regen')) {
             $session->put('last_session_regen', now());
         }
+    }
+
+    /**
+     * Obtener IP real del cliente considerando proxies
+     */
+    private function getClientIp(Request $request): string
+    {
+        // Considerar X-Forwarded-For para proxies/CDNs
+        if ($request->header('X-Forwarded-For')) {
+            $ips = explode(',', $request->header('X-Forwarded-For'));
+
+            return trim($ips[0]);
+        }
+        if ($request->header('X-Real-IP')) {
+            return $request->header('X-Real-IP');
+        }
+
+        return $request->ip() ?? '';
+    }
+
+    /**
+     * Verificar si la transición de IP es válida (legítima)
+     */
+    private function isValidIpTransition(string $savedIp, string $currentIp): bool
+    {
+        // Por defecto: IP exacta requerida (más seguro)
+        // Configurar SESSION_ALLOW_IP_CHANGE=true para permitir cambio de red
+        if (config('session.allow_ip_change', false)) {
+            return $this->isSameSubnet($savedIp, $currentIp);
+        }
+
+        // Validación estricta: IP exacta
+        return $savedIp === $currentIp;
+    }
+
+    /**
+     * Verificar si dos IPs están en la misma subred /24 (solo redes confiables)
+     */
+    private function isSameSubnet(string $savedIp, string $currentIp): bool
+    {
+        $savedParts = explode('.', $savedIp);
+        $currentParts = explode('.', $currentIp);
+
+        if (count($savedParts) === 4 && count($currentParts) === 4) {
+            if ($savedParts[0] === $currentParts[0] &&
+                $savedParts[1] === $currentParts[1] &&
+                $savedParts[2] === $currentParts[2]) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -142,5 +202,26 @@ class AuthMiddleware
         }
 
         return $keywords;
+    }
+
+    /**
+     * Invalidar sesión de forma segura
+     */
+    private function invalidateSession(Request $request, string $reason): void
+    {
+        Log::info('Session invalidated: '.$reason, [
+            'user_id' => $request->session()->get('usr_id'),
+            'ip' => $request->ip(),
+        ]);
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // Invalidar y redirigir
+        $request->session()->flush();
+
+        // Usar redirect con->send() para salir del middleware
+        redirect()->route('login')->with('error', $reason)->send();
+        exit;
     }
 }

@@ -36,7 +36,7 @@ return new class extends Migration
 
             $table->string('url_archivo', 255)->nullable();           // URL del archivo entregado
             $table->text('descripcion')->nullable();                  // Descripción de la entrega
-            $table->enum('estado', ['pendiente', 'aprobada', 'rechazada'])->default('pendiente');
+            $table->enum('estado', ['pendiente', 'aceptada', 'rechazada'])->default('pendiente');
 
             $table->timestamps();
 

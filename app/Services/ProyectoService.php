@@ -34,14 +34,34 @@ class ProyectoService
         return $query->recientes()->paginate($paginate);
     }
 
-    /**
+/**
      * Obtener categorías disponibles
      *
      * @return \Illuminate\Support\Collection
      */
     public function obtenerCategorias()
     {
-        return Proyecto::distinct()->pluck('pro_categoria');
+        return Proyecto::distinct()->pluck('categoria');
+    }
+
+    /**
+     * Obtener proyectos disponibles (activos y sin vencer)
+     *
+     * @param  int  $limite
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function obtenerProyectosDisponibles(int $limite = null)
+    {
+        $query = Proyecto::with('empresa')
+            ->activos()
+            ->where('fecha_publicacion', '>', now()->subMonths(6))
+            ->recientes();
+
+        if ($limite) {
+            $query->limit($limite);
+        }
+
+        return $query->get();
     }
 
     /**
@@ -101,10 +121,10 @@ class ProyectoService
             'empresa',
             'instructor',
             'etapas' => function ($query) {
-                $query->orderBy('eta_orden');
+                $query->orderBy('orden');
             },
             'postulaciones' => function ($query) {
-                $query->where('pos_estado', 'Aprobada');
+                $query->where('estado', 'aceptada');
             }
         ])->find($proyectoId);
     }
@@ -123,7 +143,7 @@ class ProyectoService
             ->with('aprendiz');
 
         if ($estado) {
-            $query->where('pos_estado', $estado);
+            $query->where('estado', $estado);
         }
 
         return $query->get();
@@ -142,7 +162,7 @@ class ProyectoService
             ->postulaciones();
 
         if ($estado) {
-            $query->where('pos_estado', $estado);
+            $query->where('estado', $estado);
         }
 
         return $query->count();

@@ -10,6 +10,7 @@ use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use App\Notifications\AppNotification;
+use App\Services\FileProcessingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,15 +18,25 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class AprendizController extends Controller
 {
+    private function validarRol(int $rolEsperado): bool
+    {
+        return session('rol') === $rolEsperado;
+    }
+
     // ══════════════════════════════════════════════════════════════
     // DASHBOARD
     // ══════════════════════════════════════════════════════════════
 
     public function dashboard()
     {
+        if (!$this->validarRol(1)) {
+            return redirect()->route('login')->with('error', 'Acceso denegado.');
+        }
+
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
 
@@ -39,41 +50,35 @@ class AprendizController extends Controller
             ->count();
         $proyectosDisponibles = Proyecto::activos()->count();
 
-        $proyectosRecientes = Proyecto::with('empresa')
+        $proyectosRecientes = Proyecto::with(['empresa', 'instructor.usuario'])
             ->activos()
             ->recientes()
             ->limit(6)
             ->get();
 
-        // Obtener IDs de proyectos con postulación aprobada
         $proyectosAprobadosQuery = DB::table('postulaciones')
             ->where('aprendiz_id', $aprendiz?->id ?? 0)
             ->where('estado', 'aceptada');
 
         $proyectosAprobados = (clone $proyectosAprobadosQuery)->pluck('proyecto_id')->toArray();
 
-        // Próxima fecha de cierre de sus proyectos (recalculada por duración + publicacion)
-        // Ya no hay `fecha_finalizacion` en DB, lo traemos por Colección (ya que usamos append isVencido o similar)
-        // Para DB, si necesitamos fecha, usamos DB raw o tomamos en memoria si son pocos:
         $proyectosAsociados = Proyecto::whereIn('id', $proyectosAprobados)->get();
-        // Ordenarlos por la estimación (fecha_publicacion + duracion_estimada_dias) que esté en el futuro
+
         $proximoCierre = $proyectosAsociados->filter(function ($p) {
             $fechaFin = Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
-
             return $fechaFin->isFuture();
         })->sortBy(function ($p) {
             return Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
         })->first();
 
-        return view('aprendiz.dashboard', compact(
-            'aprendiz',
-            'totalPostulaciones',
-            'postulacionesAprobadas',
-            'proyectosDisponibles',
-            'proyectosRecientes',
-            'proyectosAprobados',
-            'proximoCierre'
-        ));
+        return Inertia::render('Aprendiz/Dashboard', [
+            'aprendiz' => $aprendiz,
+            'totalPostulaciones' => $totalPostulaciones,
+            'postulacionesAprobadas' => $postulacionesAprobadas,
+            'proyectosDisponibles' => $proyectosDisponibles,
+            'proyectosRecientes' => $proyectosRecientes,
+            'proximoCierre' => $proximoCierre,
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -120,7 +125,11 @@ class AprendizController extends Controller
             ->pluck('categoria')
             ->toArray();
 
-        return view('aprendiz.proyectos', compact('proyectos', 'postulados', 'categorias'));
+        return Inertia::render('Aprendiz/Proyectos', [
+            'proyectos' => $proyectos,
+            'postulados' => $postulados,
+            'categorias' => $categorias
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -134,6 +143,27 @@ class AprendizController extends Controller
 
         if (! $aprendiz) {
             return back()->with('error', 'No se encontró tu perfil de aprendiz.');
+        }
+
+        $proyecto = Proyecto::withTrashed()->find($id);
+        if (!$proyecto) {
+            return back()->with('error', 'Proyecto no encontrado.');
+        }
+
+        // Validar fecha límite de postulación
+        $fechaFinEstimada = Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias);
+        if (now()->greaterThan($fechaFinEstimada)) {
+            return back()->with('error', 'El período de postulación para este proyecto ha vencido.');
+        }
+
+        // Verificar límite máximo de postulaciones (5 por defecto)
+        $maxPostulaciones = 5;
+        $totalPostulaciones = DB::table('postulaciones')
+            ->where('aprendiz_id', $aprendiz->id)
+            ->whereIn('estado', ['pendiente', 'en_revision'])
+            ->count();
+        if ($totalPostulaciones >= $maxPostulaciones) {
+            return back()->with('error', "Has alcanzado el límite máximo de {$maxPostulaciones} postulaciones activas.");
         }
 
         $yaPostulado = DB::table('postulaciones')
@@ -202,10 +232,16 @@ class AprendizController extends Controller
     public function misPostulaciones()
     {
         $usrId = session('usr_id');
+        $rolId = session('rol');
+
+        if ($rolId != 1) {
+            return redirect()->route('login')->with('error', 'Acceso denegado.');
+        }
+
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
 
         if (! $aprendiz) {
-            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendizaje.');
         }
 
         $postulaciones = Postulacion::where('aprendiz_id', $aprendiz->id)
@@ -213,7 +249,9 @@ class AprendizController extends Controller
             ->orderByDesc('fecha_postulacion')
             ->paginate(10);
 
-        return view('aprendiz.postulaciones', compact('postulaciones'));
+        return Inertia::render('Aprendiz/Postulaciones', [
+            'postulaciones' => $postulaciones
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -256,7 +294,9 @@ class AprendizController extends Controller
                 ];
             });
 
-        return view('aprendiz.historial', compact('proyectos'));
+        return Inertia::render('Aprendiz/Historial', [
+            'proyectos' => $proyectos
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -292,7 +332,11 @@ class AprendizController extends Controller
             ->orderBy('proyecto_id')
             ->get();
 
-        return view('aprendiz.mis-entregas', compact('proyectos', 'entregas', 'evidencias'));
+        return Inertia::render('Aprendiz/Entregas', [
+            'proyectos' => $proyectos,
+            'entregas' => $entregas,
+            'evidencias' => $evidencias
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -308,13 +352,15 @@ class AprendizController extends Controller
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
-        // Verificar que el aprendiz está aprobado en este proyecto
+        // ✅ VALIDACIÓN: Verificar que el aprendiz está ACEPTADO en este proyecto
+        // Esto previene IDOR (Insecure Direct Object Reference)
         $postulacion = Postulacion::where('aprendiz_id', $aprendiz->id)
             ->where('proyecto_id', $proId)
+            ->where('estado', 'aceptada')  // ← Solo postulaciones ACEPTADAS
             ->first();
 
         if (! $postulacion) {
-            return back()->with('error', 'No tienes acceso a este proyecto o no has sido aprobado.');
+            return back()->with('error', 'No tienes acceso a este proyecto. Solo postulaciones aceptadas pueden ver los detalles.');
         }
 
         // Obtener el proyecto con sus relaciones
@@ -344,7 +390,12 @@ class AprendizController extends Controller
             ->orderByDesc('evidencias.fecha_envio')
             ->get();
 
-        return view('aprendiz.detalle-proyecto', compact('proyecto', 'etapas', 'evidencias', 'aprendiz'));
+        return Inertia::render('Aprendiz/DetalleProyecto', [
+            'proyecto' => $proyecto,
+            'etapas' => $etapas,
+            'evidencias' => $evidencias,
+            'aprendiz' => $aprendiz
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -356,10 +407,11 @@ class AprendizController extends Controller
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->firstOrFail();
 
-        // Verificar que está aprobado en el proyecto
+        // ✅ VALIDACIÓN: Verificar que está ACEPTADO en el proyecto (prevenir IDOR)
         $postulacion = DB::table('postulaciones')
             ->where('aprendiz_id', $aprendiz->id)
             ->where('proyecto_id', $proId)
+            ->where('estado', 'aceptada')  // ← Solo postulaciones ACEPTADAS
             ->firstOrFail();
 
         // Validar que la etapa pertenece al proyecto
@@ -376,34 +428,49 @@ class AprendizController extends Controller
             'descripcion.max' => 'La descripción no puede exceder 1000 caracteres.',
             'archivo.max' => 'El archivo no puede ser mayor a 5MB.',
             'archivo.mimes' => 'Tipo de archivo no permitido. Solo: PDF, imágenes, Word, Excel.',
+            'archivo.mines' => 'Extensión no permitida.',
         ]);
 
-        // Guardar archivo si existe
         $archivoUrl = null;
         if ($request->hasFile('archivo')) {
             $file = $request->file('archivo');
 
-            // Validar MIME real del archivo
             $mime = $file->getMimeType();
+            $extension = strtolower($file->getClientOriginalExtension());
             $allowedMimes = [
-                'application/pdf',
-                'image/jpeg',
-                'image/png',
-                'image/jpg',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.ms-excel',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/pdf' => 'pdf',
+                'image/jpeg' => ['jpg', 'jpeg'],
+                'image/png' => 'png',
+                'application/msword' => 'doc',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+                'application/vnd.ms-excel' => 'xls',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
             ];
 
-            if (! in_array($mime, $allowedMimes)) {
-                return back()->with('error', 'Tipo de archivo no permitido.');
+            $allowedExts = array_unique(array_merge(...array_values($allowedMimes)));
+            if (! in_array($extension, $allowedExts)) {
+                return back()->with('error', 'Extensión de archivo no permitida: .'.$extension);
             }
 
-            // Generar nombre seguro (sin path traversal)
-            $extension = $file->getClientOriginalExtension();
-            $safeFilename = 'evidencia_'.$aprendiz->id.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
-            $path = $file->storeAs('evidencias', $safeFilename, 'public');
+            if (! isset($allowedMimes[$mime])) {
+                return back()->with('error', 'Tipo MIME no permitido: '.$mime);
+            }
+
+            $validExts = is_array($allowedMimes[$mime]) ? $allowedMimes[$mime] : [$allowedMimes[$mime]];
+            if (! in_array($extension, $validExts)) {
+                return back()->with('error', 'El archivo no coincide con su tipo MIME. Extensión: .'.$extension.', Tipo: '.$mime);
+            }
+
+            $fileService = new FileProcessingService();
+            $path = $fileService->processUpload($file, 'evidencias', [
+                'watermark' => true,
+                'scan_virus' => config('app.env') === 'production',
+            ]);
+
+            if (!$path) {
+                return back()->with('error', 'Error al procesar el archivo. Verifique que no contenga malware.');
+            }
+
             $archivoUrl = $path;
         }
 
@@ -437,7 +504,10 @@ class AprendizController extends Controller
 
         $usuario = User::findOrFail($usrId);
 
-        return view('aprendiz.perfil', compact('aprendiz', 'usuario'));
+        return Inertia::render('Aprendiz/Perfil', [
+            'aprendiz' => $aprendiz,
+            'usuario' => $usuario
+        ]);
     }
 
     // ══════════════════════════════════════════════════════════════

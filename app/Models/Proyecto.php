@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Proyecto extends Model
 {
+    use SoftDeletes;
     protected $table = 'proyectos';
 
     protected $primaryKey = 'id';
@@ -36,6 +38,7 @@ class Proyecto extends Model
 
     protected $casts = [
         'fecha_publicacion' => 'date',
+        'deleted_at' => 'datetime',
     ];
 
     // ── RELACIONES ──
