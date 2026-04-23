@@ -42,6 +42,8 @@ class AuthController extends Controller
         $attempts = cache()->get($rateLimitKey, 0);
         $lockedUntil = cache()->get($rateLimitKey.'_locked_until');
 
+        $decayMinutes = ($attempts >= 3) ? 3 : 15;
+
         if ($attempts >= 5 && $lockedUntil) {
             $remainingSeconds = now()->diffInSeconds($lockedUntil);
             $minutes = ceil($remainingSeconds / 60);
@@ -67,10 +69,12 @@ class AuthController extends Controller
 
             if (! $loginOk) {
                 $newAttempts = $attempts + 1;
-                cache()->put($rateLimitKey, $newAttempts, now()->addMinutes(15));
+                $decayMinutes = ($newAttempts >= 3) ? 3 : 15;
+                cache()->put($rateLimitKey, $newAttempts, now()->addMinutes($decayMinutes));
 
                 if ($newAttempts >= 5) {
-                    cache()->put($rateLimitKey.'_locked_until', now()->addMinutes(15), now()->addMinutes(15));
+                    $lockMinutes = ($newAttempts >= 3) ? 3 : 15;
+                    cache()->put($rateLimitKey.'_locked_until', now()->addMinutes($lockMinutes), now()->addMinutes($lockMinutes));
                 }
 
                 return back()->with('error', 'Contraseña incorrecta.')->withInput(['correo' => $correo]);
