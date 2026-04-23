@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class RegistroEmpresaRequest extends FormRequest
 {
@@ -33,7 +34,17 @@ class RegistroEmpresaRequest extends FormRequest
                 },
             ],
             'correo' => 'required|email:rfc,dns|max:255|unique:empresas,correo_contacto|unique:usuarios,correo',
-            'password' => 'required|string|min:8|max:100|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'max:100',
+                'confirmed',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
+            ],
             'terminos' => 'accepted',
         ];
     }
@@ -50,6 +61,10 @@ class RegistroEmpresaRequest extends FormRequest
             'digits_between' => 'El documento debe tener entre :min y :max dígitos.',
             'accepted' => 'Debes aceptar los términos y condiciones.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
+            'password.letters' => 'La contraseña debe tener al menos una letra.',
+            'password.mixedCase' => 'La contraseña debe tener al menos una mayúscula y una minúscula.',
+            'password.numbers' => 'La contraseña debe tener al menos un número.',
+            'password.symbols' => 'La contraseña debe tener al menos un carácter especial.',
             'representante.regex' => 'El nombre del representante solo puede contener letras y espacios (sin números).',
             'representante.min' => 'El nombre del representante debe tener al menos 10 caracteres.',
         ];

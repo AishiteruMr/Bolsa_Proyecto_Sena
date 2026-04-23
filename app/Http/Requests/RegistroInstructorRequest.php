@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class RegistroInstructorRequest extends FormRequest
 {
@@ -70,10 +71,13 @@ class RegistroInstructorRequest extends FormRequest
             'password' => [
                 'required',
                 'string',
-                'min:8',
                 'max:100',
                 'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
             ],
             'terminos' => 'accepted',
         ];
@@ -92,7 +96,10 @@ class RegistroInstructorRequest extends FormRequest
             'accepted' => 'Debes aceptar los términos y condiciones.',
             'regex' => 'El campo :attribute solo puede contener letras y espacios.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password.regex' => 'La contraseña debe tener mayúsculas, minúsculas y números.',
+            'password.letters' => 'La contraseña debe tener al menos una letra.',
+            'password.mixedCase' => 'La contraseña debe tener al menos una mayúscula y una minúscula.',
+            'password.numbers' => 'La contraseña debe tener al menos un número.',
+            'password.symbols' => 'La contraseña debe tener al menos un carácter especial.',
         ];
     }
 }

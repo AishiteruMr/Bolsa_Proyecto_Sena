@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
 class ValidarLoginRequest extends FormRequest
 {
@@ -19,17 +18,7 @@ class ValidarLoginRequest extends FormRequest
     {
         return [
             'correo' => 'required|email|max:255',
-            'password' => [
-                'required',
-                'string',
-                'max:100',
-                // Validación de complejidad (sin uncompromised para desarrollo)
-                Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols(),
-            ],
+            'password' => 'required|string|min:8|max:100',
         ];
     }
 
@@ -40,12 +29,8 @@ class ValidarLoginRequest extends FormRequest
             'correo.email' => 'Ingresa un correo válido.',
             'correo.max' => 'El correo no puede tener más de 255 caracteres.',
             'password.required' => 'La contraseña es obligatoria.',
-            'password.max' => 'La contraseña no puede exceder 100 caracteres.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.letters' => 'La contraseña debe contener al menos una letra.',
-            'password.mixed' => 'La contraseña debe contener mayúsculas y minúsculas.',
-            'password.numbers' => 'La contraseña debe contener al menos un número.',
-            'password.symbols' => 'La contraseña debe contener al menos un carácter especial (!@#$%^&*).',
+            'password.max' => 'La contraseña no puede exceder 100 caracteres.',
         ];
     }
 }
