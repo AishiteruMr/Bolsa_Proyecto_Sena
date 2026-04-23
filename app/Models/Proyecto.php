@@ -359,7 +359,7 @@ class Proyecto extends Model
             'imagen' => [
                 'ok' => true,
                 'peso' => 0,
-                'descripcion' => ! empty($this->imagen) ? 'Imagen de identidad cargada' : 'Imagen no requerida',
+                'descripcion' => ! empty($this->imagen_url) ? 'Imagen de identidad cargada' : 'Imagen no requerida',
                 'opcional' => true,
             ],
         ];

@@ -177,7 +177,7 @@ class EmpresaController extends Controller
         $request->validate([
             'titulo' => 'required|string|max:200',
             'categoria' => 'required|string|max:100',
-            'descripcion' => 'required|string|max:500',
+            'descripcion' => 'required|string|min:80|max:5000',
             'requisitos' => 'required|string|max:200',
             'habilidades' => 'required|string|max:200',
             'fecha_publi' => 'required|date',
@@ -410,7 +410,6 @@ class EmpresaController extends Controller
                 'string',
                 'max:100',
                 'min:10',
-                'regex:/^[a-zA-ZÀ-ÿ\s]+$/u',
                 function ($attribute, $value, $fail) {
                     $palabras = count(array_filter(explode(' ', trim($value))));
                     if ($palabras < 2) {
