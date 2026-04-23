@@ -139,6 +139,8 @@ function detectarUbicacion(btnId) {
 }
 
 // ─── MISSION MAP (shows SENA + user location) ─────────────────────────────────
+let _missionMapInstance = null;
+
 function initMissionMap(elementId, senaLat, senaLng) {
     if (!document.getElementById(elementId)) return;
 
@@ -156,6 +158,8 @@ function initMissionMap(elementId, senaLat, senaLng) {
         .addTo(map)
         .bindPopup('<b>SENA Malambo</b><br>Centro de Innovación');
 
+    _missionMapInstance = { map, senaMarker };
+
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function(position) {
             const userLat = position.coords.latitude;
@@ -170,18 +174,138 @@ function initMissionMap(elementId, senaLat, senaLng) {
                 .addTo(map)
                 .bindPopup('Tu ubicación actual');
 
+            _missionMapInstance.userMarker = userMarker;
+
             const infoCard = document.getElementById('user-location-info');
             const addressEl = document.getElementById('user-address');
-            if (infoCard && addressEl) {
+            const detectBtn = document.getElementById('detect-user-location-btn');
+            if (infoCard) {
                 infoCard.style.display = 'flex';
                 addressEl.innerText = `Lat: ${userLat.toFixed(4)}, Lng: ${userLng.toFixed(4)}`;
+            }
+            if (detectBtn) {
+                detectBtn.style.background = 'var(--primary)';
+                detectBtn.style.color = 'white';
+                document.querySelector('#detect-user-location-btn i').style.color = '#fff';
+                document.getElementById('detect-btn-text').innerText = 'Ubicación detectada';
             }
 
             const group = new L.featureGroup([senaMarker, userMarker]);
             map.fitBounds(group.getBounds().pad(0.1));
-        });
+        },
+        function(error) {
+            const errorDiv = document.getElementById('location-error');
+            const detectBtn = document.getElementById('detect-user-location-btn');
+            if (errorDiv) {
+                let mensaje = 'No se pudo detectar tu ubicación.';
+                if (error.code === 1) mensaje = 'Permiso denegado. Haz clic en el botón para intentar de nuevo.';
+                else if (error.code === 2) mensaje = 'Ubicación no disponible. Verifica tu conexión.';
+                else if (error.code === 3) mensaje = 'Tiempo de espera agotado. Intenta de nuevo.';
+                errorDiv.innerText = mensaje;
+                errorDiv.style.display = 'block';
+            }
+            if (detectBtn) {
+                detectBtn.style.borderColor = '#fecaca';
+            }
+        },
+        { enableHighAccuracy: true, timeout: 15000 }
+        );
     }
 
     setTimeout(() => map.invalidateSize(), 500);
     return map;
 }
+
+function detectUserLocation() {
+    const btn = document.getElementById('detect-user-location-btn');
+    const errorDiv = document.getElementById('location-error');
+    const infoCard = document.getElementById('user-location-info');
+    const addressEl = document.getElementById('user-address');
+
+    if (!navigator.geolocation) {
+        if (errorDiv) {
+            errorDiv.innerText = 'Tu navegador no soporta geolocalización.';
+            errorDiv.style.display = 'block';
+        }
+        return;
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        document.getElementById('detect-btn-text').innerText = 'Detectando...';
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = 'fas fa-spinner fa-spin';
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const userLat = position.coords.latitude;
+            const userLng = position.coords.longitude;
+
+            if (_missionMapInstance) {
+                const { map, senaMarker } = _missionMapInstance;
+
+                const userIcon = L.divIcon({
+                    className: 'user-location-marker',
+                    html: '<div style="background-color: #3b82f6; width: 15px; height: 15px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>'
+                });
+
+                if (_missionMapInstance.userMarker) {
+                    _missionMapInstance.userMarker.setLatLng([userLat, userLng]);
+                } else {
+                    const userMarker = L.marker([userLat, userLng], { icon: userIcon })
+                        .addTo(map)
+                        .bindPopup('Tu ubicación actual');
+                    _missionMapInstance.userMarker = userMarker;
+                }
+
+                const bounds = L.featureGroup([senaMarker, _missionMapInstance.userMarker]);
+                map.fitBounds(bounds.getBounds().pad(0.1));
+            }
+
+            if (infoCard) infoCard.style.display = 'flex';
+            if (addressEl) addressEl.innerText = `Lat: ${userLat.toFixed(4)}, Lng: ${userLng.toFixed(4)}`;
+            if (errorDiv) errorDiv.style.display = 'none';
+
+            if (btn) {
+                btn.style.background = 'var(--primary)';
+                btn.style.color = 'white';
+                btn.disabled = false;
+                document.getElementById('detect-btn-text').innerText = 'Ubicación detectada';
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-check';
+                    icon.style.color = '#fff';
+                }
+            }
+        },
+        function(error) {
+            if (btn) {
+                btn.disabled = false;
+                document.getElementById('detect-btn-text').innerText = 'Reintentar';
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-exclamation-triangle';
+                    icon.style.color = '#dc2626';
+                }
+            }
+
+            if (errorDiv) {
+                let mensaje = 'No se pudo detectar tu ubicación.';
+                if (error.code === 1) mensaje = 'Permiso denegado. Permite el acceso a ubicación en tu navegador.';
+                else if (error.code === 2) mensaje = 'Ubicación no disponible. Verifica tu GPS y conexión.';
+                else if (error.code === 3) mensaje = 'Tiempo agotado. Intenta de nuevo.';
+                errorDiv.innerText = mensaje;
+                errorDiv.style.display = 'block';
+            }
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('detect-user-location-btn');
+    if (btn) {
+        btn.addEventListener('click', detectUserLocation);
+    }
+});

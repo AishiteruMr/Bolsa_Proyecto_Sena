@@ -150,6 +150,23 @@
 
                             <p style="color: var(--text-light); font-size: 14px; margin-bottom: 24px; font-weight: 500; line-height: 1.6; position: relative; z-index: 1;">{{ $etapa->descripcion }}</p>
 
+                            @if($etapa->url_documento)
+                            <div style="background: linear-gradient(135deg, rgba(62,180,137,0.1), rgba(62,180,137,0.05)); border: 1px solid rgba(62,180,137,0.2); border-radius: 14px; padding: 18px; margin-bottom: 24px;">
+                                <div style="display: flex; align-items: center; gap: 14px;">
+                                    <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <h5 style="font-size: 14px; font-weight: 800; color: var(--text); margin: 0 0 4px 0;">Documento Guía de la Etapa</h5>
+                                        <p style="font-size: 12px; color: var(--text-light); margin: 0;">Descarga la guía/formato para esta etapa</p>
+                                    </div>
+                                    <a href="{{ asset('storage/' . $etapa->url_documento) }}" target="_blank" class="btn-premium" style="padding: 10px 20px; font-size: 13px;">
+                                        <i class="fas fa-download" style="margin-right: 6px;"></i>Descargar
+                                    </a>
+                                </div>
+                            </div>
+                            @endif
+
                             <!-- Evidencias Existentes -->
                             @if($evidenciasEtapa->count())
                                 <div style="background: #f8fafc; border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 1px solid #e2e8f0;">

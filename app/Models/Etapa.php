@@ -18,6 +18,12 @@ class Etapa extends Model
         'nombre',
         'descripcion',
         'orden',
+        'documentos_requeridos',
+        'url_documento',
+    ];
+
+    protected $casts = [
+        'documentos_requeridos' => 'array',
     ];
 
     // ── RELACIONES ──
@@ -98,5 +104,18 @@ class Etapa extends Model
             ->where('orden', '>', $this->orden)
             ->orderBy('orden')
             ->first();
+    public function getDocumentosCountAttribute(): int
+    {
+        return count($this->documentos_requeridos ?? []);
+    }
+
+    public function hasDocumento(): bool
+    {
+        return !empty($this->url_documento);
+    }
+
+    public function getFileUrl(): string
+    {
+        return asset('storage/' . $this->url_documento);
     }
 }

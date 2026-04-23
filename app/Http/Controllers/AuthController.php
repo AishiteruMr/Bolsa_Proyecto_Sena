@@ -179,107 +179,143 @@ class AuthController extends Controller
 
     public function registrarAprendiz(RegistroAprendizRequest $request): RedirectResponse
     {
-        DB::transaction(function () use ($request) {
-            $usrId = DB::table('usuarios')->insertGetId([
-                'numero_documento' => (int) $request->documento,
-                'correo' => strip_tags(trim($request->correo)),
-                'contrasena' => Hash::make($request->password),
-                'rol_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        try {
+            $resultado = DB::transaction(function () use ($request) {
+                $usrId = DB::table('usuarios')->insertGetId([
+                    'numero_documento' => (int) $request->documento,
+                    'correo' => strip_tags(trim($request->correo)),
+                    'contrasena' => Hash::make($request->password),
+                    'rol_id' => 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            DB::table('aprendices')->insert([
-                'usuario_id' => $usrId,
-                'nombres' => strip_tags(trim($request->nombre)),
-                'apellidos' => strip_tags(trim($request->apellido)),
-                'programa_formacion' => strip_tags(trim($request->programa)),
-                'activo' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+                DB::table('aprendices')->insert([
+                    'usuario_id' => $usrId,
+                    'nombres' => strip_tags(trim($request->nombre)),
+                    'apellidos' => strip_tags(trim($request->apellido)),
+                    'programa_formacion' => strip_tags(trim($request->programa)),
+                    'activo' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
+                return $usrId;
+            });
 
-            $user = User::find($usrId);
-            if ($user) {
-                $user->sendEmailVerificationNotification();
+            if ($resultado) {
+                $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
+
+                $user = User::find($resultado);
+                if ($user) {
+                    $user->sendEmailVerificationNotification();
+                }
+
+                return redirect()->route('login')->with('success', 'Registro exitoso. Verifica tu correo antes de iniciar sesion.');
             }
-        });
 
-        return redirect()->route('login')->with('success', '✅ Registro exitoso. Por favor revisa tu bandeja de entrada y verifica tu correo electrónico antes de iniciar sesión.');
+            return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error en registro aprendiz: '.$e->getMessage());
+
+            return back()->with('error', 'Error al procesar el registro. Intenta de nuevo.')->withInput();
+        }
     }
 
     // ─── REGISTRO INSTRUCTOR ─────────────────────────────────────────────────────
 
     public function registrarInstructor(RegistroInstructorRequest $request): RedirectResponse
     {
-        DB::transaction(function () use ($request) {
-            $usrId = DB::table('usuarios')->insertGetId([
-                'numero_documento' => (int) $request->documento,
-                'correo' => strip_tags(trim($request->correo)),
-                'contrasena' => Hash::make($request->password),
-                'rol_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        try {
+            $resultado = DB::transaction(function () use ($request) {
+                $usrId = DB::table('usuarios')->insertGetId([
+                    'numero_documento' => (int) $request->documento,
+                    'correo' => strip_tags(trim($request->correo)),
+                    'contrasena' => Hash::make($request->password),
+                    'rol_id' => 2,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            DB::table('instructores')->insert([
-                'usuario_id' => $usrId,
-                'nombres' => strip_tags(trim($request->nombre)),
-                'apellidos' => strip_tags(trim($request->apellido)),
-                'especialidad' => strip_tags(trim($request->especialidad)),
-                'activo' => false,
-                'disponibilidad' => 'Disponible',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+                DB::table('instructores')->insert([
+                    'usuario_id' => $usrId,
+                    'nombres' => strip_tags(trim($request->nombre)),
+                    'apellidos' => strip_tags(trim($request->apellido)),
+                    'especialidad' => strip_tags(trim($request->especialidad)),
+                    'activo' => false,
+                    'disponibilidad' => 'Disponible',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
+                return $usrId;
+            });
 
-            $user = User::find($usrId);
-            if ($user) {
-                $user->sendEmailVerificationNotification();
+            if ($resultado) {
+                $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
+
+                $user = User::find($resultado);
+                if ($user) {
+                    $user->sendEmailVerificationNotification();
+                }
+
+                return redirect()->route('login')->with('success', 'Registro exitoso. Verifica tu correo antes de iniciar sesion.');
             }
-        });
 
-        return redirect()->route('login')->with('success', '✅ Registro exitoso. Por favor revisa tu bandeja de entrada y verifica tu correo electrónico antes de iniciar sesión.');
+            return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error en registro instructor: '.$e->getMessage());
+
+            return back()->with('error', 'Error al procesar el registro. Intenta de nuevo.')->withInput();
+        }
     }
 
     // ─── REGISTRO EMPRESA ────────────────────────────────────────────────────────
 
     public function registrarEmpresa(RegistroEmpresaRequest $request): RedirectResponse
     {
-        DB::transaction(function () use ($request) {
-            $usrId = DB::table('usuarios')->insertGetId([
-                'numero_documento' => (int) $request->nit,
-                'correo' => strip_tags(trim($request->correo)),
-                'contrasena' => Hash::make($request->password),
-                'rol_id' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        try {
+            $resultado = DB::transaction(function () use ($request) {
+                $usrId = DB::table('usuarios')->insertGetId([
+                    'numero_documento' => (int) $request->nit,
+                    'correo' => strip_tags(trim($request->correo)),
+                    'contrasena' => Hash::make($request->password),
+                    'rol_id' => 3,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            DB::table('empresas')->insert([
-                'usuario_id' => $usrId,
-                'nit' => (int) $request->nit,
-                'nombre' => strip_tags(trim($request->nombre_empresa)),
-                'representante' => strip_tags(trim($request->representante)),
-                'correo_contacto' => strip_tags(trim($request->correo)),
-                'activo' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+                DB::table('empresas')->insert([
+                    'usuario_id' => $usrId,
+                    'nit' => (int) $request->nit,
+                    'nombre' => strip_tags(trim($request->nombre_empresa)),
+                    'representante' => strip_tags(trim($request->representante)),
+                    'correo_contacto' => strip_tags(trim($request->correo)),
+                    'activo' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-            $this->enviarCorreoBienvenida($request->correo, $request->nombre_empresa, '');
+                return $usrId;
+            });
 
-            $user = User::find($usrId);
-            if ($user) {
-                $user->sendEmailVerificationNotification();
+            if ($resultado) {
+                $this->enviarCorreoBienvenida($request->correo, $request->nombre_empresa, '');
+
+                $user = User::find($resultado);
+                if ($user) {
+                    $user->sendEmailVerificationNotification();
+                }
+
+                return redirect()->route('login')->with('success', 'Empresa registrada. Verifica tu correo antes de iniciar sesion.');
             }
-        });
 
-        return redirect()->route('login')->with('success', '✅ Empresa registrada exitosamente. Por favor revisa tu bandeja de entrada y verifica tu correo electrónico antes de iniciar sesión.');
+            return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error en registro empresa: '.$e->getMessage());
+
+            return back()->with('error', 'Error al procesar el registro. Intenta de nuevo.')->withInput();
+        }
     }
 
     // ─── HELPERS PRIVADOS ────────────────────────────────────────────────────────

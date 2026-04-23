@@ -13,6 +13,7 @@ use App\Models\Evidencia;
 use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
+use App\Services\PerfilService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
@@ -24,6 +25,8 @@ use Illuminate\View\View;
 
 class EmpresaController extends Controller
 {
+    public function __construct(private PerfilService $perfilService) {}
+
     public function dashboard(): View|RedirectResponse
     {
         $nit = session('nit');
@@ -387,7 +390,6 @@ class EmpresaController extends Controller
     public function actualizarPerfil(Request $request): RedirectResponse
     {
         $empId = session('emp_id');
-        $empresa = Empresa::findOrFail($empId);
 
         $request->validate([
             'nombre_empresa' => 'required|string|max:150',
@@ -399,7 +401,7 @@ class EmpresaController extends Controller
                 function ($attribute, $value, $fail) {
                     $palabras = count(array_filter(explode(' ', trim($value))));
                     if ($palabras < 2) {
-                        $fail('El nombre del representante debe incluir nombre y apellido (mínimo 2 palabras).');
+                        $fail('El nombre del representante debe incluir nombre y apellido (minimo 2 palabras).');
                     }
                 },
             ],
@@ -407,22 +409,19 @@ class EmpresaController extends Controller
         ]);
 
         $datos = [
-            'nombre' => $request->nombre_empresa,
+            'nombre_empresa' => $request->nombre_empresa,
             'representante' => $request->representante,
+            'password' => $request->password,
         ];
 
-        if ($request->filled('password')) {
-            // Empresa uses password on User now ideally, but table may have it
-            // Assuming it's still being replicated or purely in User table:
-            $usuario = User::find($empresa->usuario_id);
-            if ($usuario) {
-                $usuario->update(['contrasena' => Hash::make($request->password)]);
-            }
+        [$exito, $mensaje] = $this->perfilService->actualizarPerfilEmpresa($empId, $datos);
+
+        if (!$exito) {
+            return back()->with('error', $mensaje);
         }
 
-        $empresa->update($datos);
         session(['nombre' => $request->nombre_empresa]);
 
-        return back()->with('success', 'Perfil actualizado correctamente.');
+        return back()->with('success', $mensaje);
     }
 }

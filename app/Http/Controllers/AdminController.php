@@ -81,8 +81,8 @@ class AdminController extends Controller
             Cache::forget('admin_stats');
             $usrToNotify = $aprendiz->usuario;
 
-            // Audit log
-            AuditLog::registrar(
+            // Audit log detallado
+            AuditLog::registrarCambio(
                 $usrId,
                 'cambiar_estado',
                 'usuarios',
@@ -98,8 +98,8 @@ class AdminController extends Controller
             Cache::forget('admin_stats');
             $usrToNotify = $instructor->usuario;
 
-            // Audit log
-            AuditLog::registrar(
+            // Audit log detallado
+            AuditLog::registrarCambio(
                 $usrId,
                 'cambiar_estado',
                 'usuarios',
@@ -145,8 +145,8 @@ class AdminController extends Controller
         $empresa->update(['activo' => $request->estado]);
         Cache::forget('admin_stats');
 
-        // Audit log
-        AuditLog::registrar(
+        // Audit log detallado
+        AuditLog::registrarCambio(
             $usrId,
             'cambiar_estado',
             'empresas',

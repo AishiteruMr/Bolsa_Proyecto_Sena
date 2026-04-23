@@ -15,6 +15,7 @@ use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use App\Notifications\AppNotification;
+use App\Services\PerfilService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,6 +27,8 @@ use Illuminate\View\View;
 
 class InstructorController extends Controller
 {
+    public function __construct(private PerfilService $perfilService) {}
+
     public function dashboard(): View|RedirectResponse
     {
         $usrId = session('usr_id');
@@ -146,7 +149,6 @@ class InstructorController extends Controller
     {
         $usrId = session('usr_id');
         $instructor = Instructor::where('usuario_id', $usrId)->firstOrFail();
-        $usuario = User::findOrFail($usrId);
 
         $request->validate([
             'nombre' => 'required|string|max:50',
@@ -155,21 +157,22 @@ class InstructorController extends Controller
             'password' => 'nullable|string|min:'.config('app_config.password.min_length', 8),
         ]);
 
-        $instructor->update([
-            'nombres' => $request->nombre,
-            'apellidos' => $request->apellido,
+        $datos = [
+            'nombre' => $request->nombre,
+            'apellido' => $request->apellido,
             'especialidad' => $request->especialidad,
-        ]);
+            'password' => $request->password,
+        ];
 
-        if ($request->filled('password')) {
-            $usuario->update([
-                'contrasena' => Hash::make($request->password),
-            ]);
+        [$exito, $mensaje] = $this->perfilService->actualizarPerfilInstructor($instructor->id, $datos);
+
+        if (!$exito) {
+            return back()->with('error', $mensaje);
         }
 
         session(['nombre' => $request->nombre, 'apellido' => $request->apellido]);
 
-        return back()->with('success', 'Perfil actualizado correctamente.');
+        return back()->with('success', $mensaje);
     }
 
     // ── HISTORIAL DE PROYECTOS ──
@@ -369,6 +372,55 @@ class InstructorController extends Controller
         $etapa->delete();
 
         return back()->with('success', 'Etapa eliminada correctamente.');
+    }
+
+    // ✅ MÉTODO PARA SUBIR DOCUMENTO/GUÍA A ETAPA
+    public function subirDocumentoEtapa(Request $request, int $etaId): RedirectResponse
+    {
+        $usrId = session('usr_id');
+
+        $etapa = Etapa::where('id', $etaId)
+            ->whereHas('proyecto', function ($query) use ($usrId) {
+                $query->where('instructor_usuario_id', $usrId);
+            })->firstOrFail();
+
+        $request->validate([
+            'documento' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx|max:10240',
+            'documentos_requeridos' => 'nullable|json',
+        ]);
+
+        if ($request->hasFile('documento')) {
+            $file = $request->file('documento');
+            $mime = $file->getMimeType();
+            $allowedMimes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            ];
+
+            if (! in_array($mime, $allowedMimes)) {
+                return back()->with('error', 'Tipo de documento no permitido.');
+            }
+
+            $extension = $file->getClientOriginalExtension();
+            $safeFilename = 'etapa_'.$etaId.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
+            $path = $file->storeAs('etapas', $safeFilename, 'public');
+
+            $etapa->update(['url_documento' => $path]);
+        }
+
+        if ($request->has('documentos_requeridos')) {
+            $documentos = json_decode($request->input('documentos_requeridos'), true);
+            if (is_array($documentos)) {
+                $etapa->update(['documentos_requeridos' => $documentos]);
+            }
+        }
+
+        return back()->with('success', 'Documento subido correctamente.');
     }
 
     // ✅ MÉTODO PARA SUBIR IMAGEN AL PROYECTO

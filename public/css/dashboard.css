@@ -163,6 +163,8 @@ body {
     border: 1px solid var(--border-glass);
     box-shadow: var(--shadow);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-sizing: border-box;
+    min-height: 200px;
 }
 .glass-card:hover { 
     transform: translateY(-8px) scale(1.01); 
@@ -178,6 +180,8 @@ body {
     position: relative; overflow: hidden;
     transition: all 0.4s ease;
     box-shadow: var(--shadow-sm);
+    min-height: 180px;
+    box-sizing: border-box;
 }
 .stat-card-premium:hover { 
     transform: scale(1.03) translateY(-4px); 

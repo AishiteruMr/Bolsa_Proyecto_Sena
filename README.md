@@ -1,23 +1,36 @@
-# 🚀 Bolsa de Proyectos SENA — Modern Edition
+# Bolsa de Proyectos SENA — Modern Edition
 
 Plataforma integral premium para la conexión entre empresas, instructores y aprendices del SENA, mejorada con estándares modernos de seguridad, estabilidad y diseño sobre Laravel 11.x.
 
 ---
 
+## Características
 
-## ✨ Características
-
-* ✅ Sistema de roles (Aprendiz, Empresa, Instructor, Administrador)
-* ✅ Dashboard personalizado por perfil
-* ✅ Gestión de proyectos y postulaciones
-* ✅ Sistema de evidencias por etapas
-* ✅ Notificaciones en tiempo real
-* ✅ Seguridad avanzada con CSP y protección IDOR
-* ✅ Diseño Premium Glassmorphism
+* Sistema de roles (Aprendiz, Empresa, Instructor, Administrador)
+* Dashboard personalizado por perfil
+* Gestión de proyectos y postulaciones
+* Sistema de evidencias por etapas
+* Notificaciones en tiempo real
+* Seguridad avanzada con CSP y protección IDOR
+* Diseño Premium Glassmorphism
+* API REST para proyectos
+* Estadísticas y métricas en tiempo real
+* Scroll infinito para listados grandes
+* Exportación de datos (Excel/CSV)
+* Logging de auditoría completo
+* Procesamiento de archivos seguros
+* Validación de contraseñas robusta
+* Middleware de seguridad personalizados
+* Notificaciones por email
+* Emails transaccionales
+* Middleware de ownership
+* Timeout de sesión
+* Validación de firma
+* Cifrado de cookies
 
 ---
 
-## 🛠️ Tecnologías
+## Tecnologías
 
 * PHP 8.4+
 * Laravel 11.x
@@ -29,7 +42,7 @@ Plataforma integral premium para la conexión entre empresas, instructores y apr
 
 ---
 
-## 📦 Instalación
+## Instalación
 
 ```bash
 # Clonar repositorio
@@ -63,33 +76,58 @@ npm run dev
 
 ---
 
-## ▶️ Uso
+## Uso
 
 1. Accede a `http://localhost:8000` después de ejecutar `php artisan serve`
 2. Inicia sesión con las credenciales de prueba
 
 ---
 
-## 📂 Estructura del proyecto
+## Estructura del proyecto
 
 ```bash
 app/
- ├── Http/
- ├── Models/
- ├── Providers/
- └── ...
+├── Http/
+│   ├── Controllers/
+│   │   ├── Api/
+│   │   ├── AprendizController.php
+│   │   ├── EmpresaController.php
+│   │   ├── InstructorController.php
+│   │   ├── AdminController.php
+│   │   ├── StatsController.php
+│   │   ├── ExportController.php
+│   │   └── AuditLogController.php
+│   ├── Middleware/
+│   │   ├── SecurityHeadersMiddleware.php
+│   │   ├── OwnershipMiddleware.php
+│   │   ├── SessionTimeout.php
+│   │   └── ValidateFileUpload.php
+│   └── Requests/
+├── Models/
+├── Services/
+│   ├── ProyectoService.php
+│   ├── EvidenciaService.php
+│   ├── PostulacionService.php
+│   ├── FileProcessingService.php
+│   └── AprendizService.php
+├── Notifications/
+├── Mail/
+├── Traits/
+├── Providers/
+└── Console/Commands/
 database/
- ├── migrations/
- └── seeders/
+├── migrations/
+└── seeders/
 resources/
- └── views/
+└── views/
 routes/
 public/
+tests/
 ```
 
 ---
 
-## ⚠️ Notas de Seguridad 
+## Notas de Seguridad 
 
 ### Autenticación
 - Implementar Laravel Fortify para autenticación robusta
@@ -103,7 +141,6 @@ public/
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 Este proyecto está bajo la licencia MIT.
-
