@@ -417,7 +417,7 @@ class EmpresaController extends Controller
                     }
                 },
             ],
-            'password' => 'nullable|string|min:8',
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
         $datos = [

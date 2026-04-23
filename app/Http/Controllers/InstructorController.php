@@ -30,52 +30,41 @@ class InstructorController extends Controller
             return redirect()->route('login')->with('error', 'No se encontró tu perfil de instructor.');
         }
 
-        // Proyectos asignados activos
-        $proyectosAsignados = Proyecto::where('instructor_usuario_id', $usrId)
-            ->whereIn('estado', ['aprobado', 'en_progreso']) // Activos
-            ->count();
-
-        // Proyectos recientes con relación a empresa (eager loading)
-        $proyectos = Proyecto::where('instructor_usuario_id', $usrId)
+        $proyectoIds = Proyecto::where('instructor_usuario_id', $usrId)
             ->whereIn('estado', ['aprobado', 'en_progreso'])
+            ->pluck('id');
+
+        $proyectosAsignados = $proyectoIds->count();
+
+        $proyectos = Proyecto::whereIn('id', $proyectoIds)
             ->with(['empresa', 'postulaciones'])
             ->orderByDesc('id')
             ->limit(5)
             ->get();
 
-        // Contar aprendices aprobados en proyectos del instructor
-        $totalAprendices = Postulacion::whereIn('proyecto_id',
-            Proyecto::where('instructor_usuario_id', $usrId)
-                ->whereIn('estado', ['aprobado', 'en_progreso'])
-                ->pluck('id')
-        )->where('estado', 'aceptada')
+        $totalAprendices = Postulacion::whereIn('proyecto_id', $proyectoIds)
+            ->where('estado', 'aceptada')
             ->distinct('aprendiz_id')
+            ->count('aprendiz_id');
+
+        $evidenciasPendientes = Evidencia::whereIn('proyecto_id', $proyectoIds)
+            ->where('estado', 'pendiente')
             ->count();
 
-        // Evidencias pendientes por calificar
-        $evidenciasPendientes = Evidencia::whereIn('proyecto_id',
-            Proyecto::where('instructor_usuario_id', $usrId)
-                ->pluck('id')
-        )->where('estado', 'pendiente')
+        $nuevasPostulaciones = Postulacion::whereIn('proyecto_id', $proyectoIds)
+            ->where('fecha_postulacion', '>=', now()->subHours(48))
             ->count();
 
-        // 🆕 Nuevas postulaciones (últimas 48 horas)
-        $nuevasPostulaciones = Postulacion::whereIn('proyecto_id',
-            Proyecto::where('instructor_usuario_id', $usrId)->pluck('id')
-        )->where('fecha_postulacion', '>=', now()->subHours(48))->count();
-
-        // 🆕 Próximo cierre de proyecto
-        $proximosProyectos = Proyecto::where('instructor_usuario_id', $usrId)
-            ->whereIn('estado', ['aprobado', 'en_progreso'])
-            ->get();
-
-        $proximoCierre = $proximosProyectos->filter(function ($p) {
-            $fechaFin = Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
-
-            return $fechaFin->isFuture(); // solo proyectos aún vigentes
-        })->sortBy(function ($p) {
-            return Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
-        })->first();
+        $proximoCierre = Proyecto::whereIn('id', $proyectoIds)
+            ->get()
+            ->filter(function ($p) {
+                $fechaFin = Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
+                return $fechaFin->isFuture();
+            })
+            ->sortBy(function ($p) {
+                return Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
+            })
+            ->first();
 
         return view('instructor.dashboard', compact(
             'instructor', 'proyectosAsignados',
@@ -465,11 +454,11 @@ class InstructorController extends Controller
     {
         // ✅ SEGURIDAD: Validar ANTES de procesar
         $request->validate([
-            'estado' => 'required|string|in:pendiente,aprobada,rechazada',
+            'estado' => 'required|string|in:pendiente,aceptada,rechazada',
             'comentario' => 'nullable|string|max:1000',
         ], [
             'estado.required' => 'El estado es obligatorio.',
-            'estado.in' => 'El estado debe ser: pendiente, aprobada o rechazada.',
+            'estado.in' => 'El estado debe ser: pendiente, aceptada o rechazada.',
             'comentario.max' => 'El comentario no puede exceder 1000 caracteres.',
         ]);
 

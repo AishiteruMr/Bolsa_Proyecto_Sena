@@ -137,7 +137,7 @@ class AprendizController extends Controller
             return back()->with('error', 'No se encontró tu perfil de aprendiz.');
         }
 
-        $proyecto = Proyecto::withTrashed()->find($id);
+        $proyecto = Proyecto::find($id);
         if (!$proyecto) {
             return back()->with('error', 'Proyecto no encontrado.');
         }
@@ -502,7 +502,7 @@ class AprendizController extends Controller
             'apellido.max' => 'El apellido no puede exceder 50 caracteres.',
             'programa.required' => 'El programa de formación es obligatorio.',
             'programa.max' => 'El programa no puede exceder 100 caracteres.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
