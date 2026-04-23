@@ -12,6 +12,7 @@ use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use App\Notifications\AppNotification;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -21,23 +22,29 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        $stats = [
-            'aprendices' => Aprendiz::count(),
-            'instructores' => Instructor::count(),
-            'empresas' => Empresa::count(),
-            'proyectos' => Proyecto::count(),
-            'pendientes' => Proyecto::where('estado', 'pendiente')->count(),
-            'usuarios' => User::count(),
-        ];
+        $stats = Cache::remember('admin_stats', now()->addMinutes(5), function () {
+            return [
+                'aprendices' => Aprendiz::count(),
+                'instructores' => Instructor::count(),
+                'empresas' => Empresa::count(),
+                'proyectos' => Proyecto::count(),
+                'pendientes' => Proyecto::where('estado', 'pendiente')->count(),
+                'usuarios' => User::count(),
+            ];
+        });
 
-        $proyectosRecientes = Proyecto::with('empresa')
-            ->orderByDesc('id')
-            ->limit(5)
-            ->get();
+        $proyectosRecientes = Cache::remember('admin_proyectos_recientes', now()->addMinutes(5), function () {
+            return Proyecto::with('empresa')
+                ->orderByDesc('id')
+                ->limit(5)
+                ->get();
+        });
 
-        $usuariosRecientes = User::orderByDesc('created_at')
-            ->limit(5)
-            ->get();
+        $usuariosRecientes = Cache::remember('admin_usuarios_recientes', now()->addMinutes(5), function () {
+            return User::orderByDesc('created_at')
+                ->limit(5)
+                ->get();
+        });
 
         return view('admin.dashboard', compact('stats', 'proyectosRecientes', 'usuariosRecientes'));
     }
@@ -64,6 +71,7 @@ class AdminController extends Controller
             $aprendiz = Aprendiz::with('usuario')->findOrFail($id);
             $anterior = ['activo' => $aprendiz->activo];
             $aprendiz->update(['activo' => $request->estado]);
+            Cache::forget('admin_stats');
             $usrToNotify = $aprendiz->usuario;
 
             // Audit log
@@ -80,6 +88,7 @@ class AdminController extends Controller
             $instructor = Instructor::with('usuario')->findOrFail($id);
             $anterior = ['activo' => $instructor->activo];
             $instructor->update(['activo' => $request->estado]);
+            Cache::forget('admin_stats');
             $usrToNotify = $instructor->usuario;
 
             // Audit log
@@ -126,6 +135,7 @@ class AdminController extends Controller
 
         $anterior = ['activo' => $empresa->activo];
         $empresa->update(['activo' => $request->estado]);
+        Cache::forget('admin_stats');
 
         // Audit log
         AuditLog::registrar(
@@ -208,8 +218,9 @@ class AdminController extends Controller
                 'estado' => $proyecto->estado,
                 'categoria' => $proyecto->categoria,
                 'fecha_publicacion' => $proyecto->fecha_publicacion,
-                'empresa_nombre' => $proyecto->empresa->nombre ?? null,
-                'instructor_nombre' => $proyecto->instructor ? $proyecto->instructor->nombres : null,
+                'empresa_nombre' => $proyecto->empresa?->nombre,
+                'instructor_nombre' => $proyecto->instructor?->nombres,
+                'postulaciones_count' => $proyecto->postulaciones_count ?? 0,
             ];
         });
 
@@ -244,6 +255,8 @@ class AdminController extends Controller
                 'estado' => $request->estado,
                 'instructor_usuario_id' => null,
             ]);
+            Cache::forget('admin_stats');
+            Cache::forget('admin_proyectos_recientes');
 
             // Notificar a la empresa
             if ($empresaUsr) {
@@ -273,6 +286,8 @@ class AdminController extends Controller
             }
         } else {
             $proyecto->update(['estado' => $request->estado]);
+            Cache::forget('admin_stats');
+            Cache::forget('admin_proyectos_recientes');
             $proyectoActual = $proyecto->load('empresa');
             $empresaUsr = $proyectoActual->empresa->usuario ?? null;
             if ($empresaUsr) {
@@ -294,7 +309,13 @@ class AdminController extends Controller
         ]);
 
         $proyecto = Proyecto::findOrFail($id);
+
+        if (!in_array($proyecto->estado, ['pendiente', 'aprobado'])) {
+            return back()->with('error', 'No se puede asignar instructor a un proyecto que está '.$proyecto->estado.'.');
+        }
+
         $proyecto->update(['instructor_usuario_id' => $request->instructor_usuario_id]);
+        Cache::forget('admin_stats');
 
         // Enviar correo de notificación al instructor asignado
         try {
