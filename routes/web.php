@@ -11,7 +11,6 @@ use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\StatsController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +20,10 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
 Route::get('/nosotros', function () {
-    return Inertia::render('Home/Nosotros');
+    return view('nosotros');
 })->name('nosotros');
 
 /*
@@ -172,8 +173,7 @@ Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats', [StatsContr
 
 // ✅ SEGURIDAD: Rate limiting en APIs de infinite scroll (60/min)
 Route::middleware(['auth.custom', 'throttle:60,1'])->group(function () {
-    // Infinite scroll routes - temporarily disabled
-// Route::get('/api/infinite/proyectos', [InfiniteScrollController::class, 'proyectos'])->name('api.infinite.proyectos');
-// Route::get('/api/infinite/aprendices', [InfiniteScrollController::class, 'aprendices'])->name('api.infinite.aprendices');
-// Route::middleware(['auth.custom', 'rol:3'])->get('/api/infinite/proyectos-empresa', [InfiniteScrollController::class, 'proyectosEmpresa'])->name('api.infinite.proyectos-empresa');
+    Route::get('/api/infinite/proyectos', [InfiniteScrollController::class, 'proyectos'])->name('api.infinite.proyectos');
+    Route::get('/api/infinite/aprendices', [InfiniteScrollController::class, 'aprendices'])->name('api.infinite.aprendices');
+    Route::middleware(['auth.custom', 'rol:3'])->get('/api/infinite/proyectos-empresa', [InfiniteScrollController::class, 'proyectosEmpresa'])->name('api.infinite.proyectos-empresa');
 });

@@ -64,7 +64,6 @@ class Kernel extends HttpKernel
             VerifyCsrfToken::class,
             SubstituteBindings::class,
             SessionTimeout::class,
-            \App\Http\Middleware\HandleInertiaRequests::class,
         ],
 
         'api' => [
