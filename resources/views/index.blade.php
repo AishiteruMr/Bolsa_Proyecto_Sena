@@ -92,13 +92,13 @@
         </div>
     </section>
 
-    <section style="padding: 80px 8%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); border-radius: 32px; margin: 0 8% 80px; text-align: center; position: relative; overflow: hidden;">
+    <section class="cta-section">
         <div style="position: absolute; top: -50%; right: -20%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);"></div>
         <div style="position: absolute; bottom: -30%; left: -10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%);"></div>
         <div style="position: relative; z-index: 1;">
-            <h2 style="color: #fff; font-size: 44px; font-weight: 900; letter-spacing: -1px; margin-bottom: 20px;">¿Listo para transformar el futuro?</h2>
-            <p style="color: rgba(255,255,255,0.85); font-size: 18px; max-width: 500px; margin: 0 auto 40px;">Únete hoy a la mayor comunidad de innovación técnica y comienza a generar valor real en la industria.</p>
-            <a href="{{ route('login') }}" style="background: #fff; color: var(--primary); padding: 20px 50px; font-size: 17px; font-weight: 700; text-decoration: none; border-radius: 16px; display: inline-block; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <h2>¿Listo para transformar el futuro?</h2>
+            <p>Únete hoy a la mayor comunidad de innovación técnica y comienza a generar valor real en la industria.</p>
+            <a href="{{ route('login') }}">
                 Comenzar Ahora <i class="fas fa-rocket" style="margin-left: 12px;"></i>
             </a>
         </div>

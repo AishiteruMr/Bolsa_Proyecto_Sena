@@ -24,7 +24,7 @@ use Illuminate\View\View;
 
 class EmpresaController extends Controller
 {
-    public function dashboard(): View
+    public function dashboard(): View|RedirectResponse
     {
         $nit = session('nit');
         $empresa = Empresa::where('nit', $nit)->first();
@@ -64,7 +64,7 @@ class EmpresaController extends Controller
         ));
     }
 
-    public function proyectos(Request $request): View
+    public function proyectos(Request $request): View|RedirectResponse
     {
         $nit = session('nit');
         $empresa = Empresa::where('nit', $nit)->first();

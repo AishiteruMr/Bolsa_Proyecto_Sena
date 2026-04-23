@@ -355,11 +355,46 @@
 @media (max-width: 1024px) {
     .aprendiz-dashboard-grid { grid-template-columns: repeat(2, 1fr); }
     .aprendiz-status-card { grid-column: span 2; }
+    .aprendiz-search-hero { padding: 60px 32px; border-radius: 32px; }
+    .instructor-stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .instructor-stat-card-lg { grid-column: span 1; }
+}
+
+@media (max-width: 768px) {
+    .aprendiz-search-hero { padding: 48px 24px; border-radius: 24px; }
+    .aprendiz-hero-title { font-size: 32px; }
+    .aprendiz-search-input-wrapper { max-width: 100%; }
+    .aprendiz-search-control { padding: 18px 24px 18px 52px; font-size: 15px; }
+    .aprendiz-search-btn { padding: 0 24px; }
+    .aprendiz-pill-container { justify-content: center; }
+    .aprendiz-postulation-card { flex-direction: column; align-items: flex-start; }
+    .aprendiz-postulation-info { min-width: 100%; }
+    .aprendiz-info-card { padding: 24px; }
+    .aprendiz-project-body { padding: 24px; }
+    .apr-hero { flex-direction: column; text-align: center; padding: 32px 24px; gap: 24px; }
+    .instructor-hero { padding: 40px 24px; }
+    .instructor-title { font-size: 28px; }
 }
 
 @media (max-width: 640px) {
     .aprendiz-dashboard-grid { grid-template-columns: 1fr; }
-    .aprendiz-status-card { grid-column: span 1; flex-direction: column; text-align: center; padding: 32px; }
+    .aprendiz-status-card { grid-column: span 1; flex-direction: column; text-align: center; padding: 32px 24px; }
+    .aprendiz-status-icon { width: 56px; height: 56px; font-size: 24px; }
+    .aprendiz-card-value { font-size: 22px; }
+    .aprendiz-search-hero { padding: 40px 20px; border-radius: 20px; }
+    .aprendiz-hero-title { font-size: 26px; }
+    .aprendiz-search-control { padding: 16px 20px 16px 48px; border-radius: 14px; }
+    .aprendiz-search-btn { position: static; width: 100%; margin-top: 12px; padding: 14px; border-radius: 14px; }
+    .aprendiz-search-input-wrapper { flex-direction: column; }
+    .aprendiz-pill { padding: 8px 16px; font-size: 13px; }
+    .aprendiz-results-count { text-align: center; }
+    .aprendiz-empty-state { padding: 60px 24px; }
+    .aprendiz-project-image-wrapper { height: 180px; }
+    .instructor-stat-grid { grid-template-columns: 1fr; }
+    .instructor-stat-card-lg { flex-direction: column; text-align: center; gap: 16px; padding: 24px; }
+    .apr-hero { padding: 28px 20px; }
+    .apr-avatar-hero { width: 72px; height: 72px; font-size: 28px; }
+    .apr-stat-chip { padding: 12px 16px; }
 }
 
 /* 

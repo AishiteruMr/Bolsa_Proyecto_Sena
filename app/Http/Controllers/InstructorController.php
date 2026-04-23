@@ -26,7 +26,7 @@ use Illuminate\View\View;
 
 class InstructorController extends Controller
 {
-    public function dashboard(): View
+    public function dashboard(): View|RedirectResponse
     {
         $usrId = session('usr_id');
 
@@ -111,7 +111,7 @@ class InstructorController extends Controller
         return view('instructor.aprendices', compact('aprendices'));
     }
 
-    public function perfil(): View
+    public function perfil(): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $instructor = Instructor::where('usuario_id', $usrId)->first();

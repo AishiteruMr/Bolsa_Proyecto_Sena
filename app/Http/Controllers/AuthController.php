@@ -25,7 +25,7 @@ class AuthController extends Controller
 {
     // ─── VISTAS DE LOGIN ────────────────────────────────────────────────────────
 
-    public function showLogin(): View
+    public function showLogin(): View|RedirectResponse
     {
         if (session()->has('usr_id') || session()->has('emp_id')) {
             return $this->redirectByRol(session('rol'));
@@ -160,17 +160,17 @@ class AuthController extends Controller
 
     // ─── VISTAS DE REGISTRO ──────────────────────────────────────────────────────
 
-    public function showRegistroAprendiz(): View
+    public function showRegistroAprendiz(): View|RedirectResponse
     {
         return view('auth.registro-aprendiz');
     }
 
-    public function showRegistroEmpresa(): View
+    public function showRegistroEmpresa(): View|RedirectResponse
     {
         return view('auth.registro-empresa');
     }
 
-    public function showRegistroInstructor(): View
+    public function showRegistroInstructor(): View|RedirectResponse
     {
         return view('auth.registro-instructor');
     }

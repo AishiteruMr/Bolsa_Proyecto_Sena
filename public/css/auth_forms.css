@@ -194,4 +194,18 @@
     .registro-container { padding: 32px 24px; }
     .input-row { grid-template-columns: 1fr; }
     .auth-main { padding: 20px; }
+    .reg-header h2 { font-size: 22px; }
+    .reg-header img { width: 48px; height: 48px; }
+    .input-icon input { padding: 10px 12px 10px 40px; border-radius: 10px; font-size: 13px; }
+    .btn-registro { padding: 14px; border-radius: 10px; font-size: 14px; }
+    .checkbox-group { font-size: 12px; }
+    .link-text { font-size: 12px; margin-top: 12px; }
+    .back-btn { font-size: 12px; margin-bottom: 16px; }
+}
+
+@media (max-width: 400px) {
+    .registro-container { padding: 24px 16px; border-radius: 12px; }
+    .auth-main { padding: 16px 12px; }
+    .reg-header { margin-bottom: 24px; }
+    .form-group { margin-bottom: 14px; }
 }

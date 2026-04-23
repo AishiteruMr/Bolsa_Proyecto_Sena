@@ -28,7 +28,7 @@ class AprendizController extends Controller
     // DASHBOARD
     // ══════════════════════════════════════════════════════════════
 
-    public function dashboard(): View
+    public function dashboard(): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -84,7 +84,7 @@ class AprendizController extends Controller
     // EXPLORAR PROYECTOS
     // ══════════════════════════════════════════════════════════════
 
-    public function proyectos(Request $request): View
+    public function proyectos(Request $request): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -235,7 +235,7 @@ class AprendizController extends Controller
     // MIS POSTULACIONES
     // ══════════════════════════════════════════════════════════════
 
-    public function misPostulaciones(): View
+    public function misPostulaciones(): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -256,7 +256,7 @@ class AprendizController extends Controller
     // HISTORIAL DE PROYECTOS
     // ══════════════════════════════════════════════════════════════
 
-    public function historial(): View
+    public function historial(): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -299,7 +299,7 @@ class AprendizController extends Controller
     // MIS ENTREGAS Y EVIDENCIAS
     // ══════════════════════════════════════════════════════════════
 
-    public function misEntregas(): View
+    public function misEntregas(): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -335,7 +335,7 @@ class AprendizController extends Controller
     // VER DETALLE DE PROYECTO APROBADO
     // ══════════════════════════════════════════════════════════════
 
-    public function verDetalleProyecto(int $proId): View
+    public function verDetalleProyecto(int $proId): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -468,7 +468,7 @@ class AprendizController extends Controller
     // PERFIL
     // ══════════════════════════════════════════════════════════════
 
-    public function perfil(): View
+    public function perfil(): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
