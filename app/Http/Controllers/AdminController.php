@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CambiarEstadoUsuarioRequest;
+use App\Http\Requests\GestionarPostulacionRequest;
+use App\Http\Requests\GestionarProyectoRequest;
 use App\Mail\InstructorAsignado;
 use App\Mail\InstructorDesasignado;
 use App\Models\Aprendiz;
@@ -12,15 +15,17 @@ use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use App\Notifications\AppNotification;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
-    public function dashboard()
+    public function dashboard(): View
     {
         $stats = Cache::remember('admin_stats', now()->addMinutes(5), function () {
             return [
@@ -49,22 +54,24 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('stats', 'proyectosRecientes', 'usuariosRecientes'));
     }
 
-    public function usuarios()
+    public function usuarios(Request $request): View
     {
-        $aprendices = Aprendiz::with('usuario')->get();
-        $instructores = Instructor::with('usuario')->get();
-        $empresas = Empresa::orderByDesc('id')->get();
+        $aprendices = Aprendiz::with('usuario')
+            ->orderByDesc('id')
+            ->paginate($this->getPerPage($request, 15, 5, 50), ['*'], 'aprendices');
+
+        $instructores = Instructor::with('usuario')
+            ->orderByDesc('id')
+            ->paginate($this->getPerPage($request, 15, 5, 50), ['*'], 'instructores');
+
+        $empresas = Empresa::orderByDesc('id')
+            ->paginate($this->getPerPage($request, 15, 5, 50), ['*'], 'empresas');
 
         return view('admin.usuarios', compact('aprendices', 'instructores', 'empresas'));
     }
 
-    public function cambiarEstadoUsuario(Request $request, int $id)
+    public function cambiarEstadoUsuario(CambiarEstadoUsuarioRequest $request, int $id): RedirectResponse
     {
-        $request->validate([
-            'tipo' => 'required|in:aprendiz,instructor',
-            'estado' => 'required|in:0,1',
-        ]);
-
         $usrId = session('usr_id');
 
         if ($request->tipo === 'aprendiz') {
@@ -119,14 +126,15 @@ class AdminController extends Controller
         return back()->with('success', 'Estado del usuario actualizado.');
     }
 
-    public function empresas()
+    public function empresas(Request $request): View
     {
-        $empresas = Empresa::orderByDesc('id')->get();
+        $empresas = Empresa::orderByDesc('id')
+            ->paginate($this->getPerPage($request, 15, 5, 50));
 
         return view('admin.empresas', compact('empresas'));
     }
 
-    public function cambiarEstadoEmpresa(Request $request, int $id)
+    public function cambiarEstadoEmpresa(Request $request, int $id): RedirectResponse
     {
         $request->validate(['estado' => 'required|in:0,1']);
 
@@ -164,7 +172,7 @@ class AdminController extends Controller
         return back()->with('success', 'Estado de la empresa actualizado.');
     }
 
-    public function proyectos(Request $request)
+    public function proyectos(Request $request): View
     {
         $validated = $request->validate([
             'buscar' => 'nullable|string|max:100',
@@ -179,12 +187,12 @@ class AdminController extends Controller
             ->withCount('postulaciones');
 
         if (! empty($validated['buscar'])) {
-            $buscar = str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $validated['buscar']);
+            $buscar = addcslashes($validated['buscar'], '%_\\');
             $query->where(function ($q) use ($buscar) {
-                $q->where('titulo', 'like', "%{$buscar}%")
-                    ->orWhere('descripcion', 'like', "%{$buscar}%")
+                $q->whereRaw('titulo LIKE ?', ["%{$buscar}%"])
+                    ->orWhereRaw('descripcion LIKE ?', ["%{$buscar}%"])
                     ->orWhereHas('empresa', function ($q) use ($buscar) {
-                        $q->where('nombre', 'like', "%{$buscar}%");
+                        $q->whereRaw('nombre LIKE ?', ["%{$buscar}%"]);
                     });
             });
         }
@@ -209,7 +217,9 @@ class AdminController extends Controller
             $query->where('instructor_usuario_id', $validated['instructor_id']);
         }
 
-        $proyectos = $query->orderByDesc('id')->get()->map(function ($proyecto) {
+        $proyectosPaginados = $query->orderByDesc('id')->paginate($this->getPerPage($request, 15, 5, 50));
+
+        $proyectos = $proyectosPaginados->getCollection()->map(function ($proyecto) {
             return (object) [
                 'id' => $proyecto->id,
                 'titulo' => $proyecto->titulo,
@@ -234,13 +244,16 @@ class AdminController extends Controller
             ->sort()
             ->values();
 
-        return view('admin.proyectos', compact('proyectos', 'instructores', 'categorias'));
+        return view('admin.proyectos', compact('proyectos', 'proyectosPaginados', 'instructores', 'categorias'));
     }
 
-    public function cambiarEstadoProyecto(Request $request, int $id)
+    public function cambiarEstadoProyecto(Request $request, int $id): RedirectResponse
     {
         $request->validate([
             'estado' => 'required|in:aprobado,rechazado,pendiente,cerrado,en_progreso',
+        ], [
+            'estado.required' => 'El estado es obligatorio.',
+            'estado.in' => 'El estado debe ser uno de los valores permitidos.',
         ]);
 
         $proyecto = Proyecto::findOrFail($id);
@@ -302,7 +315,7 @@ class AdminController extends Controller
         return back()->with('success', 'Estado del proyecto actualizado.');
     }
 
-    public function asignarInstructor(Request $request, $id)
+    public function asignarInstructor(Request $request, int $id): RedirectResponse
     {
         $request->validate([
             'instructor_usuario_id' => 'required|exists:usuarios,id',
@@ -350,7 +363,7 @@ class AdminController extends Controller
         return back()->with('success', 'Instructor asignado correctamente');
     }
 
-    public function revisarProyecto(int $id)
+    public function revisarProyecto(int $id): View
     {
         $proyecto = Proyecto::with('empresa')->findOrFail($id);
         $calidad = $proyecto->calidadProyecto();

@@ -128,10 +128,12 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" style="text-align: center; padding: 80px; color: var(--text-light);">
-                                    <i class="fas fa-building-circle-exclamation" style="font-size: 48px; margin-bottom: 16px; opacity: 0.2;"></i>
-                                    <div style="font-size: 16px; font-weight: 800; color: var(--text);">No se han encontrado empresas registradas</div>
-                                    <div style="font-size: 14px; margin-top: 4px; font-weight: 500;">Las nuevas inscripciones aparecerán en esta tabla automáticamente.</div>
+                                <td colspan="6" style="text-align: center; padding: 80px;">
+                                    <div style="color: var(--text-light);">
+                                        <i class="fas fa-building-circle-exclamation" style="font-size: 48px; margin-bottom: 16px; opacity: 0.2;"></i>
+                                        <div style="font-size: 16px; font-weight: 800; color: var(--text);">Sin empresas registradas</div>
+                                        <div style="font-size: 14px; margin-top: 8px; font-weight: 500;">Las nuevas inscripciones aparecerán en esta tabla automáticamente.</div>
+                                    </div>
                                 </td>
                             </tr>
                         @endforelse

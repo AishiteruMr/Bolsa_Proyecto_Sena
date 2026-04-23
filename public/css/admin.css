@@ -398,19 +398,67 @@
     color: #dc2626;
 }
 
+@media (max-width: 1200px) {
+    .admin-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .admin-header-master { padding: 48px 32px; }
+    .admin-header-title { font-size: 38px; }
+}
+
 @media (max-width: 1024px) {
     .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
     .admin-main-grid { grid-template-columns: 1fr; }
+    .admin-header-title { font-size: 36px; }
+    .admin-header-master { padding: 40px 28px; }
+    .admin-page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .admin-title-main { font-size: 28px; }
 }
-@media (max-width: 640px) {
-    .admin-header-title { font-size: 32px; }
-    .admin-stats-grid { grid-template-columns: 1fr; }
+
+@media (max-width: 768px) {
+    .admin-header-master { padding: 32px 20px; border-radius: 20px; }
+    .admin-header-title { font-size: 28px; }
+    .admin-badge-hub { font-size: 10px; padding: 6px 14px; }
+    .admin-stats-grid { grid-template-columns: 1fr; gap: 16px; }
+    .admin-tab-group { width: 100%; overflow-x: auto; }
+    .admin-tab-btn { padding: 8px 16px; font-size: 12px; }
+    .admin-review-hero { padding: 24px; }
+    .admin-review-sidebar { position: static; }
+    .admin-map-container { height: 200px; }
+    .admin-quality-score { font-size: 36px; }
+    .premium-table th, .premium-table td { padding: 12px 14px; font-size: 13px; }
+    .admin-project-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
+    .admin-header-title { font-size: 24px; }
+    .admin-header-master { padding: 24px 16px; }
+    .admin-stats-grid { grid-template-columns: 1fr; gap: 12px; }
+    .admin-stat-value { font-size: 28px; }
+    .admin-stat-icon { width: 44px; height: 44px; font-size: 18px; }
+    .admin-tab-group { flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+    .admin-tab-btn { white-space: nowrap; }
     .admin-project-card { min-height: 260px; }
     .admin-project-card-header { padding: 14px 16px; }
     .admin-project-card-body { padding: 12px 14px; }
+    .admin-project-card-header h3 { font-size: 1rem; }
+    .admin-review-hero { padding: 20px 16px; border-radius: 16px; }
+    .admin-quality-score { font-size: 28px; }
+    .admin-quality-item { font-size: 12px; padding: 8px 12px; }
+    .inline-pill { font-size: 10px; padding: 4px 10px; }
+}
+
+@media (max-width: 480px) {
+    .admin-header-title { font-size: 20px; letter-spacing: -0.5px; }
+    .admin-stats-grid { grid-template-columns: 1fr; }
+    .admin-stat-card { padding: 20px; }
+    .admin-title-main { font-size: 22px; }
+    .admin-tab-group { border-radius: 12px; }
+    .admin-tab-btn { padding: 6px 12px; font-size: 11px; }
+    .admin-project-card-header { padding: 12px 14px; }
+    .admin-project-card-body { padding: 10px 12px; gap: 8px; }
+    .premium-table { font-size: 12px; }
+    .premium-table th, .premium-table td { padding: 10px 12px; }
+    .admin-map-container { height: 180px; border-radius: 12px; }
+    .admin-quality-score { font-size: 24px; }
 }
 
 /* Minimal fixes to project card typography and overflow

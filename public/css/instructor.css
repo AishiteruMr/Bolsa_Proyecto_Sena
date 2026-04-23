@@ -127,19 +127,55 @@
 /* Reducir padding del hero y de las tarjetas de estadísticas en pantallas pequeñas */
 @media (max-width: 640px) {
     .instructor-hero { padding: 28px 20px; }
-    .instructor-stat-card-lg { padding: 18px; }
+    .instructor-stat-card-lg { padding: 18px; flex-direction: column; text-align: center; gap: 16px; }
     .instructor-quick-actions { padding: 18px; }
+    .instructor-small-stat .label { font-size: 9px; }
+    .instructor-title { font-size: 28px; }
+    .instructor-stat-icon-main { width: 64px; height: 64px; font-size: 28px; }
 }
 
 /* Ajustes responsivos */
 @media (max-width: 1024px) {
     .instructor-title { font-size: 36px; }
     .instructor-stat-card-lg { padding: 28px; }
+    .instructor-stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .instructor-stat-card-lg { grid-column: span 2; }
+    .instructor-main-grid { grid-template-columns: 1fr 1fr; }
 }
-@media (max-width: 640px) {
-    .instructor-small-stat .label { font-size:9px; }
+
+@media (max-width: 768px) {
+    .instructor-main-grid { grid-template-columns: 1fr !important; }
+    .instructor-project-grid { grid-template-columns: 1fr; }
+    .instructor-hero { padding: 40px 24px; }
     .instructor-title { font-size: 28px; }
-    .instructor-stat-icon-main { width:64px; height:64px; font-size:28px; }
+    .instructor-stat-grid { grid-template-columns: 1fr; }
+    .ins-hero { flex-direction: column; text-align: center; gap: 24px; padding: 32px 24px; }
+    .ins-hero-meta { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .stat-mini { flex: 1; }
+    .instructor-project-catalog-grid { grid-template-columns: 1fr; }
+    .instructor-community-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+    .instructor-hero { padding: 24px 16px; border-radius: 20px; }
+    .instructor-title { font-size: 24px; }
+    .instructor-stat-grid { grid-template-columns: 1fr; gap: 16px; }
+    .instructor-stat-card-lg { padding: 20px; }
+    .instructor-tag { font-size: 10px; padding: 6px 12px; }
+    .instructor-project-catalog-grid { grid-template-columns: 1fr; }
+    .instructor-community-grid { grid-template-columns: 1fr; }
+    .instructor-notification-card { padding: 16px; }
+    .instructor-quick-actions { padding: 20px; border-radius: 16px; }
+    .instructor-action-link { padding: 12px; }
+    .instructor-stage-card { flex-direction: column; text-align: center; }
+    .instructor-stage-number { width: 40px; height: 40px; }
+    .ins-hero { padding: 24px 16px; }
+    .ins-avatar-hero { width: 72px; height: 72px; font-size: 28px; }
+    .ins-contact-row { flex-direction: column; text-align: center; }
+    .instructor-project-hero { height: 200px; }
+    .instructor-hero-content { padding: 1.5rem; }
+    .instructor-apprentice-card { padding: 20px; }
+    .instructor-apprentice-avatar { width: 64px; height: 64px; font-size: 24px; }
 }
 
 .instructor-project-card {
@@ -236,17 +272,6 @@
 /* Reducir brillo agresivo en las tarjetas estadísticas y usar variables de diseño */
 .instructor-stat-card-lg { background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,255,255,0.95)); }
 
-/* Ajustes responsivos */
-@media (max-width: 1024px) {
-    .instructor-title { font-size: 36px; }
-    .instructor-stat-card-lg { padding: 28px; }
-}
-@media (max-width: 640px) {
-    .instructor-small-stat .label { font-size:9px; }
-    .instructor-title { font-size: 28px; }
-    .instructor-stat-icon-main { width:64px; height:64px; font-size:28px; }
-}
-
 .instructor-project-card {
     padding: 0;
     overflow: hidden;
@@ -306,16 +331,6 @@
     color: var(--p-instructor);
     transform: translateX(10px);
     box-shadow: -5px 0 0 var(--p-instructor);
-}
-
-@media (max-width: 1024px) {
-    .instructor-stat-grid { grid-template-columns: repeat(2, 1fr); }
-    .instructor-stat-card-lg { grid-column: span 2; }
-}
-
-@media (max-width: 768px) {
-    .instructor-main-grid { grid-template-columns: 1fr !important; }
-    .instructor-project-grid { grid-template-columns: 1fr; }
 }
 
 /* --- PROYECTOS & CATALOG --- */

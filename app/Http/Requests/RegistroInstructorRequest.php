@@ -17,32 +17,40 @@ class RegistroInstructorRequest extends FormRequest
             'nombre' => [
                 'required',
                 'string',
-                'min:3',
+                'min:2',
                 'max:50',
-                'regex:/^[a-zA-ZÀ-ÿÑñ\s]+$/u',
+                'regex:/^[a-zA-ZÀ-ÿÑñ\s\.]+$/u',
                 function ($attribute, $value, $fail) {
-                    $palabras = count(array_filter(explode(' ', trim($value))));
-                    if ($palabras < 2) {
-                        $fail('El nombre debe incluir nombre y apellido (mínimo 2 palabras).');
+                    $palabras = array_filter(explode(' ', trim($value)));
+                    $count = count($palabras);
+                    if ($count < 1 || $count > 4) {
+                        $fail('El nombre debe tener entre 1 y 4 palabras.');
                     }
-                    if (trim($value) !== ucwords(strtolower(trim($value)))) {
-                        $fail('El nombre debe tener cada palabra con mayúscula inicial.');
+                    foreach ($palabras as $palabra) {
+                        if (!ctype_upper(mb_substr($palabra, 0, 1))) {
+                            $fail('El nombre debe tener mayúscula inicial en cada palabra.');
+                            break;
+                        }
                     }
                 },
             ],
             'apellido' => [
                 'required',
                 'string',
-                'min:3',
+                'min:2',
                 'max:50',
-                'regex:/^[a-zA-ZÀ-ÿÑñ\s]+$/u',
+                'regex:/^[a-zA-ZÀ-ÿÑñ\s\.]+$/u',
                 function ($attribute, $value, $fail) {
-                    $palabras = count(array_filter(explode(' ', trim($value))));
-                    if ($palabras < 2) {
-                        $fail('El apellido debe incluir ambos apellidos (mínimo 2 palabras).');
+                    $palabras = array_filter(explode(' ', trim($value)));
+                    $count = count($palabras);
+                    if ($count < 1 || $count > 4) {
+                        $fail('El apellido debe tener entre 1 y 4 palabras.');
                     }
-                    if (trim($value) !== ucwords(strtolower(trim($value)))) {
-                        $fail('El apellido debe tener cada palabra con mayúscula inicial.');
+                    foreach ($palabras as $palabra) {
+                        if (!ctype_upper(mb_substr($palabra, 0, 1))) {
+                            $fail('El apellido debe tener mayúscula inicial en cada palabra.');
+                            break;
+                        }
                     }
                 },
             ],

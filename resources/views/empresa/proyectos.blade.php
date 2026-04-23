@@ -165,13 +165,13 @@
                                         <a href="{{ route('empresa.proyectos.edit', $proyecto->id) }}" style="width: 36px; height: 36px; border-radius: 10px; background: #f8fafc; color: var(--text-light); display: inline-flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.2s;" title="Editar" onmouseover="this.style.background='#3eb489'; this.style.color='white'" onmouseout="this.style.background='#f8fafc'; this.style.color='var(--text-light)'">
                                             <i class="fas fa-pen-to-square"></i>
                                         </a>
-                                        <form action="{{ route('empresa.proyectos.destroy', $proyecto->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Cerrar este proyecto? Ya no será visible para nuevos aprendices.');">
+                                        <form action="{{ route('empresa.proyectos.destroy', $proyecto->id) }}" method="POST" id="cerrar-form-{{ $proyecto->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" style="width: 36px; height: 36px; border-radius: 10px; background: #fef2f2; color: #ef4444; display: inline-flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: all 0.2s;" title="Cerrar" onmouseover="this.style.background='#ef4444'; this.style.color='white'" onmouseout="this.style.background='#fef2f2'; this.style.color='#ef4444'">
-                                                <i class="fas fa-lock"></i>
-                                            </button>
                                         </form>
+                                        <button type="button" onclick="openConfirm('¿Cerrar proyecto?', 'El proyecto &quot;{{ Str::limit($proyecto->titulo, 30) }}&quot; ya no será visible para nuevos aprendices.', () => document.getElementById('cerrar-form-{{ $proyecto->id }}').submit())" style="width: 36px; height: 36px; border-radius: 10px; background: #fef2f2; color: #ef4444; display: inline-flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: all 0.2s;" title="Cerrar" onmouseover="this.style.background='#ef4444'; this.style.color='white'" onmouseout="this.style.background='#fef2f2'; this.style.color='#ef4444'">
+                                            <i class="fas fa-lock"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

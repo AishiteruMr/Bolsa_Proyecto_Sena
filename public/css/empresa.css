@@ -105,16 +105,66 @@
 
 @media (max-width: 1200px) {
     .instructor-stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .empresa-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 1024px) {
+    .empresa-hero-title { font-size: 36px; }
+    .empresa-hero { padding: 40px 32px; }
+    .empresa-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .profile-hero { padding: 36px; gap: 24px; }
+    .company-logo { width: 80px; height: 80px; font-size: 36px; }
 }
 
 @media (max-width: 768px) {
-    .instructor-hero { padding: 32px; }
+    .instructor-hero { padding: 32px 24px; }
     .instructor-title { font-size: 26px; }
     .instructor-stat-grid { grid-template-columns: 1fr; }
+    .empresa-hero-title { font-size: 28px; }
+    .empresa-hero { padding: 28px 20px; }
+    .empresa-stats-grid { grid-template-columns: 1fr; }
+    .profile-hero { flex-direction: column; text-align: center; padding: 28px 20px; gap: 20px; }
+    .company-logo { width: 72px; height: 72px; font-size: 28px; }
+    .hero-meta { text-align: center; }
+    .profile-integrity-bar { margin: 16px auto 0; }
+    .empresa-form-section { flex-direction: column; text-align: center; gap: 12px; }
+    .empresa-upload-box { padding: 40px 24px; }
+    .contact-pill { flex-direction: column; text-align: center; gap: 12px; }
     
     table { font-size: 12px; }
     table th, table td { padding: 12px 16px !important; }
     table img { width: 40px !important; height: 40px !important; }
+}
+
+@media (max-width: 640px) {
+    .instructor-hero { padding: 24px 16px; border-radius: 16px; }
+    .instructor-title { font-size: 22px; }
+    .instructor-stat-grid { grid-template-columns: 1fr; gap: 12px; }
+    .glass-card { padding: 16px; }
+    .empresa-hero-title { font-size: 24px; }
+    .empresa-hero { padding: 24px 16px; border-radius: 16px; }
+    .empresa-stats-grid { grid-template-columns: 1fr; gap: 12px; }
+    .empresa-stat-card { padding: 24px; }
+    .empresa-stat-icon { width: 40px; height: 40px; font-size: 18px; margin-bottom: 12px; }
+    .empresa-badge-portal { font-size: 10px; padding: 6px 12px; }
+    .profile-hero { padding: 24px 16px; border-radius: 16px; }
+    .company-logo { width: 64px; height: 64px; font-size: 24px; }
+    .empresa-form-control { padding: 14px 14px 14px 44px; font-size: 13px; }
+    .empresa-textarea { padding: 14px; font-size: 13px; }
+    .empresa-upload-box { padding: 32px 20px; border-radius: 16px; }
+    .empresa-upload-icon-wrapper { width: 60px; height: 60px; }
+    .empresa-action-btn { width: 32px; height: 32px; }
+}
+
+@media (max-width: 480px) {
+    .empresa-hero-title { font-size: 20px; }
+    .empresa-stats-grid { grid-template-columns: 1fr; }
+    .empresa-stat-card { padding: 20px; }
+    .empresa-form-step-number { width: 28px; height: 28px; font-size: 12px; }
+    .empresa-form-label { font-size: 11px; }
+    .btn-premium { padding: 10px 14px; font-size: 13px; }
+    .bento-stat-sm { padding: 16px; }
+    .section-divider { flex-direction: column; text-align: center; gap: 8px; }
 }
 
 .empresa-hero {
@@ -249,16 +299,6 @@
     border-color: var(--p-empresa);
     transform: translateY(-4px) rotate(8deg);
     box-shadow: 0 8px 16px var(--p-empresa-glow);
-}
-
-@media (max-width: 1200px) {
-    .empresa-stats-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 768px) {
-    .empresa-hero-title { font-size: 32px; }
-    .empresa-hero { padding: 32px; }
-    .empresa-stats-grid { grid-template-columns: 1fr; }
 }
 
 /* --- BENTO STATS CARDS --- */

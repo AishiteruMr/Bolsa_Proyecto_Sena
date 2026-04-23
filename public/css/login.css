@@ -307,11 +307,26 @@ label .hint-icon {
     .login-content { padding: 24px 20px; }
 }
 
-/* Scrollbar styling */
-.login-content::-webkit-scrollbar { width: 5px; }
-.login-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
-.login-content::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
-.login-content::-webkit-scrollbar-thumb:hover { background: #a1a1a1; }
+@media (max-width: 600px) {
+    .login-content { padding: 20px 16px; }
+    .content-header { margin-bottom: 20px; }
+    .content-header h3 { font-size: 20px; }
+    .form-group { margin-bottom: 16px; }
+    .input-wrapper input { padding: 12px 40px 12px 40px; border-radius: 12px; }
+    .btn-submit { padding: 14px; border-radius: 12px; font-size: 13px; }
+    .role-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .role-card { padding: 12px 8px; }
+    .role-card i { font-size: 18px; margin-bottom: 4px; }
+    .role-card span { font-size: 9px; }
+    .divider { margin: 20px 0; font-size: 9px; }
+    .forgot-link { margin-bottom: 20px; }
+    .input-row { grid-template-columns: 1fr; }
+}
 
-.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 600px) { .input-row { grid-template-columns: 1fr; } }
+@media (max-width: 400px) {
+    .login-page-wrapper { padding: 16px 12px; }
+    .content-header h3 { font-size: 18px; }
+    .role-grid { grid-template-columns: repeat(3, 1fr); }
+    .role-card span { display: none; }
+    .role-card { padding: 12px; }
+}

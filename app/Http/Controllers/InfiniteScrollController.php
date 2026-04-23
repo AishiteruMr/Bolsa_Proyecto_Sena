@@ -17,12 +17,12 @@ class InfiniteScrollController extends Controller
         $query = Proyecto::with(['empresa', 'instructor.usuario'])->orderByDesc('id');
 
         if ($request->filled('buscar')) {
-            $buscar = str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $request->buscar);
+            $buscar = addcslashes($request->buscar, '%_\\');
             $query->where(function ($q) use ($buscar) {
-                $q->where('titulo', 'like', "%{$buscar}%")
-                    ->orWhere('descripcion', 'like', "%{$buscar}%")
+                $q->whereRaw('titulo LIKE ?', ["%{$buscar}%"])
+                    ->orWhereRaw('descripcion LIKE ?', ["%{$buscar}%"])
                     ->orWhereHas('empresa', function ($q) use ($buscar) {
-                        $q->where('nombre', 'like', "%{$buscar}%");
+                        $q->whereRaw('nombre LIKE ?', ["%{$buscar}%"]);
                     });
             });
         }
@@ -66,10 +66,10 @@ class InfiniteScrollController extends Controller
         $query = Aprendiz::with('usuario')->orderByDesc('id');
 
         if ($request->filled('buscar')) {
-            $buscar = str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $request->buscar);
+            $buscar = addcslashes($request->buscar, '%_\\');
             $query->where(function ($q) use ($buscar) {
-                $q->where('correo', 'like', "%{$buscar}%")
-                    ->orWhere('programa', 'like', "%{$buscar}%");
+                $q->whereRaw('correo LIKE ?', ["%{$buscar}%"])
+                    ->orWhereRaw('programa LIKE ?', ["%{$buscar}%"]);
             });
         }
 

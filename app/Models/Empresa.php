@@ -42,6 +42,6 @@ class Empresa extends Model
 
     public function isActivo(): bool
     {
-        return $this->activo === true;
+        return (bool) $this->activo;
     }
 }

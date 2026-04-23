@@ -50,12 +50,15 @@
     <!-- MAIN -->
     <div class="main">
         <header class="topbar">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
             <span class="topbar-title">@yield('page-title', 'Principal')</span>
             <div class="topbar-right" style="display: flex; align-items: center; gap: 24px;">
                 @php
                     $unreadCount = 0;
-                    if(session()->has('id')){
-                        $usr = \App\Models\User::find(session('id'));
+                    if(session()->has('usr_id')){
+                        $usr = \App\Models\User::find(session('usr_id'));
                         if($usr) $unreadCount = $usr->unreadNotifications()->count();
                     }
                 @endphp
@@ -167,6 +170,10 @@
             });
         });
     });
+
+    function toggleSidebar() {
+        document.querySelector('.sidebar').classList.toggle('open');
+    }
     </script>
 
     <script src="{{ asset('js/dashboard.js') }}"></script>

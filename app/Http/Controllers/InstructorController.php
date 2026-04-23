@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ActualizarPerfilRequest;
+use App\Http\Requests\CalificarEvidenciaRequest;
+use App\Http\Requests\GestionarEtapaRequest;
+use App\Http\Requests\GestionarPostulacionRequest;
 use App\Mail\PostulacionEstadoCambiado;
 use App\Models\Aprendiz;
 use App\Models\Etapa;
@@ -12,15 +16,17 @@ use App\Models\Proyecto;
 use App\Models\User;
 use App\Notifications\AppNotification;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class InstructorController extends Controller
 {
-    public function dashboard()
+    public function dashboard(): View|RedirectResponse
     {
         $usrId = session('usr_id');
 
@@ -73,7 +79,7 @@ class InstructorController extends Controller
         ));
     }
 
-    public function proyectos()
+    public function proyectos(): View
     {
         $usrId = session('usr_id');
         $proyectos = Proyecto::where('instructor_usuario_id', $usrId)
@@ -85,7 +91,7 @@ class InstructorController extends Controller
         return view('instructor.proyectos', compact('proyectos'));
     }
 
-    public function aprendices()
+    public function aprendices(Request $request): View
     {
         $usrId = session('usr_id');
 
@@ -100,12 +106,12 @@ class InstructorController extends Controller
                 ->whereHas('proyecto', function ($sq) use ($usrId) {
                     $sq->where('instructor_usuario_id', $usrId);
                 });
-        }])->get();
+        }])->paginate($this->getPerPage($request, 10, 5, 30));
 
         return view('instructor.aprendices', compact('aprendices'));
     }
 
-    public function perfil()
+    public function perfil(): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $instructor = Instructor::where('usuario_id', $usrId)->first();
@@ -136,7 +142,7 @@ class InstructorController extends Controller
         ));
     }
 
-    public function actualizarPerfil(Request $request)
+    public function actualizarPerfil(Request $request): RedirectResponse
     {
         $usrId = session('usr_id');
         $instructor = Instructor::where('usuario_id', $usrId)->firstOrFail();
@@ -146,7 +152,7 @@ class InstructorController extends Controller
             'nombre' => 'required|string|max:50',
             'apellido' => 'required|string|max:50',
             'especialidad' => 'required|string|max:100',
-            'password' => 'nullable|string|min:8',
+            'password' => 'nullable|string|min:'.config('app_config.password.min_length', 8),
         ]);
 
         $instructor->update([
@@ -167,7 +173,7 @@ class InstructorController extends Controller
     }
 
     // ── HISTORIAL DE PROYECTOS ──
-    public function historial()
+    public function historial(): View
     {
         $usrId = session('usr_id');
 
@@ -201,7 +207,7 @@ class InstructorController extends Controller
     }
 
     // ── REPORTE DE SEGUIMIENTO POR PROYECTO ──
-    public function reporteSeguimiento($proId)
+    public function reporteSeguimiento(int $proId): View
     {
         $usrId = session('usr_id');
 
@@ -242,7 +248,7 @@ class InstructorController extends Controller
         ));
     }
 
-    public function detalleProyecto($id)
+    public function detalleProyecto(int $id): View
     {
         $usrId = session('usr_id');
 
@@ -272,16 +278,8 @@ class InstructorController extends Controller
     }
 
     // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN (SOLO EL INSTRUCTOR)
-    public function cambiarEstadoPostulacion(Request $request, int $id)
+    public function cambiarEstadoPostulacion(GestionarPostulacionRequest $request, int $id): RedirectResponse
     {
-        // ✅ SEGURIDAD: Validación explícita de estados permitidos
-        $request->validate([
-            'estado' => 'required|string|in:pendiente,aceptada,rechazada',
-        ], [
-            'estado.required' => 'El estado es obligatorio.',
-            'estado.in' => 'El estado debe ser: pendiente, aceptada o rechazada.',
-        ]);
-
         $usrId = session('usr_id');
 
         // ✅ SEGURIDAD: Verificar que la postulación pertenece a un proyecto del instructor
@@ -320,20 +318,13 @@ class InstructorController extends Controller
     }
 
     // ✅ MÉTODO PARA CREAR ETAPA
-    public function crearEtapa(Request $request, int $proId)
+    public function crearEtapa(GestionarEtapaRequest $request, int $proId): RedirectResponse
     {
         $usrId = session('usr_id');
 
-        // Verificar que el proyecto pertenece al instructor
         $proyecto = Proyecto::where('id', $proId)
             ->where('instructor_usuario_id', $usrId)
             ->firstOrFail();
-
-        $request->validate([
-            'nombre' => 'required|string|max:200',
-            'descripcion' => 'required|string|max:1000',
-            'orden' => 'required|integer|min:1',
-        ]);
 
         Etapa::create([
             'proyecto_id' => $proId,
@@ -346,21 +337,14 @@ class InstructorController extends Controller
     }
 
     // ✅ MÉTODO PARA EDITAR ETAPA
-    public function editarEtapa(Request $request, int $etaId)
+    public function editarEtapa(GestionarEtapaRequest $request, int $etaId): RedirectResponse
     {
         $usrId = session('usr_id');
 
-        // Verificar que la etapa pertenece a un proyecto del instructor
         $etapa = Etapa::where('id', $etaId)
             ->whereHas('proyecto', function ($query) use ($usrId) {
                 $query->where('instructor_usuario_id', $usrId);
             })->firstOrFail();
-
-        $request->validate([
-            'nombre' => 'required|string|max:200',
-            'descripcion' => 'required|string|max:1000',
-            'orden' => 'required|integer|min:1',
-        ]);
 
         $etapa->update([
             'orden' => $request->orden,
@@ -372,7 +356,7 @@ class InstructorController extends Controller
     }
 
     // ✅ MÉTODO PARA ELIMINAR ETAPA
-    public function eliminarEtapa(int $etaId)
+    public function eliminarEtapa(int $etaId): RedirectResponse
     {
         $usrId = session('usr_id');
 
@@ -388,7 +372,7 @@ class InstructorController extends Controller
     }
 
     // ✅ MÉTODO PARA SUBIR IMAGEN AL PROYECTO
-    public function subirImagenProyecto(Request $request, int $proId)
+    public function subirImagenProyecto(Request $request, int $proId): RedirectResponse
     {
         $usrId = session('usr_id');
 
@@ -427,7 +411,7 @@ class InstructorController extends Controller
     }
 
     // ✅ MÉTODO PARA VER EVIDENCIAS DE UN PROYECTO
-    public function verEvidencias(int $proId)
+    public function verEvidencias(int $proId): View
     {
         $usrId = session('usr_id');
 
@@ -450,27 +434,15 @@ class InstructorController extends Controller
     }
 
     // ✅ MÉTODO PARA CALIFICAR EVIDENCIA
-    public function calificarEvidencia(Request $request, int $evidId)
+    public function calificarEvidencia(CalificarEvidenciaRequest $request, int $evidId): RedirectResponse
     {
-        // ✅ SEGURIDAD: Validar ANTES de procesar
-        $request->validate([
-            'estado' => 'required|string|in:pendiente,aceptada,rechazada',
-            'comentario' => 'nullable|string|max:1000',
-        ], [
-            'estado.required' => 'El estado es obligatorio.',
-            'estado.in' => 'El estado debe ser: pendiente, aceptada o rechazada.',
-            'comentario.max' => 'El comentario no puede exceder 1000 caracteres.',
-        ]);
-
         $usrId = session('usr_id');
 
-        // ✅ SEGURIDAD: Verificar que la evidencia pertenece a un proyecto del instructor
         $evidencia = Evidencia::where('id', $evidId)
             ->whereHas('proyecto', function ($query) use ($usrId) {
                 $query->where('instructor_usuario_id', $usrId);
             })->firstOrFail();
 
-        // ✅ SEGURIDAD: El estado es validado en el validator, se puede usar directamente
         $estadoInput = strtolower($request->estado);
 
         $evidencia->update([
