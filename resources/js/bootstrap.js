@@ -20,7 +20,7 @@ import Pusher from 'pusher-js';
 
 window.Pusher = Pusher;
 
-window.Echo = (import.meta.env.VITE_PUSHER_APP_KEY) ? new Echo({
+window.Echo = new Echo({
     broadcaster: 'pusher',
     key: import.meta.env.VITE_PUSHER_APP_KEY,
     cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
@@ -29,7 +29,7 @@ window.Echo = (import.meta.env.VITE_PUSHER_APP_KEY) ? new Echo({
     wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
-}) : null;
+});
 
 window.addNotificationToast = function(data) {
     const container = document.getElementById('toast-container') || createToastContainer();
@@ -128,7 +128,7 @@ function createToastContainer() {
     return container;
 }
 
-if (window.Echo && window.Laravel && window.Laravel.user) {
+if (typeof window.Echo !== 'undefined' && window.Laravel && window.Laravel.user) {
     window.Echo.private('user.' + window.Laravel.user.id)
         .listen('.notificacion', (data) => {
             window.addNotificationToast(data);

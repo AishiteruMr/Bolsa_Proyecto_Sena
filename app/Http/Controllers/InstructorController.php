@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
 
 class InstructorController extends Controller
 {
@@ -78,15 +77,11 @@ class InstructorController extends Controller
             return Carbon::parse($p->fecha_publicacion)->addDays($p->duracion_estimada_dias ?? 0);
         })->first();
 
-        return Inertia::render('Instructor/Dashboard', [
-            'instructor' => $instructor,
-            'proyectosAsignados' => $proyectosAsignados,
-            'proyectos' => $proyectos,
-            'totalAprendices' => $totalAprendices,
-            'evidenciasPendientes' => $evidenciasPendientes,
-            'nuevasPostulaciones' => $nuevasPostulaciones,
-            'proximoCierre' => $proximoCierre
-        ]);
+        return view('instructor.dashboard', compact(
+            'instructor', 'proyectosAsignados',
+            'proyectos', 'totalAprendices', 'evidenciasPendientes',
+            'nuevasPostulaciones', 'proximoCierre'
+        ));
     }
 
     public function proyectos()
@@ -98,9 +93,7 @@ class InstructorController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        return Inertia::render('Instructor/Proyectos', [
-            'proyectos' => $proyectos
-        ]);
+        return view('instructor.proyectos', compact('proyectos'));
     }
 
     public function aprendices()
@@ -120,21 +113,38 @@ class InstructorController extends Controller
                 });
         }])->get();
 
-return Inertia::render('Instructor/Aprendices', [
-            'aprendices' => $aprendices
-        ]);
+        return view('instructor.aprendices', compact('aprendices'));
     }
 
     public function perfil()
     {
         $usrId = session('usr_id');
         $instructor = Instructor::where('usuario_id', $usrId)->first();
-        $usuario = User::find($usrId);
 
-        return Inertia::render('Instructor/Perfil', [
-            'instructor' => $instructor,
-            'usuario' => $usuario
-        ]);
+        if (! $instructor) {
+            return redirect()->route('login')->with('error', 'No se encontró tu perfil de instructor.');
+        }
+
+        $usuario = User::findOrFail($usrId);
+
+        // 🆕 Estadísticas reales para el perfil
+        $proyectosCount = Proyecto::where('instructor_usuario_id', $usrId)->count();
+
+        $aprendicesCount = Postulacion::whereIn('proyecto_id',
+            Proyecto::where('instructor_usuario_id', $usrId)->pluck('id')
+        )->where('estado', 'aceptada')
+            ->distinct('aprendiz_id')
+            ->count();
+
+        $evidenciasPendientesCount = Evidencia::whereIn('proyecto_id',
+            Proyecto::where('instructor_usuario_id', $usrId)->pluck('id')
+        )->where('estado', 'pendiente')
+            ->count();
+
+        return view('instructor.perfil', compact(
+            'instructor', 'usuario', 'proyectosCount',
+            'aprendicesCount', 'evidenciasPendientesCount'
+        ));
     }
 
     public function actualizarPerfil(Request $request)
@@ -198,29 +208,33 @@ return Inertia::render('Instructor/Aprendices', [
                 ];
             });
 
-return Inertia::render('Instructor/Historial', [
-            'proyectos' => $proyectos
-        ]);
+        return view('instructor.historial', compact('proyectos'));
     }
 
-    public function reporteSeguimiento(int $id)
+    // ── REPORTE DE SEGUIMIENTO POR PROYECTO ──
+    public function reporteSeguimiento($proId)
     {
-        $proyecto = Proyecto::with(['empresa', 'instructor.usuario'])
-            ->where('id', $id)
+        $usrId = session('usr_id');
+
+        // Verificar que el proyecto pertenece al instructor
+        $proyecto = Proyecto::where('id', $proId)
+            ->where('instructor_usuario_id', $usrId)
+            ->with('empresa')
             ->firstOrFail();
 
-        $etapas = Etapa::where('proyecto_id', $id)
+        // Obtener etapas del proyecto
+        $etapas = Etapa::where('proyecto_id', $proId)
             ->orderBy('orden')
             ->get();
 
-        $postulaciones = Postulacion::where('proyecto_id', $id)
-            ->where('estado', 'aceptada')
-            ->with('aprendiz.usuario')
-            ->get();
+        // Obtener aprendices aprobados
+        $aprendices = Aprendiz::whereHas('postulaciones', function ($query) use ($proId) {
+            $query->where('proyecto_id', $proId)
+                ->where('estado', 'aceptada');
+        })->with('usuario')->get();
 
-        $integrantes = $postulaciones;
-
-        $evidencias = Evidencia::where('evidencias.proyecto_id', $id)
+        // Obtener evidencias con datos del aprendiz
+        $evidencias = Evidencia::where('evidencias.proyecto_id', $proId)
             ->join('etapas', 'evidencias.etapa_id', '=', 'etapas.id')
             ->join('aprendices', 'evidencias.aprendiz_id', '=', 'aprendices.id')
             ->orderBy('etapas.orden', 'asc')
@@ -232,13 +246,11 @@ return Inertia::render('Instructor/Historial', [
             )
             ->get();
 
-        return Inertia::render('Instructor/ReporteSeguimiento', [
-            'proyecto' => $proyecto,
-            'etapas' => $etapas,
-            'postulaciones' => $postulaciones,
-            'integrantes' => $integrantes,
-            'evidencias' => $evidencias
-        ]);
+        $entregas = $evidencias;
+
+        return view('instructor.reporte-seguimiento', compact(
+            'proyecto', 'etapas', 'aprendices', 'evidencias', 'entregas'
+        ));
     }
 
     public function detalleProyecto($id)
@@ -267,15 +279,10 @@ return Inertia::render('Instructor/Historial', [
             ->with(['aprendiz.usuario'])
             ->get();
 
-        return Inertia::render('Instructor/DetalleProyecto', [
-            'proyecto' => $proyecto,
-            'etapas' => $etapas,
-            'postulaciones' => $postulaciones,
-            'integrantes' => $integrantes
-        ]);
+        return view('instructor.detalle_proyecto', compact('proyecto', 'etapas', 'postulaciones', 'integrantes'));
     }
 
-    // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN
+    // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN (SOLO EL INSTRUCTOR)
     public function cambiarEstadoPostulacion(Request $request, int $id)
     {
         // ✅ SEGURIDAD: Validación explícita de estados permitidos
@@ -450,9 +457,59 @@ return Inertia::render('Instructor/Historial', [
             ->select('evidencias.*')
             ->get();
 
-return Inertia::render('Instructor/Evidencias', [
-            'proyecto' => $proyecto,
-            'evidencias' => $evidencias
+        return view('instructor.evidencias', compact('proyecto', 'evidencias'));
+    }
+
+    // ✅ MÉTODO PARA CALIFICAR EVIDENCIA
+    public function calificarEvidencia(Request $request, int $evidId)
+    {
+        // ✅ SEGURIDAD: Validar ANTES de procesar
+        $request->validate([
+            'estado' => 'required|string|in:pendiente,aprobada,rechazada',
+            'comentario' => 'nullable|string|max:1000',
+        ], [
+            'estado.required' => 'El estado es obligatorio.',
+            'estado.in' => 'El estado debe ser: pendiente, aprobada o rechazada.',
+            'comentario.max' => 'El comentario no puede exceder 1000 caracteres.',
         ]);
+
+        $usrId = session('usr_id');
+
+        // ✅ SEGURIDAD: Verificar que la evidencia pertenece a un proyecto del instructor
+        $evidencia = Evidencia::where('id', $evidId)
+            ->whereHas('proyecto', function ($query) use ($usrId) {
+                $query->where('instructor_usuario_id', $usrId);
+            })->firstOrFail();
+
+        // ✅ SEGURIDAD: El estado es validado en el validator, se puede usar directamente
+        $estadoInput = strtolower($request->estado);
+
+        $evidencia->update([
+            'estado' => $estadoInput,
+            'comentario_instructor' => $request->comentario,
+        ]);
+
+        try {
+            $evidencia->load(['aprendiz.usuario', 'proyecto']);
+            $aprendizUsr = $evidencia->aprendiz->usuario ?? null;
+            if ($aprendizUsr) {
+                // Mapear estado a iconos/colores
+                $stateColor = match ($estadoInput) {
+                    'aceptada' => 'fa-check-circle',
+                    'rechazada' => 'fa-times-circle',
+                    'pendiente' => 'fa-info-circle',
+                    default => 'fa-info-circle',
+                };
+                $aprendizUsr->notify(new AppNotification(
+                    'Evidencia '.ucfirst($estadoInput),
+                    'El instructor ha calificado tu evidencia en el proyecto "'.Str::limit($evidencia->proyecto->titulo ?? '', 30).'".',
+                    $stateColor
+                ));
+            }
+        } catch (\Exception $e) {
+            Log::error('Error al notificar calificación de evidencia: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+        }
+
+        return back()->with('success', 'Evidencia calificada correctamente.');
     }
 }
