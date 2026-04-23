@@ -54,8 +54,8 @@
             <div class="topbar-right" style="display: flex; align-items: center; gap: 24px;">
                 @php
                     $unreadCount = 0;
-                    if(session()->has('id')){
-                        $usr = \App\Models\User::find(session('id'));
+                    if(session()->has('usr_id')){
+                        $usr = \App\Models\User::find(session('usr_id'));
                         if($usr) $unreadCount = $usr->unreadNotifications()->count();
                     }
                 @endphp

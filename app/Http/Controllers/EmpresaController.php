@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ActualizarPerfilRequest;
+use App\Http\Requests\GestionarPostulacionRequest;
+use App\Http\Requests\GestionarProyectoRequest;
 use App\Mail\PostulacionEstadoCambiado;
 use App\Models\Aprendiz;
 use App\Models\Empresa;
@@ -12,14 +15,16 @@ use App\Models\Proyecto;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\View\View;
 
 class EmpresaController extends Controller
 {
-    public function dashboard()
+    public function dashboard(): View
     {
         $nit = session('nit');
         $empresa = Empresa::where('nit', $nit)->first();
@@ -59,7 +64,7 @@ class EmpresaController extends Controller
         ));
     }
 
-    public function proyectos()
+    public function proyectos(Request $request): View
     {
         $nit = session('nit');
         $empresa = Empresa::where('nit', $nit)->first();
@@ -70,70 +75,57 @@ class EmpresaController extends Controller
 
         $proyectos = $empresa->proyectos()
             ->orderByDesc('id')
-            ->get();
+            ->paginate($this->getPerPage($request, 10, 5, 30));
 
         return view('empresa.proyectos', compact('proyectos'));
     }
 
-    public function crearProyecto()
+    public function crearProyecto(): View
     {
         return view('empresa.crear-proyecto');
     }
 
-    public function guardarProyecto(Request $request)
+    public function guardarProyecto(GestionarProyectoRequest $request): RedirectResponse
     {
-        // Validación básica
-        $request->validate([
-            'titulo' => 'required|string|min:10|max:200',
-            'categoria' => 'required|string|max:100',
-            'descripcion' => 'required|string|min:80|max:5000',
-            'requisitos' => 'required|string|min:20|max:200',
-            'habilidades' => 'required|string|min:15|max:200',
-            'fecha_publi' => 'required|date',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
-        ]);
-
-        // Validar calidad del proyecto
-        $proyectoFake = new Proyecto([
-            'titulo' => $request->titulo,
-            'descripcion' => $request->descripcion,
-            'categoria' => $request->categoria,
-            'requisitos_especificos' => $request->requisitos,
-            'habilidades_requeridas' => $request->habilidades,
-            'duracion_estimada_dias' => Carbon::parse($request->fecha_publi)->addMonths(6)->diffInDays(Carbon::parse($request->fecha_publi)),
-        ]);
-
-        $calidad = $proyectoFake->calidadProyecto();
-
-        // Verificar empresa activa
         $nit = session('nit');
         $empresa = Empresa::where('nit', $nit)->first();
         if (!$empresa || $empresa->activo != 1) {
             return back()->with('error', 'Tu empresa debe estar activa para crear proyectos.')->withInput();
         }
 
-        // Fallos mínimos requeridos
+        $calidad = (new Proyecto([
+            'titulo' => $request->titulo,
+            'descripcion' => $request->descripcion,
+            'categoria' => $request->categoria,
+            'requisitos_especificos' => $request->requisitos,
+            'habilidades_requeridas' => $request->habilidades,
+            'duracion_estimada_dias' => Carbon::parse($request->fecha_publi)->addMonths(6)->diffInDays(Carbon::parse($request->fecha_publi)),
+        ]))->calidadProyecto();
+
         $fallos = array_filter($calidad['detalles'], fn($d) => !$d['ok'] && !($d['opcional'] ?? false));
         if (count($fallos) > 0) {
             $mensajes = array_column($fallos, 'descripcion');
             return back()->with('error', 'El proyecto no cumple los requisitos mínimos de calidad: '.implode(', ', $mensajes))->withInput();
         }
 
-        $nit = session('nit');
         $imagenUrl = null;
 
         if ($request->hasFile('imagen')) {
             $file = $request->file('imagen');
+            $maxSizeKb = 2048;
+            $maxSizeBytes = $maxSizeKb * 1024;
 
-            // Validar MIME real
+            if ($file->getSize() > $maxSizeBytes) {
+                return back()->with('error', "La imagen excede el tamaño máximo permitido ({$maxSizeKb}KB).")->withInput();
+            }
+
             $mime = $file->getMimeType();
             $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
 
             if (! in_array($mime, $allowedMimes)) {
-                return back()->with('error', 'Tipo de imagen no permitido.');
+                return back()->with('error', 'Tipo de imagen no permitido.')->withInput();
             }
 
-            // Nombre seguro
             $extension = $file->getClientOriginalExtension();
             $safeFilename = 'proyecto_'.$nit.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
             $path = $file->storeAs('proyectos', $safeFilename, 'public');
@@ -162,7 +154,7 @@ class EmpresaController extends Controller
         return redirect()->route('empresa.proyectos')->with('success', ' Proyecto enviado para revisión. Aparecerá como "Activo" una vez el administrador lo apruebe.');
     }
 
-    public function editarProyecto(int $id)
+    public function editarProyecto(int $id): View
     {
         $nit = session('nit');
         $proyecto = Proyecto::where('id', $id)
@@ -172,7 +164,7 @@ class EmpresaController extends Controller
         return view('empresa.editar-proyecto', compact('proyecto'));
     }
 
-    public function actualizarProyecto(Request $request, int $id)
+    public function actualizarProyecto(Request $request, int $id): RedirectResponse
     {
         $request->validate([
             'titulo' => 'required|string|max:200',
@@ -207,16 +199,20 @@ class EmpresaController extends Controller
 
         if ($request->hasFile('imagen')) {
             $file = $request->file('imagen');
+            $maxSizeKb = 2048;
+            $maxSizeBytes = $maxSizeKb * 1024;
 
-            // Validar MIME real
+            if ($file->getSize() > $maxSizeBytes) {
+                return back()->with('error', "La imagen excede el tamaño máximo permitido ({$maxSizeKb}KB).")->withInput();
+            }
+
             $mime = $file->getMimeType();
             $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
 
             if (! in_array($mime, $allowedMimes)) {
-                return back()->with('error', 'Tipo de imagen no permitido.');
+                return back()->with('error', 'Tipo de imagen no permitido.')->withInput();
             }
 
-            // Nombre seguro
             $extension = $file->getClientOriginalExtension();
             $safeFilename = 'proyecto_'.$nit.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
             $path = $file->storeAs('proyectos', $safeFilename, 'public');
@@ -228,7 +224,7 @@ class EmpresaController extends Controller
         return redirect()->route('empresa.proyectos')->with('success', 'Proyecto actualizado correctamente.');
     }
 
-    public function eliminarProyecto(int $id)
+    public function eliminarProyecto(int $id): RedirectResponse
     {
         $nit = session('nit');
 
@@ -249,7 +245,7 @@ class EmpresaController extends Controller
         }
     }
 
-    public function verPostulantes(int $id)
+    public function verPostulantes(int $id): View
     {
         $nit = session('nit');
 
@@ -277,7 +273,7 @@ class EmpresaController extends Controller
         return view('empresa.postulantes', compact('proyecto', 'postulantes'));
     }
 
-    public function verParticipantes(int $id)
+    public function verParticipantes(int $id): View
     {
         $nit = session('nit');
 
@@ -307,7 +303,7 @@ class EmpresaController extends Controller
     /**
      * Ver reporte de proyecto para exportar PDF
      */
-    public function verReporte(int $id)
+    public function verReporte(int $id): View
     {
         $nit = session('nit');
 
@@ -345,19 +341,10 @@ class EmpresaController extends Controller
         ));
     }
 
-    public function cambiarEstadoPostulacion(Request $request, int $id)
+    public function cambiarEstadoPostulacion(GestionarPostulacionRequest $request, int $id): RedirectResponse
     {
-        // ✅ SEGURIDAD: Validación explícita de estados permitidos
-        $request->validate([
-            'estado' => 'required|string|in:pendiente,aceptada,rechazada',
-        ], [
-            'estado.required' => 'El estado es obligatorio.',
-            'estado.in' => 'El estado debe ser: pendiente, aceptada o rechazada.',
-        ]);
-
         $nit = session('nit');
 
-        // ✅ SEGURIDAD: Validar que la postulación pertenece a un proyecto de esta empresa
         $postulacion = Postulacion::with('proyecto')
             ->where('id', $id)
             ->whereHas('proyecto', function ($query) use ($nit) {
@@ -365,7 +352,6 @@ class EmpresaController extends Controller
             })
             ->firstOrFail();
 
-        // ✅ SEGURIDAD: El estado es validado en el validator, se puede usar directamente
         $estadoInput = strtolower($request->estado);
 
         $postulacion->update(['estado' => $estadoInput]);
@@ -390,7 +376,7 @@ class EmpresaController extends Controller
         return back()->with('success', 'Estado de postulación actualizado y aprendiz notificado.');
     }
 
-    public function perfil()
+    public function perfil(): View
     {
         $empId = session('emp_id');
         $empresa = Empresa::findOrFail($empId);
@@ -398,7 +384,7 @@ class EmpresaController extends Controller
         return view('empresa.perfil', compact('empresa'));
     }
 
-    public function actualizarPerfil(Request $request)
+    public function actualizarPerfil(Request $request): RedirectResponse
     {
         $empId = session('emp_id');
         $empresa = Empresa::findOrFail($empId);
@@ -417,7 +403,7 @@ class EmpresaController extends Controller
                     }
                 },
             ],
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'nullable|string|min:'.config('app_config.password.min_length', 8),
         ]);
 
         $datos = [

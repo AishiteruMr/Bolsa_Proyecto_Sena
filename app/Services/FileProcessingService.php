@@ -59,10 +59,9 @@ class FileProcessingService
             return [false, 'Archivo no encontrado'];
         }
 
-        // Verificar si clamscan está disponible
-        $scanPath = env('CLAMAV_SCAN_PATH', '/usr/bin/clamscan');
+        $scanPath = $this->getClamavPath();
         
-        if (!file_exists($scanPath)) {
+        if ($scanPath === null) {
             Log::warning('ClamAV no está instalado en el servidor. Virus scanning omitido.');
             return [true, 'ClamAV no disponible - escaneo omitido'];
         }
@@ -70,7 +69,7 @@ class FileProcessingService
         $output = [];
         $returnVar = 0;
         
-        exec("$scanPath --move=quarantine '$path' 2>&1", $output, $returnVar);
+        exec("$scanPath --move=quarantine \"$path\" 2>&1", $output, $returnVar);
         
         if ($returnVar === 0) {
             return [true, 'Archivo limpio'];
@@ -82,6 +81,42 @@ class FileProcessingService
         }
         
         return [false, 'Error en escaneo: ' . implode(' ', $output)];
+    }
+
+    /**
+     * Obtener ruta de ClamAV según el sistema operativo
+     */
+    private function getClamavPath(): ?string
+    {
+        $customPath = env('CLAMAV_SCAN_PATH');
+        
+        if ($customPath && file_exists($customPath)) {
+            return $customPath;
+        }
+
+        $isWindows = str_starts_with(PHP_OS, 'WIN');
+        
+        if ($isWindows) {
+            $possiblePaths = [
+                'C:\clamav\clamscan.exe',
+                'C:\Program Files\ClamAV\clamscan.exe',
+                'C:\Program Files (x86)\ClamAV\clamscan.exe',
+            ];
+        } else {
+            $possiblePaths = [
+                '/usr/bin/clamscan',
+                '/usr/local/bin/clamscan',
+                '/opt/clamscan/bin/clamscan',
+            ];
+        }
+        
+        foreach ($possiblePaths as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+        
+        return null;
     }
 
     /**

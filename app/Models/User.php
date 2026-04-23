@@ -42,7 +42,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'contrasena' => 'hashed',
     ];
 
     public function sendEmailVerificationNotification(): void
@@ -143,11 +142,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function findByEmail(string $email): ?self
     {
         return static::where('correo', $email)->first();
-    }
-
-    public function setPasswordAttribute(string $password): void
-    {
-        $this->attributes['contrasena'] = Hash::make($password);
     }
 
     public function tienePerfil(): bool

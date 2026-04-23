@@ -10,6 +10,7 @@ use App\Mail\RecuperarContraseña;
 use App\Mail\RegistroExitoso;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -18,12 +19,13 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
     // ─── VISTAS DE LOGIN ────────────────────────────────────────────────────────
 
-    public function showLogin()
+    public function showLogin(): View
     {
         if (session()->has('usr_id') || session()->has('emp_id')) {
             return $this->redirectByRol(session('rol'));
@@ -34,7 +36,7 @@ class AuthController extends Controller
 
     // ─── PROCESO DE LOGIN ────────────────────────────────────────────────────────
 
-    public function login(ValidarLoginRequest $request)
+    public function login(ValidarLoginRequest $request): RedirectResponse
     {
         $correo = strip_tags(trim($request->correo));
         $password = $request->password;
@@ -109,7 +111,7 @@ class AuthController extends Controller
 
     // ─── LOGOUT ─────────────────────────────────────────────────────────────────
 
-    public function logout(Request $request)
+    public function logout(Request $request): RedirectResponse
     {
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -118,7 +120,7 @@ class AuthController extends Controller
         return redirect()->route('login')->with('success', 'Sesión cerrada correctamente.');
     }
 
-    public function verifyEmail(Request $request, $id, $hash)
+    public function verifyEmail(Request $request, int $id, string $hash): RedirectResponse
     {
         $user = User::findOrFail($id);
 
@@ -135,7 +137,7 @@ class AuthController extends Controller
         return redirect()->route('login')->with('success', '¡Correo verificado exitosamente! Ya puedes iniciar sesión.');
     }
 
-    public function resendVerification(Request $request)
+    public function resendVerification(Request $request): RedirectResponse
     {
         if (! $request->filled('correo')) {
             return back()->with('error', 'Debes proporcionar tu correo electrónico.');
@@ -158,24 +160,24 @@ class AuthController extends Controller
 
     // ─── VISTAS DE REGISTRO ──────────────────────────────────────────────────────
 
-    public function showRegistroAprendiz()
+    public function showRegistroAprendiz(): View
     {
         return view('auth.registro-aprendiz');
     }
 
-    public function showRegistroEmpresa()
+    public function showRegistroEmpresa(): View
     {
         return view('auth.registro-empresa');
     }
 
-    public function showRegistroInstructor()
+    public function showRegistroInstructor(): View
     {
         return view('auth.registro-instructor');
     }
 
     // ─── REGISTRO APRENDIZ ───────────────────────────────────────────────────────
 
-    public function registrarAprendiz(RegistroAprendizRequest $request)
+    public function registrarAprendiz(RegistroAprendizRequest $request): RedirectResponse
     {
         DB::transaction(function () use ($request) {
             $usrId = DB::table('usuarios')->insertGetId([
@@ -210,7 +212,7 @@ class AuthController extends Controller
 
     // ─── REGISTRO INSTRUCTOR ─────────────────────────────────────────────────────
 
-    public function registrarInstructor(RegistroInstructorRequest $request)
+    public function registrarInstructor(RegistroInstructorRequest $request): RedirectResponse
     {
         DB::transaction(function () use ($request) {
             $usrId = DB::table('usuarios')->insertGetId([
@@ -246,7 +248,7 @@ class AuthController extends Controller
 
     // ─── REGISTRO EMPRESA ────────────────────────────────────────────────────────
 
-    public function registrarEmpresa(RegistroEmpresaRequest $request)
+    public function registrarEmpresa(RegistroEmpresaRequest $request): RedirectResponse
     {
         DB::transaction(function () use ($request) {
             $usrId = DB::table('usuarios')->insertGetId([
@@ -327,19 +329,16 @@ class AuthController extends Controller
 
     // ─── RECUPERACIÓN DE CONTRASEÑA ──────────────────────────────────────────
 
-    public function showOlvideContraseña()
+    public function showOlvideContraseña(): View
     {
         return view('auth.olvide-contraseña');
     }
 
-    public function enviarEnlaceRecuperacion(Request $request)
+    public function enviarEnlaceRecuperacion(Request $request): RedirectResponse
     {
         $request->validate([
             'correo' => 'required|email|max:255',
-        ], [
-            'correo.required' => 'El correo es obligatorio.',
-            'correo.email' => 'Ingresa un correo válido.',
-        ]);
+        ], self::mensajesValidacion());
 
         $correo = strip_tags(trim($request->correo));
 
@@ -393,7 +392,7 @@ class AuthController extends Controller
      * ✅ SEGURIDAD: Mostrar formulario de restablecimiento sin email en URL
      * El token es el único parámetro, y el email se obtiene de la BD
      */
-    public function mostrarFormularioRestablecerContraseña($token)
+    public function mostrarFormularioRestablecerContraseña(string $token): View
     {
         // ✅ BUSCAR: Encontrar el email desde el token (sin pasar email en URL)
         $registro = DB::table('password_reset_tokens')
@@ -416,7 +415,7 @@ class AuthController extends Controller
         return view('auth.restablecer-contraseña', compact('token', 'correo'));
     }
 
-    public function restablecerContraseña(Request $request)
+    public function restablecerContraseña(Request $request): RedirectResponse
     {
         $request->validate([
             'token' => 'required|string',
@@ -426,17 +425,13 @@ class AuthController extends Controller
                 'string',
                 'max:100',
                 'confirmed',
-                Password::min(8)
+                Password::min(config('app_config.password.min_length', 8))
                     ->letters()
                     ->mixedCase()
                     ->numbers()
                     ->symbols(),
             ],
-        ], [
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-        ]);
+        ], self::mensajesValidacion());
 
         $correo = strip_tags(trim($request->correo));
         $token = $request->token;

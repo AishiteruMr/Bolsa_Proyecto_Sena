@@ -166,10 +166,10 @@
                                 <button type="button" onclick="toggleEditStage({{ $etapa->id }})" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Editar etapa">
                                     <i class="fas fa-pen"></i>
                                 </button>
-                                <form action="{{ route('instructor.etapas.eliminar', $etapa->id) }}" method="POST">
+                                <form action="{{ route('instructor.etapas.eliminar', $etapa->id) }}" method="POST" id="eliminar-etapa-{{ $etapa->id }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar esta etapa?')" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" class="btn-del-hover">
+                                    <button type="button" data-confirm="¿Eliminar etapa?" data-confirm-title="Eliminar Etapa" onclick="openConfirm('¿Eliminar etapa?', 'La etapa &quot;{{ Str::limit($etapa->nombre, 25) }}&quot; será eliminada permanentemente.', () => document.getElementById('eliminar-etapa-{{ $etapa->id }}').submit())" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" class="btn-del-hover">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>

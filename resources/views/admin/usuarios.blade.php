@@ -37,12 +37,12 @@
             </div>
         </div>
 
-        <div style="display:flex;gap:12px;margin:24px 0;">
-            <button id="btn-aprendices" onclick="mostrarTabla('aprendices')" style="display:flex;align-items:center;gap:10px;padding:14px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#2e7d46,#1a5c30);color:white;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(46,125,70,0.4);transition:all 0.3s;">
+        <div style="display:flex; gap:12px; margin:24px 0; position: relative; z-index: 10;">
+            <button id="btn-aprendices" onclick="mostrarTabla('aprendices')" style="display:flex;align-items:center;gap:10px;padding:14px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#2e7d46,#1a5c30);color:white;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(46,125,70,0.4);transition:all 0.3s; z-index: 11;">
                 <i class="fas fa-user-graduate"></i> Aprendices
                 <span style="background:rgba(255,255,255,0.25);padding:2px 10px;border-radius:20px;font-size:12px;">{{ $aprendices->count() }}</span>
             </button>
-            <button id="btn-instructores" onclick="mostrarTabla('instructores')" style="display:flex;align-items:center;gap:10px;padding:14px 28px;border:2px solid #2e7d46;color:#2e7d46;border-radius:14px;background:transparent;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.3s;">
+            <button id="btn-instructores" onclick="mostrarTabla('instructores')" style="display:flex;align-items:center;gap:10px;padding:14px 28px;border:2px solid #2e7d46;color:#2e7d46;border-radius:14px;background:transparent;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.3s; z-index: 11;">
                 <i class="fas fa-chalkboard-teacher"></i> Instructores
                 <span style="background:#2e7d46;color:white;padding:2px 10px;border-radius:20px;font-size:12px;">{{ $instructores->count() }}</span>
             </button>
@@ -101,7 +101,7 @@
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="6" style="padding:60px;text-align:center;color:#1a5c30;"><i class="fas fa-users" style="font-size:48px;margin-bottom:16px;display:block;opacity:0.3;color:#2e7d46;"></i>No hay aprendices registrados.</td></tr>
+                            <tr><td colspan="6" style="padding:60px;text-align:center;"><div style="color:#2e7d46;"><i class="fas fa-user-graduate" style="font-size:48px;margin-bottom:16px;display:block;opacity:0.3;"></i><h4 style="font-size:1.2rem;font-weight:800;margin-bottom:8px;color:#1a5c30;">No hay aprendices registrados</h4><p style="color:#64748b;font-size:14px;">Los aprendices aparecerán aquí cuando se registren en la plataforma.</p></div></td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -162,50 +162,63 @@
                                 </td>
                             </tr>
                             @empty
-                            <tr><td colspan="6" style="padding:60px;text-align:center;color:#1a5c30;"><i class="fas fa-chalkboard-teacher" style="font-size:48px;margin-bottom:16px;display:block;opacity:0.3;color:#2e7d46;"></i>No hay instructores registrados.</td></tr>
+                            <tr><td colspan="6" style="padding:60px;text-align:center;"><div style="color:#2e7d46;"><i class="fas fa-chalkboard-teacher" style="font-size:48px;margin-bottom:16px;display:block;opacity:0.3;"></i><h4 style="font-size:1.2rem;font-weight:800;margin-bottom:8px;color:#1a5c30;">No hay instructores registrados</h4><p style="color:#64748b;font-size:14px;">Los instructores aparecerán aquí cuando se registren en la plataforma.</p></div></td></tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+    </div>
 @endsection
 
 @section('scripts')
 <script>
 function mostrarTabla(tab) {
-    document.getElementById('tabla-aprendices').style.display = (tab === 'aprendices') ? 'block' : 'none';
-    document.getElementById('tabla-instructores').style.display = (tab === 'instructores') ? 'block' : 'none';
-    
+    const tablaA = document.getElementById('tabla-aprendices');
+    const tablaI = document.getElementById('tabla-instructores');
     const btnA = document.getElementById('btn-aprendices');
     const btnI = document.getElementById('btn-instructores');
+
+    if (!tablaA || !tablaI || !btnA || !btnI) return;
+
+    tablaA.style.display = (tab === 'aprendices') ? 'block' : 'none';
+    tablaI.style.display = (tab === 'instructores') ? 'block' : 'none';
     
     if (tab === 'aprendices') {
         btnA.style.background = 'linear-gradient(135deg,#2e7d46,#1a5c30)';
         btnA.style.color = 'white';
         btnA.style.boxShadow = '0 6px 20px rgba(46,125,70,0.4)';
         btnA.style.border = 'none';
-        btnA.querySelector('span').style.background = 'rgba(255,255,255,0.25)';
+        const spanA = btnA.querySelector('span');
+        if (spanA) spanA.style.background = 'rgba(255,255,255,0.25)';
         
         btnI.style.background = 'transparent';
         btnI.style.color = '#2e7d46';
         btnI.style.border = '2px solid #2e7d46';
         btnI.style.boxShadow = 'none';
-        btnI.querySelector('span').style.background = '#2e7d46';
-        btnI.querySelector('span').style.color = 'white';
+        const spanI = btnI.querySelector('span');
+        if (spanI) {
+            spanI.style.background = '#2e7d46';
+            spanI.style.color = 'white';
+        }
     } else {
         btnI.style.background = 'linear-gradient(135deg,#2e7d46,#1a5c30)';
         btnI.style.color = 'white';
         btnI.style.boxShadow = '0 6px 20px rgba(46,125,70,0.4)';
         btnI.style.border = 'none';
-        btnI.querySelector('span').style.background = 'rgba(255,255,255,0.25)';
+        const spanI = btnI.querySelector('span');
+        if (spanI) spanI.style.background = 'rgba(255,255,255,0.25)';
         
         btnA.style.background = 'transparent';
         btnA.style.color = '#2e7d46';
         btnA.style.border = '2px solid #2e7d46';
         btnA.style.boxShadow = 'none';
-        btnA.querySelector('span').style.background = '#2e7d46';
-        btnA.querySelector('span').style.color = 'white';
+        const spanA = btnA.querySelector('span');
+        if (spanA) {
+            spanA.style.background = '#2e7d46';
+            spanA.style.color = 'white';
+        }
     }
 }
 </script>

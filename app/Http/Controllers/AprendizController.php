@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PostulacionExitosa;
+use App\Http\Requests\ActualizarPerfilRequest;
+use App\Http\Requests\EnviarEvidenciaRequest;
 use App\Models\Aprendiz;
 use App\Models\Etapa;
 use App\Models\Evidencia;
@@ -12,12 +13,14 @@ use App\Models\User;
 use App\Notifications\AppNotification;
 use App\Services\FileProcessingService;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class AprendizController extends Controller
 {
@@ -25,7 +28,7 @@ class AprendizController extends Controller
     // DASHBOARD
     // ══════════════════════════════════════════════════════════════
 
-    public function dashboard()
+    public function dashboard(): View
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -81,7 +84,7 @@ class AprendizController extends Controller
     // EXPLORAR PROYECTOS
     // ══════════════════════════════════════════════════════════════
 
-    public function proyectos(Request $request)
+    public function proyectos(Request $request): View
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -142,13 +145,24 @@ class AprendizController extends Controller
             return back()->with('error', 'Proyecto no encontrado.');
         }
 
-        // Validar fecha límite de postulación
-        $fechaFinEstimada = Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias);
-        if (now()->greaterThan($fechaFinEstimada)) {
+        if (!in_array($proyecto->estado, ['aprobado', 'en_progreso'])) {
+            return back()->with('error', 'Este proyecto no está aceptando postulaciones.');
+        }
+
+        if (!$proyecto->fecha_publicacion) {
+            return back()->with('error', 'Este proyecto no tiene fecha de publicación válida.');
+        }
+
+        $fechaPublicacion = Carbon::parse($proyecto->fecha_publicacion);
+        if ($fechaPublicacion->isFuture()) {
+            return back()->with('error', 'El período de postulación aún no ha iniciado.');
+        }
+
+        $fechaLimite = $fechaPublicacion->copy()->addDays($proyecto->duracion_estimada_dias ?? 0);
+        if (now()->greaterThan($fechaLimite)) {
             return back()->with('error', 'El período de postulación para este proyecto ha vencido.');
         }
 
-        // Verificar límite máximo de postulaciones (5 por defecto)
         $maxPostulaciones = 5;
         $totalPostulaciones = DB::table('postulaciones')
             ->where('aprendiz_id', $aprendiz->id)
@@ -221,7 +235,7 @@ class AprendizController extends Controller
     // MIS POSTULACIONES
     // ══════════════════════════════════════════════════════════════
 
-    public function misPostulaciones()
+    public function misPostulaciones(): View
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -242,7 +256,7 @@ class AprendizController extends Controller
     // HISTORIAL DE PROYECTOS
     // ══════════════════════════════════════════════════════════════
 
-    public function historial()
+    public function historial(): View
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -285,7 +299,7 @@ class AprendizController extends Controller
     // MIS ENTREGAS Y EVIDENCIAS
     // ══════════════════════════════════════════════════════════════
 
-    public function misEntregas()
+    public function misEntregas(): View
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -321,7 +335,7 @@ class AprendizController extends Controller
     // VER DETALLE DE PROYECTO APROBADO
     // ══════════════════════════════════════════════════════════════
 
-    public function verDetalleProyecto(int $proId)
+    public function verDetalleProyecto(int $proId): View
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -375,7 +389,7 @@ class AprendizController extends Controller
     // ENVIAR EVIDENCIA
     // ══════════════════════════════════════════════════════════════
 
-    public function enviarEvidencia(Request $request, int $proId, int $etaId)
+    public function enviarEvidencia(EnviarEvidenciaRequest $request, int $proId, int $etaId): RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->firstOrFail();
@@ -391,18 +405,6 @@ class AprendizController extends Controller
         $etapa = Etapa::where('id', $etaId)
             ->where('proyecto_id', $proId)
             ->firstOrFail();
-
-        // Validar datos
-        $request->validate([
-            'descripcion' => 'required|string|max:1000',
-            'archivo' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,doc,docx,xls,xlsx', // 5MB, tipos permitidos
-        ], [
-            'descripcion.required' => 'La descripción es obligatoria.',
-            'descripcion.max' => 'La descripción no puede exceder 1000 caracteres.',
-            'archivo.max' => 'El archivo no puede ser mayor a 5MB.',
-            'archivo.mimes' => 'Tipo de archivo no permitido. Solo: PDF, imágenes, Word, Excel.',
-            'archivo.mines' => 'Extensión no permitida.',
-        ]);
 
         $archivoUrl = null;
         if ($request->hasFile('archivo')) {
@@ -466,7 +468,7 @@ class AprendizController extends Controller
     // PERFIL
     // ══════════════════════════════════════════════════════════════
 
-    public function perfil()
+    public function perfil(): View
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -484,36 +486,17 @@ class AprendizController extends Controller
     // ACTUALIZAR PERFIL
     // ══════════════════════════════════════════════════════════════
 
-    public function actualizarPerfil(Request $request)
+    public function actualizarPerfil(ActualizarPerfilRequest $request): RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->firstOrFail();
 
-        // Validar datos
-        $request->validate([
-            'nombre' => 'required|string|max:50',
-            'apellido' => 'required|string|max:50',
-            'programa' => 'required|string|max:100',
-            'password' => 'nullable|string|min:8|confirmed',
-        ], [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.max' => 'El nombre no puede exceder 50 caracteres.',
-            'apellido.required' => 'El apellido es obligatorio.',
-            'apellido.max' => 'El apellido no puede exceder 50 caracteres.',
-            'programa.required' => 'El programa de formación es obligatorio.',
-            'programa.max' => 'El programa no puede exceder 100 caracteres.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-        ]);
-
-        // Actualizar aprendiz
         $aprendiz->update([
             'nombres' => $request->nombre,
             'apellidos' => $request->apellido,
             'programa_formacion' => $request->programa,
         ]);
 
-        // Actualizar contraseña si se proporciona
         if ($request->filled('password')) {
             $usuario = User::findOrFail($usrId);
             $usuario->update([

@@ -77,7 +77,8 @@
     <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: white; border-radius: 20px; border: 1px dashed rgba(62,180,137,0.2);">
         <i class="fas fa-project-diagram" style="font-size: 48px; color: #3eb489; margin-bottom: 16px; opacity: 0.5;"></i>
         <h4 style="color:var(--text); font-size: 1.5rem; margin-bottom:8px; font-weight: 800;">No hay proyectos asignados</h4>
-        <p style="color:var(--text-light); font-weight: 500;">Actualmente no tienes proyectos bajo tu supervisión.</p>
+        <p style="color:var(--text-light); font-weight: 500; margin-bottom: 16px;">Actualmente no tienes proyectos bajo tu supervisión.</p>
+        <p style="color:#3eb489; font-weight: 600; font-size: 13px;">Un administrador te asignará proyectos cuando estén disponibles.</p>
     </div>
     @endforelse
 </div>

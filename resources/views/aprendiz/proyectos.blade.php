@@ -111,10 +111,18 @@
     @if($proyectos->isEmpty())
         <div style="padding: 5rem 2rem; text-align: center; background: white; border-radius: 24px; border: 1px dashed rgba(62,180,137,0.2);">
             <div style="width: 100px; height: 100px; background: rgba(62,180,137,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
-                <i class="fas fa-search" style="font-size: 40px; color: #3eb489;"></i>
+                <i class="fas {{ request('buscar') || request('categoria') ? 'fa-search' : 'fa-folder-open' }}" style="font-size: 40px; color: #3eb489;"></i>
             </div>
-            <h3 style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 8px;">No encontramos lo que buscas</h3>
-            <p style="color: var(--text-light); max-width: 400px; margin: 0 auto;">Intenta con otros términos de búsqueda o explora nuestras categorías destacadas.</p>
+            @if(request('buscar') || request('categoria'))
+                <h3 style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 8px;">Sin resultados</h3>
+                <p style="color: var(--text-light); max-width: 400px; margin: 0 auto 24px;">No encontramos proyectos que coincidan con tu búsqueda "{{ request('buscar') ?? request('categoria') }}".</p>
+                <a href="{{ route('aprendiz.proyectos') }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: #3eb489; color: white; border-radius: 12px; font-weight: 700; text-decoration: none;">
+                    <i class="fas fa-rotate-left"></i> Limpiar filtros
+                </a>
+            @else
+                <h3 style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 8px;">No hay proyectos disponibles</h3>
+                <p style="color: var(--text-light); max-width: 400px; margin: 0 auto;">Próximamente habrá nuevas oportunidades. Revisa más tarde.</p>
+            @endif
         </div>
     @else
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;">
