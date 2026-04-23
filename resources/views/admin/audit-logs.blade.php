@@ -100,6 +100,11 @@
                     </thead>
                     <tbody>
                         @forelse($logs as $log)
+                            @php
+                                $bgColor = match($log->accion) { 'crear' => '#f0fdf4', 'editar' => '#fffbeb', 'eliminar' => '#fef2f2', default => '#f8fafc' };
+                                $textColor = match($log->accion) { 'crear' => '#15803d', 'editar' => '#b45309', 'eliminar' => '#dc2626', default => '#64748b' };
+                                $borderColor = match($log->accion) { 'crear' => '#bbf7d0', 'editar' => '#fde68a', 'eliminar' => '#fecaca', default => '#e2e8f0' };
+                            @endphp
                             <tr>
                                 <td style="font-size: 12px; color: var(--text-light);">
                                     <i class="far fa-clock" style="margin-right: 4px; opacity: 0.5;"></i>
@@ -114,7 +119,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="status-badge" style="background: {{ match($log->accion) { 'crear' => '#f0fdf4', 'editar' => '#fffbeb', 'eliminar' => '#fef2f2', default => '#f8fafc' } }}; color: {{ match($log->accion) { 'crear' => '#15803d', 'editar' => '#b45309', 'eliminar' => '#dc2626', default => '#64748b' } }}; border-color: {{ match($log->accion) { 'crear' => '#bbf7d0', 'editar' => '#fde68a', 'eliminar' => '#fecaca', default => '#e2e8f0' } }; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800;">
+                                    <span class="status-badge" style="background: {{ $bgColor }}; color: {{ $textColor }}; border-color: {{ $borderColor }}; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; border: 1px solid;">
                                         <i class="fas {{ $log->accion_icon }}"></i>
                                         {{ ucfirst($log->accion) }}
                                     </span>

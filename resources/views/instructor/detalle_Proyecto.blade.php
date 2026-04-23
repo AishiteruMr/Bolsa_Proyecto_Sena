@@ -161,8 +161,19 @@
                             <div style="flex: 1;">
                                 <h4 style="font-weight: 800; color: var(--text); margin-bottom: 6px; font-size: 1.1rem;">{{ $etapa->nombre }}</h4>
                                 <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6; font-weight: 500;">{{ $etapa->descripcion }}</p>
+                                @if($etapa->url_documento)
+                                <div style="margin-top: 10px; padding: 10px 14px; background: rgba(62,180,137,0.08); border-radius: 10px; display: inline-flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-file-alt" style="color: #3eb489; font-size: 0.9rem;"></i>
+                                    <a href="{{ asset('storage/' . $etapa->url_documento) }}" target="_blank" style="color: #3eb489; font-size: 0.85rem; font-weight: 700; text-decoration: none;">
+                                        Ver documento/guide
+                                    </a>
+                                </div>
+                                @endif
                             </div>
                             <div style="display: flex; gap: 8px;">
+                                <button type="button" onclick="document.getElementById('docForm-{{ $etapa->id }}').classList.toggle('active')" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Subir documento">
+                                    <i class="fas fa-upload"></i>
+                                </button>
                                 <button type="button" onclick="toggleEditStage({{ $etapa->id }})" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Editar etapa">
                                     <i class="fas fa-pen"></i>
                                 </button>
@@ -190,6 +201,27 @@
                                     <button type="button" onclick="toggleEditStage({{ $etapa->id }})" style="background: transparent; border: none; font-weight: 700; color: var(--text-light); cursor: pointer; padding: 8px 16px;">Cancelar</button>
                                     <button type="submit" class="btn-premium" style="width: auto; padding: 10px 24px;">
                                         <i class="fas fa-save" style="margin-right: 6px;"></i>Guardar Cambios
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        {{-- Formulario de subida de documento (oculto por defecto) --}}
+                        <div id="docForm-{{ $etapa->id }}" class="instructor-collapsible" style="display: none; margin-top: 1rem;">
+                            <form action="{{ route('instructor.etapas.documento', $etapa->id) }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div style="margin-bottom: 1rem;">
+                                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                                        <i class="fas fa-file-pdf" style="margin-right: 6px; color: #3eb489;"></i>
+                                        Documento/Guía de la Etapa (PDF, Word, Excel, PowerPoint)
+                                    </label>
+                                    <input type="file" name="documento" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" class="aprendiz-input-control" style="padding: 10px;">
+                                    <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 4px;">Formato máximo: 10MB</p>
+                                </div>
+                                <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                                    <button type="button" onclick="document.getElementById('docForm-{{ $etapa->id }}').classList.toggle('active')" style="background: transparent; border: none; font-weight: 700; color: var(--text-light); cursor: pointer;">Cancelar</button>
+                                    <button type="submit" class="btn-premium" style="width: auto; padding: 10px 24px;">
+                                        <i class="fas fa-upload" style="margin-right: 6px;"></i>Subir Documento
                                     </button>
                                 </div>
                             </form>

@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AprendizController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\HomeController;
@@ -123,6 +124,7 @@ Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instruc
     Route::post('/proyectos/{id}/etapas', [InstructorController::class, 'crearEtapa'])->name('etapas.crear')->middleware('ownership:proyecto,id');
     Route::put('/etapas/{id}', [InstructorController::class, 'editarEtapa'])->name('etapas.editar')->middleware('ownership:etapa,id');
     Route::delete('/etapas/{id}', [InstructorController::class, 'eliminarEtapa'])->name('etapas.eliminar')->middleware('ownership:etapa,id');
+    Route::post('/etapas/{id}/documento', [InstructorController::class, 'subirDocumentoEtapa'])->name('etapas.documento')->middleware('ownership:etapa,id');
 
     // RUTAS PARA IMAGEN DE PROYECTO
     Route::post('/proyectos/{id}/imagen', [InstructorController::class, 'subirImagenProyecto'])->name('proyectos.imagen')->middleware('ownership:proyecto,id');
@@ -166,6 +168,11 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::get('/exportar/instructores', [ExportController::class, 'instructores'])->name('exportar.instructores')->middleware('throttle:10,1');
 
     Route::get('/audit', [AuditLogController::class, 'index'])->name('audit');
+
+    Route::get('/backup', [BackupController::class, 'index'])->name('backup');
+    Route::post('/backup/crear', [BackupController::class, 'crear'])->name('backup.crear')->middleware('throttle:3,60');
+    Route::get('/backup/descargar/{nombre}', [BackupController::class, 'descargar'])->name('backup.descargar');
+    Route::delete('/backup/eliminar/{nombre}', [BackupController::class, 'eliminar'])->name('backup.eliminar');
 });
 
 Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats', [StatsController::class, 'dashboard'])->name('api.admin.stats');

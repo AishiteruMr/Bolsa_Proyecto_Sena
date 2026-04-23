@@ -46,34 +46,69 @@
     </section>
 
     <section class="map-section">
+        <!-- Elementos decorativos de fondo -->
+        <div class="map-bg-blob blob-1"></div>
+        <div class="map-bg-blob blob-2"></div>
+
         <div class="section-header">
+            <span class="hero-badge" style="margin-bottom: 16px;">¿Dónde estamos?</span>
             <h2>Nuestra Ubicación Estratégica</h2>
             <p>Visítanos en nuestra sede principal de innovación y tecnología.</p>
         </div>
-        <div class="map-container">
-            <div class="map-info">
-                <h3 style="font-size: 22px; font-weight: 800; margin-bottom: 16px;">Sede Metalmecánica</h3>
-                <p style="color: var(--text-light); font-size: 15px; margin-bottom: 32px;">Un espacio diseñado para la colabaración técnica y el desarrollo industrial.</p>
-                
-                <div class="loc-card">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <div>
-                        <div style="font-weight: 800; color: var(--secondary);">Dirección</div>
-                        <div style="font-size: 14px; color: var(--text-light);">Dg. 18 #111, Malambo, Atlántico</div>
-                    </div>
-                </div>
 
-                <div id="user-location-info" class="loc-card" style="display: none; border-color: var(--primary-glow); background: #fff;">
-                    <div style="width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;">
-                        <i class="fas fa-location-arrow"></i>
+        <div class="map-wrapper">
+            <div class="map-container-premium">
+                <div class="map-info-glass">
+                    <div class="info-header">
+                        <div class="icon-box">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div>
+                            <h3>Sede Metalmecánica</h3>
+                            <p>Centro de formación industrial</p>
+                        </div>
                     </div>
-                    <div>
-                        <div style="font-weight: 800; color: var(--secondary);">Tu Ubicación</div>
-                        <div id="user-address" style="font-size: 14px; color: var(--text-light);">Calculando...</div>
+                    
+                    <p class="info-description">Un espacio diseñado para la colaboración técnica, el desarrollo industrial y la formación de talento humano de clase mundial.</p>
+                    
+                    <div class="location-cards">
+                        <div class="loc-card-premium">
+                            <div class="card-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="card-content">
+                                <span class="card-label">Dirección Principal</span>
+                                <span class="card-value">Dg. 18 #111, Malambo, Atlántico</span>
+                            </div>
+                        </div>
+
+                        <div id="user-location-info" class="loc-card-premium user-loc" style="display: none;">
+                            <div class="card-icon">
+                                <i class="fas fa-location-arrow"></i>
+                            </div>
+                            <div class="card-content">
+                                <span class="card-label">Tu Ubicación Actual</span>
+                                <span id="user-address" class="card-value">Calculando...</span>
+                            </div>
+                        </div>
                     </div>
+
+                    <button id="detect-user-location-btn" class="btn-detect">
+                        <div class="btn-icon">
+                            <i class="fas fa-crosshairs"></i>
+                        </div>
+                        <span id="detect-btn-text">Encontrar mi ubicación</span>
+                        <div class="btn-shine"></div>
+                    </button>
+
+                    <div id="location-error" class="loc-error-msg" style="display: none;"></div>
+                </div>
+                
+                <div class="map-visual">
+                    <div id="nosotros-map"></div>
+                    <div class="map-overlay"></div>
                 </div>
             </div>
-            <div id="nosotros-map"></div>
         </div>
     </section>
 
