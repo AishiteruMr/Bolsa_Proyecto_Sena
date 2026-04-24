@@ -86,6 +86,11 @@ class Proyecto extends Model
         return $query->where('estado', 'rechazado');
     }
 
+    public function scopeCompletados(Builder $query): Builder
+    {
+        return $query->where('estado', 'completado');
+    }
+
     public function scopeFinalizados(Builder $query): Builder
     {
         return $query->where('estado', 'cerrado');
@@ -135,6 +140,11 @@ class Proyecto extends Model
     public function isRechazado(): bool
     {
         return $this->estado === 'rechazado';
+    }
+
+    public function isCompletado(): bool
+    {
+        return $this->estado === 'completado';
     }
 
     /**

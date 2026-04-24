@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Soporte | Inspírate SENA'); ?>
 
-@section('title', 'Soporte | Inspírate SENA')
-
-@section('styles')
+<?php $__env->startSection('styles'); ?>
 <style>
     /* Diseño Minimalista y Moderno */
     .support-wrapper { padding: 80px 10%; color: #333; }
@@ -46,15 +44,16 @@
         width: 100%; 
     }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="support-wrapper">
-    @if(session('success'))
+    <?php if(session('success')): ?>
         <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 12px; margin-bottom: 30px; text-align: center; border: 1px solid #c3e6cb;">
-            {{ session('success') }}
+            <?php echo e(session('success')); ?>
+
         </div>
-    @endif
+    <?php endif; ?>
 
     <section class="support-hero">
         <h1>¿Cómo podemos ayudarte hoy?</h1>
@@ -82,8 +81,8 @@
 
     <section class="contact-form">
         <h2 style="margin-bottom: 30px; text-align: center;">Envía tu consulta</h2>
-        <form action="{{ route('soporte.enviar') }}" method="POST">
-            @csrf
+        <form action="<?php echo e(route('soporte.enviar')); ?>" method="POST">
+            <?php echo csrf_field(); ?>
             <input type="text" name="nombre" placeholder="Tu nombre" class="form-input" required>
             <input type="email" name="email" placeholder="Tu correo electrónico" class="form-input" required>
             <select name="motivo" class="form-input">
@@ -96,4 +95,6 @@
         </form>
     </section>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\Bolsa_Proyecto_Sena\resources\views/soporte.blade.php ENDPATH**/ ?>

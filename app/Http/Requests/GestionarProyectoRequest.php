@@ -35,7 +35,7 @@ class GestionarProyectoRequest extends FormRequest
                 'longitud' => 'nullable|numeric',
             ],
             $this->routeIs('admin.proyectos.estado') => [
-                'estado' => 'required|in:aprobado,rechazado,pendiente,cerrado,en_progreso',
+                'estado' => 'required|in:aprobado,rechazado,pendiente,cerrado,en_progreso,completado',
             ],
             default => [],
         };
