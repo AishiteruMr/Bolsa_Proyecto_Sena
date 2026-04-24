@@ -64,7 +64,7 @@ class AuthController extends Controller
                 return back()->with('error', 'Tu cuenta está pendiente de activación por un administrador.');
             }
 
-            if (property_exists($usuario, 'email_verified_at') && is_null($usuario->email_verified_at)) {
+            if (isset($usuario->email_verified_at) && is_null($usuario->email_verified_at)) {
                 $userModel = User::find($usuario->id);
                 if ($userModel) {
                     $userModel->sendEmailVerificationNotification();
@@ -482,8 +482,8 @@ class AuthController extends Controller
             return back()->with('error', 'El enlace de recuperación es inválido o ha expirado.');
         }
 
-        // Verificar que no haya expirado (30 minutos)
-        if (Carbon::parse($registro->created_at)->addMinutes(30)->isPast()) {
+        // Verificar que no haya expirado (usar expires_at)
+        if ($registro->expires_at && Carbon::parse($registro->expires_at)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
             return back()->with('error', 'El enlace de recuperación ha expirado.');

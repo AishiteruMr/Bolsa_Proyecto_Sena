@@ -81,7 +81,7 @@
                     <ul style="list-style: none; margin: 0; padding: 0;">
                         <li class="requirement unmet" id="req-length">
                             <span class="requirement-icon">✓</span>
-                            Mínimo 6 caracteres
+                            Mínimo 8 caracteres
                         </li>
                         <li class="requirement unmet" id="req-upper">
                             <span class="requirement-icon">✓</span>
@@ -162,7 +162,7 @@
             const password = document.getElementById('password').value;
 
             // Validaciones
-            const length = password.length >= 6;
+            const length = password.length >= 8;
             const upper = /[A-Z]/.test(password);
             const lower = /[a-z]/.test(password);
             const number = /[0-9]/.test(password);

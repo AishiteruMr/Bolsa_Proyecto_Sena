@@ -69,17 +69,32 @@
 }
 
 .glass-card {
-    background: rgba(255,255,255,0.95);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 8px 24px rgba(62,180,137,0.06);
-    border: 1px solid rgba(62,180,137,0.08);
-    transition: transform 0.3s, box-shadow 0.3s;
+    background: rgba(255,255,255,0.92);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    border: 1px solid rgba(62,180,137,0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top:0; left:0; right:0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+    pointer-events: none;
 }
 
 .glass-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(62,180,137,0.1);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(62,180,137,0.1);
+    border-color: rgba(62,180,137,0.2);
+    background: rgba(255,255,255,0.98);
 }
 
 .btn-premium {
@@ -222,8 +237,33 @@
 
 .empresa-stat-card {
     padding: 32px;
-    border-color: var(--primary-soft);
+    border: 1px solid var(--primary-soft);
     background: rgba(255,255,255,0.95);
+    border-radius: var(--radius);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
+}
+
+.empresa-stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(180deg, var(--primary), var(--primary-hover));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.empresa-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(62,180,137,0.12);
+    border-color: rgba(62,180,137,0.2);
+}
+
+.empresa-stat-card:hover::after {
+    opacity: 1;
 }
 
 .empresa-stat-icon {
@@ -317,10 +357,35 @@
     border-color: var(--primary-soft);
 }
 
+.candidate-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: white;
+    overflow: hidden;
+    position: relative;
+}
+
+.candidate-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
 .candidate-card:hover { 
     transform: translateY(-8px); 
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
-    border-color: var(--primary-glow); 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
+    border-color: rgba(62,180,137,0.25);
+    background: white;
+}
+
+.candidate-card:hover::before {
+    opacity: 1;
 }
 
 @keyframes fadeIn { 

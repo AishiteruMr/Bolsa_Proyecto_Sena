@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AprendizController;
@@ -170,7 +170,9 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::get('/audit', [AuditLogController::class, 'index'])->name('audit');
 
     Route::get('/backup', [BackupController::class, 'index'])->name('backup');
-    Route::post('/backup/crear', [BackupController::class, 'crear'])->name('backup.crear')->middleware('throttle:3,60');
+    Route::post('/backup/crear', [BackupController::class, 'crear'])->name('backup.crear');
+    Route::get('/backup/exportar', [BackupController::class, 'exportar'])->name('backup.exportar');
+    Route::post('/backup/importar', [BackupController::class, 'importar'])->name('backup.importar');
     Route::get('/backup/descargar/{nombre}', [BackupController::class, 'descargar'])->name('backup.descargar');
     Route::delete('/backup/eliminar/{nombre}', [BackupController::class, 'eliminar'])->name('backup.eliminar');
 });
