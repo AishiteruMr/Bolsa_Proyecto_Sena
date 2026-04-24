@@ -110,20 +110,23 @@
 
     <script>
     // ── TOAST ─────────────────────────────────────────────────────
-    function showToast(type, message) {
+    function showToast(type, message, title = null) {
         const icons   = { success:'fa-circle-check', error:'fa-circle-xmark', warning:'fa-triangle-exclamation' };
         const colors  = { success:'#22c55e', error:'#ef4444', warning:'#f59e0b' };
         const bgs     = { success:'#f0fdf4', error:'#fef2f2', warning:'#fffbeb' };
         const borders = { success:'#bbf7d0', error:'#fecaca', warning:'#fde68a' };
+        const titles  = { success: '¡Éxito!', error: 'Error', warning: 'Atención' };
+        const finalTitle = title || titles[type] || '';
+
         const toast = document.createElement('div');
         toast.style.cssText = `
-            pointer-events:all; display:flex; align-items:center; gap:14px;
+            pointer-events:all; display:flex; align-items:flex-start; gap:14px;
             background:${bgs[type]}; color:#1e293b; border:1.5px solid ${borders[type]};
             border-left:4px solid ${colors[type]}; border-radius:16px;
-            padding:16px 20px; min-width:280px; max-width:380px;
+            padding:16px 20px; min-width:300px; max-width:400px;
             box-shadow:0 8px 32px rgba(0,0,0,0.12);
             animation:slideInToast 0.4s cubic-bezier(0.34,1.56,0.64,1);
-            font-family:'Outfit',sans-serif; font-weight:600; font-size:14px;
+            font-family:'Outfit',sans-serif;
         `;
         
         // Sanitize message to prevent XSS
@@ -133,7 +136,14 @@
             return div.innerHTML;
         };
         
-        toast.innerHTML = `<i class="fas ${icons[type]}" style="font-size:20px;color:${colors[type]};flex-shrink:0;"></i><span style="flex:1;">${sanitize(message)}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:16px;padding:0;"><i class="fas fa-xmark"></i></button>`;
+        toast.innerHTML = `
+            <i class="fas ${icons[type]}" style="font-size:20px;color:${colors[type]};flex-shrink:0; margin-top: 2px;"></i>
+            <div style="flex:1;">
+                <div style="font-weight:800; font-size:14px; margin-bottom:2px;">${finalTitle}</div>
+                <div style="font-size:13px; color:#475569; line-height: 1.4;">${sanitize(message)}</div>
+            </div>
+            <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:16px;padding:0;"><i class="fas fa-xmark"></i></button>
+        `;
         document.getElementById('toast-container').appendChild(toast);
         setTimeout(() => {
             toast.style.opacity = '0';

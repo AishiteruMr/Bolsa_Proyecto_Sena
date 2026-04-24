@@ -190,28 +190,47 @@
                 </form>
             </div>
 
-            {{-- Mostrar archivo de estructura si existe --}}
-            @if($proyecto->url_estructura)
+            {{-- Mostrar archivo de estructura (siempre visible) --}}
             <div style="margin-bottom: 2rem; padding: 14px 18px; background: linear-gradient(135deg, rgba(62,180,137,0.08), rgba(62,180,137,0.04)); border-radius: 12px; border: 1px solid rgba(62,180,137,0.15); display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-file-alt" style="font-size: 1rem;"></i>
                     </div>
                     <div>
-                        <p style="font-weight: 800; color: var(--text); font-size: 0.9rem;">Estructura del Proyecto</p>
-                        <p style="font-size: 0.75rem; color: var(--text-light); font-weight: 500;">Documento de planificacion/rubricas</p>
+                        <p style="font-weight: 800; color: var(--text); font-size: 0.9rem;">
+                            {{ $proyecto->url_estructura ? 'Estructura Personalizada' : 'Estructura Predeterminada' }}
+                        </p>
+                        <p style="font-size: 0.75rem; color: var(--text-light); font-weight: 500;">
+                            {{ $proyecto->url_estructura ? 'Archivo personalizado cargado' : 'Documento de planificación estándar' }}
+                        </p>
                     </div>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <a href="{{ asset('storage/' . $proyecto->url_estructura) }}" target="_blank" style="padding: 8px 16px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border-radius: 10px; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-eye"></i> Ver
-                    </a>
-                    <a href="{{ asset('storage/' . $proyecto->url_estructura) }}" download style="padding: 8px 16px; background: rgba(62,180,137,0.1); color: #3eb489; border-radius: 10px; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-download"></i> Descargar
+                    <button type="button" onclick="togglePreview('{{ $proyecto->url_estructura_full }}')" style="padding: 8px 16px; background: rgba(62,180,137,0.1); color: #3eb489; border-radius: 10px; font-size: 0.8rem; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-eye"></i> Vista Previa
+                    </button>
+                    <a href="{{ $proyecto->url_estructura_full }}" target="_blank" style="padding: 8px 16px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border-radius: 10px; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-external-link-alt"></i> Abrir
                     </a>
                 </div>
             </div>
+            
+            {{-- Opción para ver estructura predeterminada si hay una personalizada --}}
+            @if($proyecto->url_estructura)
+            <div style="margin-bottom: 2rem; text-align: center;">
+                <p style="font-size: 0.8rem; color: var(--text-light);">
+                    ¿Deseas comparar con la estructura estándar?
+                    <button type="button" onclick="togglePreview('{{ asset('assets/default-estructura.pdf') }}')" style="background: none; border: none; color: #3eb489; font-weight: 700; text-decoration: underline; cursor: pointer;">
+                        Ver estructura predeterminada aquí
+                    </button>
+                </p>
+            </div>
             @endif
+
+            {{-- Contenedor de Vista Previa --}}
+            <div id="previewContainer" style="display: none; margin-top: 1rem; border: 1px solid rgba(62,180,137,0.2); border-radius: 12px; overflow: hidden; height: 600px;">
+                <iframe id="previewIframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
 
             <div id="stageForm" class="instructor-collapsible" style="display: none; margin-bottom: 2rem;">
                 <form action="{{ route('instructor.etapas.crear', $proyecto->id) }}" method="POST">
@@ -228,37 +247,45 @@
                 </form>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                 @forelse($etapas as $index => $etapa)
-                    <div class="instructor-stage-card" id="stage-card-{{ $etapa->id }}">
+                    <div class="instructor-stage-card" id="stage-card-{{ $etapa->id }}" style="background: white; border: 1px solid rgba(62,180,137,0.15); border-radius: 16px; padding: 1.5rem; transition: all 0.2s ease;">
                         {{-- Vista normal de la etapa --}}
-                        <div class="instructor-stage-view" id="stage-view-{{ $etapa->id }}">
-                            <div class="instructor-stage-number" style="background: {{ $index == 0 ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : 'rgba(62,180,137,0.08)' }}; color: {{ $index == 0 ? 'white' : '#3eb489' }};">
+                        <div class="instructor-stage-view" id="stage-view-{{ $etapa->id }}" style="display: flex; gap: 1.5rem; align-items: start;">
+                            <div class="instructor-stage-number" style="width: 45px; height: 45px; border-radius: 14px; background: {{ $index == 0 ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : 'rgba(62,180,137,0.1)' }}; color: {{ $index == 0 ? 'white' : '#3eb489' }}; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; flex-shrink: 0;">
                                 {{ $etapa->orden }}
                             </div>
+                            
                             <div style="flex: 1;">
-                                <h4 style="font-weight: 800; color: var(--text); margin-bottom: 6px; font-size: 1.1rem;">{{ $etapa->nombre }}</h4>
-                                <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.6; font-weight: 500;">{{ $etapa->descripcion }}</p>
+                                <h4 style="font-weight: 800; color: var(--text); margin-bottom: 8px; font-size: 1.15rem;">{{ $etapa->nombre }}</h4>
+                                <p style="font-size: 0.95rem; color: var(--text-light); line-height: 1.7; font-weight: 500; margin-bottom: 12px;">{{ $etapa->descripcion }}</p>
+                                
                                 @if($etapa->url_documento)
-                                <div style="margin-top: 10px; padding: 10px 14px; background: rgba(62,180,137,0.08); border-radius: 10px; display: inline-flex; align-items: center; gap: 8px;">
-                                    <i class="fas fa-file-alt" style="color: #3eb489; font-size: 0.9rem;"></i>
+                                <div style="padding: 10px 14px; background: rgba(62,180,137,0.05); border-radius: 10px; display: inline-flex; align-items: center; gap: 12px; border: 1px solid rgba(62,180,137,0.1);">
+                                    <i class="fas fa-file-alt" style="color: #3eb489; font-size: 1rem;"></i>
+                                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--text);">Documento adjunto:</span>
+                                    <button type="button" onclick="togglePreview('{{ asset('storage/' . $etapa->url_documento) }}')" style="background: none; border: none; color: #3eb489; font-size: 0.85rem; font-weight: 700; cursor: pointer; text-decoration: underline;">
+                                        Vista Previa
+                                    </button>
+                                    <span style="color: #cbd5e1;">|</span>
                                     <a href="{{ asset('storage/' . $etapa->url_documento) }}" target="_blank" style="color: #3eb489; font-size: 0.85rem; font-weight: 700; text-decoration: none;">
-                                        Ver documento/guide
+                                        Descargar
                                     </a>
                                 </div>
                                 @endif
                             </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button type="button" onclick="document.getElementById('docForm-{{ $etapa->id }}').classList.toggle('active')" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Subir documento">
+
+                            <div style="display: flex; gap: 10px; flex-shrink: 0;">
+                                <button type="button" onclick="document.getElementById('docForm-{{ $etapa->id }}').classList.toggle('active')" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(62,180,137,0.1); color: #3eb489; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Subir documento">
                                     <i class="fas fa-upload"></i>
                                 </button>
-                                <button type="button" onclick="toggleEditStage({{ $etapa->id }})" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Editar etapa">
+                                <button type="button" onclick="toggleEditStage({{ $etapa->id }})" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(62,180,137,0.1); color: #3eb489; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Editar etapa">
                                     <i class="fas fa-pen"></i>
                                 </button>
                                 <form action="{{ route('instructor.etapas.eliminar', $etapa->id) }}" method="POST" id="eliminar-etapa-{{ $etapa->id }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" data-confirm="¿Eliminar etapa?" data-confirm-title="Eliminar Etapa" onclick="openConfirm('¿Eliminar etapa?', 'La etapa &quot;{{ Str::limit($etapa->nombre, 25) }}&quot; será eliminada permanentemente.', () => document.getElementById('eliminar-etapa-{{ $etapa->id }}').submit())" style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" class="btn-del-hover">
+                                    <button type="button" onclick="openConfirm('¿Eliminar etapa?', 'La etapa &quot;{{ Str::limit($etapa->nombre, 25) }}&quot; será eliminada permanentemente.', () => document.getElementById('eliminar-etapa-{{ $etapa->id }}').submit())" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Eliminar etapa">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
@@ -270,45 +297,46 @@
                             <form action="{{ route('instructor.etapas.editar', $etapa->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <div style="display: grid; grid-template-columns: 80px 1fr; gap: 1rem; margin-bottom: 1rem;">
-                                    <input type="number" name="orden" value="{{ $etapa->orden }}" placeholder="N°" required class="aprendiz-input-control">
-                                    <input type="text" name="nombre" value="{{ $etapa->nombre }}" placeholder="Título de la etapa..." required class="aprendiz-input-control">
+                                <div style="display: grid; grid-template-columns: 100px 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                    <input type="number" name="orden" value="{{ $etapa->orden }}" placeholder="N°" required class="aprendiz-input-control" style="border-radius: 10px;">
+                                    <input type="text" name="nombre" value="{{ $etapa->nombre }}" placeholder="Título de la etapa..." required class="aprendiz-input-control" style="border-radius: 10px;">
                                 </div>
-                                <textarea name="descripcion" placeholder="Descripción de la etapa..." required class="aprendiz-input-control" style="min-height: 80px; margin-bottom: 1rem;">{{ $etapa->descripcion }}</textarea>
+                                <textarea name="descripcion" placeholder="Descripción de la etapa..." required class="aprendiz-input-control" style="min-height: 100px; margin-bottom: 1rem; border-radius: 10px;">{{ $etapa->descripcion }}</textarea>
                                 <div style="display: flex; justify-content: flex-end; gap: 1rem;">
-                                    <button type="button" onclick="toggleEditStage({{ $etapa->id }})" style="background: transparent; border: none; font-weight: 700; color: var(--text-light); cursor: pointer; padding: 8px 16px;">Cancelar</button>
-                                    <button type="submit" class="btn-premium" style="width: auto; padding: 10px 24px;">
-                                        <i class="fas fa-save" style="margin-right: 6px;"></i>Guardar Cambios
+                                    <button type="button" onclick="toggleEditStage({{ $etapa->id }})" style="background: transparent; border: none; font-weight: 700; color: var(--text-light); cursor: pointer; padding: 10px 20px;">Cancelar</button>
+                                    <button type="submit" class="btn-premium" style="width: auto; padding: 10px 24px; border-radius: 10px;">
+                                        <i class="fas fa-save" style="margin-right: 8px;"></i>Guardar Cambios
                                     </button>
                                 </div>
                             </form>
                         </div>
 
                         {{-- Formulario de subida de documento (oculto por defecto) --}}
-                        <div id="docForm-{{ $etapa->id }}" class="instructor-collapsible" style="display: none; margin-top: 1rem;">
+                        <div id="docForm-{{ $etapa->id }}" class="instructor-collapsible" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #f8fafc; border-radius: 14px; border: 1px dashed #e2e8f0;">
                             <form action="{{ route('instructor.etapas.documento', $etapa->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                <div style="margin-bottom: 1rem;">
-                                    <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 6px;">
-                                        <i class="fas fa-file-pdf" style="margin-right: 6px; color: #3eb489;"></i>
-                                        Documento/Guía de la Etapa (PDF, Word, Excel, PowerPoint)
+                                <div style="margin-bottom: 1.25rem;">
+                                    <label style="display: block; font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 8px;">
+                                        <i class="fas fa-file-upload" style="margin-right: 8px; color: #3eb489;"></i>
+                                        Cargar Documento/Guía (PDF, Word, Excel, PPT)
                                     </label>
-                                    <input type="file" name="documento" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" class="aprendiz-input-control" style="padding: 10px;">
-                                    <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 4px;">Formato máximo: 10MB</p>
+                                    <input type="file" name="documento" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" class="aprendiz-input-control" style="padding: 12px; border-radius: 10px; background: white;">
+                                    <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 6px;">Formato máximo: 10MB</p>
                                 </div>
                                 <div style="display: flex; justify-content: flex-end; gap: 1rem;">
                                     <button type="button" onclick="document.getElementById('docForm-{{ $etapa->id }}').classList.toggle('active')" style="background: transparent; border: none; font-weight: 700; color: var(--text-light); cursor: pointer;">Cancelar</button>
-                                    <button type="submit" class="btn-premium" style="width: auto; padding: 10px 24px;">
-                                        <i class="fas fa-upload" style="margin-right: 6px;"></i>Subir Documento
+                                    <button type="submit" class="btn-premium" style="width: auto; padding: 10px 24px; border-radius: 10px;">
+                                        <i class="fas fa-upload" style="margin-right: 8px;"></i>Subir Documento
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 @empty
-                    <div class="instructor-empty-state">
-                        <i class="fas fa-project-diagram" style="font-size: 32px; color: #3eb489; margin-bottom: 12px; opacity: 0.5;"></i>
-                        <h4>Comienza definiendo el plan de trabajo para que los aprendices puedan entregar evidencias.</h4>
+                    <div class="instructor-empty-state" style="text-align: center; padding: 3rem; background: #f8fafc; border-radius: 20px; border: 2px dashed #e2e8f0;">
+                        <i class="fas fa-project-diagram" style="font-size: 48px; color: #cbd5e1; margin-bottom: 1rem;"></i>
+                        <h4 style="color: var(--text-light); font-weight: 600;">Aún no hay etapas definidas.</h4>
+                        <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 8px;">Define el plan de trabajo para que los aprendices comiencen sus entregas.</p>
                     </div>
                 @endforelse
             </div>
@@ -416,6 +444,22 @@ function toggleEditStage(id) {
     } else {
         viewEl.style.display = 'flex';
         editEl.style.display = 'none';
+    }
+}
+
+// Función para manejar la vista previa
+function togglePreview(url) {
+    const container = document.getElementById('previewContainer');
+    const iframe = document.getElementById('previewIframe');
+    
+    if (container.style.display === 'block') {
+        container.style.display = 'none';
+        iframe.src = '';
+    } else {
+        // Cargamos la URL directamente en el iframe.
+        // Los navegadores modernos renderizan PDFs nativamente.
+        iframe.src = url;
+        container.style.display = 'block';
     }
 }
 </script>

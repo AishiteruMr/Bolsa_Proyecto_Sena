@@ -7,6 +7,7 @@
     <nav class="menu" id="mainMenu">
         <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Inicio</a>
         <a href="{{ route('nosotros') }}" class="{{ request()->routeIs('nosotros') ? 'active' : '' }}">Nosotros</a>
+        <a href="{{ route('soporte') }}" class="{{ request()->routeIs('soporte') ? 'active' : '' }}">Soporte</a>
     </nav>
 
     <div class="nav-right">
