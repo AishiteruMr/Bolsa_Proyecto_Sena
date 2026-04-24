@@ -12,7 +12,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Backup automático cada 1.5 semanas (10 días)
+        $schedule->command('backup:automatico')
+                 ->cron('0 2 */10 * *')   // A las 2:00 AM, cada 10 días
+                 ->withoutOverlapping()
+                 ->runInBackground()
+                 ->appendOutputTo(storage_path('logs/backup-automatico.log'));
     }
 
     /**

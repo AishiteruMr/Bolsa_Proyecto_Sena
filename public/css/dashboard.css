@@ -158,35 +158,59 @@ body {
 .glass-card {
     background: var(--surface);
     backdrop-filter: var(--glass);
+    -webkit-backdrop-filter: blur(14px) saturate(190%);
     border-radius: var(--radius);
     padding: 28px;
     border: 1px solid var(--border-glass);
     box-shadow: var(--shadow);
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-sizing: border-box;
-    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+}
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+    pointer-events: none;
 }
 .glass-card:hover { 
-    transform: translateY(-8px) scale(1.01); 
+    transform: translateY(-6px); 
     box-shadow: var(--shadow-lg);
     border-color: var(--primary-glow);
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
 }
 
 .stat-card-premium {
     background: var(--surface-solid);
-    padding: 36px; border-radius: var(--radius);
+    padding: 32px; border-radius: var(--radius);
     border: 1px solid var(--border);
     position: relative; overflow: hidden;
-    transition: all 0.4s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--shadow-sm);
     min-height: 180px;
     box-sizing: border-box;
 }
+.stat-card-premium::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(180deg, var(--primary), var(--primary-hover));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
 .stat-card-premium:hover { 
-    transform: scale(1.03) translateY(-4px); 
+    transform: translateY(-4px);
     box-shadow: var(--shadow-premium); 
     border-color: var(--primary-glow);
+}
+.stat-card-premium:hover::after {
+    opacity: 1;
 }
 
 .btn-premium {

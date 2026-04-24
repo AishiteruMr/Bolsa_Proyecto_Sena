@@ -72,6 +72,22 @@ php artisan migrate --seed
 # Ejecutar en desarrollo
 php artisan serve
 npm run dev
+
+# Crear backup manual
+php artisan backup:manual
+
+# Ejecutar backup automático
+php artisan backup:automatico
+
+# Importar backup
+php artisan backup:import nombre_del_archivo.sql
+
+# Listar backups
+php artisan backup:list
+
+# Eliminar backup
+php artisan backup:delete nombre_del_archivo.sql
+
 ```
 
 ---
