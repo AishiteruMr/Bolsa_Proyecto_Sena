@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="<?php echo e(asset('css/dashboard.css')); ?>">
     <link rel="stylesheet" href="<?php echo e(asset('css/cards-enhanced.css')); ?>">
     <?php echo $__env->yieldContent('styles'); ?>
+    <script src="<?php echo e(asset('js/pdfjs/pdf.min.js')); ?>"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "<?php echo e(asset('js/pdfjs/pdf.worker.min.js')); ?>";
+    </script>
 </head>
 <body>
 

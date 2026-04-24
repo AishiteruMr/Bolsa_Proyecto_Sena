@@ -14,13 +14,14 @@ class StatsController extends Controller
     {
         try {
             $proyectosPorEstado = [
-                'labels' => ['Pendiente', 'Aprobado', 'Rechazado', 'En Progreso', 'Cerrado'],
+                'labels' => ['Pendiente', 'Aprobado', 'Rechazado', 'En Progreso', 'Cerrado', 'Completado'],
                 'data' => [
                     Proyecto::where('estado', 'pendiente')->count(),
                     Proyecto::where('estado', 'aprobado')->count(),
                     Proyecto::where('estado', 'rechazado')->count(),
                     Proyecto::where('estado', 'en_progreso')->count(),
                     Proyecto::where('estado', 'cerrado')->count(),
+                    Proyecto::where('estado', 'completado')->count(),
                 ],
             ];
 
@@ -84,8 +85,8 @@ class StatsController extends Controller
         } catch (\Exception $e) {
             // Fallback: retornar valores por defecto para evitar dashboard en blanco
             return response()->json([
-                'proyectos_por_estado' => ['labels' => ['Pendiente', 'Aprobado', 'Rechazado', 'En Progreso', 'Cerrado'], 'data' => [0, 0, 0, 0, 0]],
-                'usuarios_por_tipo' => ['labels' => ['Aprendices', 'Instructores', 'Empresas', 'Admins'], 'data' => [0, 0, 0, 0]],
+                'proyectos_por_estado' => ['labels' => ['Pendiente', 'Aprobado', 'Rechazado', 'En Progreso', 'Cerrado', 'Completado'], 'data' => [0, 0, 0, 0, 0, 0]],
+                'usuarios_por_tipo' => ['labels' => ['Aprendices', 'Instructores', 'Empresas', 'Admins'], 'data' => [0, 0, 0, 0, 0]],
                 'proyectos_por_categoria' => [],
                 'ranking_empresas' => [],
                 'metricas_mensuales' => ['labels' => [], 'data' => []],

@@ -31,6 +31,8 @@ Route::get('/soporte', function () {
     return view('soporte');
 })->name('soporte');
 
+Route::post('/soporte/enviar', [App\Http\Controllers\SoporteController::class, 'enviar'])->name('soporte.enviar');
+
 /*
 |--------------------------------------------------------------------------
 | Rutas de autenticación
@@ -177,6 +179,7 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::get('/exportar/instructores', [ExportController::class, 'instructores'])->name('exportar.instructores')->middleware('throttle:10,1');
 
     Route::get('/audit', [AuditLogController::class, 'index'])->name('audit');
+    Route::get('/mensajes-soporte', [AdminController::class, 'mensajesSoporte'])->name('mensajes.soporte');
 
     Route::get('/backup', [BackupController::class, 'index'])->name('backup');
     Route::post('/backup/crear', [BackupController::class, 'crear'])->name('backup.crear');

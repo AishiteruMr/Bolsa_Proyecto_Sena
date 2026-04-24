@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/cards-enhanced.css') }}">
     @yield('styles')
+    <script src="{{ asset('js/pdfjs/pdf.min.js') }}"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "{{ asset('js/pdfjs/pdf.worker.min.js') }}";
+    </script>
 </head>
 <body>
 

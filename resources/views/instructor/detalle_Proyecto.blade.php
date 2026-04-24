@@ -190,7 +190,7 @@
                 </form>
             </div>
 
-            {{-- Mostrar archivo de estructura (siempre visible) --}}
+            {{-- Mostrar archivo de estructura --}}
             <div style="margin-bottom: 2rem; padding: 14px 18px; background: linear-gradient(135deg, rgba(62,180,137,0.08), rgba(62,180,137,0.04)); border-radius: 12px; border: 1px solid rgba(62,180,137,0.15); display: flex; align-items: center; justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; display: flex; align-items: center; justify-content: center;">
@@ -205,31 +205,14 @@
                         </p>
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <button type="button" onclick="togglePreview('{{ $proyecto->url_estructura_full }}')" style="padding: 8px 16px; background: rgba(62,180,137,0.1); color: #3eb489; border-radius: 10px; font-size: 0.8rem; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-eye"></i> Vista Previa
-                    </button>
-                    <a href="{{ $proyecto->url_estructura_full }}" target="_blank" style="padding: 8px 16px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border-radius: 10px; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-external-link-alt"></i> Abrir
-                    </a>
-                </div>
             </div>
             
-            {{-- Opción para ver estructura predeterminada si hay una personalizada --}}
-            @if($proyecto->url_estructura)
+            {{-- Opción para ver estructura --}}
             <div style="margin-bottom: 2rem; text-align: center;">
                 <p style="font-size: 0.8rem; color: var(--text-light);">
                     ¿Deseas comparar con la estructura estándar?
-                    <button type="button" onclick="togglePreview('{{ asset('assets/default-estructura.pdf') }}')" style="background: none; border: none; color: #3eb489; font-weight: 700; text-decoration: underline; cursor: pointer;">
-                        Ver estructura predeterminada aquí
-                    </button>
+                    <a href="{{ asset('assets/default-estructura.pdf') }}" target="_blank" style="color: #3eb489; font-weight: 700; text-decoration: underline;">Ver estructura predeterminada aquí</a>
                 </p>
-            </div>
-            @endif
-
-            {{-- Contenedor de Vista Previa --}}
-            <div id="previewContainer" style="display: none; margin-top: 1rem; border: 1px solid rgba(62,180,137,0.2); border-radius: 12px; overflow: hidden; height: 600px;">
-                <iframe id="previewIframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
             </div>
 
             <div id="stageForm" class="instructor-collapsible" style="display: none; margin-bottom: 2rem;">
@@ -263,14 +246,7 @@
                                 @if($etapa->url_documento)
                                 <div style="padding: 10px 14px; background: rgba(62,180,137,0.05); border-radius: 10px; display: inline-flex; align-items: center; gap: 12px; border: 1px solid rgba(62,180,137,0.1);">
                                     <i class="fas fa-file-alt" style="color: #3eb489; font-size: 1rem;"></i>
-                                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--text);">Documento adjunto:</span>
-                                    <button type="button" onclick="togglePreview('{{ asset('storage/' . $etapa->url_documento) }}')" style="background: none; border: none; color: #3eb489; font-size: 0.85rem; font-weight: 700; cursor: pointer; text-decoration: underline;">
-                                        Vista Previa
-                                    </button>
-                                    <span style="color: #cbd5e1;">|</span>
-                                    <a href="{{ asset('storage/' . $etapa->url_documento) }}" target="_blank" style="color: #3eb489; font-size: 0.85rem; font-weight: 700; text-decoration: none;">
-                                        Descargar
-                                    </a>
+                                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--text);">Documento adjunto</span>
                                 </div>
                                 @endif
                             </div>
@@ -444,22 +420,6 @@ function toggleEditStage(id) {
     } else {
         viewEl.style.display = 'flex';
         editEl.style.display = 'none';
-    }
-}
-
-// Función para manejar la vista previa
-function togglePreview(url) {
-    const container = document.getElementById('previewContainer');
-    const iframe = document.getElementById('previewIframe');
-    
-    if (container.style.display === 'block') {
-        container.style.display = 'none';
-        iframe.src = '';
-    } else {
-        // Cargamos la URL directamente en el iframe.
-        // Los navegadores modernos renderizan PDFs nativamente.
-        iframe.src = url;
-        container.style.display = 'block';
     }
 }
 </script>

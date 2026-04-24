@@ -11,6 +11,7 @@ use App\Models\Aprendiz;
 use App\Models\AuditLog;
 use App\Models\Empresa;
 use App\Models\Instructor;
+use App\Models\MensajeSoporte;
 use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
@@ -366,6 +367,12 @@ class AdminController extends Controller
         }
 
         return back()->with('success', 'Instructor asignado correctamente');
+    }
+
+    public function mensajesSoporte(): View
+    {
+        $mensajes = MensajeSoporte::orderByDesc('created_at')->paginate(15);
+        return view('admin.mensajes-soporte', compact('mensajes'));
     }
 
     public function revisarProyecto(int $id): View
