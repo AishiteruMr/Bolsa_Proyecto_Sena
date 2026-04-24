@@ -65,10 +65,10 @@ class BackupController extends Controller
     public function importar(Request $request)
     {
         $request->validate([
-            'archivo_backup' => 'required|file|mimes:sql,zip,txt|max:51200', // máx 50 MB
+            'archivo_backup' => 'required|file|extensions:sql,zip,txt|max:51200', // máx 50 MB
         ], [
             'archivo_backup.required' => 'Debes seleccionar un archivo.',
-            'archivo_backup.mimes'    => 'Solo se aceptan archivos .sql o .zip.',
+            'archivo_backup.extensions' => 'Solo se aceptan archivos .sql o .zip.',
             'archivo_backup.max'      => 'El archivo no debe superar los 50 MB.',
         ]);
 

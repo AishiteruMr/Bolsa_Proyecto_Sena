@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AprendizController;
@@ -181,7 +181,13 @@ Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats', [StatsContr
 
 // ✅ SEGURIDAD: Rate limiting en APIs de infinite scroll (60/min)
 Route::middleware(['auth.custom', 'throttle:60,1'])->group(function () {
-    Route::get('/api/infinite/proyectos', [InfiniteScrollController::class, 'proyectos'])->name('api.infinite.proyectos');
-    Route::get('/api/infinite/aprendices', [InfiniteScrollController::class, 'aprendices'])->name('api.infinite.aprendices');
-    Route::middleware(['auth.custom', 'rol:3'])->get('/api/infinite/proyectos-empresa', [InfiniteScrollController::class, 'proyectosEmpresa'])->name('api.infinite.proyectos-empresa');
+    Route::get('/api/infinite/proyectos', [InfiniteScrollController::class, 'proyectos'])
+        ->name('api.infinite.proyectos');
+
+    Route::get('/api/infinite/aprendices', [InfiniteScrollController::class, 'aprendices'])
+        ->name('api.infinite.aprendices');
+
+    // Para empresa (rol 3) y admin (rol 4)
+    Route::middleware('rol:3,4')->get('/api/infinite/proyectos-empresa', [InfiniteScrollController::class, 'proyectosEmpresa'])
+        ->name('api.infinite.proyectos-empresa');
 });
