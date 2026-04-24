@@ -36,7 +36,7 @@
 
 @section('content')
     <div class="glass-card" style="padding: 28px; background: white;">
-        <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 24px;">Mensajes Recibidos</h3>
+        <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 24px;">Mensajes de Quejas y Sugerencias</h3>
         
         <div class="premium-table-container">
             <table class="premium-table">
@@ -46,6 +46,7 @@
                         <th>Email</th>
                         <th>Motivo</th>
                         <th>Mensaje</th>
+                        <th>Estado</th>
                         <th>Fecha</th>
                         <th style="text-align: right;">Acciones</th>
                     </tr>
@@ -61,15 +62,31 @@
                                 </span>
                             </td>
                             <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $m->mensaje }}</td>
+                            <td>
+                                <span class="status-badge" style="padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; background: {{ $m->estado == 'respondido' ? '#d1fae5' : '#fef3c7' }}; color: {{ $m->estado == 'respondido' ? '#065f46' : '#92400e' }};">
+                                    {{ ucfirst($m->estado ?? 'Pendiente') }}
+                                </span>
+                            </td>
                             <td>{{ $m->created_at->format('d/m/Y H:i') }}</td>
                             <td style="text-align: right;">
-                                <a href="mailto:{{ $m->email }}?subject=Respuesta a su mensaje de soporte: {{ $m->motivo }}" class="btn-premium" style="padding: 6px 12px; font-size: 11px; background: var(--primary-soft); color: var(--primary); text-decoration: none; border-radius: 6px;">
-                                    <i class="fas fa-reply"></i> Responder
-                                </a>
+                                <!-- Modal trigger or inline form for manual response -->
+                                <button type="button" class="btn-premium" style="padding: 6px 12px; font-size: 11px; background: var(--primary-soft); color: var(--primary); text-decoration: none; border-radius: 6px; border: none; cursor: pointer;" onclick="toggleResponseForm('{{ $m->id }}')">
+                                    <i class="fas fa-reply"></i> {{ $m->estado == 'respondido' ? 'Ver Respuesta' : 'Responder' }}
+                                </button>
+                                
+                                <div id="form-{{ $m->id }}" style="display: none; margin-top: 10px; text-align: left;">
+                                    <form action="{{ route('admin.mensajes.soporte.responder', $m->id) }}" method="POST">
+                                        @csrf
+                                        <textarea name="respuesta" class="form-control" required placeholder="Escribe tu respuesta manual..." style="width: 100%; margin-bottom: 5px; height: 80px;">{{ $m->respuesta }}</textarea>
+                                        <button type="submit" class="btn-premium" style="border: none; cursor: pointer; padding: 6px 12px; font-size: 11px; background: var(--primary); color: white; border-radius: 6px;">
+                                            <i class="fas fa-paper-plane"></i> Enviar Respuesta
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" style="text-align:center; padding: 40px;">No hay mensajes nuevos.</td></tr>
+                        <tr><td colspan="7" style="text-align:center; padding: 40px;">No hay mensajes registrados.</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -79,4 +96,11 @@
             {{ $mensajes->links() }}
         </div>
     </div>
+
+    <script>
+        function toggleResponseForm(id) {
+            const form = document.getElementById('form-' + id);
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 @endsection

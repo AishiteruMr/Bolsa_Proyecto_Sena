@@ -12,12 +12,8 @@
     <a href="<?php echo e(route('admin.empresas')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.empresas') ? 'active' : ''); ?>">
         <i class="fas fa-building"></i> Empresas Aliadas
     </a>
-    <a href="<?php echo e(route('admin.proyectos')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.proyectos*') ? 'active' : ''); ?>">
+    <a href="<?php echo e(route('admin.proyectos')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.proyectos') ? 'active' : ''); ?>">
         <i class="fas fa-project-diagram"></i> Banco Proyectos
-    </a>
-    <span class="nav-label" style="margin-top: 16px;">Soporte</span>
-    <a href="<?php echo e(route('admin.mensajes.soporte')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.mensajes.soporte') ? 'active' : ''); ?>">
-        <i class="fas fa-envelope"></i> Mensajes Soporte
     </a>
 <?php $__env->stopSection(); ?>
 
