@@ -10,6 +10,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\InfiniteScrollController;
 use App\Http\Controllers\StatsController;
 use Illuminate\Support\Facades\Route;
 
@@ -128,6 +129,10 @@ Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instruc
 
     // RUTAS PARA IMAGEN DE PROYECTO
     Route::post('/proyectos/{id}/imagen', [InstructorController::class, 'subirImagenProyecto'])->name('proyectos.imagen')->middleware('ownership:proyecto,id');
+
+    // RUTAS PARA ESTRUCTURA DEL MAPA DE RUTA
+    Route::post('/proyectos/{id}/estructura', [InstructorController::class, 'subirEstructura'])->name('proyectos.estructura')->middleware('ownership:proyecto,id');
+    Route::delete('/proyectos/{id}/estructura', [InstructorController::class, 'eliminarEstructura'])->name('proyectos.estructura.eliminar')->middleware('ownership:proyecto,id');
 
     // RUTAS PARA EVIDENCIAS
     Route::get('/proyectos/{id}/evidencias', [InstructorController::class, 'verEvidencias'])->name('evidencias.ver')->middleware('ownership:proyecto,id');

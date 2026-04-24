@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.custom' => \App\Http\Middleware\AuthMiddleware::class,
             'rol'         => \App\Http\Middleware\RolMiddleware::class,
+            'ownership'   => \App\Http\Middleware\OwnershipMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

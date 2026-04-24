@@ -97,12 +97,13 @@ class EmpresaController extends Controller
         }
 
         $calidad = (new Proyecto([
+            'empresa_nit' => $nit,
             'titulo' => $request->titulo,
             'descripcion' => $request->descripcion,
             'categoria' => $request->categoria,
             'requisitos_especificos' => $request->requisitos,
             'habilidades_requeridas' => $request->habilidades,
-            'duracion_estimada_dias' => Carbon::parse($request->fecha_publi)->addMonths(6)->diffInDays(Carbon::parse($request->fecha_publi)),
+            'duracion_estimada_dias' => 183,
         ]))->calidadProyecto();
 
         $fallos = array_filter($calidad['detalles'], fn($d) => !$d['ok'] && !($d['opcional'] ?? false));
@@ -135,9 +136,10 @@ class EmpresaController extends Controller
             $imagenUrl = $path;
         }
 
-        // Calcular fecha de finalización (6 meses desde la fecha de publicación)
-        $fechaPubli = Carbon::parse($request->fecha_publi);
-        $fechaFinalizacion = $fechaPubli->addMonths(6);
+        // Calcular fecha de publicación automática y duración (183 días = 6 meses)
+        $fechaPublicacion = Carbon::now();
+        $duracion = 183;
+        $fechaFinalizacion = $fechaPublicacion->copy()->addDays($duracion);
 
         Proyecto::create([
             'empresa_nit' => $nit,
@@ -146,9 +148,9 @@ class EmpresaController extends Controller
             'descripcion' => $request->descripcion,
             'requisitos_especificos' => $request->requisitos,
             'habilidades_requeridas' => $request->habilidades,
-            'fecha_publicacion' => $request->fecha_publi,
-            'duracion_estimada_dias' => $fechaPubli->diffInDays($fechaFinalizacion),
-            'estado' => 'pendiente', // Cambiado a Pendiente para flujo de aprobación
+            'fecha_publicacion' => $fechaPublicacion->format('Y-m-d'),
+            'duracion_estimada_dias' => $duracion,
+            'estado' => 'pendiente',
             'imagen_url' => $imagenUrl,
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
@@ -175,7 +177,6 @@ class EmpresaController extends Controller
             'descripcion' => 'required|string|min:80|max:5000',
             'requisitos' => 'required|string|max:200',
             'habilidades' => 'required|string|max:200',
-            'fecha_publi' => 'required|date',
             'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -184,18 +185,13 @@ class EmpresaController extends Controller
             ->where('empresa_nit', $nit)
             ->firstOrFail();
 
-        // Calcular fecha de finalización (6 meses desde la fecha de publicación)
-        $fechaPubli = Carbon::parse($request->fecha_publi);
-        $fechaFinalizacion = $fechaPubli->addMonths(6);
-
+        // Mantener las fechas originales del proyecto
         $datos = [
             'titulo' => $request->titulo,
             'categoria' => $request->categoria,
             'descripcion' => $request->descripcion,
             'requisitos_especificos' => $request->requisitos,
             'habilidades_requeridas' => $request->habilidades,
-            'fecha_publicacion' => $request->fecha_publi,
-            'duracion_estimada_dias' => $fechaPubli->diffInDays($fechaFinalizacion),
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
         ];

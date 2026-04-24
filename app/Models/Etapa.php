@@ -104,6 +104,8 @@ class Etapa extends Model
             ->where('orden', '>', $this->orden)
             ->orderBy('orden')
             ->first();
+    }
+
     public function getDocumentosCountAttribute(): int
     {
         return count($this->documentos_requeridos ?? []);

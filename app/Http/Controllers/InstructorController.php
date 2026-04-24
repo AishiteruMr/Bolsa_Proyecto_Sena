@@ -423,6 +423,65 @@ class InstructorController extends Controller
         return back()->with('success', 'Documento subido correctamente.');
     }
 
+    // ✅ MÉTODO PARA SUBIR ESTRUCTURA DEL PROYECTO (MAPA DE RUTA)
+    public function subirEstructura(Request $request, int $proId): RedirectResponse
+    {
+        $usrId = session('usr_id');
+
+        $proyecto = Proyecto::where('id', $proId)
+            ->where('instructor_usuario_id', $usrId)
+            ->firstOrFail();
+
+        $request->validate([
+            'estructura' => 'required|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,zip,rar|max:20480',
+        ]);
+
+        if ($request->hasFile('estructura')) {
+            $file = $request->file('estructura');
+            $mime = $file->getMimeType();
+            $allowedMimes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'application/zip',
+                'application/x-rar-compressed',
+            ];
+
+            if (! in_array($mime, $allowedMimes)) {
+                return back()->with('error', 'Tipo de archivo no permitido.');
+            }
+
+            $extension = $file->getClientOriginalExtension();
+            $safeFilename = 'estructura_'.$proId.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
+            $path = $file->storeAs('estructuras', $safeFilename, 'public');
+
+            $proyecto->update(['url_estructura' => $path]);
+        }
+
+        return back()->with('success', 'Estructura del proyecto subida correctamente.');
+    }
+
+    // ✅ MÉTODO PARA ELIMINAR ESTRUCTURA DEL PROYECTO
+    public function eliminarEstructura(int $proId): RedirectResponse
+    {
+        $usrId = session('usr_id');
+
+        $proyecto = Proyecto::where('id', $proId)
+            ->where('instructor_usuario_id', $usrId)
+            ->firstOrFail();
+
+        if ($proyecto->url_estructura) {
+            \Storage::disk('public')->delete($proyecto->url_estructura);
+            $proyecto->update(['url_estructura' => null]);
+        }
+
+        return back()->with('success', 'Estructura eliminada correctamente.');
+    }
+
     // ✅ MÉTODO PARA SUBIR IMAGEN AL PROYECTO
     public function subirImagenProyecto(Request $request, int $proId): RedirectResponse
     {

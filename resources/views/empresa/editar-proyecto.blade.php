@@ -98,41 +98,13 @@
                 </div>
             </section>
 
-            {{-- SECCIÓN 3: CRONOGRAMA + MAPA (2 columnas) --}}
-            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px;">
-
-                {{-- CRONOGRAMA --}}
-                <section>
-                    <div class="empresa-form-section">
-                        <span class="empresa-form-step-number">3</span>
-                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Planificación Temporal</h3>
-                    </div>
-                    <div style="background: #f8fafc; padding: 24px; border-radius: 20px; border: 1.5px solid #e2e8f0; display: grid; gap: 16px;">
-                        <div class="form-group">
-                            <label style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Apertura de Convocatoria *</label>
-                            <div class="empresa-input-container" style="margin-top: 8px;">
-                                <i class="far fa-calendar-alt empresa-input-icon" style="top: 16px;"></i>
-                                <input type="date" name="fecha_publi" id="fecha_publi" value="{{ old('fecha_publi', $proyecto->fecha_publicacion) }}" required class="empresa-form-control">
-                            </div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                            <div class="form-group">
-                                <label style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase;">Duración</label>
-                                <input type="text" id="duracion" readonly class="empresa-form-control" style="background: var(--primary-soft); border-color: var(--primary-glow); font-weight: 800; color: var(--primary-hover); text-align: center; margin-top: 8px;">
-                            </div>
-                            <div class="form-group">
-                                <label style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase;">Cierre Estimado</label>
-                                <input type="text" id="fecha_finalizacion" readonly class="empresa-form-control" style="background: white; font-weight: 700; text-align: center; margin-top: 8px;">
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
+            {{-- SECCIÓN 3: MAPA --}}
+            <div style="margin-bottom: 32px;">
                 {{-- MAPA --}}
                 <section>
                     <div class="empresa-form-section" style="justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <span class="empresa-form-step-number">4</span>
+                            <span class="empresa-form-step-number">3</span>
                             <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Localización</h3>
                         </div>
                         <button type="button" id="btn-detectar" class="btn-premium" style="background: white; color: var(--primary); border: 1px solid var(--primary-soft); font-size: 11px; padding: 6px 14px; box-shadow: none;">
@@ -156,10 +128,10 @@
                 </section>
             </div>
 
-            {{-- SECCIÓN 5: IMAGEN --}}
+            {{-- SECCIÓN 4: IMAGEN --}}
             <section>
                 <div class="empresa-form-section">
-                    <span class="empresa-form-step-number">5</span>
+                    <span class="empresa-form-step-number">4</span>
                     <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Material Visual</h3>
                 </div>
 
@@ -216,23 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('btn-detectar')
         ?.addEventListener('click', () => detectarUbicacion('btn-detectar'));
-
-    // ── FECHAS ───────────────────────────────────────────────────
-    const fechaInput   = document.getElementById('fecha_publi');
-    const durInput     = document.getElementById('duracion');
-    const finInput     = document.getElementById('fecha_finalizacion');
-
-    function calcularFechas() {
-        const d = new Date(fechaInput.value);
-        if (!isNaN(d)) {
-            const fin = new Date(d);
-            fin.setMonth(fin.getMonth() + 6);
-            const dias = Math.ceil((fin - d) / 86400000);
-            if (durInput) durInput.value = dias + ' días (6 meses)';
-            if (finInput) finInput.value = fin.toLocaleDateString('es-ES', { year:'numeric', month:'short', day:'numeric' });
-        }
-    }
-    if (fechaInput) { fechaInput.addEventListener('change', calcularFechas); calcularFechas(); }
 });
 </script>
 @endsection

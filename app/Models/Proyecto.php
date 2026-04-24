@@ -25,7 +25,9 @@ class Proyecto extends Model
         'descripcion',
         'categoria',
         'estado',
+        'calidad_aprobada',
         'imagen_url',
+        'url_estructura',
         'requisitos_especificos',
         'habilidades_requeridas',
         'duracion_estimada_dias',
@@ -39,6 +41,7 @@ class Proyecto extends Model
     protected $casts = [
         'fecha_publicacion' => 'date',
         'deleted_at' => 'datetime',
+        'calidad_aprobada' => 'boolean',
     ];
 
     // ── RELACIONES ──
@@ -221,6 +224,20 @@ class Proyecto extends Model
         $fechaFinEstimada = Carbon::parse($this->fecha_publicacion)->addDays($this->duracion_estimada_dias);
 
         return now()->isAfter($fechaFinEstimada);
+    }
+
+    /**
+     * Accesor para fecha de finalización calculada automáticamente
+     */
+    public function getFechaFinalizacionAttribute(): ?string
+    {
+        if (! $this->fecha_publicacion || ! $this->duracion_estimada_dias) {
+            return null;
+        }
+
+        return Carbon::parse($this->fecha_publicacion)
+            ->addDays($this->duracion_estimada_dias)
+            ->format('Y-m-d');
     }
 
     /**

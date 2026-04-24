@@ -130,10 +130,88 @@
                     <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text);">Mapa de Ruta Académica</h3>
                     <p style="color: var(--text-light); font-size: 0.9rem; font-weight: 500;">Define las etapas y hitos del proyecto.</p>
                 </div>
-                <button type="button" onclick="document.getElementById('stageForm').classList.toggle('active')" class="btn-premium" style="width: auto; padding: 10px 24px;">
-                    <i class="fas fa-plus" style="margin-right: 8px;"></i> Nueva Etapa
-                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" onclick="document.getElementById('estructuraForm').classList.toggle('active')" class="btn-premium" style="width: auto; padding: 10px 20px; background: rgba(62,180,137,0.1); color: #3eb489;">
+                        <i class="fas fa-file-alt" style="margin-right: 8px;"></i> Subir Estructura
+                    </button>
+                    <button type="button" onclick="document.getElementById('stageForm').classList.toggle('active')" class="btn-premium" style="width: auto; padding: 10px 24px;">
+                        <i class="fas fa-plus" style="margin-right: 8px;"></i> Nueva Etapa
+                    </button>
+                </div>
             </div>
+
+            {{-- Formulario para subir estructura del proyecto --}}
+            <div id="estructuraForm" class="instructor-collapsible" style="display: none; margin-bottom: 2rem; padding: 1.5rem; background: rgba(62,180,137,0.03); border-radius: 14px; border: 1px dashed rgba(62,180,137,0.2);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="font-weight: 800; color: var(--text); font-size: 1rem; margin-bottom: 4px;">
+                            <i class="fas fa-folder-open" style="color: #3eb489; margin-right: 8px;"></i>
+                            Archivo de Estructura del Proyecto
+                        </h4>
+                        <p style="font-size: 0.8rem; color: var(--text-light); font-weight: 500;">Sube un documento con la estructura, rubricas o planificacion general.</p>
+                    </div>
+                    <button type="button" onclick="document.getElementById('estructuraForm').classList.toggle('active')" style="background: transparent; border: none; color: var(--text-light); cursor: pointer; font-size: 1.2rem;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                @if($proyecto->url_estructura)
+                <div style="margin-bottom: 1rem; padding: 12px 16px; background: rgba(62,180,137,0.08); border-radius: 10px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-file-pdf" style="color: #ef4444; font-size: 1.2rem;"></i>
+                        <div>
+                            <p style="font-weight: 700; color: var(--text); font-size: 0.85rem;">Archivo actual</p>
+                            <a href="{{ asset('storage/' . $proyecto->url_estructura) }}" target="_blank" style="color: #3eb489; font-size: 0.8rem; font-weight: 600; text-decoration: none;">Ver archivo</a>
+                        </div>
+                    </div>
+                    <form action="{{ route('instructor.proyectos.estructura.eliminar', $proyecto->id) }}" method="POST" id="eliminar-estructura-form" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" onclick="openConfirm('Eliminar archivo', 'Este archivo sera eliminado permanentemente.', () => document.getElementById('eliminar-estructura-form').submit())" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(239,68,68,0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
+                @endif
+                <form action="{{ route('instructor.proyectos.estructura', $proyecto->id) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+                        <div>
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+                                <i class="fas fa-upload" style="margin-right: 6px; color: #3eb489;"></i>
+                                Seleccionar archivo
+                            </label>
+                            <input type="file" name="estructura" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar" class="aprendiz-input-control" style="padding: 10px;">
+                            <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 4px;">Formatos: PDF, Word, Excel, PowerPoint, ZIP, RAR | Max: 20MB</p>
+                        </div>
+                        <button type="submit" class="btn-premium" style="width: auto; padding: 10px 24px;">
+                            <i class="fas fa-cloud-upload-alt" style="margin-right: 6px;"></i>Subir
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Mostrar archivo de estructura si existe --}}
+            @if($proyecto->url_estructura)
+            <div style="margin-bottom: 2rem; padding: 14px 18px; background: linear-gradient(135deg, rgba(62,180,137,0.08), rgba(62,180,137,0.04)); border-radius: 12px; border: 1px solid rgba(62,180,137,0.15); display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-file-alt" style="font-size: 1rem;"></i>
+                    </div>
+                    <div>
+                        <p style="font-weight: 800; color: var(--text); font-size: 0.9rem;">Estructura del Proyecto</p>
+                        <p style="font-size: 0.75rem; color: var(--text-light); font-weight: 500;">Documento de planificacion/rubricas</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <a href="{{ asset('storage/' . $proyecto->url_estructura) }}" target="_blank" style="padding: 8px 16px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border-radius: 10px; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-eye"></i> Ver
+                    </a>
+                    <a href="{{ asset('storage/' . $proyecto->url_estructura) }}" download style="padding: 8px 16px; background: rgba(62,180,137,0.1); color: #3eb489; border-radius: 10px; font-size: 0.8rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-download"></i> Descargar
+                    </a>
+                </div>
+            </div>
+            @endif
 
             <div id="stageForm" class="instructor-collapsible" style="display: none; margin-bottom: 2rem;">
                 <form action="{{ route('instructor.etapas.crear', $proyecto->id) }}" method="POST">
