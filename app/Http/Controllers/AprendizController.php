@@ -125,6 +125,11 @@ class AprendizController extends Controller
         return back()->with('success', 'Postulacion enviada. Revisa tu correo para la confirmacion.');
     }
 
+    public function postular(Request $request, int $id): RedirectResponse
+    {
+        return $this->postulacion($request, $id);
+    }
+
     public function misPostulaciones(): View|RedirectResponse
     {
         $usrId = session('usr_id');
@@ -280,7 +285,7 @@ class AprendizController extends Controller
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
             ];
 
-            $allowedExts = array_unique(array_merge(...array_values($allowedMimes)));
+            $allowedExts = array_unique(array_merge(...array_map(fn($v) => (array) $v, array_values($allowedMimes))));
             if (!in_array($extension, $allowedExts)) {
                 return back()->with('error', 'Extension de archivo no permitida: .'.$extension);
             }

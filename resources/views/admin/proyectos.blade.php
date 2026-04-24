@@ -128,28 +128,33 @@
 
                 <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
                     
+                    @php $hasCalidad = !empty($p->calidad_aprobada); @endphp
                     <div style="margin-bottom: 24px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <label style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Mentor Asignado</label>
-                            @if($p->instructor_nombre)
+                            @if(!$hasCalidad)
+                                <span style="font-size: 10px; color: #dc2626; font-weight: 700; background: #fef2f2; padding: 2px 8px; border-radius: 10px;">Pendiente Validación</span>
+                            @elseif($p->instructor_nombre)
                                 <span style="font-size: 10px; color: var(--primary); font-weight: 700; background: var(--primary-soft); padding: 2px 8px; border-radius: 10px;">Asignado</span>
                             @else
-                                <span style="font-size: 10px; color: #f97316; font-weight: 700; background: #fff7ed; padding: 2px 8px; border-radius: 10px;">Pendiente</span>
+                                <span style="font-size: 10px; color: #f97316; font-weight: 700; background: #fff7ed; padding: 2px 8px; border-radius: 10px;">Sin Asignar</span>
                             @endif
                         </div>
                         
                         <form action="{{ route('admin.proyectos.asignar', $p->id) }}" method="POST">
                             @csrf
                             <div style="display: flex; gap: 8px;">
-                                <select name="instructor_usuario_id" style="flex: 1; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; font-weight: 600; color: #334155; background: #f8fafc; outline: none; transition: border-color 0.2s; cursor: pointer;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e2e8f0'" required>
-                                    <option value="" disabled selected>Seleccionar Instructor...</option>
-                                    @foreach($instructores as $ins)
-                                        <option value="{{ $ins->usuario->id ?? '' }}" {{ $p->instructor_usuario_id == ($ins->usuario->id ?? '') ? 'selected' : '' }}>
-                                            {{ $ins->nombres }} {{ $ins->apellidos }}
-                                        </option>
-                                    @endforeach
+                                <select name="instructor_usuario_id" style="flex: 1; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; font-weight: 600; color: #334155; background: #f8fafc; outline: none; transition: border-color 0.2s; cursor: pointer;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e2e8f0'" required {{ !$hasCalidad ? 'disabled' : '' }}>
+                                    <option value="" disabled selected>{{ $hasCalidad ? 'Seleccionar Instructor...' : 'Validar calidad primero' }}</option>
+                                    @if($hasCalidad)
+                                        @foreach($instructores as $ins)
+                                            <option value="{{ $ins->usuario->id ?? '' }}" {{ $p->instructor_usuario_id == ($ins->usuario->id ?? '') ? 'selected' : '' }}>
+                                                {{ $ins->nombres }} {{ $ins->apellidos }}
+                                            </option>
+                                        @endforeach
+                                    @endif
                                 </select>
-                                <button type="submit" style="width: 42px; border: 1px solid #e2e8f0; border-radius: 10px; background: white; color: var(--primary); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='var(--primary-soft)'; this.style.borderColor='var(--primary-soft)';" onmouseout="this.style.background='white'; this.style.borderColor='#e2e8f0';" title="Actualizar">
+                                <button type="submit" style="width: 42px; border: 1px solid #e2e8f0; border-radius: 10px; background: white; color: var(--primary); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.02); {{ !$hasCalidad ? 'opacity: 0.5; cursor: not-allowed;' : '' }}" {{ !$hasCalidad ? 'disabled' : '' }} title="{{ $hasCalidad ? 'Actualizar' : 'Valida la calidad del proyecto primero' }}">
                                     <i class="fas fa-save"></i>
                                 </button>
                             </div>

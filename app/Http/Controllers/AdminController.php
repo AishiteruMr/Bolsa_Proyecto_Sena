@@ -225,6 +225,7 @@ class AdminController extends Controller
                 'titulo' => $proyecto->titulo,
                 'empresa_nit' => $proyecto->empresa_nit,
                 'instructor_usuario_id' => $proyecto->instructor_usuario_id,
+                'calidad_aprobada' => (bool) $proyecto->calidad_aprobada,
                 'estado' => $proyecto->estado,
                 'categoria' => $proyecto->categoria,
                 'fecha_publicacion' => $proyecto->fecha_publicacion,
@@ -267,6 +268,7 @@ class AdminController extends Controller
             $proyecto->update([
                 'estado' => $request->estado,
                 'instructor_usuario_id' => null,
+                'calidad_aprobada' => false,
             ]);
             Cache::forget('admin_stats');
             Cache::forget('admin_proyectos_recientes');
@@ -298,7 +300,10 @@ class AdminController extends Controller
                 }
             }
         } else {
-            $proyecto->update(['estado' => $request->estado]);
+            $proyecto->update([
+                'estado' => $request->estado,
+                'calidad_aprobada' => $request->estado === 'aprobado' ? true : $proyecto->calidad_aprobada,
+            ]);
             Cache::forget('admin_stats');
             Cache::forget('admin_proyectos_recientes');
             $proyectoActual = $proyecto->load('empresa');

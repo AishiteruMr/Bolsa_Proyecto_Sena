@@ -120,45 +120,13 @@
                     </div>
                 </div>
 
-                <!-- Steps 3 & 4 -->
-                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px;">
-                    
-                    <!-- Step 3: Planificación -->
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
+                <!-- Step 3: Localización -->
+                <div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
+                        <div style="display: flex; align-items: center; gap: 16px;">
                             <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">3</span>
-                            <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Planificación Temporal</h3>
+                            <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Localización</h3>
                         </div>
-                        
-                        <div style="background: #f8fafc; padding: 28px; border-radius: 20px; border: 1.5px solid #e2e8f0; display: grid; gap: 20px;">
-                            <div>
-                                <label style="display: block; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Fecha de Apertura</label>
-                                <div style="position: relative;">
-                                    <i class="far fa-calendar-alt" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
-                                    <input type="date" name="fecha_publi" id="fecha_publi" value="{{ old('fecha_publi', date('Y-m-d')) }}" required style="width: 100%; padding: 12px 16px 12px 48px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; background: white;">
-                                </div>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                <div>
-                                    <label style="display: block; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Duración</label>
-                                    <input type="text" id="duracion" readonly style="width: 100%; padding: 12px; border: 1px solid rgba(62,180,137,0.2); border-radius: 12px; font-size: 14px; font-weight: 700; color: #3eb489; background: rgba(62,180,137,0.1); text-align: center;">
-                                    <input type="hidden" name="duracion" id="duracion_hidden">
-                                </div>
-                                <div>
-                                    <label style="display: block; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Cierre</label>
-                                    <input type="text" id="fecha_finalizacion" readonly style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 700; color: var(--text); background: white; text-align: center;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Step 4: Localización -->
-                    <div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">4</span>
-                                <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Localización</h3>
-                            </div>
                             <button type="button" id="btn-detectar" style="display: inline-flex; align-items: center; gap: 8px; background: white; color: #3eb489; border: 1px solid rgba(62,180,137,0.2); padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;">
                                 <i class="fas fa-location-arrow"></i> GPS
                             </button>
@@ -175,10 +143,10 @@
                     </div>
                 </div>
 
-                <!-- Step 5: Material Visual -->
+                <!-- Step 4: Material Visual -->
                 <div>
                     <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
-                        <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">5</span>
+                        <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">4</span>
                         <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Material de Referencia</h3>
                     </div>
 
@@ -230,24 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
         onUpdate: function() {}
     };
     initEditorMap('map', config);
-
-    // Fecha calculations
-    const fechaInput = document.getElementById('fecha_publi');
-    const durInput = document.getElementById('duracion');
-    const finInput = document.getElementById('fecha_finalizacion');
-
-    function calcularFechas() {
-        const d = new Date(fechaInput.value);
-        if (!isNaN(d)) {
-            const fin = new Date(d);
-            fin.setMonth(fin.getMonth() + 6);
-            const dias = Math.ceil((fin - d) / 86400000);
-            if (durInput) durInput.value = dias + ' días';
-            document.getElementById('duracion_hidden').value = dias;
-            if (finInput) finInput.value = fin.toLocaleDateString('es-ES', { year:'numeric', month:'short', day:'numeric' });
-        }
-    }
-    if (fechaInput) { fechaInput.addEventListener('change', calcularFechas); calcularFechas(); }
 
     // Image preview
     const input = document.getElementById('imagen-input');

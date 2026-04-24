@@ -94,6 +94,5 @@ class Kernel extends HttpKernel
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
         'validate.upload' => ValidateFileUpload::class,
-        'ownership' => OwnershipMiddleware::class,
     ];
 }

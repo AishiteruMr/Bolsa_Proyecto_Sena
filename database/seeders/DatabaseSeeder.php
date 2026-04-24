@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
         $instructorRoleId = DB::table('roles')->where('nombre', 'instructor')->value('id');
         $apprenticeRoleId = DB::table('roles')->where('nombre', 'aprendiz')->value('id');
 
-        // 2. Administrador
-        $adminUserId = DB::table('usuarios')->where('correo', 'admin@gmail.com')->value('id');
+// 2. Administrador
+        $adminUserId = DB::table('usuarios')->where('correo', 'geniszully@gmail.com')->value('id');
         if (!$adminUserId) {
             $adminUserId = DB::table('usuarios')->insertGetId([
                 'numero_documento' => 1043277456,
@@ -28,15 +28,22 @@ class DatabaseSeeder extends Seeder
                 'rol_id'           => $adminRoleId,
                 'email_verified_at' => now(),
                 'created_at'       => now(),
-                'updated_at'       => now(),
+                'updated_at'      => now(),
             ]);
         }
-        DB::table('administradores')->updateOrInsert(
-            ['usuario_id' => $adminUserId],
-            ['nombres' => 'Admin', 'apellidos' => 'SENA', 'activo' => true, 'created_at' => now(), 'updated_at' => now()]
-        );
+        $admin = DB::table('administradores')->where('usuario_id', $adminUserId)->first();
+        if (!$admin) {
+            DB::table('administradores')->insert([
+                'usuario_id' => $adminUserId,
+                'nombres' => 'Admin',
+                'apellidos' => 'SENA',
+                'activo' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
-        // 3. Empresa
+// 3. Empresa
         $companyUserId = DB::table('usuarios')->where('correo', 'camilopineda182@gmail.com')->value('id');
         if (!$companyUserId) {
             $companyUserId = DB::table('usuarios')->insertGetId([
@@ -46,12 +53,13 @@ class DatabaseSeeder extends Seeder
                 'rol_id'           => $companyRoleId,
                 'email_verified_at' => now(),
                 'created_at'       => now(),
-                'updated_at'       => now(),
+                'updated_at'      => now(),
             ]);
         }
-        DB::table('empresas')->updateOrInsert(
-            ['nit' => 12345475784],
-            [
+        $empresa = DB::table('empresas')->where('nit', 12345475784)->first();
+        if (!$empresa) {
+            DB::table('empresas')->insert([
+                'nit'            => 12345475784,
                 'usuario_id'      => $companyUserId,
                 'nombre'          => 'Cristian Padilla',
                 'representante'   => 'Representante Legal',
@@ -59,10 +67,10 @@ class DatabaseSeeder extends Seeder
                 'activo'          => true,
                 'created_at'      => now(),
                 'updated_at'      => now(),
-            ]
-        );
+            ]);
+        }
 
-        // 4. Instructor
+// 4. Instructor
         $instructorUserId = DB::table('usuarios')->where('correo', 'sherelynrocha939@gmail.com')->value('id');
         if (!$instructorUserId) {
             $instructorUserId = DB::table('usuarios')->insertGetId([
@@ -72,23 +80,24 @@ class DatabaseSeeder extends Seeder
                 'rol_id'           => $instructorRoleId,
                 'email_verified_at' => now(),
                 'created_at'       => now(),
-                'updated_at'       => now(),
+                'updated_at'      => now(),
             ]);
         }
-        DB::table('instructores')->updateOrInsert(
-            ['usuario_id' => $instructorUserId],
-            [
+        $instructor = DB::table('instructores')->where('usuario_id', $instructorUserId)->first();
+        if (!$instructor) {
+            DB::table('instructores')->insert([
+                'usuario_id'    => $instructorUserId,
                 'nombres'        => 'Sherelyn',
                 'apellidos'      => 'Rocha',
                 'especialidad'   => 'Desarrollo de Software',
                 'activo'         => true,
                 'disponibilidad' => 'disponible',
                 'created_at'     => now(),
-                'updated_at'     => now(),
-            ]
-        );
+                'updated_at'      => now(),
+            ]);
+        }
 
-        // 5. Aprendiz
+// 5. Aprendiz
         $apprenticeUserId = DB::table('usuarios')->where('correo', 'liyen_sanjuan@soy.sena.edu.co')->value('id');
         if (!$apprenticeUserId) {
             $apprenticeUserId = DB::table('usuarios')->insertGetId([
@@ -98,20 +107,21 @@ class DatabaseSeeder extends Seeder
                 'rol_id'           => $apprenticeRoleId,
                 'email_verified_at' => now(),
                 'created_at'       => now(),
-                'updated_at'       => now(),
+                'updated_at'      => now(),
             ]);
         }
-        DB::table('aprendices')->updateOrInsert(
-            ['usuario_id' => $apprenticeUserId],
-            [
+        $aprendiz = DB::table('aprendices')->where('usuario_id', $apprenticeUserId)->first();
+        if (!$aprendiz) {
+            DB::table('aprendices')->insert([
+                'usuario_id'        => $apprenticeUserId,
                 'nombres'            => 'Liyen',
                 'apellidos'          => 'San Juan',
                 'programa_formacion' => 'Análisis y Desarrollo de Software',
                 'activo'             => true,
                 'created_at'         => now(),
-                'updated_at'         => now(),
-            ]
-        );
+                'updated_at'          => now(),
+            ]);
+        }
 
         // 6. Proyectos de ejemplo
         $this->call(ProjectSeeder::class);
