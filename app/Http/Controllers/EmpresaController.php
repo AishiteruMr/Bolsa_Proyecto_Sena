@@ -96,14 +96,18 @@ class EmpresaController extends Controller
             return back()->with('error', 'Tu empresa debe estar activa para crear proyectos.')->withInput();
         }
 
-        $calidad = (new Proyecto([
+        $proyectoTemp = new Proyecto([
             'titulo' => $request->titulo,
             'descripcion' => $request->descripcion,
             'categoria' => $request->categoria,
             'requisitos_especificos' => $request->requisitos,
             'habilidades_requeridas' => $request->habilidades,
-            'duracion_estimada_dias' => Carbon::parse($request->fecha_publi)->addMonths(6)->diffInDays(Carbon::parse($request->fecha_publi)),
-        ]))->calidadProyecto();
+            'duracion_estimada_dias' => (int) $request->duracion,
+            'empresa_nit' => $empresa->nit,
+        ]);
+        $proyectoTemp->setRelation('empresa', $empresa);
+
+        $calidad = $proyectoTemp->calidadProyecto();
 
         $fallos = array_filter($calidad['detalles'], fn($d) => !$d['ok'] && !($d['opcional'] ?? false));
         if (count($fallos) > 0) {
@@ -137,7 +141,7 @@ class EmpresaController extends Controller
 
         // Calcular fecha de finalización (6 meses desde la fecha de publicación)
         $fechaPubli = Carbon::parse($request->fecha_publi);
-        $fechaFinalizacion = $fechaPubli->addMonths(6);
+        $fechaFinalizacion = $fechaPubli->copy()->addMonths(6);
 
         Proyecto::create([
             'empresa_nit' => $nit,
@@ -147,7 +151,7 @@ class EmpresaController extends Controller
             'requisitos_especificos' => $request->requisitos,
             'habilidades_requeridas' => $request->habilidades,
             'fecha_publicacion' => $request->fecha_publi,
-            'duracion_estimada_dias' => $fechaPubli->diffInDays($fechaFinalizacion),
+            'duracion_estimada_dias' => $fechaPubli->copy()->diffInDays($fechaFinalizacion),
             'estado' => 'pendiente', // Cambiado a Pendiente para flujo de aprobación
             'imagen_url' => $imagenUrl,
             'latitud' => $request->latitud,
@@ -186,7 +190,7 @@ class EmpresaController extends Controller
 
         // Calcular fecha de finalización (6 meses desde la fecha de publicación)
         $fechaPubli = Carbon::parse($request->fecha_publi);
-        $fechaFinalizacion = $fechaPubli->addMonths(6);
+        $fechaFinalizacion = $fechaPubli->copy()->addMonths(6);
 
         $datos = [
             'titulo' => $request->titulo,
@@ -195,7 +199,7 @@ class EmpresaController extends Controller
             'requisitos_especificos' => $request->requisitos,
             'habilidades_requeridas' => $request->habilidades,
             'fecha_publicacion' => $request->fecha_publi,
-            'duracion_estimada_dias' => $fechaPubli->diffInDays($fechaFinalizacion),
+            'duracion_estimada_dias' => $fechaPubli->copy()->diffInDays($fechaFinalizacion),
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
         ];
