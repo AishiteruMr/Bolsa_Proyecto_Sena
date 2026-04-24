@@ -142,6 +142,7 @@
                                 <div>
                                     <label style="display: block; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Duración</label>
                                     <input type="text" id="duracion" readonly style="width: 100%; padding: 12px; border: 1px solid rgba(62,180,137,0.2); border-radius: 12px; font-size: 14px; font-weight: 700; color: #3eb489; background: rgba(62,180,137,0.1); text-align: center;">
+                                    <input type="hidden" name="duracion" id="duracion_hidden">
                                 </div>
                                 <div>
                                     <label style="display: block; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Cierre</label>
@@ -242,6 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fin.setMonth(fin.getMonth() + 6);
             const dias = Math.ceil((fin - d) / 86400000);
             if (durInput) durInput.value = dias + ' días';
+            document.getElementById('duracion_hidden').value = dias;
             if (finInput) finInput.value = fin.toLocaleDateString('es-ES', { year:'numeric', month:'short', day:'numeric' });
         }
     }
