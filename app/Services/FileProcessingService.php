@@ -69,7 +69,7 @@ class FileProcessingService
         $output = [];
         $returnVar = 0;
         
-        exec("$scanPath --move=quarantine \"$path\" 2>&1", $output, $returnVar);
+        exec(escapeshellarg($scanPath) . ' --move=quarantine ' . escapeshellarg($path) . ' 2>&1', $output, $returnVar);
         
         if ($returnVar === 0) {
             return [true, 'Archivo limpio'];

@@ -633,7 +633,7 @@
             <span><strong>¡Atención!</strong> La importación <strong>reemplazará</strong> los datos actuales de la base de datos con los del archivo seleccionado. Esta acción no se puede deshacer.</span>
         </div>
 
-        <form action="{{ route('admin.backup.importar') }}" method="POST" enctype="multipart/form-data" id="formImportar">
+        <form action="{{ url('/admin/backup/importar') }}" method="POST" enctype="multipart/form-data" id="formImportar">
             @csrf
 
             <div class="file-drop-zone" id="dropZone" onclick="document.getElementById('archivoBackup').click()">

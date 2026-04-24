@@ -65,10 +65,10 @@ class BackupController extends Controller
     public function importar(Request $request)
     {
         $request->validate([
-            'archivo_backup' => 'required|file|mimes:sql,zip,txt|max:51200', // máx 50 MB
+            'archivo_backup' => 'required|file|extensions:sql,zip,txt|max:51200', // máx 50 MB
         ], [
             'archivo_backup.required' => 'Debes seleccionar un archivo.',
-            'archivo_backup.mimes'    => 'Solo se aceptan archivos .sql o .zip.',
+            'archivo_backup.extensions' => 'Solo se aceptan archivos .sql o .zip.',
             'archivo_backup.max'      => 'El archivo no debe superar los 50 MB.',
         ]);
 
@@ -133,6 +133,14 @@ class BackupController extends Controller
     // ─────────────────────────────────────────────
     public function descargar(string $nombre)
     {
+        // Sanitizar para prevenir path traversal
+        $nombre = basename($nombre);
+        $nombre = preg_replace('/[^a-zA-Z0-9_\-]/', '', $nombre);
+        
+        if (empty($nombre)) {
+            return back()->with('error', 'Nombre de archivo inválido.');
+        }
+
         $rutaZip    = storage_path("app/backups/{$nombre}.zip");
         $rutaFolder = storage_path("app/backups/{$nombre}_folder");
 
@@ -157,6 +165,14 @@ class BackupController extends Controller
     // ─────────────────────────────────────────────
     public function eliminar(string $nombre)
     {
+        // Sanitizar para prevenir path traversal
+        $nombre = basename($nombre);
+        $nombre = preg_replace('/[^a-zA-Z0-9_\-]/', '', $nombre);
+        
+        if (empty($nombre)) {
+            return back()->with('error', 'Nombre de archivo inválido.');
+        }
+
         $rutaZip    = storage_path("app/backups/{$nombre}.zip");
         $rutaFolder = storage_path("app/backups/{$nombre}_folder");
         $eliminado  = false;
@@ -208,6 +224,8 @@ class BackupController extends Controller
 
         foreach ($tablas as $tabla) {
             $tableName   = $tabla->{array_keys((array) $tabla)[0]};
+            // Sanitizar nombre de tabla para prevenir SQL injection
+            $tableName   = preg_replace('/[^a-zA-Z0-9_]/', '', $tableName);
             $createTable = DB::select("SHOW CREATE TABLE `{$tableName}`")[0]->{"Create Table"};
 
             $sql .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
@@ -215,7 +233,10 @@ class BackupController extends Controller
 
             $registros = DB::table($tableName)->get();
             if ($registros->isNotEmpty()) {
-                $campos  = array_keys((array) $registros->first());
+                $campos  = array_map(
+                    fn($campo) => preg_replace('/[^a-zA-Z0-9_]/', '', $campo),
+                    array_keys((array) $registros->first())
+                );
                 $valores = [];
 
                 foreach ($registros as $registro) {
@@ -269,10 +290,10 @@ class BackupController extends Controller
 
     /**
      * Ejecuta un string SQL en la base de datos, sentencia por sentencia.
+     * Solo permite sentencias seguras para restauración de backups.
      */
     private function ejecutarSql(string $sql): void
     {
-        // Dividir por ";" pero respetando las cadenas
         $sentencias = array_filter(
             array_map('trim', $this->dividirSql($sql)),
             fn($s) => !empty($s) && !str_starts_with($s, '--')
@@ -280,9 +301,39 @@ class BackupController extends Controller
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
         foreach ($sentencias as $sentencia) {
+            if (!$this->esSentenciaSegura($sentencia)) {
+                throw new \Exception('Sentencia SQL no permitida detectada: ' . substr($sentencia, 0, 100));
+            }
             DB::unprepared($sentencia);
         }
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    }
+
+    /**
+     * Valida que la sentencia SQL sea segura para ejecutar.
+     * Solo permite sentencias generadas por el sistema de backup.
+     */
+    private function esSentenciaSegura(string $sentencia): bool
+    {
+        $sentenciaUpper = strtoupper(trim($sentencia));
+        
+        $patronesPermitidos = [
+            '/^SET\s+FOREIGN_KEY_CHECKS\s*=/i',
+            '/^DROP\s+TABLE\s+(IF\s+EXISTS\s+)?`?[a-zA-Z0-9_]+`?\s*/i',
+            '/^CREATE\s+TABLE\s+`?[a-zA-Z0-9_]+`?\s*\(/i',
+            '/^INSERT\s+INTO\s+`?[a-zA-Z0-9_]+`?\s*\(/i',
+            '/^LOCK\s+TABLES\s+/i',
+            '/^UNLOCK\s+TABLES/i',
+            '/^--\s/i',
+        ];
+        
+        foreach ($patronesPermitidos as $patron) {
+            if (preg_match($patron, $sentenciaUpper)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     /**
