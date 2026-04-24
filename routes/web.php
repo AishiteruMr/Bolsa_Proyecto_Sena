@@ -94,14 +94,14 @@ Route::middleware(['auth.custom', 'rol:3'])->prefix('empresa')->name('empresa.')
     Route::get('/proyectos', [EmpresaController::class, 'proyectos'])->name('proyectos');
     Route::get('/proyectos/crear', [EmpresaController::class, 'crearProyecto'])->name('proyectos.crear');
     Route::post('/proyectos', [EmpresaController::class, 'guardarProyecto'])->name('proyectos.store');
-    Route::get('/proyectos/{id}/editar', [EmpresaController::class, 'editarProyecto'])->name('proyectos.edit')->middleware('ownership:proyecto,id');
-    Route::put('/proyectos/{id}', [EmpresaController::class, 'actualizarProyecto'])->name('proyectos.update')->middleware('ownership:proyecto,id');
-    Route::delete('/proyectos/{id}', [EmpresaController::class, 'eliminarProyecto'])->name('proyectos.destroy')->middleware('ownership:proyecto,id');
-    Route::get('/proyectos/{id}/postulantes', [EmpresaController::class, 'verPostulantes'])->name('proyectos.postulantes')->middleware('ownership:proyecto,id');
-    Route::get('/proyectos/{id}/participantes', [EmpresaController::class, 'verParticipantes'])->name('proyectos.participantes')->middleware('ownership:proyecto,id');
-    Route::get('/proyectos/{id}/reporte', [EmpresaController::class, 'verReporte'])->name('proyectos.reporte')->middleware('ownership:proyecto,id');
+    Route::get('/proyectos/{id}/editar', [EmpresaController::class, 'editarProyecto'])->name('proyectos.edit');
+    Route::put('/proyectos/{id}', [EmpresaController::class, 'actualizarProyecto'])->name('proyectos.update');
+    Route::delete('/proyectos/{id}', [EmpresaController::class, 'eliminarProyecto'])->name('proyectos.destroy');
+    Route::get('/proyectos/{id}/postulantes', [EmpresaController::class, 'verPostulantes'])->name('proyectos.postulantes');
+    Route::get('/proyectos/{id}/participantes', [EmpresaController::class, 'verParticipantes'])->name('proyectos.participantes');
+    Route::get('/proyectos/{id}/reporte', [EmpresaController::class, 'verReporte'])->name('proyectos.reporte');
     // ✅ SEGURIDAD: Rate limiting en cambio de estado (máx 30/minuto)
-    Route::post('/postulaciones/{id}/estado', [EmpresaController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado')->middleware('throttle:30,1')->middleware('ownership:postulacion,id');
+    Route::post('/postulaciones/{id}/estado', [EmpresaController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado')->middleware('throttle:30,1');
     Route::get('/perfil', [EmpresaController::class, 'perfil'])->name('perfil');
     Route::put('/perfil', [EmpresaController::class, 'actualizarPerfil'])->name('perfil.update');
 });
@@ -115,29 +115,29 @@ Route::middleware(['auth.custom', 'rol:3'])->prefix('empresa')->name('empresa.')
 Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instructor.')->group(function () {
     Route::get('/dashboard', [InstructorController::class, 'dashboard'])->name('dashboard');
     Route::get('/proyectos', [InstructorController::class, 'proyectos'])->name('proyectos');
-    Route::get('/proyectos/{id}', [InstructorController::class, 'detalleProyecto'])->name('proyecto.detalle')->middleware('ownership:proyecto,id');
+    Route::get('/proyectos/{id}', [InstructorController::class, 'detalleProyecto'])->name('proyecto.detalle');
     Route::get('/historial', [InstructorController::class, 'historial'])->name('historial');
-    Route::get('/proyectos/{id}/reporte', [InstructorController::class, 'reporteSeguimiento'])->name('reporte')->middleware('ownership:proyecto,id');
+    Route::get('/proyectos/{id}/reporte', [InstructorController::class, 'reporteSeguimiento'])->name('reporte');
     // ✅ SEGURIDAD: Rate limiting en cambio de estado (máx 30/minuto)
-    Route::post('/postulaciones/{id}/estado', [InstructorController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado')->middleware('throttle:30,1')->middleware('ownership:postulacion,id');
+    Route::post('/postulaciones/{id}/estado', [InstructorController::class, 'cambiarEstadoPostulacion'])->name('postulaciones.estado')->middleware('throttle:30,1');
 
     // RUTAS PARA ETAPAS
-    Route::post('/proyectos/{id}/etapas', [InstructorController::class, 'crearEtapa'])->name('etapas.crear')->middleware('ownership:proyecto,id');
-    Route::put('/etapas/{id}', [InstructorController::class, 'editarEtapa'])->name('etapas.editar')->middleware('ownership:etapa,id');
-    Route::delete('/etapas/{id}', [InstructorController::class, 'eliminarEtapa'])->name('etapas.eliminar')->middleware('ownership:etapa,id');
-    Route::post('/etapas/{id}/documento', [InstructorController::class, 'subirDocumentoEtapa'])->name('etapas.documento')->middleware('ownership:etapa,id');
+    Route::post('/proyectos/{id}/etapas', [InstructorController::class, 'crearEtapa'])->name('etapas.crear');
+    Route::put('/etapas/{id}', [InstructorController::class, 'editarEtapa'])->name('etapas.editar');
+    Route::delete('/etapas/{id}', [InstructorController::class, 'eliminarEtapa'])->name('etapas.eliminar');
+    Route::post('/etapas/{id}/documento', [InstructorController::class, 'subirDocumentoEtapa'])->name('etapas.documento');
 
     // RUTAS PARA IMAGEN DE PROYECTO
-    Route::post('/proyectos/{id}/imagen', [InstructorController::class, 'subirImagenProyecto'])->name('proyectos.imagen')->middleware('ownership:proyecto,id');
+    Route::post('/proyectos/{id}/imagen', [InstructorController::class, 'subirImagenProyecto'])->name('proyectos.imagen');
 
     // RUTAS PARA ESTRUCTURA DEL MAPA DE RUTA
     Route::post('/proyectos/{id}/estructura', [InstructorController::class, 'subirEstructura'])->name('proyectos.estructura')->middleware('ownership:proyecto,id');
     Route::delete('/proyectos/{id}/estructura', [InstructorController::class, 'eliminarEstructura'])->name('proyectos.estructura.eliminar')->middleware('ownership:proyecto,id');
 
     // RUTAS PARA EVIDENCIAS
-    Route::get('/proyectos/{id}/evidencias', [InstructorController::class, 'verEvidencias'])->name('evidencias.ver')->middleware('ownership:proyecto,id');
+    Route::get('/proyectos/{id}/evidencias', [InstructorController::class, 'verEvidencias'])->name('evidencias.ver');
     // ✅ SEGURIDAD: Rate limiting en calificación (máx 20/minuto)
-    Route::put('/evidencias/{id}', [InstructorController::class, 'calificarEvidencia'])->name('evidencias.calificar')->middleware('throttle:20,1')->middleware('ownership:evidencia,id');
+    Route::put('/evidencias/{id}', [InstructorController::class, 'calificarEvidencia'])->name('evidencias.calificar')->middleware('throttle:20,1');
 
     Route::get('/aprendices', [InstructorController::class, 'aprendices'])->name('aprendices');
     Route::get('/perfil', [InstructorController::class, 'perfil'])->name('perfil');
