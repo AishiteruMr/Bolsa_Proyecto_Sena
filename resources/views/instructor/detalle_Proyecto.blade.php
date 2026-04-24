@@ -456,8 +456,9 @@ function togglePreview(url) {
         container.style.display = 'none';
         iframe.src = '';
     } else {
-        // Usamos Google Docs Viewer para la previsualización
-        iframe.src = 'https://docs.google.com/viewer?url=' + encodeURIComponent(url) + '&embedded=true';
+        // Cargamos la URL directamente en el iframe.
+        // Los navegadores modernos renderizan PDFs nativamente.
+        iframe.src = url;
         container.style.display = 'block';
     }
 }

@@ -221,7 +221,9 @@
             <div style="margin-bottom: 2rem; text-align: center;">
                 <p style="font-size: 0.8rem; color: var(--text-light);">
                     ¿Deseas comparar con la estructura estándar?
-                    <a href="<?php echo e(asset('assets/default-estructura.pdf')); ?>" target="_blank" style="color: #3eb489; font-weight: 700; text-decoration: underline;">Ver estructura predeterminada aquí</a>
+                    <button type="button" onclick="togglePreview('<?php echo e(asset('assets/default-estructura.pdf')); ?>')" style="background: none; border: none; color: #3eb489; font-weight: 700; text-decoration: underline; cursor: pointer;">
+                        Ver estructura predeterminada aquí
+                    </button>
                 </p>
             </div>
             <?php endif; ?>
@@ -459,8 +461,9 @@ function togglePreview(url) {
         container.style.display = 'none';
         iframe.src = '';
     } else {
-        // Usamos Google Docs Viewer para la previsualización
-        iframe.src = 'https://docs.google.com/viewer?url=' + encodeURIComponent(url) + '&embedded=true';
+        // Cargamos la URL directamente en el iframe.
+        // Los navegadores modernos renderizan PDFs nativamente.
+        iframe.src = url;
         container.style.display = 'block';
     }
 }
