@@ -134,11 +134,23 @@
     border: 1px solid hsla(45, 100%, 50%, 0.2);
 }
 
-/* Enhancing Table in Admin */
-.admin-table-header {
-    background: hsla(var(--h-current), 20%, 98%, 0.8);
-    backdrop-filter: blur(10px);
-    padding: 20px 24px;
+/* --- MENSAJES SOPORTE --- */
+.status-badge-support {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+.status-badge-support.respondido {
+    background: #d1fae5;
+    color: #065f46;
+}
+.status-badge-support.pendiente {
+    background: #fef3c7;
+    color: #92400e;
 }
 
 .user-incorporation-list {

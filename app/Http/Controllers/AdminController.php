@@ -7,6 +7,8 @@ use App\Http\Requests\GestionarPostulacionRequest;
 use App\Http\Requests\GestionarProyectoRequest;
 use App\Mail\InstructorAsignado;
 use App\Mail\InstructorDesasignado;
+use App\Mail\RegistroExitoso;
+use App\Mail\RespuestaSoporte;
 use App\Models\Aprendiz;
 use App\Models\AuditLog;
 use App\Models\Empresa;
@@ -19,6 +21,7 @@ use App\Notifications\AppNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -119,6 +122,16 @@ class AdminController extends Controller
                     'Tu cuenta ha sido '.$estadoTexto.' por un administrador.',
                     $request->estado == 1 ? 'fa-user-check' : 'fa-user-lock'
                 ));
+
+                // --- SEND WELCOME EMAIL ON ACTIVATION ---
+                if ($request->estado == 1) {
+                    $tabla = $request->tipo === 'aprendiz' ? 'aprendices' : 'instructores';
+                    $perfil = DB::table($tabla)->where('usuario_id', $usrToNotify->id)->first();
+                    if ($perfil) {
+                        Mail::to($usrToNotify->correo)->send(new RegistroExitoso($perfil->nombres, $perfil->apellidos));
+                    }
+                }
+                // ----------------------------------------
             }
         } catch (\Exception $e) {
             Log::error('Error al notificar estado de usuario: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
@@ -165,6 +178,12 @@ class AdminController extends Controller
                     'La cuenta de tu empresa ha sido '.$estadoTexto.' por un administrador.',
                     $request->estado == 1 ? 'fa-building-circle-check' : 'fa-building-circle-xmark'
                 ));
+
+                // --- SEND WELCOME EMAIL ON ACTIVATION ---
+                if ($request->estado == 1) {
+                    Mail::to($empresa->usuario->correo)->send(new RegistroExitoso($empresa->nombre, ''));
+                }
+                // ----------------------------------------
             }
         } catch (\Exception $e) {
             Log::error('Error al notificar estado de empresa: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
@@ -386,6 +405,18 @@ class AdminController extends Controller
             'respuesta' => $request->respuesta,
             'estado' => 'respondido',
         ]);
+
+        try {
+            Mail::to($mensaje->email)->send(new RespuestaSoporte(
+                $mensaje->nombre,
+                $mensaje->motivo,
+                $mensaje->mensaje,
+                $mensaje->respuesta
+            ));
+        } catch (\Exception $e) {
+            Log::error('Error al enviar respuesta de soporte: ' . $e->getMessage());
+            return back()->with('error', 'Respuesta guardada pero ocurrió un error al enviar el email.');
+        }
 
         return back()->with('success', 'Respuesta enviada correctamente.');
     }
