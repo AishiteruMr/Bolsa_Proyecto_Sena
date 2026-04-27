@@ -16,5 +16,7 @@ class MensajeSoporte extends Model
         'email',
         'motivo',
         'mensaje',
+        'respuesta',
+        'estado',
     ];
 }

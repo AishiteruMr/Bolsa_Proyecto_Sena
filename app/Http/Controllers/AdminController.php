@@ -375,6 +375,21 @@ class AdminController extends Controller
         return view('admin.mensajes-soporte', compact('mensajes'));
     }
 
+    public function responderMensajeSoporte(Request $request, int $id): RedirectResponse
+    {
+        $request->validate([
+            'respuesta' => 'required|string',
+        ]);
+
+        $mensaje = MensajeSoporte::findOrFail($id);
+        $mensaje->update([
+            'respuesta' => $request->respuesta,
+            'estado' => 'respondido',
+        ]);
+
+        return back()->with('success', 'Respuesta enviada correctamente.');
+    }
+
     public function revisarProyecto(int $id): View
     {
         $proyecto = Proyecto::with('empresa')->findOrFail($id);
