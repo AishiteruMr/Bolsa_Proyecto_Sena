@@ -26,6 +26,12 @@
     <a href="<?php echo e(route('admin.audit')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.audit') ? 'active' : ''); ?>">
         <i class="fas fa-clipboard-list"></i> Auditoría
     </a>
+    <span class="nav-label" style="margin-top: 24px; display: flex; align-items: center; gap: 8px; color: var(--primary);">
+        <i class="fas fa-headset" style="font-size: 10px;"></i> Soporte
+    </span>
+    <a href="<?php echo e(route('admin.mensajes.soporte')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.mensajes.soporte*') ? 'active' : ''); ?>">
+        <i class="fas fa-envelope"></i> Mensajes Soporte
+    </a>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
