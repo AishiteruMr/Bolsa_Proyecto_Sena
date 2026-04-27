@@ -180,6 +180,7 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
 
     Route::get('/audit', [AuditLogController::class, 'index'])->name('audit');
     Route::get('/mensajes-soporte', [AdminController::class, 'mensajesSoporte'])->name('mensajes.soporte');
+    Route::post('/mensajes-soporte/{id}/responder', [AdminController::class, 'responderMensajeSoporte'])->name('mensajes.soporte.responder');
 
     Route::get('/backup', [BackupController::class, 'index'])->name('backup');
     Route::post('/backup/crear', [BackupController::class, 'crear'])->name('backup.crear');
