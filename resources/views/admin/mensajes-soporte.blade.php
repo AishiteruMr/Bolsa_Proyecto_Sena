@@ -21,16 +21,11 @@
     <a href="{{ route('admin.proyectos') }}" class="nav-item">
         <i class="fas fa-project-diagram"></i> Banco Proyectos
     </a>
-    <span class="nav-label" style="margin-top: 16px;">Soporte</span>
+    <span class="nav-label" style="margin-top: 24px; display: flex; align-items: center; gap: 8px; color: var(--primary);">
+        <i class="fas fa-headset" style="font-size: 10px;"></i> Soporte
+    </span>
     <a href="{{ route('admin.mensajes.soporte') }}" class="nav-item active">
         <i class="fas fa-envelope"></i> Mensajes Soporte
-    </a>
-    <span class="nav-label" style="margin-top: 16px;">Herramientas</span>
-    <a href="{{ route('admin.backup') }}" class="nav-item">
-        <i class="fas fa-database"></i> Backup
-    </a>
-    <a href="{{ route('admin.audit') }}" class="nav-item">
-        <i class="fas fa-clipboard-list"></i> Auditoría
     </a>
 @endsection
 
