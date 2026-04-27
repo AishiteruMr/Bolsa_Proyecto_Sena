@@ -158,6 +158,45 @@ class AuthController extends Controller
         return back()->with('success', 'Se ha enviado un nuevo enlace de verificación a tu correo.');
     }
 
+    // ─── VERIFICACIÓN OTP ────────────────────────────────────────────────────────
+
+    public function showVerificarOTP(string $email): View
+    {
+        return view('auth.verificar-otp', compact('email'));
+    }
+
+    public function verificarOTP(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|digits:6',
+        ]);
+
+        $otpRecord = DB::table('email_verification_otps')
+            ->where('email', $request->email)
+            ->where('otp', hash('sha256', (string) $request->otp))
+            ->first();
+
+        if (! $otpRecord) {
+            return back()->with('error', 'Código OTP inválido.');
+        }
+
+        if (Carbon::parse($otpRecord->expires_at)->isPast()) {
+            DB::table('email_verification_otps')->where('email', $request->email)->delete();
+            return redirect()->route('login')->with('error', 'El código ha expirado. Por favor, regístrate de nuevo.');
+        }
+
+        // --- VERIFICAR USUARIO ---
+        $user = User::where('correo', $request->email)->first();
+        if ($user) {
+            $user->markEmailAsVerified();
+        }
+
+        DB::table('email_verification_otps')->where('email', $request->email)->delete();
+
+        return redirect()->route('login')->with('success', '¡Correo verificado exitosamente! Ya puedes iniciar sesión.');
+    }
+
     // ─── VISTAS DE REGISTRO ──────────────────────────────────────────────────────
 
     public function showRegistroAprendiz(): View|RedirectResponse
@@ -204,14 +243,20 @@ class AuthController extends Controller
             });
 
             if ($resultado) {
-                $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
+                // --- OTP VERIFICATION ---
+                $otp = random_int(100000, 999999);
+                DB::table('email_verification_otps')->insert([
+                    'email' => $request->correo,
+                    'otp' => hash('sha256', (string) $otp),
+                    'expires_at' => now()->addMinutes(10),
+                    'created_at' => now(),
+                ]);
 
-                $user = User::find($resultado);
-                if ($user) {
-                    $user->sendEmailVerificationNotification();
-                }
+                Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
+                // ------------------------
 
-                return redirect()->route('login')->with('success', 'Registro exitoso. Verifica tu correo antes de iniciar sesion.');
+                return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
+                    ->with('success', 'Registro exitoso. Introduce el código OTP enviado a tu correo.');
             }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
@@ -252,14 +297,20 @@ class AuthController extends Controller
             });
 
             if ($resultado) {
-                $this->enviarCorreoBienvenida($request->correo, $request->nombre, $request->apellido);
+                // --- OTP VERIFICATION ---
+                $otp = random_int(100000, 999999);
+                DB::table('email_verification_otps')->insert([
+                    'email' => $request->correo,
+                    'otp' => hash('sha256', (string) $otp),
+                    'expires_at' => now()->addMinutes(10),
+                    'created_at' => now(),
+                ]);
 
-                $user = User::find($resultado);
-                if ($user) {
-                    $user->sendEmailVerificationNotification();
-                }
+                Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
+                // ------------------------
 
-                return redirect()->route('login')->with('success', 'Registro exitoso. Verifica tu correo antes de iniciar sesion.');
+                return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
+                    ->with('success', 'Registro exitoso. Introduce el código OTP enviado a tu correo.');
             }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
@@ -300,15 +351,29 @@ class AuthController extends Controller
             });
 
             if ($resultado) {
-                $this->enviarCorreoBienvenida($request->correo, $request->nombre_empresa, '');
+                // --- OTP VERIFICATION ---
+                $otp = random_int(100000, 999999);
+                DB::table('email_verification_otps')->insert([
+                    'email' => $request->correo,
+                    'otp' => hash('sha256', (string) $otp),
+                    'expires_at' => now()->addMinutes(10),
+                    'created_at' => now(),
+                ]);
 
-                $user = User::find($resultado);
-                if ($user) {
-                    $user->sendEmailVerificationNotification();
-                }
+                Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre_empresa, $otp));
+                // ------------------------
 
-                return redirect()->route('login')->with('success', 'Empresa registrada. Verifica tu correo antes de iniciar sesion.');
+                return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
+                    ->with('success', 'Empresa registrada. Introduce el código OTP enviado a tu correo.');
             }
+
+            return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
+        } catch (\Exception $e) {
+            Log::error('Error en registro empresa: '.$e->getMessage());
+
+            return back()->with('error', 'Error al procesar el registro. Intenta de nuevo.')->withInput();
+        }
+    }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
         } catch (\Exception $e) {

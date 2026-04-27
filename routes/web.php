@@ -62,6 +62,11 @@ Route::post('/registro/aprendiz', [AuthController::class, 'registrarAprendiz'])-
 Route::post('/registro/empresa', [AuthController::class, 'registrarEmpresa'])->name('registro.empresa.post')->middleware('throttle:5,1');
 Route::post('/registro/instructor', [AuthController::class, 'registrarInstructor'])->name('registro.instructor.post')->middleware('throttle:5,1');
 
+// OTP Verification
+Route::get('/verificar-otp/{email}', [AuthController::class, 'showVerificarOTP'])->name('auth.mostrar-verificar-otp');
+Route::post('/verificar-otp', [AuthController::class, 'verificarOTP'])->name('auth.verificar-otp')->middleware('throttle:5,1');
+
+
 Route::middleware(['auth.custom'])->group(function () {
     Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
     Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'leerTodas'])->name('notificaciones.leer_todas');
