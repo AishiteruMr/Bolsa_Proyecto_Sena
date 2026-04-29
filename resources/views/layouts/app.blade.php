@@ -16,6 +16,7 @@
 </head>
 
 <body>
+    @include('partials.loader')
     @include('partials.navbar')
 
     <main>

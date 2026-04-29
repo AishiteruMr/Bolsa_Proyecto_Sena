@@ -18,6 +18,7 @@
     </script>
 </head>
 <body>
+    @include('partials.loader')
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
