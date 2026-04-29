@@ -102,6 +102,7 @@ class AuthController extends Controller
 
             session($sessionData);
             $request->session()->regenerate();
+            session(['mostrar_loader' => true]); // Flag para mostrar loader en la primera página del panel
 
             return $this->redirectByRol($usuario->rol_id);
         }
@@ -485,7 +486,7 @@ class AuthController extends Controller
      * ✅ SEGURIDAD: Mostrar formulario de restablecimiento sin email en URL
      * El token es el único parámetro, y el email se obtiene de la BD
      */
-    public function mostrarFormularioRestablecerContraseña(string $token): View
+    public function mostrarFormularioRestablecerContraseña(string $token): View|RedirectResponse
     {
         // ✅ BUSCAR: Encontrar el email desde el token (sin pasar email en URL)
         $registro = DB::table('password_reset_tokens')

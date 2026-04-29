@@ -1,0 +1,133 @@
+<?php $__env->startSection('title', 'Registro Empresa'); ?>
+<?php $__env->startSection('styles'); ?>
+<link rel="stylesheet" href="<?php echo e(asset('css/login.css')); ?>">
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="login-page-wrapper">
+    <a href="<?php echo e(route('home')); ?>" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Volver al Inicio
+    </a>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="login-container">
+        <div class="login-brand">
+            <div class="brand-header">
+                <img src="<?php echo e(asset('assets/logo.png')); ?>" alt="SENA">
+                <span>Inspírate<br>SENA</span>
+            </div>
+            
+            <div class="brand-quote">
+                <h2>Regístrate como <span style="color: var(--primary-light);">Empresa</span></h2>
+                <p>Únete a nuestra red de empresas y conecta con talentosos aprendices del SENA.</p>
+            </div>
+
+            <div class="brand-features">
+                <div class="brand-feature">
+                    <i class="fas fa-building"></i>
+                    <span>Talento Calificado</span>
+                </div>
+                <div class="brand-feature">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Aprendices SENA</span>
+                </div>
+                <div class="brand-feature">
+                    <i class="fas fa-handshake"></i>
+                    <span>Alianzas Estratégicas</span>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                Bolsa de Proyectos & Talentos
+            </div>
+        </div>
+
+        <div class="login-content">
+            <div class="content-header">
+                <h3>Crear Cuenta</h3>
+                <p>Ingresa los datos de tu empresa para comenzar.</p>
+            </div>
+
+            <?php if($errors->any()): ?>
+                <div class="alert alert-error">
+                    <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?> <span><?php echo e($error); ?></span><br> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            <?php endif; ?>
+
+            <form action="<?php echo e(route('registro.empresa.post')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+                <div class="form-group">
+                    <label>Nombre de la Empresa <i class="fas fa-question-circle hint-icon" data-hint="Nombre oficialRegistered de tu empresa según documento legal"></i></label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-building"></i>
+                        <input type="text" name="nombre_empresa" value="<?php echo e(old('nombre_empresa')); ?>" placeholder="Nombre de la empresa" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>NIT <i class="fas fa-question-circle hint-icon" data-hint="Número de Identificación Tributaria (sin puntos ni guión)"></i></label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" name="nit" value="<?php echo e(old('nit')); ?>" placeholder="Número de identificación" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Representante Legal <i class="fas fa-question-circle hint-icon" data-hint="Nombre completo del representante legal (nombre y apellido)"></i></label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-tie"></i>
+                        <input type="text" name="representante" value="<?php echo e(old('representante')); ?>" placeholder="Nombre completo" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Correo Electrónico <i class="fas fa-question-circle hint-icon" data-hint="Correo institucional o empresarial activo para notificaciones"></i></label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="correo" value="<?php echo e(old('correo')); ?>" placeholder="correo@empresa.com" required>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="form-group">
+                        <label>Contraseña <i class="fas fa-question-circle hint-icon" data-hint="Mínimo 6 caracteres, usa letras y números"></i></label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password" placeholder="Mín. 6 caracteres" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar <i class="fas fa-question-circle hint-icon" data-hint="Debe ser idéntica a la contraseña"></i></label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password_confirmation" placeholder="Confirmar" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="terminos" name="terminos" required style="width: 16px; height: 16px; accent-color: var(--primary);">
+                        <label for="terminos" style="margin: 0; font-size: 13px; color: var(--text-light);">Acepto los Términos y Condiciones</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Crear Cuenta</button>
+            </form>
+
+            <div class="divider">¿Ya tienes cuenta?</div>
+
+            <a href="<?php echo e(route('login')); ?>" class="btn-submit" style="text-align: center; text-decoration: none;">
+                Iniciar Sesión
+            </a>
+        </div>
+    </div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('scripts'); ?>
+<script src="<?php echo e(asset('js/login.js')); ?>"></script>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\Bolsa_Proyecto_Sena\resources\views/auth/registro-empresa.blade.php ENDPATH**/ ?>
