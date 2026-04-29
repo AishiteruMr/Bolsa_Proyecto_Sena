@@ -22,7 +22,7 @@ class NuevaEtapaCreada extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "📌 Nueva Etapa: {$this->etapaNombre} - {$this->proyectoTitulo}",
+            subject: "Nueva Etapa: {$this->etapaNombre} - {$this->proyectoTitulo}",
         );
     }
 

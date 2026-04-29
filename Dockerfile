@@ -1,36 +1,34 @@
-FROM php:8.4-cli
+FROM php:8.4-apache
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
     libpng-dev \
-    libonig-dev \
-    libxml2-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libzip-dev \
     zip \
     unzip \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    git \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd pdo_mysql zip bcmath
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
 
-WORKDIR /var/www
+# Set working directory
+WORKDIR /var/www/html
 
-# Copy composer files and install dependencies
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
-
-# Copy application source
+# Copy project files
 COPY . .
 
-# Run post-install scripts
-RUN composer run-script post-autoload-dump
+# Set up permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Update DocumentRoot
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
-EXPOSE 8000
+# Expose port 80
+EXPOSE 80
 
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+# Start Apache
+CMD ["apache2-foreground"]
