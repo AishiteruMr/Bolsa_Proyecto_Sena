@@ -570,6 +570,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     updateUI();
+
+    // --- Persistence ---
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        const savedValue = localStorage.getItem(`wizard_${input.name}`);
+        if (savedValue && input.type !== 'password') input.value = savedValue;
+        input.addEventListener('input', () => {
+            if (input.type !== 'password') localStorage.setItem(`wizard_${input.name}`, input.value);
+        });
+    });
+    const savedStep = localStorage.getItem('wizard_currentStep');
+    if (savedStep) {
+        currentStep = parseInt(savedStep);
+        currentStepInput.value = currentStep;
+        updateUI();
+    }
+    btnNext.addEventListener('click', () => localStorage.setItem('wizard_currentStep', currentStep));
+    btnBack.addEventListener('click', () => localStorage.setItem('wizard_currentStep', currentStep));
+    form.addEventListener('submit', () => {
+        Object.keys(localStorage).forEach(key => { if (key.startsWith('wizard_')) localStorage.removeItem(key); });
+    });
 });
 </script>
 <script src="{{ asset('js/login.js') }}"></script>
