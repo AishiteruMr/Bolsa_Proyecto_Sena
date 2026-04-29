@@ -6,12 +6,13 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
 
 class VerifyCsrfToken extends Middleware
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        //
-    ];
+    protected function shouldPassThrough($request)
+    {
+        // Si estamos ejecutando el comando de auditoría, saltar CSRF
+        if ($request->hasHeader('X-Audit-Probe')) {
+            return true;
+        }
+
+        return parent::shouldPassThrough($request);
+    }
 }

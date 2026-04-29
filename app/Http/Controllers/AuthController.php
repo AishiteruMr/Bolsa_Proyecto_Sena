@@ -365,7 +365,7 @@ class AuthController extends Controller
 
                 return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
                     ->with('success', 'Empresa registrada. Introduce el código OTP enviado a tu correo.');
-    }
+            }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
         } catch (\Exception $e) {
@@ -485,7 +485,7 @@ class AuthController extends Controller
      * ✅ SEGURIDAD: Mostrar formulario de restablecimiento sin email en URL
      * El token es el único parámetro, y el email se obtiene de la BD
      */
-    public function mostrarFormularioRestablecerContraseña(string $token): View
+    public function mostrarFormularioRestablecerContraseña(string $token): View|RedirectResponse
     {
         // ✅ BUSCAR: Encontrar el email desde el token (sin pasar email en URL)
         $registro = DB::table('password_reset_tokens')
