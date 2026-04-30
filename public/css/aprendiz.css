@@ -51,7 +51,7 @@
     border-radius: 20px;
     border: none;
     background: white;
-    font-size: 16px;
+    font-size: var(--text-base);
     font-weight: 600;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     outline: none;
@@ -67,7 +67,7 @@
     border: none;
     padding: 0 32px;
     border-radius: 14px;
-    font-weight: 700;
+    font-weight: var(--font-bold);
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-shadow: 0 8px 16px var(--p-aprendiz-glow);
@@ -196,9 +196,21 @@
 }
 
 .aprendiz-status-approved {
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
-    border-color: rgba(16, 185, 129, 0.2);
+    background: var(--status-approved-bg);
+    color: var(--status-approved-text);
+    border-color: var(--status-approved-bg);
+}
+
+.aprendiz-status-rejected {
+    background: var(--status-rejected-bg);
+    color: var(--status-rejected-text);
+    border-color: var(--status-rejected-bg);
+}
+
+.aprendiz-status-pending {
+    background: var(--status-pending-bg);
+    color: var(--status-pending-text);
+    border-color: var(--status-pending-bg);
 }
 
 .aprendiz-status-rejected {

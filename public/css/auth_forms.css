@@ -48,8 +48,8 @@
 }
 
 .reg-header h2 {
-    font-size: 26px;
-    font-weight: 800;
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
     color: var(--secondary);
     letter-spacing: -0.5px;
 }
@@ -77,7 +77,7 @@
     padding: 11px 12px 11px 40px;
     border: 2px solid #e8e8e8;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: var(--text-sm);
     outline: none;
     transition: all .3s ease;
     background: #fafafa;
@@ -106,8 +106,8 @@
     color: #fff;
     border: none;
     border-radius: 8px;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
     cursor: pointer;
     margin-top: 8px;
     transition: all .3s ease;
@@ -124,7 +124,7 @@
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    font-size: 13px;
+    font-size: var(--text-xs);
     margin-bottom: 16px;
     margin-top: 4px;
 }
@@ -143,14 +143,14 @@
 
 .link-text {
     text-align: center;
-    font-size: 13px;
+    font-size: var(--text-xs);
     color: #666;
     margin-top: 16px;
 }
 
 .link-text a {
     color: var(--primary);
-    font-weight: 700;
+    font-weight: var(--font-bold);
     text-decoration: none;
     transition: color .2s;
 }
@@ -163,7 +163,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 13px;
+    font-size: var(--text-xs);
     color: #666;
     margin-bottom: 20px;
     text-decoration: none;
@@ -180,7 +180,7 @@
     padding: 12px 14px;
     border-radius: 8px;
     margin-bottom: 18px;
-    font-size: 13px;
+    font-size: var(--text-xs);
     border-left: 4px solid #e74c3c;
     animation: slideDown 0.4s ease-out;
 }

@@ -17,8 +17,8 @@
     --surface-solid: #ffffff;
     
     --text: #1a2e1a;
-    --text-light: #4a5d4a;
-    --text-lighter: #8fa38f;
+    --text-light: #64748b;
+    --text-lighter: #94a3b8;
     
     --border: rgba(var(--h), var(--s), var(--l), 0.1);
     --border-glass: rgba(255, 255, 255, 0.4);
@@ -34,6 +34,28 @@
     
     --sidebar-w: 290px;
     --glass: blur(14px) saturate(190%);
+    
+    /* ═════ STATUS COLORS - UNIFIED PALETTE ═════ */
+    --status-approved: #10b981;
+    --status-approved-bg: #d1fae5;
+    --status-approved-text: #065f46;
+    
+    --status-rejected: #ef4444;
+    --status-rejected-bg: #fee2e2;
+    --status-rejected-text: #991b1b;
+    
+    --status-pending: #f59e0b;
+    --status-pending-bg: #fef3c7;
+    --status-pending-text: #92400e;
+    
+    --status-active: #3b82f6;
+    --status-active-bg: #dbeafe;
+    --status-active-text: #1e40af;
+    
+    /* ═════ COMPLETADO - Deep green with white illuminated gradient ═════ */
+    --status-completed: #065f46;
+    --status-completed-gradient: linear-gradient(180deg, #ffffff 0%, #10b981 30%, #065f46 100%);
+    --status-completed-text: #ffffff;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -73,7 +95,7 @@ body {
     flex-shrink: 0;
 }
 .sidebar-logo span { 
-    font-size: 22px; font-weight: 800; 
+    font-size: var(--text-xl); font-weight: var(--font-bold); 
     line-height: 1; letter-spacing: -1.5px;
     color: #fff;
     white-space: nowrap;
@@ -83,7 +105,7 @@ body {
 
 .nav-label { 
     display: block;
-    font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.3); 
+    font-size: var(--text-xs); font-weight: var(--font-bold); color: rgba(255,255,255,0.3); 
     text-transform: uppercase; letter-spacing: 1.5px; 
     margin: 24px 14px 10px;
 }
@@ -92,7 +114,7 @@ body {
     display: flex; align-items: center; gap: 12px;
     padding: 12px 16px; 
     color: rgba(255,255,255,0.5); 
-    font-size: 14px; font-weight: 600;
+    font-size: var(--text-sm); font-weight: var(--font-medium);
     border-radius: 14px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-bottom: 4px;
@@ -123,7 +145,7 @@ body {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
     border-radius: 12px; 
     display: flex; align-items: center; justify-content: center;
-    color: #fff; font-weight: 800; font-size: 16px;
+    color: #fff; font-weight: var(--font-bold); font-size: var(--text-base);
     flex-shrink: 0;
     box-shadow: 0 4px 12px rgba(62,180,137,0.3);
 }

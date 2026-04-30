@@ -115,14 +115,18 @@
             <div style="text-align: center; margin-bottom: 20px;">
                 <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-light); font-weight: 800; margin-bottom: 10px;">Estado Actual</p>
                 @php
-                    $statusClass = match($proyecto->estado) {
-                        'aprobado' => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a'],
-                        'pendiente' => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706'],
-                        default => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444'],
-                    };
+                $statusClass = match($proyecto->estado) {
+                    'completado' => ['bg' => '#065f46', 'border' => '#065f46', 'text' => '#ffffff', 'icon' => 'fa-check'],
+                    'aprobado' => ['bg' => '#10b981', 'border' => '#bbf7d0', 'text' => '#ffffff', 'icon' => 'fa-check'],
+                    'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'text' => '#ffffff', 'icon' => 'fa-clock'],
+                    'rechazado' => ['bg' => '#ef4444', 'border' => '#fecaca', 'text' => '#ffffff', 'icon' => 'fa-times'],
+                    'cerrado' => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-lock'],
+                    'en_progreso' => ['bg' => '#3b82f6', 'border' => '#bfdbfe', 'text' => '#ffffff', 'icon' => 'fa-spinner'],
+                    default => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-info-circle'],
+                };
                 @endphp
-                <span style="background: {{ $statusClass['bg'] }}; border: 1px solid {{ $statusClass['border'] }}; color: {{ $statusClass['text'] }}; font-size: 14px; padding: 8px 20px; border-radius: 20px; font-weight: 800;">
-                    {{ $proyecto->estado }}
+                <span style="background: {{ $statusClass['bg'] }}; border: 1px solid {{ $statusClass['border'] }}; color: {{ $statusClass['text'] }}; font-size: 14px; padding: 8px 20px; border-radius: 20px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas {{ $statusClass['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $proyecto->estado)) }}
                 </span>
             </div>
             

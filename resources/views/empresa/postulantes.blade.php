@@ -55,17 +55,18 @@
         @forelse($postulantes as $p)
             @php
                 $statusConfig = match($p->pos_estado) {
-                    'pendiente' => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-clock', 'label' => 'Por Revisar'],
-                    'aceptada' => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle', 'label' => 'Aprobado'],
-                    'rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444', 'icon' => 'fa-times-circle', 'label' => 'Rechazado'],
-                    default => ['bg' => '#f1f5f9', 'border' => '#e2e8f0', 'text' => '#64748b', 'icon' => 'fa-circle', 'label' => $p->pos_estado]
+                    'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'text' => '#ffffff', 'icon' => 'fa-clock', 'label' => 'Por Revisar'],
+                    'aceptada' => ['bg' => '#10b981', 'border' => '#bbf7d0', 'text' => '#ffffff', 'icon' => 'fa-check', 'label' => 'Aprobado'],
+                    'rechazada' => ['bg' => '#ef4444', 'border' => '#fecaca', 'text' => '#ffffff', 'icon' => 'fa-times', 'label' => 'Rechazado'],
+                    'en_progreso' => ['bg' => '#3b82f6', 'border' => '#bfdbfe', 'text' => '#ffffff', 'icon' => 'fa-spinner', 'label' => 'En Progreso'],
+                    default => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-info-circle', 'label' => $p->pos_estado]
                 };
             @endphp
             <div class="glass-card" style="padding: 28px; position: relative; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 20px 40px rgba(62,180,137,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
                 
                 <!-- Status Ribbon -->
                 <div style="position: absolute; top: 16px; right: 16px; background: {{ $statusConfig['bg'] }}; border: 1px solid {{ $statusConfig['border'] }}; color: {{ $statusConfig['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-                    <i class="fas {{ $statusConfig['icon'] }}"></i> {{ $statusConfig['label'] }}
+                    <i class="fas {{ $statusConfig['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $statusConfig['label'])) }}
                 </div>
 
                     <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 20px;">
