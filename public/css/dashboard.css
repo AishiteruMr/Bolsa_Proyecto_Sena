@@ -61,7 +61,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body { 
-    font-family: 'Outfit', sans-serif; 
+    font-family: var(--font-heading); 
     background: var(--bg); 
     color: var(--text); 
     display: flex; 
