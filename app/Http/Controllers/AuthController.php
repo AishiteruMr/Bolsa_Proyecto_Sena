@@ -102,6 +102,7 @@ class AuthController extends Controller
 
             session($sessionData);
             $request->session()->regenerate();
+            session(['mostrar_loader' => true]); // Flag para mostrar loader en la primera página del panel
 
             return $this->redirectByRol($usuario->rol_id);
         }
