@@ -37,7 +37,7 @@
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: rgba(255, 255, 255, 0.7);
-    font-size: 13px; font-weight: 700;
+    font-size: var(--text-sm); font-weight: var(--font-bold);
     text-decoration: none; display: flex; align-items: center; gap: 8px;
     transition: all 0.3s ease;
     z-index: 10000;
@@ -111,7 +111,7 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 .brand-header span {
-    font-size: 26px; font-weight: 900; color: #fff;
+    font-size: var(--text-xl); font-weight: var(--font-black); color: #fff;
     letter-spacing: -1px; line-height: 1.1;
 }
 
@@ -126,12 +126,12 @@
     backdrop-filter: blur(8px);
 }
 .brand-quote h2 {
-    font-size: 32px; font-weight: 900; color: #fff;
+    font-size: var(--text-2xl); font-weight: var(--font-black); color: #fff;
     line-height: 1.2; letter-spacing: -1px; margin-bottom: 16px;
 }
 .brand-quote p {
-    font-size: 15px; color: rgba(255,255,255,0.75);
-    line-height: 1.6; font-weight: 500;
+    font-size: var(--text-sm); color: rgba(255,255,255,0.75);
+    line-height: 1.6; font-weight: var(--font-medium);
     font-style: italic;
 }
 
@@ -165,17 +165,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: var(--text-base);
     color: #3eb489;
 }
 .brand-feature span {
-    font-size: 14px; font-weight: 600; color: #fff;
+    font-size: var(--text-sm); font-weight: var(--font-medium); color: #fff;
     letter-spacing: 0.3px;
 }
 
 .brand-footer {
-    font-size: 11px; color: rgba(255,255,255,0.35);
-    font-weight: 600; letter-spacing: 1.5px;
+    font-size: var(--text-xs); color: rgba(255,255,255,0.35);
+    font-weight: var(--font-medium); letter-spacing: 1.5px;
     text-transform: uppercase;
     position: relative;
     z-index: 1;
@@ -195,14 +195,14 @@
 
 .content-header { margin-bottom: 28px; }
 .content-header h3 { 
-    font-size: 24px; font-weight: 800; color: #1a2e1a; 
+    font-size: var(--text-xl); font-weight: var(--font-bold); color: #1a2e1a; 
     margin-bottom: 8px; letter-spacing: -0.5px;
 }
-.content-header p { font-size: 14px; color: #6b7c6b; font-weight: 500; }
+.content-header p { font-size: var(--text-sm); color: #6b7c6b; font-weight: var(--font-medium); }
 
 .form-group { margin-bottom: 20px; }
 .form-group label {
-    display: block; font-size: 11px; font-weight: 800;
+    display: block; font-size: var(--text-xs); font-weight: var(--font-bold);
     color: #4a5d4a; text-transform: uppercase;
     letter-spacing: 1.2px; margin-bottom: 8px; margin-left: 2px;
 }
@@ -212,7 +212,7 @@
     background: linear-gradient(180deg, #f9faf9 0%, #f0f3f0 100%);
     border: 1.5px solid #e4e7e4;
     border-radius: 14px; color: #1a2e1a;
-    font-size: 14px; font-weight: 500;
+    font-size: var(--text-sm); font-weight: var(--font-medium);
     transition: all 0.25s ease;
     outline: none;
 }
@@ -225,7 +225,7 @@
 .input-wrapper i {
     position: absolute; left: 16px; top: 50%;
     transform: translateY(-50%);
-    color: #a3b0a3; font-size: 16px;
+    color: #a3b0a3; font-size: var(--text-base);
     transition: color 0.25s ease;
 }
 .input-wrapper input:focus + i { color: #3eb489; }
@@ -241,7 +241,7 @@ label .hint-icon {
     border-radius: 50%;
     background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
     color: #64748b;
-    font-size: 9px;
+    font-size: var(--text-xs);
     cursor: pointer;
     vertical-align: middle;
     margin-left: 6px;
@@ -250,7 +250,7 @@ label .hint-icon {
 
 .forgot-link {
     display: block; text-align: right; margin-top: -8px; margin-bottom: 24px;
-    font-size: 12px; font-weight: 700; color: #3eb489;
+    font-size: var(--text-xs); font-weight: var(--font-bold); color: #3eb489;
     text-decoration: none;
 }
 .forgot-link:hover { color: #2d9d74; }
@@ -258,7 +258,7 @@ label .hint-icon {
 .btn-submit {
     width: 100%; padding: 16px; border-radius: 14px;
     background: linear-gradient(135deg, #3eb489 0%, #2d9d74 100%);
-    color: #fff; border: none; font-size: 14px; font-weight: 800;
+    color: #fff; border: none; font-size: var(--text-sm); font-weight: var(--font-bold);
     cursor: pointer; transition: all 0.3s ease;
     box-shadow: 0 8px 24px rgba(62, 180, 137, 0.35);
 }
@@ -271,7 +271,7 @@ label .hint-icon {
 .divider {
     display: flex; align-items: center; gap: 14px;
     margin: 24px 0; color: #a3b0a3;
-    font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+    font-size: var(--text-xs); font-weight: var(--font-bold); text-transform: uppercase; letter-spacing: 2px;
 }
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e4e7e4; }
 
@@ -287,14 +287,14 @@ label .hint-icon {
     color: #1a2e1a; transform: translateY(-4px);
     box-shadow: 0 12px 24px rgba(62, 180, 137, 0.15);
 }
-.role-card i { font-size: 22px; margin-bottom: 8px; display: block; color: #3eb489; transition: transform 0.3s; }
+.role-card i { font-size: var(--text-xl); margin-bottom: 8px; display: block; color: #3eb489; transition: transform 0.3s; }
 .role-card:hover i { transform: scale(1.15); }
-.role-card span { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+.role-card span { font-size: var(--text-xs); font-weight: var(--font-bold); text-transform: uppercase; letter-spacing: 1px; }
 
 .alert {
     background: linear-gradient(180deg, #fdfdfd 0%, #f8faf8 100%);
     border-radius: 14px; padding: 14px 20px;
-    margin-bottom: 20px; font-size: 13px; font-weight: 600;
+    margin-bottom: 20px; font-size: var(--text-sm); font-weight: var(--font-medium);
     border-left: 4px solid #3eb489;
     box-shadow: 0 6px 20px rgba(0,0,0,0.03);
 }
@@ -310,22 +310,22 @@ label .hint-icon {
 @media (max-width: 600px) {
     .login-content { padding: 20px 16px; }
     .content-header { margin-bottom: 20px; }
-    .content-header h3 { font-size: 20px; }
+    .content-header h3 { font-size: var(--text-lg); }
     .form-group { margin-bottom: 16px; }
     .input-wrapper input { padding: 12px 40px 12px 40px; border-radius: 12px; }
-    .btn-submit { padding: 14px; border-radius: 12px; font-size: 13px; }
+    .btn-submit { padding: 14px; border-radius: 12px; font-size: var(--text-sm); }
     .role-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .role-card { padding: 12px 8px; }
-    .role-card i { font-size: 18px; margin-bottom: 4px; }
-    .role-card span { font-size: 9px; }
-    .divider { margin: 20px 0; font-size: 9px; }
+    .role-card i { font-size: var(--text-lg); margin-bottom: 4px; }
+    .role-card span { font-size: var(--text-xs); }
+    .divider { margin: 20px 0; font-size: var(--text-xs); }
     .forgot-link { margin-bottom: 20px; }
     .input-row { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 400px) {
     .login-page-wrapper { padding: 16px 12px; }
-    .content-header h3 { font-size: 18px; }
+    .content-header h3 { font-size: var(--text-lg); }
     .role-grid { grid-template-columns: repeat(3, 1fr); }
     .role-card span { display: none; }
     .role-card { padding: 12px; }
