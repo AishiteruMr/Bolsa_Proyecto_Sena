@@ -1,0 +1,188 @@
+# PLAN DE TRABAJO - PROYECTOS DE ANÁLISIS Y DESARROLLO DE SOFTWARE SENA
+
+## INFORMACIÓN GENERAL DEL PROYECTO
+| Campo | Descripción |
+|-------|-----------|
+| **Nombre del Proyecto** | |
+| **Empresa/Aprendiz** | |
+| **Instructor Asignado** | |
+| **Fecha de Inicio** | |
+| **Fecha de Finalización** | |
+| **Duración Estimada** | |
+
+---
+
+## 1. FASE DE ANÁLISIS
+
+### 1.1 Levantamiento de Requisitos
+- [ ] Reunión con el cliente/stakeholders
+- [ ] Documentación de requisitos funcionales
+- [ ] Documentación de requisitos no funcionales
+- [ ] Definición de alcance (scope)
+- [ ] Identificación de restricciones
+
+### 1.2 Análisis de Requisitos
+- [ ] Clasificación de requisitos (prioridad alta/media/baja)
+- [ ] Identificación de dependencias
+- [ ] Análisis de riesgos preliminar
+- [ ] Diagrama de casos de uso
+- [ ] Matriz de trazabilidad
+
+### 1.3 Validación de Requisitos
+- [ ] Revisión con el cliente
+- [ ] Aprobación formal de requisitos
+- [ ] Firma de acta de inicio
+
+---
+
+## 2. FASE DE DISEÑO
+
+### 2.1 Diseño de Arquitectura
+- [ ] Selección de arquitectura (monolítica/microservicios/otra)
+- [ ] Definición de capas/aplicación
+- [ ] Diseño de diagrama de componentes
+- [ ] Diseño de diagrama de despliegue
+- [ ] Definición de tecnología y herramientas
+
+### 2.2 Diseño de Base de Datos
+- [ ] Modelo Entidad-Relación (MER)
+- [ ] Modelo Relacional (MR)
+- [ ] Definición de tipos de datos
+- [ ] Definición de índices y claves
+- [ ] Normalización (3FN mínimo)
+
+### 2.3 Diseño de Interfaces
+- [ ] Wireframes/Bocetos
+- [ ] Definición de paleta de colores
+- [ ] Guía de estilos UI/UX
+- [ ] Prototipo de alta fidelidad (opcional)
+- [ ] Revisión de diseño con cliente
+
+### 2.4 Diseño de Seguridad
+- [ ] Definición de roles y permisos
+- [ ] Estrategia de autenticación
+- [ ] Consideraciones de seguridad OWASP
+- [ ] Plan de respaldo y recuperación
+
+---
+
+## 3. FASE DE DESARROLLO
+
+### 3.1 Configuración del Entorno
+- [ ] Instalación de IDE/extensiones
+- [ ] Configuración de control de versiones (Git)
+- [ ] Configuración de ambiente de desarrollo
+- [ ] Configuración de ambiente de pruebas
+- [ ] Documentación de instalación
+
+### 3.2 Desarrollo por Módulos/Funcionalidades
+| Módulo/Funcionalidad | Descripción | Prioridad | Estado | Observaciones |
+|-------------------|-----------|---------|--------|--------------|
+| 1. | | | | |
+| 2. | | | | |
+| 3. | | | | |
+| 4. | | | | |
+| 5. | | | | |
+
+### 3.3 Code Review
+- [ ] Revisión de código por pares
+- [ ] Verificación de estándares de codificación
+- [ ] Verificación de seguridad en código
+- [ ] Documentación de código
+
+### 3.4 Pruebas Unitarias
+- [ ] Cobertura mínima: 70%
+- [ ] Todos los casos de prueba documentados
+- [ ] Ejecución de pruebas automatizadas
+
+---
+
+## 4. FASE DE PRUEBAS
+
+### 4.1 Pruebas Funcionales
+- [ ] Plan de pruebas funcional
+- [ ] Casos de prueba ejecutados
+- [ ] Resultados documentados
+- [ ] Corrección de defectos
+
+### 4.2 Pruebas de Integración
+- [ ] Pruebas de interfaces/API
+- [ ] Pruebas de base de datos
+- [ ] Pruebas de servicios externos
+
+### 4.3 Pruebas de Aceptación (UAT)
+- [ ] Prueba con usuario final
+- [ ] Aprobación de usuario
+- [ ] Lista de pendientes resuelta
+
+### 4.4 Pruebas de Rendimiento
+- [ ] Pruebas de carga
+- [ ] Pruebas de estrés
+- [ ] Resultados de rendimiento
+
+### 4.5 Pruebas de Seguridad
+- [ ] Análisis de vulnerabilidades
+- [ ] Prueba de penetración básica
+- [ ] Remedición de hallazgos críticos
+
+---
+
+## 5. FASE DE IMPLEMENTACIÓN
+
+### 5.1 Despliegue
+- [ ] Ambiente de producción configurado
+- [ ] Migración de datos (si aplica)
+- [ ] Despliegue en producción
+- [ ] Verificación de funcionamiento
+
+### 5.2 Capacitación
+- [ ] Manual de usuario
+- [ ] Guía de administración
+- [ ] Sesión de capacitación
+- [ ] Entrega de documentación
+
+### 5.3 Entrega Final
+- [ ] Acta de entrega
+- [ ] Código fuente documentado
+- [ ] Base de datos/migraciones
+- [ ] Manuales y documentación
+
+---
+
+## 6. CRONOGRAMA GENERAL
+
+| Fase | Semana Inicio | Semana Fin | Entregable |
+|------|-------------|-----------|-----------|
+| Análisis | 1 | 2 | Documento de requisitos |
+| Diseño | 2 | 4 | Diseño técnico |
+| Desarrollo | 4 | 10 | Código funcional |
+| Pruebas | 10 | 13 | Pruebas aprobadas |
+| Implementación | 13 | 14 | Sistema en producción |
+
+---
+
+## 7. ENTREGABLES DEL PROYECTO
+
+- [ ] Documento de Análisis de Requisitos
+- [ ] Documento de Diseño Técnico
+- [ ] Código Fuente
+- [ ] Base de Datos
+- [ ] Pruebas Unitarias
+- [ ] Pruebas Funcionales
+- [ ] Manual de Usuario
+- [ ] Guía de Administración
+- [ ] Acta de Entrega
+
+---
+
+## 8. FIRMAS DE APROBACIÓN
+
+| Rol | Nombre | Firma | Fecha |
+|----|-------|-------|-------|
+| Aprendiz | | | |
+| Instructor | | | |
+| Representante Empresa | | | |
+
+---
+
+## NOTAS Y OBSERVACIONES
