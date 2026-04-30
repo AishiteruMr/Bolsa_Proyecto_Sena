@@ -1,6 +1,6 @@
 FROM php:8.4-apache
 
-# Install system dependencies
+# Instalar dependencias
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -8,80 +8,37 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libonig-dev \
     libxml2-dev \
-    zip \
-    unzip \
-    git \
-    curl \
+    zip unzip git curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-        gd \
-        pdo_mysql \
-        zip \
-        bcmath \
-        mbstring \
-        exif \
-        pcntl \
-        xml
-# Install Composer
+    && docker-php-ext-install \
+        gd pdo_mysql zip bcmath mbstring exif pcntl xml
+
+# Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Enable Apache mod_rewrite
+# FIX Apache (MPM)
 RUN rm -f /etc/apache2/mods-enabled/mpm_event.load \
     && rm -f /etc/apache2/mods-enabled/mpm_event.conf \
     && a2enmod mpm_prefork \
     && a2enmod rewrite
 
-# Set working directory
+# Directorio de trabajo
 WORKDIR /var/www/html
 
-# Copy composer files first for better layer caching
-COPY composer.json composer.lock ./
-
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
-
-# Create required directories FIRST
-RUN mkdir -p /var/www/html/bootstrap/cache \
-    && mkdir -p /var/www/html/storage \
-    && mkdir -p /var/www/html/storage/app \
-    && mkdir -p /var/www/html/storage/app/public \
-    && mkdir -p /var/www/html/storage/framework/sessions \
-    && mkdir -p /var/www/html/storage/framework/cache \
-    && mkdir -p /var/www/html/storage/framework/views \
-    && mkdir -p /var/www/html/storage/logs \
-    && chown -R www-data:www-data /var/www/html \
-    && chmod -R 777 /var/www/html/bootstrap/cache /var/www/html/storage
-
-# Copy project files
-COPY composer.json composer.lock ./
+# Copiar proyecto
 COPY . .
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+# Permisos Laravel
+RUN mkdir -p storage bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
 
-# Install PHP dependencies - allow super user for Docker
+# Instalar dependencias
 ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN composer install --no-dev --optimize-autoloader --no-interaction 
+RUN composer install --no-dev --optimize-autoloader
 
-# Run post-autoload scripts manually
-RUN php artisan package:discover --ansi || true
-
-# Clear caches
-RUN php artisan config:clear || true \
-    && php artisan cache:clear || true \
-    && php artisan view:clear || true \
-    && php artisan route:clear || true
-
-# Update DocumentRoot
+# Ajustar DocumentRoot
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
-# Configure Apache to use $PORT at runtime (Railway provides PORT dynamically)
-RUN echo 'Listen ${PORT}' > /etc/apache2/ports.conf \
-    && sed -i 's|<VirtualHost \*:80>|<VirtualHost *:${PORT}>|g' /etc/apache2/sites-available/000-default.conf
-
-# Default PORT for local development; Railway overrides this at runtime
-ENV PORT=80
-EXPOSE ${PORT}
-
-CMD ["apache2-foreground"]
-
+# Usar puerto dinámico Railway
+CMD apache2-foreground
