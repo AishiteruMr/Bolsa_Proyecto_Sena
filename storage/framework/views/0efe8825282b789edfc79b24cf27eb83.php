@@ -219,21 +219,16 @@
             fetch('/api/admin/stats')
                 .then(r => r.json())
                 .then(data => {
-                // Modern Palette - Unified with CSS variables
+                    // Modern Palette
                     const colors = {
                         emerald: '#10b981',
                         amber: '#f59e0b',
                         rose: '#f43f5e',
                         blue: '#3b82f6',
                         indigo: '#6366f1',
-                        gray: '#64748b',
-                        // Status colors
-                        statusApproved: '#10b981',
-                        statusRejected: '#ef4444',
-                        statusPending: '#f59e0b',
-                        statusCompleted: '#065f46'
+                        gray: '#64748b'
                     };
-                    
+
                     // Proyectos por Estado - Ultra Modern Doughnut
                     new Chart(document.getElementById('chartProyectosEstado'), {
                         type: 'doughnut',
@@ -241,16 +236,7 @@
                             labels: data.proyectos_por_estado.labels,
                             datasets: [{
                                 data: data.proyectos_por_estado.data,
-                                backgroundColor: data.proyectos_por_estado.labels.map(label => {
-                                    const lowerLabel = label.toLowerCase();
-                                    if (lowerLabel.includes('completado')) return '#065f46'; // Verde oscuro sólido (Chart.js no soporta gradientes CSS)
-                                    if (lowerLabel.includes('cerrado')) return colors.gray; // Gris
-                                    if (lowerLabel.includes('aprobado')) return colors.statusApproved; // Verde
-                                    if (lowerLabel.includes('pendiente')) return colors.statusPending; // Ambar
-                                    if (lowerLabel.includes('rechazado')) return colors.statusRejected; // Rojo
-                                    if (lowerLabel.includes('en progreso')) return colors.blue; // Azul (no verde)
-                                    return colors.gray;
-                                }),
+                                backgroundColor: [colors.amber, colors.emerald, colors.rose, colors.blue, colors.gray],
                                 hoverOffset: 15,
                                 weight: 2,
                                 borderWidth: 0,
