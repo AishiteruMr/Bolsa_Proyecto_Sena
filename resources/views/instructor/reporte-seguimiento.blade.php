@@ -171,7 +171,18 @@
                                             @forelse($evidencias->where('etapa_id', $etapa->id) as $ev)
                                                 <div class="mini-card-rep">
                                                     <span style="font-weight: 700; color: var(--text-main);">{{ $ev->aprendiz_nombres ?? '' }} {{ $ev->aprendiz_apellidos ?? '' }}</span>
-                                                    <span class="badge" style="background: {{ $ev->estado === 'aceptada' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)' }}; color: {{ $ev->estado === 'aceptada' ? '#10b981' : '#ef4444' }}; border: none; font-size: 0.65rem;">{{ strtoupper($ev->estado) }}</span>
+                                                    @php
+                                                        $evStatusStyles = match($ev->estado) {
+                                                            'aceptada' => ['bg' => 'rgba(16, 185, 129, 0.1)', 'text' => '#10b981', 'icon' => 'fa-check'],
+                                                            'rechazada' => ['bg' => 'rgba(239, 68, 68, 0.1)', 'text' => '#ef4444', 'icon' => 'fa-ban'],
+                                                            'pendiente' => ['bg' => 'rgba(245, 158, 11, 0.1)', 'text' => '#f59e0b', 'icon' => 'fa-clock'],
+                                                            'en_progreso' => ['bg' => 'rgba(59, 130, 246, 0.1)', 'text' => '#3b82f6', 'icon' => 'fa-spinner'],
+                                                            default => ['bg' => 'rgba(100, 116, 139, 0.1)', 'text' => '#64748b', 'icon' => 'fa-info-circle'],
+                                                        };
+                                                    @endphp
+                                                    <span class="badge" style="background: {{ $evStatusStyles['bg'] }}; color: {{ $evStatusStyles['text'] }}; border: none; font-size: 0.65rem; display: inline-flex; align-items: center; gap: 4px;">
+                                                        <i class="fas {{ $evStatusStyles['icon'] }}"></i>{{ Str::title(str_replace('_', ' ', $ev->estado)) }}
+                                                    </span>
                                                 </div>
                                             @empty
                                                 <p style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Pendiente evaluar.</p>
@@ -195,8 +206,19 @@
                 <div style="display: flex; flex-direction: column; gap: 1.25rem;">
                     <div>
                         <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Estado Actual</p>
-                        <span style="display: inline-block; padding: 6px 14px; background: rgba(16, 185, 129, 0.1); color: #10b981; border-radius: 10px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; border: 1px solid rgba(16, 185, 129, 0.2);">
-                            <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 6px; vertical-align: middle;"></i>{{ $proyecto->estado }}
+                        @php
+                             $statusStyles = match($proyecto->estado) {
+                                 'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
+                                 'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
+                                 'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
+                                 'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
+                                 'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
+                                 'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
+                                 default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
+                             };
+                        @endphp
+                        <span style="display: inline-block; padding: 6px 14px; background: {{ $statusStyles['bg'] }}; color: #ffffff; border-radius: 10px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; border: 1px solid {{ $statusStyles['bg'] }};">
+                            <i class="fas {{ $statusStyles['icon'] }}" style="font-size: 0.5rem; margin-right: 6px; vertical-align: middle;"></i>{{ Str::title(str_replace('_', ' ', $proyecto->estado)) }}
                         </span>
                     </div>
                     <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
