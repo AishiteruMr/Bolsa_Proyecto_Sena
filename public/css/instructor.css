@@ -75,7 +75,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
+    font-size: var(--text-2xl);
     box-shadow: 0 15px 30px -5px rgba(62,180,137,0.3);
 }
 
@@ -158,7 +158,7 @@
 
 @media (max-width: 480px) {
     .instructor-hero { padding: 24px 16px; border-radius: 20px; }
-    .instructor-title { font-size: 24px; }
+    .instructor-title {     font-size: var(--text-xl); }
     .instructor-stat-grid { grid-template-columns: 1fr; gap: 16px; }
     .instructor-stat-card-lg { padding: 20px; }
     .instructor-tag { font-size: 10px; padding: 6px 12px; }
@@ -175,7 +175,7 @@
     .instructor-project-hero { height: 200px; }
     .instructor-hero-content { padding: 1.5rem; }
     .instructor-apprentice-card { padding: 20px; }
-    .instructor-apprentice-avatar { width: 64px; height: 64px; font-size: 24px; }
+    .instructor-apprentice-avatar { width: 64px; height: 64px;     font-size: var(--text-xl); }
 }
 
 .instructor-project-card {
@@ -374,7 +374,7 @@
     border: 1px dashed var(--border);
 }
 .instructor-empty-icon {
-    font-size: 48px;
+    font-size: var(--text-4xl);
     color: #cbd5e1;
     margin-bottom: 16px;
 }
@@ -458,7 +458,7 @@
     align-items: center;
     justify-content: center;
     font-size: 11px;
-    font-weight: 800;
+    font-weight: var(--font-bold);
     border: 2px solid white;
 }
 .instructor-grad-radio {
@@ -635,7 +635,7 @@
     color: white;
     padding: 10px 14px;
     border-radius: 12px;
-    font-weight: 800;
+    font-weight: var(--font-bold);
     text-decoration: none;
     transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
@@ -676,7 +676,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2;
-    font-weight: 800;
+    font-weight: var(--font-bold);
     color: var(--text);
 }
 
@@ -735,7 +735,7 @@
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
-    font-weight: 800;
+    font-weight: var(--font-bold);
     flex-shrink: 0;
 }
 
@@ -781,7 +781,7 @@
 
 .instructor-empty-state h4 {
     color: var(--text-light);
-    font-weight: 600;
+    font-weight: var(--font-bold);
     font-size: 0.95rem;
 }
 
@@ -791,7 +791,7 @@
     border-radius: 12px;
     background: rgba(62,180,137,0.03);
     padding: 12px 16px;
-    font-size: 14px;
+    font-size: var(--text-sm);
     color: var(--text);
     transition: all 0.3s;
 }
@@ -832,7 +832,7 @@
         word-break: break-word;
         overflow-wrap: break-word;
         padding: 12px 16px !important;
-        font-size: 14px;
+        font-size: var(--text-sm);
         line-height: 1.4;
         display: flex !important;
         align-items: center;
@@ -905,7 +905,7 @@
 
 @media (max-width: 480px) {
     .instructor-hero { padding: 24px 16px; border-radius: 20px; }
-    .instructor-title { font-size: 24px; }
+    .instructor-title {     font-size: var(--text-xl); }
     .instructor-stat-grid { grid-template-columns: 1fr; gap: 16px; }
     .instructor-stat-card-lg { padding: 20px; }
     .instructor-tag { font-size: 10px; padding: 6px 12px; }
@@ -920,10 +920,10 @@
     .instructor-project-hero { height: 200px; }
     .instructor-hero-content { padding: 1.5rem; }
     .instructor-apprentice-card { padding: 20px; }
-    .instructor-apprentice-avatar { width: 64px; height: 64px; font-size: 24px; }
+    .instructor-apprentice-avatar { width: 64px; height: 64px;     font-size: var(--text-xl); }
     .evidencias-grid { grid-template-columns: 1fr !important; gap: 1.5rem; }
     .instructor-grad-box { padding: 12px 8px; font-size: 11px; }
-    .instructor-grad-box i { font-size: 16px; }
+    .instructor-grad-box i {     font-size: var(--text-base); }
     .btn-premium { padding: 12px !important; font-size: 13px !important; }
     div[style*="minmax(380px, 1fr)"],
     div[style*="grid-template-columns: repeat(4, 1fr)"] { grid-template-columns: 1fr !important; gap: 1rem !important; }
@@ -960,7 +960,7 @@
         word-wrap: break-word;
         overflow-wrap: break-word;
         padding: 12px 16px !important;
-        font-size: 14px;
+        font-size: var(--text-sm);
         line-height: 1.4;
         display: flex !important;
         align-items: center;

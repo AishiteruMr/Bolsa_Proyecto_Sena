@@ -43,7 +43,7 @@
 
 .admin-header-title {
     font-size: var(--text-4xl);
-    font-weight: 900;
+    font-weight: var(--font-black);
     color: white;
     margin-bottom: 12px;
     letter-spacing: -2px;
@@ -345,7 +345,7 @@
 .admin-user-name,
 .admin-company-name,
 .admin-company-rep {
-    font-weight: 700;
+    font-weight: var(--font-bold);
     color: var(--text);
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -396,7 +396,7 @@
 /* --- QUALITY CHECKLIST --- */
 .admin-quality-score {
     font-size: 52px;
-    font-weight: 900;
+    font-weight: var(--font-black);
     letter-spacing: -2px;
     line-height: 1;
 }
@@ -435,7 +435,7 @@
 @media (max-width: 1024px) {
     .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
     .admin-main-grid { grid-template-columns: 1fr; }
-    .admin-header-title { font-size: 36px; }
+    .admin-header-title { font-size: var(--text-3xl); }
     .admin-header-master { padding: 40px 28px; }
     .admin-page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
     .admin-title-main { font-size: 28px; }
@@ -447,30 +447,30 @@
     .admin-badge-hub { font-size: 10px; padding: 6px 14px; }
     .admin-stats-grid { grid-template-columns: 1fr; gap: 16px; }
     .admin-tab-group { width: 100%; overflow-x: auto; }
-    .admin-tab-btn { padding: 8px 16px; font-size: 12px; }
+    .admin-tab-btn { padding: 8px 16px; font-size: var(--text-xs); }
     .admin-review-hero { padding: 24px; }
     .admin-review-sidebar { position: static; }
     .admin-map-container { height: 200px; }
-    .admin-quality-score { font-size: 36px; }
+    .admin-quality-score { font-size: var(--text-3xl); }
     .premium-table th, .premium-table td { padding: 12px 14px; font-size: 13px; }
     .admin-project-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
-    .admin-header-title { font-size: 24px; }
+    .admin-header-title { font-size: var(--text-xl); }
     .admin-header-master { padding: 24px 16px; }
     .admin-stats-grid { grid-template-columns: 1fr; gap: 12px; }
     .admin-stat-value { font-size: 28px; }
-    .admin-stat-icon { width: 44px; height: 44px; font-size: 18px; }
+    .admin-stat-icon { width: 44px; height: 44px; font-size: var(--text-lg); }
     .admin-tab-group { flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
     .admin-tab-btn { white-space: nowrap; }
     .admin-project-card { min-height: 260px; }
     .admin-project-card-header { padding: 14px 16px; }
     .admin-project-card-body { padding: 12px 14px; }
-    .admin-project-card-header h3 { font-size: 1rem; }
+    .admin-project-card-header h3 { font-size: var(--text-base); }
     .admin-review-hero { padding: 20px 16px; border-radius: 16px; }
     .admin-quality-score { font-size: 28px; }
-    .admin-quality-item { font-size: 12px; padding: 8px 12px; }
+    .admin-quality-item { font-size: var(--text-xs); padding: 8px 12px; }
     .inline-pill { font-size: 10px; padding: 4px 10px; }
 }
 
@@ -483,10 +483,10 @@
     .admin-tab-btn { padding: 6px 12px; font-size: 11px; }
     .admin-project-card-header { padding: 12px 14px; }
     .admin-project-card-body { padding: 10px 12px; gap: 8px; }
-    .premium-table { font-size: 12px; }
+    .premium-table { font-size: var(--text-xs); }
     .premium-table th, .premium-table td { padding: 10px 12px; }
     .admin-map-container { height: 180px; border-radius: 12px; }
-    .admin-quality-score { font-size: 24px; }
+    .admin-quality-score { font-size: var(--text-xl); }
 }
 
 /* Minimal fixes to project card typography and overflow
@@ -512,7 +512,7 @@
 /* Estilo específico del título del proyecto (solo tipografía/color) */
 .admin-project-title {
     color: var(--text) !important; /* usar color de texto del tema */
-    font-weight: 900;
+    font-weight: var(--font-black);
     letter-spacing: -0.6px;
     text-shadow: 0 1px 0 rgba(255,255,255,0.03);
     display: -webkit-box;
@@ -610,7 +610,7 @@
     background: rgba(255,255,255,0.02);
     border: 1px solid rgba(0,0,0,0.04);
     padding: 6px 12px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     border-radius: 999px;
 }
 
