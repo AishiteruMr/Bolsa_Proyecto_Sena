@@ -61,7 +61,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body { 
-    font-family: 'Outfit', sans-serif; 
+    font-family: var(--font-heading); 
     background: var(--bg); 
     color: var(--text); 
     display: flex; 
@@ -95,7 +95,7 @@ body {
     flex-shrink: 0;
 }
 .sidebar-logo span { 
-    font-size: 22px; font-weight: 800; 
+    font-size: var(--text-xl); font-weight: var(--font-bold); 
     line-height: 1; letter-spacing: -1.5px;
     color: #fff;
     white-space: nowrap;
@@ -105,7 +105,7 @@ body {
 
 .nav-label { 
     display: block;
-    font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.3); 
+    font-size: var(--text-xs); font-weight: var(--font-bold); color: rgba(255,255,255,0.3); 
     text-transform: uppercase; letter-spacing: 1.5px; 
     margin: 24px 14px 10px;
 }
@@ -114,7 +114,7 @@ body {
     display: flex; align-items: center; gap: 12px;
     padding: 12px 16px; 
     color: rgba(255,255,255,0.5); 
-    font-size: 14px; font-weight: 600;
+    font-size: var(--text-sm); font-weight: var(--font-medium);
     border-radius: 14px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-bottom: 4px;
@@ -145,13 +145,13 @@ body {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
     border-radius: 12px; 
     display: flex; align-items: center; justify-content: center;
-    color: #fff; font-weight: 800; font-size: 16px;
+    color: #fff; font-weight: var(--font-bold); font-size: var(--text-base);
     flex-shrink: 0;
     box-shadow: 0 4px 12px rgba(62,180,137,0.3);
 }
 .user-details { flex: 1; min-width: 0; }
-.user-name { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.user-role { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 1px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.user-name { font-size: var(--text-xs); font-weight: var(--font-bold); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role { font-size: var(--text-xs); color: rgba(255,255,255,0.4); margin-top: 1px; font-weight: var(--font-medium); text-transform: uppercase; letter-spacing: 0.5px; }
 
 /* ── MAIN CONTENT ── */
 .main { 
@@ -170,7 +170,7 @@ body {
     border-bottom: 1px solid var(--border);
 }
 .topbar-title { 
-    font-size: 24px; font-weight: 800; letter-spacing: -1px;
+    font-size: var(--text-xl); font-weight: var(--font-bold); letter-spacing: -1px;
     color: var(--text);
 }
 
@@ -237,7 +237,7 @@ body {
 
 .btn-premium {
     padding: 14px 32px; border-radius: 16px;
-    font-size: 14px; font-weight: 700;
+    font-size: var(--text-sm); font-weight: var(--font-bold);
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
     color: #fff; text-decoration: none;
     display: inline-flex; align-items: center; gap: 12px;
@@ -292,17 +292,17 @@ body {
 .premium-table { width: 100%; border-collapse: collapse; }
 .premium-table th { 
     background: #f8fafc; padding: 20px 24px;
-    text-align: left; font-size: 11px; font-weight: 800;
+    text-align: left; font-size: var(--text-xs); font-weight: var(--font-bold);
     color: var(--text-light); text-transform: uppercase;
     letter-spacing: 1px; border-bottom: 1px solid #f1f5f9;
 }
-.premium-table td { padding: 20px 24px; font-size: 14.5px; border-bottom: 1px solid #f8fafc; }
+.premium-table td { padding: 20px 24px; font-size: var(--text-sm); border-bottom: 1px solid #f8fafc; }
 .premium-table tr:hover td { background: var(--primary-soft); }
 
 /* ── ALERTS ── */
 .alert { 
     padding: 16px 24px; border-radius: 16px; margin-bottom: 32px;
-    font-size: 15px; font-weight: 600;
+    font-size: var(--text-base); font-weight: var(--font-medium);
     animation: slideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     display: flex; align-items: center; gap: 12px;
     border: 1px solid transparent;

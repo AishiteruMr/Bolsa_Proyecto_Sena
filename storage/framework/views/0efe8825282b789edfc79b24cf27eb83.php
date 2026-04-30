@@ -167,8 +167,19 @@
                                     <td style="font-weight: 800; color: var(--text);"><?php echo e(Str::limit($p->titulo, 40)); ?></td>
                                     <td style="color: var(--text-light); font-weight: 600;"><?php echo e($p->empresa_nombre); ?></td>
                                     <td>
-                                        <span class="status-badge <?php echo e($p->estado == 'aprobado' ? 'active' : 'inactive'); ?>" style="padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800;">
-                                            <?php echo e($p->estado); ?>
+                                        <?php
+                                            $statusStyles = match($p->estado) {
+                                                'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
+                                                'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
+                                                'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
+                                                'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
+                                                'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
+                                                'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
+                                                default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
+                                            };
+                                        ?>
+                                        <span style="background: <?php echo e($statusStyles['bg']); ?>; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
+                                            <i class="fas <?php echo e($statusStyles['icon']); ?>"></i> <?php echo e(Str::title(str_replace('_', ' ', $p->estado))); ?>
 
                                         </span>
                                     </td>
