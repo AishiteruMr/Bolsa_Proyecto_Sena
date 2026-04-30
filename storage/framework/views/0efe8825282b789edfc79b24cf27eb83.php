@@ -1,42 +1,40 @@
-@extends('layouts.dashboard')
+<?php $__env->startSection('title', 'Admin Dashboard'); ?>
+<?php $__env->startSection('page-title', 'Página Principal'); ?>
 
-@section('title', 'Admin Dashboard')
-@section('page-title', 'Página Principal')
+<?php $__env->startSection('styles'); ?>
+    <link rel="stylesheet" href="<?php echo e(asset('css/admin.css')); ?>">
+<?php $__env->stopSection(); ?>
 
-@section('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
-@endsection
-
-@section('sidebar-nav')
+<?php $__env->startSection('sidebar-nav'); ?>
     <span class="nav-label">Administración</span>
-    <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+    <a href="<?php echo e(route('admin.dashboard')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
         <i class="fas fa-th-large"></i> Principal
     </a>
-    <a href="{{ route('admin.usuarios') }}" class="nav-item {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
+    <a href="<?php echo e(route('admin.usuarios')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.usuarios') ? 'active' : ''); ?>">
         <i class="fas fa-users"></i> Gestión Usuarios
     </a>
-    <a href= "{{ route('admin.empresas') }}" class="nav-item {{ request()->routeIs('admin.empresas') ? 'active' : '' }}">
+    <a href= "<?php echo e(route('admin.empresas')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.empresas') ? 'active' : ''); ?>">
         <i class="fas fa-building"></i> Empresas Aliadas
     </a>
-    <a href="{{ route('admin.proyectos') }}" class="nav-item {{ request()->routeIs('admin.proyectos*') ? 'active' : '' }}">
+    <a href="<?php echo e(route('admin.proyectos')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.proyectos*') ? 'active' : ''); ?>">
         <i class="fas fa-project-diagram"></i> Banco Proyectos
     </a>
     <span class="nav-label" style="margin-top: 16px;">Herramientas</span>
-    <a href="{{ route('admin.backup') }}" class="nav-item {{ request()->routeIs('admin.backup*') ? 'active' : '' }}">
+    <a href="<?php echo e(route('admin.backup')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.backup*') ? 'active' : ''); ?>">
         <i class="fas fa-database"></i> Backup
     </a>
-    <a href="{{ route('admin.audit') }}" class="nav-item {{ request()->routeIs('admin.audit') ? 'active' : '' }}">
+    <a href="<?php echo e(route('admin.audit')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.audit') ? 'active' : ''); ?>">
         <i class="fas fa-clipboard-list"></i> Auditoría
     </a>
     <span class="nav-label" style="margin-top: 24px; display: flex; align-items: center; gap: 8px; color: var(--primary);">
         <i class="fas fa-headset" style="font-size: 10px;"></i> Soporte
     </span>
-    <a href="{{ route('admin.mensajes.soporte') }}" class="nav-item {{ request()->routeIs('admin.mensajes.soporte*') ? 'active' : '' }}">
+    <a href="<?php echo e(route('admin.mensajes.soporte')); ?>" class="nav-item <?php echo e(request()->routeIs('admin.mensajes.soporte*') ? 'active' : ''); ?>">
         <i class="fas fa-envelope"></i> Mensajes Soporte
     </a>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="animate-fade-in">
         <div class="admin-header-master">
             <div class="admin-header-icon">
@@ -45,7 +43,7 @@
             <div style="position: relative; z-index: 1;">
                 <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
                     <span class="admin-badge-hub">Admin Control Hub</span>
-                    <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 700;"><i class="far fa-calendar-alt" style="margin-right: 8px;"></i>{{ now()->translatedFormat('l, d F Y') }}</span>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 700;"><i class="far fa-calendar-alt" style="margin-right: 8px;"></i><?php echo e(now()->translatedFormat('l, d F Y')); ?></span>
                 </div>
                 <h1 class="admin-header-title">Gestión Estratégica <span style="color: var(--primary);">Global</span></h1>
                 <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 600px; font-weight: 500;">Control unificado sobre el banco de proyectos y el talento humano del ecosistema Sena.</p>
@@ -57,10 +55,10 @@
                 <div class="admin-stat-icon" style="background: var(--primary-soft); color: var(--primary); margin-bottom: 24px;">
                     <i class="fas fa-project-diagram"></i>
                 </div>
-                <div class="admin-stat-value" style="font-size: 38px; color: var(--primary);">{{ $stats['proyectos'] }}</div>
+                <div class="admin-stat-value" style="font-size: 38px; color: var(--primary);"><?php echo e($stats['proyectos']); ?></div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Banco de Proyectos</div>
                 <div class="inline-pill inline-pill--warning" style="margin-top:16px; width:fit-content;">
-                    <i class="fas fa-clock-rotate-left"></i> {{ $stats['pendientes'] }} Pendientes
+                    <i class="fas fa-clock-rotate-left"></i> <?php echo e($stats['pendientes']); ?> Pendientes
                 </div>
             </div>
 
@@ -68,7 +66,7 @@
                 <div class="admin-stat-icon" style="background: #f8fafc; color: #64748b; margin-bottom: 24px;">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="admin-stat-value" style="font-size: 38px; color: var(--text);">{{ $stats['usuarios'] }}</div>
+                <div class="admin-stat-value" style="font-size: 38px; color: var(--text);"><?php echo e($stats['usuarios']); ?></div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Cuentas Totales</div>
             </div>
 
@@ -76,7 +74,7 @@
                 <div class="admin-stat-icon" style="background: #eff6ff; color: #3b82f6; margin-bottom: 24px;">
                     <i class="fas fa-building"></i>
                 </div>
-                <div class="admin-stat-value" style="font-size: 38px; color: #2563eb;">{{ $stats['empresas'] }}</div>
+                <div class="admin-stat-value" style="font-size: 38px; color: #2563eb;"><?php echo e($stats['empresas']); ?></div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Empresas Aliadas</div>
             </div>
 
@@ -84,7 +82,7 @@
                 <div class="admin-stat-icon" style="background: #fdf2f8; color: #db2777; margin-bottom: 24px;">
                     <i class="fas fa-graduation-cap"></i>
                 </div>
-                <div class="admin-stat-value" style="font-size: 38px; color: #db2777;">{{ $stats['aprendices'] }}</div>
+                <div class="admin-stat-value" style="font-size: 38px; color: #db2777;"><?php echo e($stats['aprendices']); ?></div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Aprendices</div>
             </div>
 
@@ -92,7 +90,7 @@
                 <div class="admin-stat-icon" style="background: #fef3c7; color: #d97706; margin-bottom: 24px;">
                     <i class="fas fa-chalkboard-teacher"></i>
                 </div>
-                <div class="admin-stat-value" style="font-size: 38px; color: #d97706;">{{ $stats['instructores'] }}</div>
+                <div class="admin-stat-value" style="font-size: 38px; color: #d97706;"><?php echo e($stats['instructores']); ?></div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Instructores</div>
             </div>
         </div>
@@ -151,7 +149,7 @@
             <div class="glass-card admin-table-card" style="background: white;">
                 <div class="admin-table-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">Proyectos por Auditar</h3>
-                    <a href="{{ route('admin.proyectos') }}" class="btn-premium" style="padding: 8px 16px; font-size: 11px; background: #f8fafc; color: var(--primary); border: 1px solid var(--primary-soft); box-shadow: none;">Ir al Banco</a>
+                    <a href="<?php echo e(route('admin.proyectos')); ?>" class="btn-premium" style="padding: 8px 16px; font-size: 11px; background: #f8fafc; color: var(--primary); border: 1px solid var(--primary-soft); box-shadow: none;">Ir al Banco</a>
                 </div>
                 <div class="premium-table-container">
                     <table class="premium-table">
@@ -164,35 +162,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($proyectosRecientes as $p)
+                            <?php $__empty_1 = true; $__currentLoopData = $proyectosRecientes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                                 <tr>
-                                    <td style="font-weight: 800; color: var(--text);">{{ Str::limit($p->titulo, 40) }}</td>
-                                    <td style="color: var(--text-light); font-weight: 600;">{{ $p->empresa_nombre }}</td>
+                                    <td style="font-weight: 800; color: var(--text);"><?php echo e(Str::limit($p->titulo, 40)); ?></td>
+                                    <td style="color: var(--text-light); font-weight: 600;"><?php echo e($p->empresa_nombre); ?></td>
                                     <td>
-                                        @php
-                                            $statusStyles = match($p->estado) {
-                                                'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
-                                                'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
-                                                'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
-                                                'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
-                                                'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
-                                                'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
-                                                default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
-                                            };
-                                        @endphp
-                                        <span style="background: {{ $statusStyles['bg'] }}; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
-                                            <i class="fas {{ $statusStyles['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $p->estado)) }}
+                                        <span class="status-badge <?php echo e($p->estado == 'aprobado' ? 'active' : 'inactive'); ?>" style="padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800;">
+                                            <?php echo e($p->estado); ?>
+
                                         </span>
                                     </td>
                                     <td style="text-align: right;">
-                                        <a href="{{ route('admin.proyectos.revisar', $p->id) }}" class="btn-premium" style="width: 32px; height: 32px; padding: 0; justify-content: center; background: var(--primary-soft); color: var(--primary); box-shadow: none; border-radius: 8px;">
+                                        <a href="<?php echo e(route('admin.proyectos.revisar', $p->id)); ?>" class="btn-premium" style="width: 32px; height: 32px; padding: 0; justify-content: center; background: var(--primary-soft); color: var(--primary); box-shadow: none; border-radius: 8px;">
                                             <i class="fas fa-chevron-right"></i>
                                         </a>
                                     </td>
                                 </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                 <tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--text-lighter); font-weight: 600;">No hay proyectos pendientes.</td></tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -201,23 +189,24 @@
             <div class="glass-card" style="padding: 32px; background: white;">
                 <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 28px;">Incorporaciones</h3>
                 <div class="user-incorporation-list">
-                    @foreach($usuariosRecientes as $u)
+                    <?php $__currentLoopData = $usuariosRecientes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $u): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="user-incorporation-item">
                             <div style="width: 44px; height: 44px; border-radius: 12px; background: #eff6ff; display: flex; align-items: center; justify-content: center; color: #3b82f6; font-weight: 800; font-size: 16px; border: 1px solid #dbeafe;">
-                                {{ strtoupper(substr($u->correo, 0, 1)) }}
+                                <?php echo e(strtoupper(substr($u->correo, 0, 1))); ?>
+
                             </div>
                             <div style="flex: 1; overflow: hidden;">
-                                <p style="font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $u->correo }}</p>
+                                <p style="font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo e($u->correo); ?></p>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;">{{ $u->nombre_rol }}</span>
+                                    <span style="font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;"><?php echo e($u->nombre_rol); ?></span>
                                     <span style="width: 3px; height: 3px; background: #cbd5e1; border-radius: 50%;"></span>
-                                    <span style="font-size: 10px; color: #94a3b8; font-weight: 600;">{{ $u->created_at ? \Carbon\Carbon::parse($u->created_at)->diffForHumans() : 'N/A' }}</span>
+                                    <span style="font-size: 10px; color: #94a3b8; font-weight: 600;"><?php echo e($u->created_at ? \Carbon\Carbon::parse($u->created_at)->diffForHumans() : 'N/A'); ?></span>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-                <a href="{{ route('admin.usuarios') }}" class="btn-premium" style="margin-top: 32px; width: 100%; text-align: center; justify-content: center; background: #0f172a; border: none; font-size: 13px; padding: 14px;">
+                <a href="<?php echo e(route('admin.usuarios')); ?>" class="btn-premium" style="margin-top: 32px; width: 100%; text-align: center; justify-content: center; background: #0f172a; border: none; font-size: 13px; padding: 14px;">
                     Gestionar Usuarios <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
                 </a>
             </div>
@@ -395,4 +384,6 @@
                 .catch(err => console.error('Error cargando stats:', err));
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\Bolsa_Proyecto_Sena\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>

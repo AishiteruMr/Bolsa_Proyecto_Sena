@@ -57,25 +57,25 @@
                 </div>
             </div>
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #fde68a;">
-                <div style="width: 52px; height: 52px; border-radius: 16px; background: #fffbeb; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 22px;">
-                    <i class="fas fa-hourglass-half"></i>
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #f59e0b; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                    <i class="fas fa-clock"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">{{ $postulaciones->where('estado', 'pendiente')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #f59e0b; line-height: 1;">{{ $postulaciones->where('estado', 'pendiente')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Pendientes</div>
                 </div>
             </div>
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #bbf7d0;">
-                <div style="width: 52px; height: 52px; border-radius: 16px; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $postulaciones->where('estado', 'aceptada')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #10b981; line-height: 1;">{{ $postulaciones->where('estado', 'aceptada')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Aprobadas</div>
                 </div>
             </div>
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #fecaca;">
-                <div style="width: 52px; height: 52px; border-radius: 16px; background: #fef2f2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #ef4444; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-times-circle"></i>
                 </div>
                 <div>
@@ -90,9 +90,10 @@
         @forelse($postulaciones as $post)
             @php
                 $estadoColor = match($post->estado) {
-                    'aceptada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
-                    'rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444', 'icon' => 'fa-times-circle'],
-                    default     => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-hourglass-half'],
+                    'aceptada'  => ['bg' => '#10b981', 'border' => '#bbf7d0', 'text' => '#ffffff', 'icon' => 'fa-check'],
+                    'rechazada' => ['bg' => '#ef4444', 'border' => '#fecaca', 'text' => '#ffffff', 'icon' => 'fa-ban'],
+                    'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'text' => '#ffffff', 'icon' => 'fa-clock'],
+                    default     => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-info-circle'],
                 };
             @endphp
             <div class="glass-card" style="padding: 0; overflow: hidden; display: flex; align-items: center; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 32px rgba(62,180,137,0.12)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
@@ -128,7 +129,7 @@
                     <div style="text-align: right;">
                         <p style="font-size: 10px; color: var(--text-light); margin-bottom: 8px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Estado</p>
                         <span style="background: {{ $estadoColor['bg'] }}; border: 1.5px solid {{ $estadoColor['border'] }}; color: {{ $estadoColor['text'] }}; padding: 10px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px; white-space: nowrap;">
-                            <i class="fas {{ $estadoColor['icon'] }}"></i> {{ $post->estado }}
+                            <i class="fas {{ $estadoColor['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $post->estado)) }}
                         </span>
                     </div>
 
