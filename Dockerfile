@@ -15,6 +15,10 @@ RUN apt-get update && apt-get install -y \
 
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN cp .env.example .env || true \
+    && php artisan key:generate || true \
+    && php artisan config:cache || true \
+    && php artisan route:cache || true
 
 # FIX Apache (evitar conflicto MPM)
 RUN rm -f /etc/apache2/mods-enabled/mpm_event.load \
