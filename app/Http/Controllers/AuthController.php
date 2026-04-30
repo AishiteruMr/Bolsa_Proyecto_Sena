@@ -366,7 +366,7 @@ class AuthController extends Controller
 
                 return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
                     ->with('success', 'Empresa registrada. Introduce el código OTP enviado a tu correo.');
-    }
+            }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
         } catch (\Exception $e) {

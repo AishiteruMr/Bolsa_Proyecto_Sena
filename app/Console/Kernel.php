@@ -18,6 +18,12 @@ class Kernel extends ConsoleKernel
                  ->withoutOverlapping()
                  ->runInBackground()
                  ->appendOutputTo(storage_path('logs/backup-automatico.log'));
+
+        // Auditoría automática cada lunes a las 8:00 AM
+        $schedule->command('guard:probe --send-email=bolsadeproyectossena@gmail.com')
+                 ->mondays()
+                 ->at('08:00')
+                 ->withoutOverlapping();
     }
 
     /**
