@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -6,12 +6,22 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libzip-dev \
+    libonig-dev \
+    libxml2-dev \
     zip \
     unzip \
     git \
+    curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd pdo_mysql zip bcmath
-
+    && docker-php-ext-install -j$(nproc) \
+        gd \
+        pdo_mysql \
+        zip \
+        bcmath \
+        mbstring \
+        exif \
+        pcntl \
+        xml
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -48,7 +58,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Install PHP dependencies - allow super user for Docker
 ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+RUN composer install --no-dev --optimize-autoloader --no-interaction 
 
 # Run post-autoload scripts manually
 RUN php artisan package:discover --ansi || true
