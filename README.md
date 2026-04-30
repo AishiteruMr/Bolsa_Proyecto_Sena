@@ -73,6 +73,9 @@ php artisan migrate --seed
 php artisan serve
 npm run dev
 
+# Limpiar cache,configuraciones,views y rutas
+php artisan optimize:clear
+
 # Crear backup manual
 php artisan backup:manual
 
