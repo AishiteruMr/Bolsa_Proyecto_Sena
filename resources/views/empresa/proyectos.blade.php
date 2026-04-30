@@ -51,27 +51,27 @@
             </div>
 
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px;">
-                <div style="width: 52px; height: 52px; border-radius: 14px; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                <div style="width: 52px; height: 52px; border-radius: 14px; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $proyectos->where('estado', 'aprobado')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #10b981; line-height: 1;">{{ $proyectos->where('estado', 'aprobado')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Activas</div>
                 </div>
             </div>
 
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px;">
-                <div style="width: 52px; height: 52px; border-radius: 14px; background: #fffbeb; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 22px;">
-                    <i class="fas fa-hourglass-half"></i>
+                <div style="width: 52px; height: 52px; border-radius: 14px; background: #f59e0b; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                    <i class="fas fa-clock"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">{{ $proyectos->where('estado', 'pendiente')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #f59e0b; line-height: 1;">{{ $proyectos->where('estado', 'pendiente')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">En Revisión</div>
                 </div>
             </div>
 
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px;">
-                <div style="width: 52px; height: 52px; border-radius: 14px; background: #fef2f2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                <div style="width: 52px; height: 52px; border-radius: 14px; background: #ef4444; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-times-circle"></i>
                 </div>
                 <div>
@@ -134,14 +134,18 @@
                                 <td style="padding: 20px 24px;">
                                     @php
                                         $statusClass = match($proyecto->estado) {
-                                            'aprobado' => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a'],
-                                            'pendiente' => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706'],
-                                            'rechazado' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444'],
-                                            default => ['bg' => '#f1f5f9', 'border' => '#e2e8f0', 'text' => '#64748b'],
+                                            'completado' => ['bg' => '#065f46', 'border' => '#065f46', 'text' => '#ffffff', 'icon' => 'fa-check'],
+                                            'aprobado' => ['bg' => '#10b981', 'border' => '#bbf7d0', 'text' => '#ffffff', 'icon' => 'fa-check'],
+                                            'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'text' => '#ffffff', 'icon' => 'fa-clock'],
+                                            'rechazado' => ['bg' => '#ef4444', 'border' => '#fecaca', 'text' => '#ffffff', 'icon' => 'fa-times'],
+                                            'cerrado' => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-lock'],
+                                            'en_progreso' => ['bg' => '#3b82f6', 'border' => '#bfdbfe', 'text' => '#ffffff', 'icon' => 'fa-spinner'],
+                                            default => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-info-circle'],
                                         };
                                     @endphp
-                                    <span style="background: {{ $statusClass['bg'] }}; border: 1px solid {{ $statusClass['border'] }}; color: {{ $statusClass['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">
-                                        {{ $proyecto->estado }}
+                                    <span style="background: {{ $statusClass['bg'] }}; border: 1px solid {{ $statusClass['border'] }}; color: {{ $statusClass['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                        <i class="fas {{ $statusClass['icon'] }}"></i>
+                                        {{ Str::title(str_replace('_', ' ', $proyecto->estado)) }}
                                     </span>
                                 </td>
                                 <td style="padding: 20px 24px; font-weight: 700; color: var(--text-light); font-size: 14px;">

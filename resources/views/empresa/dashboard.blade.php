@@ -53,7 +53,7 @@
 
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px;">
                 <div style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; display: flex; align-items: center; justify-content: center; font-size: 22px;">
-                    <i class="fas fa-check-double"></i>
+                    <i class="fas fa-flag-checkered"></i>
                 </div>
                 <div>
                     <div style="font-size: 32px; font-weight: 800; color: #2d9d74; line-height: 1;">{{ $proyectosActivos }}</div>
@@ -135,13 +135,17 @@
                                 <td style="padding: 20px 24px;">
                                     @php
                                         $statusClass = match($p->estado) {
-                                            'aprobado' => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a'],
-                                            'pendiente' => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706'],
-                                            default => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444'],
+                                            'completado' => ['bg' => '#065f46', 'border' => '#065f46', 'text' => '#ffffff', 'icon' => 'fa-check'],
+                                            'aprobado' => ['bg' => '#10b981', 'border' => '#bbf7d0', 'text' => '#ffffff', 'icon' => 'fa-check'],
+                                            'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'text' => '#ffffff', 'icon' => 'fa-clock'],
+                                            'rechazado' => ['bg' => '#ef4444', 'border' => '#fecaca', 'text' => '#ffffff', 'icon' => 'fa-xmark'],
+                                            'cerrado' => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-lock'],
+                                            'en_progreso' => ['bg' => '#3b82f6', 'border' => '#bfdbfe', 'text' => '#ffffff', 'icon' => 'fa-spinner'],
+                                            default => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-info-circle'],
                                         };
                                     @endphp
-                                    <span style="background: {{ $statusClass['bg'] }}; border: 1px solid {{ $statusClass['border'] }}; color: {{ $statusClass['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">
-                                        {{ $p->estado }}
+                                    <span style="background: {{ $statusClass['bg'] }}; border: 1px solid {{ $statusClass['border'] }}; color: {{ $statusClass['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                        <i class="fas {{ $statusClass['icon'] }}" style="color: {{ $statusClass['text'] }};"></i> {{ Str::title(str_replace('_', ' ', $p->estado)) }}
                                     </span>
                                 </td>
                                 <td style="padding: 20px 24px;">
