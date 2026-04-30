@@ -63,19 +63,29 @@
 
     <div class="support-grid">
         <div class="card-minimal">
-            <h3>Centro de Ayuda</h3>
+            <h3><i class="fas fa-key" style="color: var(--primary); margin-right: 8px;"></i>Acceso a tu Cuenta</h3>
             <ul>
-                <li><i class="fas fa-check"></i> Guía rápida de inicio para nuevos usuarios.</li>
-                <li><i class="fas fa-check"></i> Tutoriales sobre cómo gestionar proyectos.</li>
-                <li><i class="fas fa-check"></i> Resolución de dudas sobre certificaciones.</li>
+                <li><i class="fas fa-exclamation-circle"></i> <a href="{{ route('auth.olvide-contraseña') }}">Olvidé mi contraseña - Restablecer</a></li>
+                <li><i class="fas fa-check"></i> <a href="{{ route('registro.aprendiz') }}">¿No tienes cuenta? Regístrate aquí</a></li>
+                <li><i class="fas fa-check"></i> <a href="{{ route('registro.empresa') }}">Crear cuenta de Empresa</a></li>
+                <li><i class="fas fa-check"></i> <a href="{{ route('registro.instructor') }}">Crear cuenta de Instructor</a></li>
             </ul>
         </div>
         <div class="card-minimal">
-            <h3>Solución de Problemas</h3>
+            <h3><i class="fas fa-question-circle" style="color: var(--primary); margin-right: 8px;"></i>Preguntas Frecuentes</h3>
             <ul>
-                <li><i class="fas fa-exclamation-circle"></i> Restablecimiento de acceso a cuenta.</li>
-                <li><i class="fas fa-exclamation-circle"></i> Optimización de carga en el dashboard.</li>
-                <li><i class="fas fa-exclamation-circle"></i> Configuración de notificaciones.</li>
+                <li><i class="fas fa-check"></i> ¿Cómo publicar un proyecto? (Paso a paso)</li>
+                <li><i class="fas fa-check"></i> ¿Cómo postularme a un proyecto? (Guía rápida)</li>
+                <li><i class="fas fa-check"></i> ¿Cómo actualizar mi perfil? (Datos y foto)</li>
+                <li><i class="fas fa-check"></i> ¿Cómo cambiar mi contraseña? (Seguridad)</li>
+            </ul>
+        </div>
+        <div class="card-minimal">
+            <h3><i class="fas fa-life-ring" style="color: var(--primary); margin-right: 8px;"></i>Solución Rápida</h3>
+            <ul>
+                <li><i class="fas fa-exclamation-circle"></i> <a href="{{ route('login') }}">Iniciar Sesión</a> - Accede a tu panel</li>
+                <li><i class="fas fa-exclamation-circle"></i> <a href="{{ route('verification.resend') }}">Reenviar correo de verificación</a></li>
+                <li><i class="fas fa-exclamation-circle"></i> Contacta a soporte vía el formulario abajo</li>
             </ul>
         </div>
     </div>
