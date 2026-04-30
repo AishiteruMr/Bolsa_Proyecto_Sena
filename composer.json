@@ -2,7 +2,7 @@
     "name": "sena/bolsa-proyectos",
     "description": "Bolsa de Proyectos SENA - Plataforma de conexión entre empresas, instructores y aprendices",
     "type": "project",
-    "license": "proprietary",
+   "license": "MIT",
     "keywords": ["laravel", "sena", "proyectos"],
     "require": {
         "php": "^8.4",
