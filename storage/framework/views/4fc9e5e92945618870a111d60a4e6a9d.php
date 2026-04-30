@@ -108,17 +108,20 @@
                 <div class="admin-project-card-header">
                     <div style="position:relative; z-index:1;">
                         <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                            <?php
-                                $statusStyles = match($p->estado) {
-                                    'aprobado' => ['bg' => 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)', 'color' => '#fff', 'icon' => 'fa-check-circle'],
-                                    'pendiente' => ['bg' => '#fff7ed', 'color' => '#ea580c', 'icon' => 'fa-clock'],
-                                    'rechazado' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'icon' => 'fa-times-circle'],
-                                    default => ['bg' => '#f8fafc', 'color' => '#64748b', 'icon' => 'fa-info-circle']
-                                };
-                            ?>
+                                    <?php
+                                    $statusStyles = match($p->estado) {
+                                        'completado' => ['bg' => '#065f46', 'border' => '#065f46', 'color' => '#ffffff', 'icon' => 'fa-check'],
+                                        'aprobado' => ['bg' => '#10b981', 'border' => '#bbf7d0', 'color' => '#ffffff', 'icon' => 'fa-check'],
+                                        'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'color' => '#ffffff', 'icon' => 'fa-clock'],
+                                        'rechazado' => ['bg' => '#ef4444', 'border' => '#fecaca', 'color' => '#ffffff', 'icon' => 'fa-ban'],
+                                        'cerrado' => ['bg' => '#64748b', 'border' => '#e2e8f0', 'color' => '#ffffff', 'icon' => 'fa-lock'],
+                                        'en_progreso' => ['bg' => '#3b82f6', 'border' => '#bfdbfe', 'color' => '#ffffff', 'icon' => 'fa-spinner'],
+                                        default => ['bg' => '#64748b', 'border' => '#e2e8f0', 'color' => '#ffffff', 'icon' => 'fa-info-circle']
+                                    };
+                                ?>
                             <span class="admin-project-badge" style="background: <?php echo e($statusStyles['bg']); ?>; color: <?php echo e($statusStyles['color']); ?>;">
                                 <i class="fas <?php echo e($statusStyles['icon']); ?>"></i>
-                                <?php echo e($p->estado); ?>
+                                <?php echo e(Str::title(str_replace('_', ' ', $p->estado))); ?>
 
                             </span>
                         </div>
