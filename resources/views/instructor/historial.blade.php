@@ -45,8 +45,19 @@
                 <div style="background: white; border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s; display: flex; flex-direction: column; min-height: 320px;">
                     <div style="padding: 1.5rem; flex: 1;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                            <span style="background: {{ $proyecto->estado === 'aprobado' ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : '#64748b' }}; color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">
-                                {{ $proyecto->estado }}
+                            @php
+                                $statusStyles = match($proyecto->estado) {
+                                    'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
+                                    'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
+                                    'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
+                                    'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
+                                    'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
+                                    'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
+                                    default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
+                                };
+                            @endphp
+                            <span style="background: {{ $statusStyles['bg'] }}; color: #ffffff; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                <i class="fas {{ $statusStyles['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $proyecto->estado)) }}
                             </span>
                             <span style="font-size: 0.75rem; color: var(--text-light);">
                                 <i class="fas fa-calendar-alt" style="margin-right: 4px;"></i>

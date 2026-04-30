@@ -17,8 +17,8 @@
     --surface-solid: #ffffff;
     
     --text: #1a2e1a;
-    --text-light: #4a5d4a;
-    --text-lighter: #8fa38f;
+    --text-light: #64748b;
+    --text-lighter: #94a3b8;
     
     --border: rgba(var(--h), var(--s), var(--l), 0.1);
     --border-glass: rgba(255, 255, 255, 0.4);
@@ -34,6 +34,28 @@
     
     --sidebar-w: 290px;
     --glass: blur(14px) saturate(190%);
+    
+    /* ═════ STATUS COLORS - UNIFIED PALETTE ═════ */
+    --status-approved: #10b981;
+    --status-approved-bg: #d1fae5;
+    --status-approved-text: #065f46;
+    
+    --status-rejected: #ef4444;
+    --status-rejected-bg: #fee2e2;
+    --status-rejected-text: #991b1b;
+    
+    --status-pending: #f59e0b;
+    --status-pending-bg: #fef3c7;
+    --status-pending-text: #92400e;
+    
+    --status-active: #3b82f6;
+    --status-active-bg: #dbeafe;
+    --status-active-text: #1e40af;
+    
+    /* ═════ COMPLETADO - Deep green with white illuminated gradient ═════ */
+    --status-completed: #065f46;
+    --status-completed-gradient: linear-gradient(180deg, #ffffff 0%, #10b981 30%, #065f46 100%);
+    --status-completed-text: #ffffff;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

@@ -196,9 +196,21 @@
 }
 
 .aprendiz-status-approved {
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
-    border-color: rgba(16, 185, 129, 0.2);
+    background: var(--status-approved-bg);
+    color: var(--status-approved-text);
+    border-color: var(--status-approved-bg);
+}
+
+.aprendiz-status-rejected {
+    background: var(--status-rejected-bg);
+    color: var(--status-rejected-text);
+    border-color: var(--status-rejected-bg);
+}
+
+.aprendiz-status-pending {
+    background: var(--status-pending-bg);
+    color: var(--status-pending-text);
+    border-color: var(--status-pending-bg);
 }
 
 .aprendiz-status-rejected {

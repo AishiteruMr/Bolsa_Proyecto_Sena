@@ -169,8 +169,19 @@
                                     <td style="font-weight: 800; color: var(--text);">{{ Str::limit($p->titulo, 40) }}</td>
                                     <td style="color: var(--text-light); font-weight: 600;">{{ $p->empresa_nombre }}</td>
                                     <td>
-                                        <span class="status-badge {{ $p->estado == 'aprobado' ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800;">
-                                            {{ $p->estado }}
+                                        @php
+                                            $statusStyles = match($p->estado) {
+                                                'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
+                                                'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
+                                                'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
+                                                'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
+                                                'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
+                                                'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
+                                                default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
+                                            };
+                                        @endphp
+                                        <span style="background: {{ $statusStyles['bg'] }}; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
+                                            <i class="fas {{ $statusStyles['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $p->estado)) }}
                                         </span>
                                     </td>
                                     <td style="text-align: right;">
@@ -219,16 +230,21 @@
             fetch('/api/admin/stats')
                 .then(r => r.json())
                 .then(data => {
-                    // Modern Palette
+                // Modern Palette - Unified with CSS variables
                     const colors = {
                         emerald: '#10b981',
                         amber: '#f59e0b',
                         rose: '#f43f5e',
                         blue: '#3b82f6',
                         indigo: '#6366f1',
-                        gray: '#64748b'
+                        gray: '#64748b',
+                        // Status colors
+                        statusApproved: '#10b981',
+                        statusRejected: '#ef4444',
+                        statusPending: '#f59e0b',
+                        statusCompleted: '#065f46'
                     };
-
+                    
                     // Proyectos por Estado - Ultra Modern Doughnut
                     new Chart(document.getElementById('chartProyectosEstado'), {
                         type: 'doughnut',
@@ -236,7 +252,16 @@
                             labels: data.proyectos_por_estado.labels,
                             datasets: [{
                                 data: data.proyectos_por_estado.data,
-                                backgroundColor: [colors.amber, colors.emerald, colors.rose, colors.blue, colors.gray],
+                                backgroundColor: data.proyectos_por_estado.labels.map(label => {
+                                    const lowerLabel = label.toLowerCase();
+                                    if (lowerLabel.includes('completado')) return '#065f46'; // Verde oscuro sólido (Chart.js no soporta gradientes CSS)
+                                    if (lowerLabel.includes('cerrado')) return colors.gray; // Gris
+                                    if (lowerLabel.includes('aprobado')) return colors.statusApproved; // Verde
+                                    if (lowerLabel.includes('pendiente')) return colors.statusPending; // Ambar
+                                    if (lowerLabel.includes('rechazado')) return colors.statusRejected; // Rojo
+                                    if (lowerLabel.includes('en progreso')) return colors.blue; // Azul (no verde)
+                                    return colors.gray;
+                                }),
                                 hoverOffset: 15,
                                 weight: 2,
                                 borderWidth: 0,

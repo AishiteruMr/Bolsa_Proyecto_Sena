@@ -63,25 +63,30 @@
                 </div>
             </div>
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #bbf7d0;">
-                <div style="width: 52px; height: 52px; border-radius: 16px; background: #f0fdf4; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #16a34a; line-height: 1;">{{ $aprobadas }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #10b981; line-height: 1;">{{ $aprobadas }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Aprobadas</div>
                 </div>
             </div>
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #fde68a;">
-                <div style="width: 52px; height: 52px; border-radius: 16px; background: #fffbeb; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 22px;">
-                    <i class="fas fa-hourglass-half"></i>
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #f59e0b; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                    <i class="fas fa-clock"></i>
                 </div>
+                <div>
+                    <div style="font-size: 32px; font-weight: 800; color: #f59e0b; line-height: 1;">{{ $pendientes }}</div>
+                    <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">pendientes</div>
+                </div>
+            </div>
                 <div>
                     <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">{{ $pendientes }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Pendientes</div>
                 </div>
             </div>
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #fecaca;">
-                <div style="width: 52px; height: 52px; border-radius: 16px; background: #fef2f2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #ef4444; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-times-circle"></i>
                 </div>
                 <div>
@@ -95,9 +100,13 @@
             @foreach($proyectos as $p)
                 @php
                     $estadoColor = match($p->estado) {
-                        'aceptada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
-                        'rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#ef4444', 'icon' => 'fa-times-circle'],
-                        default     => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-clock'],
+                        'completado' => ['bg' => '#065f46', 'border' => '#065f46', 'text' => '#ffffff', 'icon' => 'fa-check'],
+                        'aceptada' => ['bg' => '#10b981', 'border' => '#bbf7d0', 'text' => '#ffffff', 'icon' => 'fa-check'],
+                        'rechazada' => ['bg' => '#ef4444', 'border' => '#fecaca', 'text' => '#ffffff', 'icon' => 'fa-ban'],
+                        'en_progreso' => ['bg' => '#3b82f6', 'border' => '#bfdbfe', 'text' => '#ffffff', 'icon' => 'fa-spinner'],
+                        'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'text' => '#ffffff', 'icon' => 'fa-clock'],
+                        'cerrado' => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-lock'],
+                        default => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-info-circle'],
                     };
                     $diasRestantes = \Carbon\Carbon::parse($p->fecha_finalizacion)->diffInDays(now(), false);
                     $esFinalizado  = $diasRestantes >= 0;
@@ -117,7 +126,7 @@
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; gap:12px;">
                             <h4 style="font-size:16px; font-weight:800; color:var(--text); line-height:1.3; flex:1;">{{ $p->titulo }}</h4>
                             <span style="background:{{ $estadoColor['bg'] }}; border:1.5px solid {{ $estadoColor['border'] }}; color:{{ $estadoColor['text'] }}; border-radius:20px; padding:6px 14px; font-size:11px; font-weight:800; white-space:nowrap; display:flex; align-items:center; gap:6px; flex-shrink:0;">
-                                <i class="fas {{ $estadoColor['icon'] }}"></i> {{ $p->estado }}
+                                <i class="fas {{ $estadoColor['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $p->estado)) }}
                             </span>
                         </div>
 

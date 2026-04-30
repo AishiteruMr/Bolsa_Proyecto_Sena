@@ -145,12 +145,12 @@
     display: inline-block;
 }
 .status-badge-support.respondido {
-    background: #d1fae5;
-    color: #065f46;
+    background: var(--status-approved-bg);
+    color: var(--status-approved-text);
 }
 .status-badge-support.pendiente {
-    background: #fef3c7;
-    color: #92400e;
+    background: var(--status-pending-bg);
+    color: var(--status-pending-text);
 }
 
 .user-incorporation-list {

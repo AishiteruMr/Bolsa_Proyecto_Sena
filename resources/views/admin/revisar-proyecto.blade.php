@@ -48,8 +48,19 @@
                     {{ $calidad['puede_publicarse'] ? 'APTO PARA PUBLICAR' : 'NO APTO' }}
                 </span>
             </div>
-            <span class="aprendiz-badge-portal" style="background: {{ $proyecto->estado == 'pendiente' ? '#fff7ed' : ($proyecto->estado == 'aprobado' ? '#f0fdf4' : '#fef2f2') }}; border-color: {{ $proyecto->estado == 'pendiente' ? '#ffedd5' : ($proyecto->estado == 'aprobado' ? '#dcfce7' : '#fee2e2') }}; color: {{ $proyecto->estado == 'pendiente' ? '#ea580c' : ($proyecto->estado == 'aprobado' ? '#16a34a' : '#dc2626') }}; padding: 8px 16px; font-weight: 800;">
-                Estado: {{ $proyecto->estado }}
+            @php
+                $statusStyles = match($proyecto->estado) {
+                    'completado' => ['bg' => '#065f46', 'border' => '#065f46', 'icon' => 'fa-check'],
+                    'aprobado' => ['bg' => '#10b981', 'border' => '#bbf7d0', 'icon' => 'fa-check'],
+                    'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'icon' => 'fa-clock'],
+                    'rechazado' => ['bg' => '#ef4444', 'border' => '#fecaca', 'icon' => 'fa-ban'],
+                    'cerrado' => ['bg' => '#64748b', 'border' => '#e2e8f0', 'icon' => 'fa-lock'],
+                    'en_progreso' => ['bg' => '#3b82f6', 'border' => '#bfdbfe', 'icon' => 'fa-spinner'],
+                    default => ['bg' => '#64748b', 'border' => '#e2e8f0', 'icon' => 'fa-info-circle'],
+                };
+            @endphp
+            <span style="background: {{ $statusStyles['bg'] }}; border: 2px solid {{ $statusStyles['border'] }}; color: #ffffff; padding: 8px 16px; font-weight: 800; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas {{ $statusStyles['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $proyecto->estado)) }}
             </span>
         </div>
     </div>
@@ -262,7 +273,7 @@
                         @csrf
                         <input type="hidden" name="estado" value="aprobado">
                         <button type="submit" class="btn-premium" style="width: 100%; background: #22c55e; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);">
-                            <i class="fas fa-check-double" style="margin-right: 10px;"></i> Publicar Proyecto
+                            <i class="fas fa-flag-checkered" style="margin-right: 10px;"></i> Publicar Proyecto
                         </button>
                     </form>
                     @endif

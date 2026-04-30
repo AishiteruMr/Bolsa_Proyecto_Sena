@@ -326,7 +326,20 @@
         <div class="instructor-sidebar-card" style="text-align: center;">
             <p style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--text-light); margin-bottom: 1rem;">Estado del Proyecto</p>
             <span style="background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; padding: 10px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; display: inline-block;">
-                 <i class="fas fa-check-circle" style="margin-right: 8px;"></i> {{ $proyecto->estado }}
+                 @php
+                      $statusStyles = match($proyecto->estado) {
+                          'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
+                          'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
+                          'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
+                          'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
+                          'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
+                          'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
+                          default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
+                      };
+                 @endphp
+                 <span style="background: {{ $statusStyles['bg'] }}; color: #ffffff; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;">
+                     <i class="fas {{ $statusStyles['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $proyecto->estado)) }}
+                 </span>
             </span>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1.5rem; border-top: 1px solid rgba(62,180,137,0.1); padding-top: 1.5rem;">
