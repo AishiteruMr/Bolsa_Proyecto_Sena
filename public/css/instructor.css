@@ -136,7 +136,7 @@
 
 /* Ajustes responsivos */
 @media (max-width: 1024px) {
-    .instructor-title { font-size: 36px; }
+    .instructor-title {     font-size: var(--text-3xl); }
     .instructor-stat-card-lg { padding: 28px; }
     .instructor-stat-grid { grid-template-columns: repeat(2, 1fr); }
     .instructor-stat-card-lg { grid-column: span 2; }
@@ -866,7 +866,7 @@
 
 /* ── GRIDS Y LAYOUT ─────────────────────────────────────────── */
 @media (max-width: 1024px) {
-    .instructor-title { font-size: 36px; }
+    .instructor-title {     font-size: var(--text-3xl); }
     .instructor-stat-grid { grid-template-columns: repeat(2, 1fr); }
     .instructor-stat-card-lg { grid-column: span 2; }
     .instructor-main-grid { grid-template-columns: 1fr 1fr; }

@@ -8,7 +8,7 @@
 
     <section class="hero-section">
         <div class="hero-bg-blobs">
-            <div class="hero-blob" style="top:-100px; right: -100px;"></div>
+            <div class="hero-blob" style="top:-100px; right: -101px;"></div>
             <div class="hero-blob" style="bottom:-100px; left: -100px; background: rgba(59,130,246,0.1)"></div>
         </div>
 
