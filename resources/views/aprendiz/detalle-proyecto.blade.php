@@ -53,11 +53,26 @@
     <div class="instructor-stat-grid" style="margin-bottom: 32px;">
         <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-top: 4px solid #3eb489;">
             <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-size: 22px;">
-                <i class="fas fa-circle-check"></i>
+                <i class="fas fa-flag-checkered"></i>
             </div>
             <div>
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Estado del Proyecto</div>
-                <div style="font-size: 20px; font-weight: 800; color: var(--text);">{{ $proyecto->estado }}</div>
+                @php
+                    $statusStyles = match($proyecto->estado) {
+                        'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
+                        'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
+                        'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
+                        'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
+                        'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
+                        'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
+                        default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
+                    };
+                @endphp
+                <div style="font-size: 20px; font-weight: 800;">
+                    <span style="background: {{ $statusStyles['bg'] }}; color: #ffffff; padding: 8px 16px; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fas {{ $statusStyles['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $proyecto->estado)) }}
+                    </span>
+                </div>
             </div>
         </div>
         
@@ -177,9 +192,11 @@
                                         @foreach($evidenciasEtapa as $evid)
                                             @php
                                                 $stateColor = match($evid->estado) {
-                                                    'aceptada'  => ['bg' => '#f0fdf4', 'border' => '#bbf7d0', 'text' => '#16a34a', 'icon' => 'fa-check-circle'],
-                                                    'rechazada' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'text' => '#dc2626', 'icon' => 'fa-times-circle'],
-                                                    default     => ['bg' => '#fffbeb', 'border' => '#fde68a', 'text' => '#d97706', 'icon' => 'fa-hourglass-half'],
+                                                    'aceptada'  => ['bg' => '#10b981', 'border' => '#bbf7d0', 'text' => '#ffffff', 'icon' => 'fa-check'],
+                                                    'rechazada' => ['bg' => '#ef4444', 'border' => '#fecaca', 'text' => '#ffffff', 'icon' => 'fa-ban'],
+                                                    'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'text' => '#ffffff', 'icon' => 'fa-clock'],
+                                                    'en_progreso' => ['bg' => '#3b82f6', 'border' => '#bfdbfe', 'text' => '#ffffff', 'icon' => 'fa-spinner'],
+                                                    default     => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-info-circle'],
                                                 };
                                             @endphp
                                             <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 16px 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
@@ -196,7 +213,7 @@
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 12px;">
                                                     <span style="background: {{ $stateColor['bg'] }}; border: 1px solid {{ $stateColor['border'] }}; color: {{ $stateColor['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-                                                        <i class="fas {{ $stateColor['icon'] }}"></i> {{ $evid->estado }}
+                                                        <i class="fas {{ $stateColor['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $evid->estado)) }}
                                                     </span>
                                                     @if($evid->ruta_archivo)
                                                         <a href="{{ asset('storage/' . $evid->ruta_archivo) }}" target="_blank" class="btn-premium" style="padding: 8px 14px; font-size: 12px;">

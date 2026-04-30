@@ -44,7 +44,20 @@
     <div class="instructor-catalog-card" style="background: rgba(255,255,255,0.9); border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s;">
         <div style="height: 180px; position: relative;">
             <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
-            <div class="instructor-project-image-badge" style="background: linear-gradient(135deg, #3eb489, #2d9d74);">{{ $p->estado }}</div>
+            @php
+                $statusStyles = match($p->estado) {
+                    'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
+                    'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
+                    'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
+                    'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
+                    'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
+                    'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
+                    default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
+                };
+            @endphp
+            <div class="instructor-project-image-badge" style="background: {{ $statusStyles['bg'] }}; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+                <i class="fas {{ $statusStyles['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $p->estado)) }}
+            </div>
         </div>
         
         <div style="flex: 1; display: flex; flex-direction: column; padding: 24px;">
