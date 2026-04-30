@@ -336,27 +336,27 @@ body {
     .topbar-title { font-size: 18px; }
     .glass-card { padding: 20px; border-radius: 16px; }
     .stat-card-premium { padding: 24px; }
-    .btn-premium { padding: 12px 20px; font-size: 13px; border-radius: 12px; }
-    .premium-table th, .premium-table td { padding: 14px 16px; font-size: 13px; }
+    .btn-premium { padding: 12px 20px; font-size: var(--text-sm); border-radius: 12px; }
+    .premium-table th, .premium-table td { padding: 14px 16px; font-size: var(--text-sm); }
     .premium-table-container { border-radius: 16px; }
 }
 
 @media (max-width: 640px) {
     .page-content { padding: 16px 12px 32px; }
     .topbar { height: 60px; }
-    .topbar-title { font-size: 16px; }
+    .topbar-title { font-size: var(--text-base); }
     .glass-card { padding: 16px; border-radius: 14px; }
     .stat-card-premium { padding: 20px; border-radius: 14px; }
-    .btn-premium { padding: 10px 16px; font-size: 12px; border-radius: 10px; width: 100%; justify-content: center; }
-    .premium-table { font-size: 12px; }
-    .premium-table th { padding: 10px 12px; font-size: 10px; }
+    .btn-premium { padding: 10px 16px; font-size: var(--text-xs); border-radius: 10px; width: 100%; justify-content: center; }
+    .premium-table { font-size: var(--text-xs); }
+    .premium-table th { padding: 10px 12px; font-size: var(--text-xs); }
     .premium-table td { padding: 10px 12px; }
-    .alert { padding: 12px 16px; font-size: 13px; border-radius: 12px; }
+    .alert { padding: 12px 16px; font-size: var(--text-sm); border-radius: 12px; }
 }
 
 @media (max-width: 480px) {
     .topbar { padding: 0 12px; }
-    .topbar-title { font-size: 14px; }
+    .topbar-title { font-size: var(--text-sm); }
     .page-content { padding: 12px 8px 24px; }
     .glass-card { padding: 14px; border-radius: 12px; }
     .stat-card-premium { padding: 16px; }
