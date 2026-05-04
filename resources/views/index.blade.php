@@ -3,7 +3,7 @@
 @section('title', 'Inspírate SENA - Inicio')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/index.css') }}">
+    @vite(['resources/css/index.css'])
 @endsection
 
 @section('content')
