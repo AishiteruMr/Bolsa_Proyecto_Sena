@@ -51,8 +51,7 @@ git clone https://github.com/AishiteruMr/Bolsa_Proyecto_Sena.git
 # Entrar a la carpeta
 cd Bolsa_Proyecto_Sena
 
-# Instalar dependencias PHP
-composer install
+# Instalar dependenci
 
 # Instalar dependencias Node
 npm install

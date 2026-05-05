@@ -26,7 +26,7 @@
 @endsection
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    @vite(['resources/css/admin.css'])
 @endsection
 @section('content')
     <div class="animate-fade-in" style="margin-bottom: 40px;">

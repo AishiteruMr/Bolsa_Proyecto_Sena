@@ -2,7 +2,7 @@
 
 @section('title', 'Registro Empresa')
 @section('styles')
-<link rel="stylesheet" href="{{ asset('css/login.css') }}">
+@vite(['resources/css/login.css'])
 @endsection
 
 @section('content')
@@ -130,5 +130,5 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('js/login.js') }}"></script>
+@vite(['resources/js/login.js'])
 @endsection

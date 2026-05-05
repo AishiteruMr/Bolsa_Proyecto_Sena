@@ -4,7 +4,7 @@
 @section('page-title', 'Mensajes de Soporte')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    @vite(['resources/css/admin.css'])
     <style>
         .soporte-wrapper { max-width: 1000px; margin: 0 auto; }
         .response-panel { display: none; }

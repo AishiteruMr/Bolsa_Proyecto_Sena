@@ -20,7 +20,7 @@
 @endsection
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/empresa.css') }}">
+    @vite(['resources/css/empresa.css'])
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 @endsection
 
@@ -165,7 +165,7 @@
 
 @section('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="{{ asset('js/maps.js') }}"></script>
+@vite(['resources/js/maps.js'])
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // ── MAP ──────────────────────────────────────────────────────
@@ -185,9 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     window._editorMapInstance = instancia;
-
+    
     document.getElementById('btn-detectar')
         ?.addEventListener('click', () => detectarUbicacion('btn-detectar'));
 });
-</script>
 @endsection

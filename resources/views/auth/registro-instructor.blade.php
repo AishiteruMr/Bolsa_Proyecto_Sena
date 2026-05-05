@@ -2,7 +2,7 @@
 
 @section('title', 'Registro Instructor')
 @section('styles')
-<link rel="stylesheet" href="{{ asset('css/login.css') }}">
+@vite(['resources/css/login.css'])
 <style>
     .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 600px) { .input-row { grid-template-columns: 1fr; } }
@@ -142,5 +142,5 @@
 @endsection
 
 @section('scripts')
-<script src="{{ asset('js/login.js') }}"></script>
+@vite(['resources/js/login.js'])
 @endsection

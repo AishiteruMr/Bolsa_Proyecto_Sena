@@ -6,8 +6,23 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/js/app.js',
+                'resources/js/admin.js',
+                'resources/js/bootstrap.js',
+                'resources/js/dashboard.js',
+                'resources/js/forms.js',
+                'resources/js/login.js',
+                'resources/js/maps.js',
                 'resources/css/app.css',
-                'resources/css/admin.css'
+                'resources/css/admin.css',
+                'resources/css/aprendiz.css',
+                'resources/css/auth_forms.css',
+                'resources/css/cards-enhanced.css',
+                'resources/css/dashboard.css',
+                'resources/css/empresa.css',
+                'resources/css/index.css',
+                'resources/css/instructor.css',
+                'resources/css/login.css',
+                'resources/css/nosotros.css'
             ],
             refresh: true,
         }),
