@@ -27,7 +27,7 @@
 @endsection
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/aprendiz.css') }}">
+    @vite(['resources/css/aprendiz.css'])
 @endsection
 
 @section('content')
@@ -333,7 +333,7 @@
 @if($proyecto->latitud && $proyecto->longitud)
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="{{ asset('js/maps.js') }}"></script>
+@vite(['resources/js/maps.js'])
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     initViewMap('ubicacion-map', {{ $proyecto->latitud }}, {{ $proyecto->longitud }}, '{{ $proyecto->nombre }}');

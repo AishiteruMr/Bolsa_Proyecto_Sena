@@ -24,7 +24,7 @@
 @endsection
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/instructor.css') }}">
+    @vite(['resources/css/instructor.css'])
 @endsection
 
 @section('content')

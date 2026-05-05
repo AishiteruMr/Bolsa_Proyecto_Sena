@@ -3,7 +3,7 @@
 @section('title', 'Inspírate SENA - Nosotros')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/nosotros.css') }}">
+    @vite(['resources/css/nosotros.css'])
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 @endsection
 
@@ -122,7 +122,7 @@
 
 @section('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="{{ asset('js/maps.js') }}"></script>
+@vite(['resources/js/maps.js'])
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     initMissionMap('nosotros-map', 10.8642, -74.7777); 

@@ -3,7 +3,7 @@
 @section('title', 'Registro Empresa')
 
 @section('styles')
-<link rel="stylesheet" href="{{ asset('css/auth_forms.css') }}">
+@vite(['resources/css/auth_forms.css'])
 <style>
     .wizard-container {
         max-width: 700px;
@@ -593,5 +593,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<script src="{{ asset('js/login.js') }}"></script>
+@vite(['resources/js/login.js'])
 @endsection

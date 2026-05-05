@@ -20,7 +20,7 @@
 @endsection
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/empresa.css') }}">
+    @vite(['resources/css/empresa.css'])
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 @endsection
 
@@ -184,8 +184,7 @@
 
 @section('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="{{ asset('js/maps.js') }}"></script>
-<script src="{{ asset('js/forms.js') }}"></script>
+@vite(['resources/js/maps.js', 'resources/js/forms.js'])
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Map

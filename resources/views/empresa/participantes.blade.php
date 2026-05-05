@@ -21,7 +21,7 @@
 @endsection
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/empresa.css') }}">
+    @vite(['resources/css/empresa.css'])
 @endsection
 
 @section('content')

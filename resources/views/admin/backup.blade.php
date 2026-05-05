@@ -33,7 +33,7 @@
 @endsection
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    @vite(['resources/css/admin.css'])
     <style>
         /* ── Backup page modern styles ── */
         :root {

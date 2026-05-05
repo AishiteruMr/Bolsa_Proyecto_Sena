@@ -4,7 +4,7 @@
 @section('page-title', 'Banco de Proyectos')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    @vite(['resources/css/admin.css'])
 @endsection
 @section('sidebar-nav')
     <span class="nav-label">Administración</span>

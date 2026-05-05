@@ -9,12 +9,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/cards-enhanced.css') }}">
+    @vite(['resources/css/dashboard.css', 'resources/css/cards-enhanced.css'])
     @yield('styles')
-    <script src="{{ asset('js/pdfjs/pdf.min.js') }}"></script>
+    <script src="{{ asset('assets/pdfjs/pdf.min.js') }}"></script>
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = "{{ asset('js/pdfjs/pdf.worker.min.js') }}";
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "{{ asset('assets/pdfjs/pdf.worker.min.js') }}";
     </script>
 </head>
 <body>
@@ -192,7 +191,7 @@
     }
     </script>
 
-    <script src="{{ asset('js/dashboard.js') }}"></script>
+    @vite(['resources/js/dashboard.js'])
     @yield('scripts')
 </body>
 </html>

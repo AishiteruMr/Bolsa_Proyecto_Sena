@@ -4,7 +4,7 @@
 @section('page-title', 'Página Principal')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    @vite(['resources/css/admin.css'])
 @endsection
 
 @section('sidebar-nav')

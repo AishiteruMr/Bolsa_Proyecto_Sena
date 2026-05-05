@@ -3,7 +3,7 @@
 @section('title', '¿Olvidaste tu Contraseña?')
 
 @section('styles')
-<link rel="stylesheet" href="{{ asset('css/auth_forms.css') }}">
+@vite(['resources/css/auth_forms.css'])
 @endsection
 
 @section('content')
