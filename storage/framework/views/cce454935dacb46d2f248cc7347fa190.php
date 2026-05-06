@@ -13,8 +13,8 @@
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
 
-    <div class="login-container" style="max-width: 1100px;">
-        <div class="login-brand">
+    <div class="login-container">
+        <div class="login-brand login-brand-show">
             <div class="brand-header">
                 <img src="<?php echo e(asset('assets/logo.png')); ?>" alt="SENA">
                 <span>Inspírate<br>SENA</span>
@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <div class="login-content" style="padding: 64px;">
+        <div class="login-content">
             <div class="content-header">
                 <h3>Bienvenido de nuevo</h3>
                 <p>Ingresa tus credenciales para continuar.</p>

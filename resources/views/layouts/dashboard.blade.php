@@ -52,6 +52,8 @@
         </div>
     </aside>
 
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- MAIN -->
     <div class="main">
         <header class="topbar">
@@ -188,7 +190,13 @@
 
     function toggleSidebar() {
         document.querySelector('.sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
     }
+
+    document.getElementById('sidebarOverlay').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.remove('open');
+        this.classList.remove('active');
+    });
     </script>
 
     @vite(['resources/js/dashboard.js'])

@@ -64,6 +64,15 @@
 }
 .value-card:hover { transform: translateY(-8px); border-color: var(--primary-glow); box-shadow: var(--shadow-premium); }
 .value-icon { font-size: var(--text-4xl); margin-bottom: 24px; }
+.value-title { font-size: 24px; font-weight: 800; margin-bottom: 16px; }
+.value-text { color: var(--text-light); line-height: 1.7; }
+
+.about-heading { font-size: 40px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 24px; }
+.about-heading .text-primary { color: var(--primary); }
+.about-paragraph { font-size: 18px; color: var(--text-light); line-height: 1.8; margin-bottom: 24px; }
+.about-paragraph:last-child { margin-bottom: 0; }
+
+.text-primary-decorated { text-decoration: underline; color: var(--primary); }
 
 /* ══ MAP SECTION PREMIUM ══ */
 .map-section {
@@ -335,6 +344,84 @@
     .icon-box { width: 52px; height: 52px; font-size: var(--text-xl); }
     .loc-card-premium { padding: 16px; }
     .map-visual { height: 350px; }
+}
+
+.hero-badge {
+    display: inline-flex;
+    padding: 8px 20px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 100px;
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: #fff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+}
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 1024px) {
+    .hero-nosotros { padding: 100px 5% 60px; }
+    .about-grid { grid-template-columns: 1fr; gap: 48px; padding: 60px 5%; }
+    .about-heading { font-size: 36px; }
+    .about-image { max-width: 500px; margin: 0 auto; }
+    .about-badge { bottom: 20px; right: 20px; padding: 18px; border-radius: 18px; }
+    .values-grid { padding: 0 5% 80px; }
+}
+
+@media (max-width: 768px) {
+    .hero-nosotros { padding: 90px 5% 50px; }
+    .hero-nosotros h1 { letter-spacing: -1px; }
+    .hero-nosotros p { font-size: var(--text-base); }
+    .section-header { margin-bottom: 40px; }
+    .about-grid { padding: 50px 5%; gap: 40px; }
+    .about-heading { font-size: 30px; }
+    .about-paragraph { font-size: var(--text-base); }
+    .values-grid { grid-template-columns: 1fr; gap: 24px; padding: 0 5% 60px; }
+    .value-card { padding: 32px; border-radius: 24px; }
+    .value-icon { font-size: var(--text-3xl); margin-bottom: 16px; }
+    .value-title { font-size: 20px; }
+}
+
+@media (max-width: 480px) {
+    .hero-nosotros { padding: 80px 20px 40px; }
+    .hero-badge { padding: 6px 14px; font-size: 11px; margin-bottom: 16px; }
+    .about-grid { padding: 40px 20px; gap: 32px; }
+    .about-image { border-radius: 24px; }
+    .about-badge { position: static; margin-top: 16px; border-radius: 16px; padding: 16px; }
+    .values-grid { padding: 0 20px 50px; }
+    .value-card { padding: 24px; border-radius: 20px; }
+    .value-icon { font-size: var(--text-2xl); }
+    .section-header { margin-bottom: 32px; }
+    .section-header h2 { font-size: var(--text-xl); }
+    .map-section { padding: 50px 20px; }
+}
+
+/* CTA section */
+.cta-nosotros {
+    padding: 100px 8%;
+    text-align: center;
+}
+.cta-nosotros h2 {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin-bottom: 32px;
+}
+.cta-nosotros .btn {
+    padding: 20px 60px;
+}
+
+@media (max-width: 768px) {
+    .cta-nosotros { padding: 70px 5%; }
+    .cta-nosotros .btn { width: 100%; max-width: 400px; padding: 16px 40px; }
+}
+
+@media (max-width: 480px) {
+    .cta-nosotros { padding: 50px 20px; }
+    .cta-nosotros h2 { letter-spacing: -1px; }
 }
 
 /* Loader while loading map */

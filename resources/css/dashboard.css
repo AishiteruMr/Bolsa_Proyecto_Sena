@@ -325,9 +325,25 @@ body {
 .notification-bell:hover { color: var(--primary) !important; transform: scale(1.1); }
 
 @media (max-width: 1024px) {
-    .sidebar { transform: translateX(-100%); }
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1002;
+    }
     .main { margin-left: 0; }
     .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
 }
 
 @media (max-width: 768px) {
@@ -377,5 +393,141 @@ body {
 @media (max-width: 1024px) {
     .sidebar-toggle {
         display: block;
+    }
+}
+
+/* ════════════════════════════════════════════════════════
+   PERFIL RESPONSIVE - GENÉRICO PARA TODOS LOS PANELES
+   ════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+    .ins-hero,
+    .instructor-hero[style*="padding: 48px"] {
+        flex-direction: column !important;
+        text-align: center;
+    }
+    .ins-hero > div:last-child,
+    .instructor-hero > div > div:last-child {
+        position: static !important;
+    }
+    div[style*="grid-template-columns:2fr 1fr"],
+    div[style*="grid-template-columns: 2fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+    .instructor-hero[style*="display: flex"] > div:first-child {
+        flex-direction: column !important;
+        align-items: center;
+        text-align: center;
+    }
+    .instructor-hero > div > div[style*="display:grid"] {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .ins-hero {
+        padding: 24px 16px !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+        border-radius: 20px !important;
+    }
+    .ins-hero::before {
+        width: 200px !important;
+        height: 200px !important;
+        top: -80px !important;
+        right: -60px !important;
+    }
+    .ins-hero::after { display: none; }
+    .ins-avatar-hero {
+        width: 72px !important;
+        height: 72px !important;
+        font-size: var(--text-xl) !important;
+    }
+    .ins-hero h2[style*="font-size:34px"],
+    .ins-hero h2[style*="font-size: 34px"] {
+        font-size: 24px !important;
+    }
+    .ins-hero-meta {
+        text-align: center !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .ins-hero-meta > div:first-child {
+        flex-direction: column !important;
+    }
+    .ins-hero > div:last-child {
+        grid-template-columns: repeat(3, 1fr) !important;
+        width: 100% !important;
+    }
+    .stat-mini {
+        padding: 12px 10px !important;
+    }
+    .stat-mini > div:first-child {
+        font-size: 22px !important;
+    }
+    .instructor-hero[style*="padding: 48px"] {
+        padding: 24px 16px !important;
+    }
+    .instructor-hero > div {
+        flex-direction: column !important;
+        gap: 20px !important;
+        text-align: center;
+    }
+    .instructor-hero > div > div[style*="display:grid"] {
+        grid-template-columns: repeat(3, 1fr) !important;
+        width: 100% !important;
+    }
+    .instructor-hero > div > div[style*="flex: 1"] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .instructor-hero > div > div[style*="max-width:380px"],
+    .instructor-hero > div > div > div[style*="max-width:380px"] {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    div[style*="display:flex; align-items:center; gap:16px; margin-bottom:32px"],
+    div[style*="display:flex; align-items:center; gap:16px; margin-bottom:28px"] {
+        flex-direction: column !important;
+        text-align: center;
+    }
+    div[style*="grid-template-columns:1fr 1fr"],
+    div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+    .glass-card[style*="padding:44px"],
+    .glass-card[style*="padding:32px"] {
+        padding: 24px 16px !important;
+    }
+    div[style*="display:flex; justify-content:flex-end"] {
+        justify-content: center !important;
+    }
+    div[style*="display:flex; justify-content:flex-end"] .btn-premium {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .ins-hero > div:last-child {
+        grid-template-columns: 1fr !important;
+    }
+    .instructor-hero > div > div[style*="display:grid"] {
+        grid-template-columns: 1fr !important;
+    }
+    .stat-mini {
+        padding: 10px 8px !important;
+    }
+    .stat-mini > div:first-child {
+        font-size: 20px !important;
+    }
+    .stat-mini > div:last-child {
+        font-size: 9px !important;
+    }
+    .ins-hero h2[style*="font-size:34px"],
+    .ins-hero h2[style*="font-size: 34px"] {
+        font-size: 20px !important;
     }
 }

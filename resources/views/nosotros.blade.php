@@ -11,18 +11,18 @@
     {{-- ══ HERO NOSOTROS ══ --}}
 
     <section class="hero-nosotros">
-        <span class="hero-badge" style="margin-bottom: 24px; display: inline-flex;">Nuestra Esencia</span>
+        <span class="hero-badge">Nuestra Esencia</span>
         <h1>Transformando el <br><span>Futuro del Talento</span></h1>
         <p>Somos el puente digital que conecta la pasión de los aprendices con la experiencia de los instructores y las necesidades reales del mundo empresarial.</p>
     </section>
 
     <section class="about-grid">
         <div class="about-text">
-            <h2 style="font-size: 40px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 24px;">Misión Educativa de <span style="color: var(--primary);">Impacto</span></h2>
-            <p style="font-size: 18px; color: var(--text-light); line-height: 1.8; margin-bottom: 24px;">
+            <h2 class="about-heading">Misión Educativa de <span class="text-primary">Impacto</span></h2>
+            <p class="about-paragraph">
                 En el corazón de la educación moderna se encuentra el desafío de convertir la teoría en <strong>acción tangible</strong>. Nuestra plataforma nace con la visión de crear un ecosistema donde cada proyecto sea una oportunidad de crecimiento.
             </p>
-            <p style="font-size: 18px; color: var(--text-light); line-height: 1.8;">
+            <p class="about-paragraph">
                 Diseñada como una <strong>Bolsa de Proyectos de alto impacto</strong>, conectamos a nuestra comunidad con retos de la industria, siempre bajo la guía experta de nuestros instructores.
             </p>
         </div>
@@ -35,13 +35,13 @@
     <section class="values-grid">
         <div class="value-card">
             <div class="value-icon">🎯</div>
-            <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 16px;">Misión</h3>
-            <p style="color: var(--text-light); line-height: 1.7;">Fomentar la innovación social y económica de Colombia a través de la formación integral, capacitando ciudadanos con competencias disruptivas que respondan a los desafíos globales.</p>
+            <h3 class="value-title">Misión</h3>
+            <p class="value-text">Fomentar la innovación social y económica de Colombia a través de la formación integral, capacitando ciudadanos con competencias disruptivas que respondan a los desafíos globales.</p>
         </div>
         <div class="value-card">
             <div class="value-icon">🔭</div>
-            <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 16px;">Visión</h3>
-            <p style="color: var(--text-light); line-height: 1.7;">Liderar la transformación digital del talento humano en Latinoamérica, siendo reconocidos como el motor que impulsa la productividad y el desarrollo sostenible del país.</p>
+            <h3 class="value-title">Visión</h3>
+            <p class="value-text">Liderar la transformación digital del talento humano en Latinoamérica, siendo reconocidos como el motor que impulsa la productividad y el desarrollo sostenible del país.</p>
         </div>
     </section>
 
@@ -51,7 +51,7 @@
         <div class="map-bg-blob blob-2"></div>
 
         <div class="section-header">
-            <span class="hero-badge" style="margin-bottom: 16px;">¿Dónde estamos?</span>
+            <span class="hero-badge">¿Dónde estamos?</span>
             <h2>Nuestra Ubicación Estratégica</h2>
             <p>Visítanos en nuestra sede principal de innovación y tecnología.</p>
         </div>
@@ -112,10 +112,10 @@
         </div>
     </section>
 
-    <section style="padding: 100px 8%; text-align: center;">
-        <h2 style="font-size: 42px; font-weight: 900; letter-spacing: -2px; margin-bottom: 32px;">¿Listo para ser parte la <span style="text-decoration: underline; color: var(--primary);">Innovación</span>?</h2>
-        <a href="{{ route('login') }}" class="btn btn-primary" style="padding: 20px 60px;">
-            Comenzar Ahora <i class="fas fa-rocket" style="margin-left: 10px;"></i>
+    <section class="cta-nosotros">
+        <h2>¿Listo para ser parte la <span class="text-primary-decorated">Innovación</span>?</h2>
+        <a href="{{ route('login') }}" class="btn btn-primary">
+            Comenzar Ahora <i class="fas fa-rocket"></i>
         </a>
     </section>
 @endsection
