@@ -3,7 +3,7 @@
 
     {{-- Logo sin fondo --}}
     <div id="loader-logo-wrap">
-        <img src="{{ asset('assets/loader-removebg-preview.png') }}" alt="Inspírate SENA" id="loader-logo">
+        <img src="{{ asset('assets/loader-removebg-preview.webp') }}" alt="Inspírate SENA" id="loader-logo">
     </div>
 
     <h2 id="loader-title">CARGANDO PROYECTOS...</h2>

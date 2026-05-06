@@ -18,7 +18,7 @@
     <div class="login-container">
         <div class="login-brand login-brand-show">
             <div class="brand-header">
-                <img src="{{ asset('assets/logo.png') }}" alt="SENA">
+                <img src="{{ asset('assets/logo.webp') }}" alt="SENA">
                 <span>Inspírate<br>SENA</span>
             </div>
             

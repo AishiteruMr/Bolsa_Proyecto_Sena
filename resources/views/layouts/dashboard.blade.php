@@ -22,7 +22,7 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-logo">
-            <img src="{{ asset('assets/logo.png') }}" alt="SENA">
+            <img src="{{ asset('assets/logo.webp') }}" alt="SENA">
             <span>Inspírate<br>SENA</span>
         </div>
         <nav class="sidebar-nav">

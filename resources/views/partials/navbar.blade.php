@@ -1,6 +1,6 @@
 <header class="navbar">
     <a href="{{ route('home') }}" class="logo">
-        <img src="{{ asset('assets/logo.png') }}" alt="Logo SENA">
+        <img src="{{ asset('assets/logo.webp') }}" alt="Logo SENA">
         <span>Inspírate SENA</span>
     </a>
 
