@@ -41,7 +41,7 @@
     --glass: blur(14px) saturate(190%);
 
     /* Tipografía: Limitada a 2 fuentes */
-    --font-heading: 'Outfit', sans-serif;
+    --font-heading: 'Open Sans', sans-serif;
     --font-body: 'system-ui', -apple-system, sans-serif;
 
     /* Jerarquía de tamaños */
@@ -103,7 +103,7 @@ a {
     cursor: pointer;
     font-size: 15px;
     font-weight: 700;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Open Sans', sans-serif;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     text-decoration: none;
     position: relative;
@@ -212,7 +212,7 @@ a {
 
 /* --- GLOBAL NAVBAR --- */
 .navbar {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Open Sans', sans-serif;
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: var(--glass);
     padding: 0 8%;
@@ -258,7 +258,7 @@ a {
 }
 
 .menu a {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 15px;
     font-weight: 600;
     color: var(--texto-suave);
