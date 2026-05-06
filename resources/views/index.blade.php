@@ -16,8 +16,8 @@
 
         <div class="hero-layout">
             <div class="hero-content">
-                <div class="hero-badge" style="font-size: 11px; padding: 6px 12px;">
-                    <i class="fas fa-bolt" style="margin-right: 6px;"></i> Portal de Innovación
+                <div class="hero-badge">
+                    <i class="fas fa-bolt"></i> Portal de Innovación
                 </div>
                 <h1 class="hero-title">
                     Conectamos <span>Talento</span> con<br><span>Empresa</span>
@@ -27,10 +27,10 @@
                 </p>
                 <div class="hero-actions">
                     <a href="{{ route('login') }}" class="btn btn-primary">
-                        Comenzar Ahora <i class="fas fa-rocket" style="margin-left: 10px;"></i>
+                        Comenzar Ahora <i class="fas fa-rocket"></i>
                     </a>
-                    <a href="{{ route('nosotros') }}" class="btn btn-outline" style="border-radius: 16px;">
-                        Ver Nosotros <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
+                    <a href="{{ route('nosotros') }}" class="btn btn-outline">
+                        Ver Nosotros <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
@@ -39,13 +39,11 @@
                 <div class="hero-image-wrapper">
                     <img src="{{ asset('assets/sena1.png') }}" alt="SENA" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80'">
                 </div>
-               
-              
             </div>
         </div>
     </section>
 
-    <section class="bento-grid">
+    <section class="index-stats">
         <div class="bento-stats">
             <div class="bento-stats-item">
                 <div class="bento-stats-number">{{ $totalProyectos }}</div>
@@ -60,7 +58,9 @@
                 <div class="bento-stats-label">Aprendices</div>
             </div>
         </div>
+    </section>
 
+    <section class="bento-grid">
         <div class="bento-item empresas">
             <div class="bento-icon"><i class="fas fa-building"></i></div>
             <h3>Empresas</h3>
