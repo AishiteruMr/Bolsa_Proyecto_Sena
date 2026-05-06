@@ -30,7 +30,7 @@
             
             <div class="login-content" style="padding: 36px 32px;">
                 <div class="brand-header" style="display: flex; align-items: center; gap: 14px; margin-bottom: 28px;">
-                    <img src="{{ asset('assets/logo.png') }}" alt="SENA" style="width: 44px; height: 44px; background: #fff; padding: 8px; border-radius: 12px; box-shadow: 0 4px 15px rgba(62,180,137,0.2);">
+                    <img src="{{ asset('assets/logo.webp') }}" alt="SENA" style="width: 44px; height: 44px; background: #fff; padding: 8px; border-radius: 12px; box-shadow: 0 4px 15px rgba(62,180,137,0.2);">
                     <span style="font-size: 24px; font-weight: 900; color: var(--secondary); letter-spacing: -1px;">@yield('title', 'Inspírate')</span>
                 </div>
                 
