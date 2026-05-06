@@ -78,7 +78,7 @@
                             </div>
                             <div class="card-content">
                                 <span class="card-label">Dirección Principal</span>
-                                <span class="card-value">Dg. 18 #161, Malambo, Atlántico</span>
+                                <span class="card-value">#16- a 16-123, Dg. 18 #111, Malambo, Atlántico</span>
                             </div>
                         </div>
 
@@ -117,7 +117,7 @@
 @vite(['resources/js/maps.js'])
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    initMissionMap('nosotros-map', 10.8249, -74.7735); // Coordenadas aproximadas para Malambo 
+    initMissionMap('nosotros-map', 10.864339, -74.777721); // Coordenadas para Malambo
 });
 </script>
 @endsection
