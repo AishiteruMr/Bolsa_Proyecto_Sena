@@ -303,7 +303,15 @@ function detectUserLocation() {
     );
 }
 
+
+// ─── EXPOSE TO GLOBAL SCOPE ──────────────────────────────────────────────────
+window.initViewMap = initViewMap;
+window.initEditorMap = initEditorMap;
+window.detectarUbicacion = detectarUbicacion;
+window.initMissionMap = initMissionMap;
+
 document.addEventListener('DOMContentLoaded', function() {
+
     const btn = document.getElementById('detect-user-location-btn');
     if (btn) {
         btn.addEventListener('click', detectUserLocation);
