@@ -182,6 +182,60 @@
     .section-divider { flex-direction: column; text-align: center; gap: 8px; }
 }
 
+/* ════════════════════════════════════════════════
+   PERFIL RESPONSIVE - EMPRESA
+   ════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    .instructor-hero[style*="padding: 48px"] > div:first-child {
+        flex-direction: column !important;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .instructor-hero[style*="padding: 48px"] {
+        padding: 24px 16px !important;
+    }
+    .instructor-hero[style*="padding: 48px"] > div:first-child {
+        gap: 20px !important;
+    }
+    .instructor-hero > div > div[style*="flex: 1"] {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .instructor-hero > div > div > div[style*="max-width:380px"] {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    .instructor-hero > div > div[style*="display:grid"] {
+        grid-template-columns: repeat(3, 1fr) !important;
+        width: 100% !important;
+    }
+    .instructor-hero[style*="display: flex; gap: 32px"] > div:first-child,
+    .instructor-hero > div[style*="display: flex; align-items: center; gap: 32px"] {
+        flex-direction: column !important;
+        text-align: center;
+    }
+    .instructor-hero > div > div[style*="display:flex; align-items:center; gap:12px"],
+    .instructor-hero > div > div[style*="display: flex; align-items:center; gap:12px"] {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+    .instructor-hero > div > div > div[style*="display:flex; justify-content:space-between"],
+    .instructor-hero > div > div > div[style*="display: flex; justify-content:space-between"] {
+        flex-direction: column !important;
+        text-align: center;
+        gap: 4px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .instructor-hero > div > div[style*="display:grid"] {
+        grid-template-columns: 1fr !important;
+    }
+}
+
 .empresa-hero {
     background: linear-gradient(135deg, #0a1a10 0%, #1a2e1e 100%);
     padding: 60px 48px;

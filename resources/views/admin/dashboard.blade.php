@@ -274,7 +274,7 @@
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
-                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 25, font: { family: 'Outfit', size: 11, weight: '600' } } },
+                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 25, font: { family: 'Open Sans', size: 11, weight: '600' } } },
                                 tooltip: {
                                     backgroundColor: 'rgba(255, 255, 255, 0.95)',
                                     titleColor: '#1e293b',
@@ -313,7 +313,7 @@
                             maintainAspectRatio: false,
                             scales: { r: { grid: { color: '#f1f5f9' }, ticks: { display: false } } },
                             plugins: {
-                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Outfit', size: 11, weight: '600' } } }
+                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 11, weight: '600' } } }
                             }
                         }
                     });
@@ -382,11 +382,11 @@
                                 y: { 
                                     beginAtZero: true, 
                                     grid: { color: '#f1f5f9', drawBorder: false },
-                                    ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 10 }, stepSize: 1 } 
+                                    ticks: { color: '#94a3b8', font: { family: 'Open Sans', size: 10 }, stepSize: 1 } 
                                 },
                                 x: {
                                     grid: { display: false },
-                                    ticks: { color: '#94a3b8', font: { family: 'Outfit', size: 10 } }
+                                    ticks: { color: '#94a3b8', font: { family: 'Open Sans', size: 10 } }
                                 }
                             }
                         }
