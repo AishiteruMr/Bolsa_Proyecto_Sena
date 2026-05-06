@@ -7,7 +7,7 @@
     <title>@yield('title', 'Panel') - Inspírate SENA</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     @vite(['resources/css/dashboard.css', 'resources/css/cards-enhanced.css'])
     @yield('styles')
@@ -51,6 +51,8 @@
             </div>
         </div>
     </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- MAIN -->
     <div class="main">
@@ -188,7 +190,13 @@
 
     function toggleSidebar() {
         document.querySelector('.sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
     }
+
+    document.getElementById('sidebarOverlay').addEventListener('click', function() {
+        document.querySelector('.sidebar').classList.remove('open');
+        this.classList.remove('active');
+    });
     </script>
 
     @vite(['resources/js/dashboard.js'])

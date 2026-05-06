@@ -1,17 +1,17 @@
 <header class="navbar">
-    <a href="{{ route('home') }}" class="logo">
-        <img src="{{ asset('assets/logo.png') }}" alt="Logo SENA">
+    <a href="<?php echo e(route('home')); ?>" class="logo">
+        <img src="<?php echo e(asset('assets/logo.png')); ?>" alt="Logo SENA">
         <span>Inspírate SENA</span>
     </a>
 
     <nav class="menu" id="mainMenu">
-        <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Inicio</a>
-        <a href="{{ route('nosotros') }}" class="{{ request()->routeIs('nosotros') ? 'active' : '' }}">Nosotros</a>
-        <a href="{{ route('soporte') }}" class="{{ request()->routeIs('soporte') ? 'active' : '' }}">Soporte</a>
+        <a href="<?php echo e(route('home')); ?>" class="<?php echo e(request()->routeIs('home') ? 'active' : ''); ?>">Inicio</a>
+        <a href="<?php echo e(route('nosotros')); ?>" class="<?php echo e(request()->routeIs('nosotros') ? 'active' : ''); ?>">Nosotros</a>
+        <a href="<?php echo e(route('soporte')); ?>" class="<?php echo e(request()->routeIs('soporte') ? 'active' : ''); ?>">Soporte</a>
     </nav>
 
     <div class="nav-right">
-        <a href="{{ route('login') }}" class="btn-login">Ingresar</a>
+        <a href="<?php echo e(route('login')); ?>" class="btn-login">Ingresar</a>
         <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
             <i class="fas fa-bars" id="hamburgerIcon"></i>
         </button>
@@ -78,3 +78,4 @@ window.addEventListener('resize', function() {
     to { opacity: 1; }
 }
 </style>
+<?php /**PATH C:\laragon\www\Bolsa_Proyecto_Sena\resources\views/partials/navbar.blade.php ENDPATH**/ ?>

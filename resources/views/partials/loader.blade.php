@@ -62,7 +62,7 @@
 
     #loader-title {
         color: #39a900;
-        font-family: 'Outfit', 'Segoe UI', sans-serif;
+        font-family: 'Open Sans', 'Segoe UI', sans-serif;
         font-size: 1rem;
         font-weight: 800;
         letter-spacing: 2px;

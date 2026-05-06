@@ -1,14 +1,12 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Iniciar Sesión'); ?>
 
-@section('title', 'Iniciar Sesión')
+<?php $__env->startSection('styles'); ?>
+<?php echo app('Illuminate\Foundation\Vite')(['resources/css/login.css']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('styles')
-@vite(['resources/css/login.css'])
-@endsection
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="login-page-wrapper">
-    <a href="{{ route('home') }}" class="btn-back">
+    <a href="<?php echo e(route('home')); ?>" class="btn-back">
         <i class="fas fa-arrow-left"></i> Volver al Inicio
     </a>
 
@@ -18,7 +16,7 @@
     <div class="login-container">
         <div class="login-brand login-brand-show">
             <div class="brand-header">
-                <img src="{{ asset('assets/logo.png') }}" alt="SENA">
+                <img src="<?php echo e(asset('assets/logo.png')); ?>" alt="SENA">
                 <span>Inspírate<br>SENA</span>
             </div>
             
@@ -53,31 +51,32 @@
                 <p>Ingresa tus credenciales para continuar.</p>
             </div>
 
-            @if(session('success'))
-                <div class="alert alert-success"> {{ session('success') }}</div>
-            @endif
-            @if(session('error'))
-                <div class="alert alert-error"> {{ session('error') }}</div>
-            @endif
-            @if(session('info'))
-                <div class="alert alert-info" style="background: #eff6ff; border-color: #3b82f6; color: #1e40af;"> {{ session('info') }}
-                    <form action="{{ route('verification.resend') }}" method="POST" style="margin-top: 8px;">
-                        @csrf
-                        <input type="hidden" name="correo" value="{{ old('correo') }}">
+            <?php if(session('success')): ?>
+                <div class="alert alert-success"> <?php echo e(session('success')); ?></div>
+            <?php endif; ?>
+            <?php if(session('error')): ?>
+                <div class="alert alert-error"> <?php echo e(session('error')); ?></div>
+            <?php endif; ?>
+            <?php if(session('info')): ?>
+                <div class="alert alert-info" style="background: #eff6ff; border-color: #3b82f6; color: #1e40af;"> <?php echo e(session('info')); ?>
+
+                    <form action="<?php echo e(route('verification.resend')); ?>" method="POST" style="margin-top: 8px;">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="correo" value="<?php echo e(old('correo')); ?>">
                         <button type="submit" class="resend-link">
                             <i class="fas fa-paper-plane"></i> Reenviar enlace de verificación
                         </button>
                     </form>
                 </div>
-            @endif
-            @if($errors->any())
+            <?php endif; ?>
+            <?php if($errors->any()): ?>
                 <div class="alert alert-error">
-                    @foreach($errors->all() as $error) <span>{{ $error }}</span><br> @endforeach
+                    <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?> <span><?php echo e($error); ?></span><br> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-            @endif
+            <?php endif; ?>
 
-            <form action="{{ route('login.post') }}" method="POST">
-                @csrf
+            <form action="<?php echo e(route('login.post')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
                 <div class="form-group">
                     <label>
                         Correo Electrónico
@@ -85,7 +84,7 @@
                     </label>
                     <div class="input-wrapper">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" name="correo" value="{{ old('correo') }}" placeholder="tucorreo@email.com" required>
+                        <input type="email" name="correo" value="<?php echo e(old('correo')); ?>" placeholder="tucorreo@email.com" required>
                     </div>
                 </div>
 
@@ -104,7 +103,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('auth.olvide-contraseña') }}" class="forgot-link">¿Olvidaste tu contraseña?</a>
+                <a href="<?php echo e(route('auth.olvide-contraseña')); ?>" class="forgot-link">¿Olvidaste tu contraseña?</a>
 
                 <button type="submit" class="btn-submit">
                     Entrar al Portal <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
@@ -114,15 +113,15 @@
             <div class="divider">ó regístrate como</div>
 
             <div class="role-grid">
-                <a href="{{ route('registro.aprendiz') }}" class="role-card">
+                <a href="<?php echo e(route('registro.aprendiz')); ?>" class="role-card">
                     <i class="fas fa-user-graduate"></i>
                     <span>Aprendiz</span>
                 </a>
-                <a href="{{ route('registro.instructor') }}" class="role-card">
+                <a href="<?php echo e(route('registro.instructor')); ?>" class="role-card">
                     <i class="fas fa-chalkboard-teacher"></i>
                     <span>Instructor</span>
                 </a>
-                <a href="{{ route('registro.empresa') }}" class="role-card">
+                <a href="<?php echo e(route('registro.empresa')); ?>" class="role-card">
                     <i class="fas fa-building"></i>
                     <span>Empresa</span>
                 </a>
@@ -130,8 +129,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
-@vite(['resources/js/login.js'])
-@endsection
+<?php $__env->startSection('scripts'); ?>
+<?php echo app('Illuminate\Foundation\Vite')(['resources/js/login.js']); ?>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\Bolsa_Proyecto_Sena\resources\views/auth/login.blade.php ENDPATH**/ ?>

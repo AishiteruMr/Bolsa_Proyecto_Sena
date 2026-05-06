@@ -160,58 +160,6 @@ function initMissionMap(elementId, senaLat, senaLng) {
 
     _missionMapInstance = { map, senaMarker };
 
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            const userLat = position.coords.latitude;
-            const userLng = position.coords.longitude;
-
-            const userIcon = L.divIcon({
-                className: 'user-location-marker',
-                html: '<div style="background-color: #3b82f6; width: 15px; height: 15px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>'
-            });
-
-            const userMarker = L.marker([userLat, userLng], { icon: userIcon })
-                .addTo(map)
-                .bindPopup('Tu ubicación actual');
-
-            _missionMapInstance.userMarker = userMarker;
-
-            const infoCard = document.getElementById('user-location-info');
-            const addressEl = document.getElementById('user-address');
-            const detectBtn = document.getElementById('detect-user-location-btn');
-            if (infoCard) {
-                infoCard.style.display = 'flex';
-                addressEl.innerText = `Lat: ${userLat.toFixed(4)}, Lng: ${userLng.toFixed(4)}`;
-            }
-            if (detectBtn) {
-                detectBtn.style.background = 'var(--primary)';
-                detectBtn.style.color = 'white';
-                document.querySelector('#detect-user-location-btn i').style.color = '#fff';
-                document.getElementById('detect-btn-text').innerText = 'Ubicación detectada';
-            }
-
-            const group = new L.featureGroup([senaMarker, userMarker]);
-            map.fitBounds(group.getBounds().pad(0.1));
-        },
-        function(error) {
-            const errorDiv = document.getElementById('location-error');
-            const detectBtn = document.getElementById('detect-user-location-btn');
-            if (errorDiv) {
-                let mensaje = 'No se pudo detectar tu ubicación.';
-                if (error.code === 1) mensaje = 'Permiso denegado. Haz clic en el botón para intentar de nuevo.';
-                else if (error.code === 2) mensaje = 'Ubicación no disponible. Verifica tu conexión.';
-                else if (error.code === 3) mensaje = 'Tiempo de espera agotado. Intenta de nuevo.';
-                errorDiv.innerText = mensaje;
-                errorDiv.style.display = 'block';
-            }
-            if (detectBtn) {
-                detectBtn.style.borderColor = '#fecaca';
-            }
-        },
-        { enableHighAccuracy: true, timeout: 15000 }
-        );
-    }
-
     setTimeout(() => map.invalidateSize(), 500);
     return map;
 }

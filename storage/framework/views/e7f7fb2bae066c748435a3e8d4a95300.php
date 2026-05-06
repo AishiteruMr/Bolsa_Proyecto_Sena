@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Inspírate SENA - Inicio'); ?>
 
-@section('title', 'Inspírate SENA - Inicio')
+<?php $__env->startSection('styles'); ?>
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/index.css']); ?>
+<?php $__env->stopSection(); ?>
 
-@section('styles')
-    @vite(['resources/css/index.css'])
-@endsection
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <section class="hero-section">
         <div class="hero-bg-blobs">
@@ -26,10 +24,10 @@
                     La plataforma definitiva donde aprendices e instructores colaboran en proyectos reales que transforman el ecosistema empresarial de Colombia.
                 </p>
                 <div class="hero-actions">
-                    <a href="{{ route('login') }}" class="btn btn-primary">
+                    <a href="<?php echo e(route('login')); ?>" class="btn btn-primary">
                         Comenzar Ahora <i class="fas fa-rocket"></i>
                     </a>
-                    <a href="{{ route('nosotros') }}" class="btn btn-outline">
+                    <a href="<?php echo e(route('nosotros')); ?>" class="btn btn-outline">
                         Ver Nosotros <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -37,7 +35,7 @@
 
             <div class="hero-visual">
                 <div class="hero-image-wrapper">
-                    <img src="{{ asset('assets/sena1.png') }}" alt="SENA" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80'">
+                    <img src="<?php echo e(asset('assets/sena1.png')); ?>" alt="SENA" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80'">
                 </div>
             </div>
         </div>
@@ -46,15 +44,15 @@
     <section class="index-stats">
         <div class="bento-stats">
             <div class="bento-stats-item">
-                <div class="bento-stats-number">{{ $totalProyectos }}</div>
+                <div class="bento-stats-number"><?php echo e($totalProyectos); ?></div>
                 <div class="bento-stats-label">Proyectos</div>
             </div>
             <div class="bento-stats-item">
-                <div class="bento-stats-number">{{ $totalEmpresas }}</div>
+                <div class="bento-stats-number"><?php echo e($totalEmpresas); ?></div>
                 <div class="bento-stats-label">Empresas</div>
             </div>
             <div class="bento-stats-item">
-                <div class="bento-stats-number">{{ $totalAprendices }}</div>
+                <div class="bento-stats-number"><?php echo e($totalAprendices); ?></div>
                 <div class="bento-stats-label">Aprendices</div>
             </div>
         </div>
@@ -65,7 +63,7 @@
             <div class="bento-icon"><i class="fas fa-building"></i></div>
             <h3>Empresas</h3>
             <p>Encuentra soluciones innovadoras para tus desafíos técnicos encargando proyectos a equipos de aprendices calificados.</p>
-            <a href="{{ route('registro.empresa') }}" class="btn">
+            <a href="<?php echo e(route('registro.empresa')); ?>" class="btn">
                 Registrar empresa <i class="fas fa-arrow-right"></i>
             </a>
         </div>
@@ -74,7 +72,7 @@
             <div class="bento-icon"><i class="fas fa-chalkboard-teacher"></i></div>
             <h3>Instructores</h3>
             <p>Lidera el desarrollo de competencias prácticas guiando a los aprendices en la ejecución de proyectos de alto valor.</p>
-            <a href="{{ route('registro.instructor') }}" class="btn">
+            <a href="<?php echo e(route('registro.instructor')); ?>" class="btn">
                 Unirme como guía <i class="fas fa-arrow-right"></i>
             </a>
         </div>
@@ -83,7 +81,7 @@
             <div class="bento-icon"><i class="fas fa-user-graduate"></i></div>
             <h3>Aprendices</h3>
             <p>Participa en retos reales, adquiere experiencia certificable y conecta directamente con empresas aliadas.</p>
-            <a href="{{ route('registro.aprendiz') }}" class="btn">
+            <a href="<?php echo e(route('registro.aprendiz')); ?>" class="btn">
                 Postular talento <i class="fas fa-arrow-right"></i>
             </a>
         </div>
@@ -93,9 +91,11 @@
         <div class="cta-content">
             <h2>¿Listo para transformar el futuro?</h2>
             <p>Únete hoy a la mayor comunidad de innovación técnica y comienza a generar valor real en la industria.</p>
-            <a href="{{ route('login') }}" class="btn">
+            <a href="<?php echo e(route('login')); ?>" class="btn">
                 Comenzar Ahora <i class="fas fa-rocket"></i>
             </a>
         </div>
     </section>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\Bolsa_Proyecto_Sena\resources\views/index.blade.php ENDPATH**/ ?>
