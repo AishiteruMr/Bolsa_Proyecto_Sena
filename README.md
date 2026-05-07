@@ -52,7 +52,7 @@ git clone https://github.com/AishiteruMr/Bolsa_Proyecto_Sena.git
 cd Bolsa_Proyecto_Sena
 
 # Instalar dependenci
-
+composer install
 # Instalar dependencias Node
 npm install
 
