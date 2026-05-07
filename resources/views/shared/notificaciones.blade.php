@@ -204,3 +204,205 @@
 
 </div>
 @endsection
+
+@section('scripts')
+<script>
+    const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    /* ── Mark single notification as read ─────────────────────── */
+    function markAsRead(id) {
+        const card = document.querySelector(`.notif-card-new[data-id="${id}"]`);
+        if (card) {
+            card.style.opacity = '0.5';
+            card.style.pointerEvents = 'none';
+        }
+
+        fetch(`/notificaciones/${id}/leer`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': CSRF_TOKEN,
+                'Accept': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                if (card) {
+                    card.classList.remove('unread');
+                    card.classList.add('read');
+                    card.style.opacity = '1';
+                    card.style.pointerEvents = '';
+                    // Remove the "Listo" button
+                    const btn = card.querySelector('.btn-action-secondary');
+                    if (btn) btn.remove();
+                    // Remove unread indicator dot
+                    const dot = card.querySelector('.unread-indicator');
+                    if (dot) dot.remove();
+                }
+                updateUnreadCounts(-1);
+                showToast('success', 'Notificación marcada como leída.');
+            } else {
+                if (card) {
+                    card.style.opacity = '1';
+                    card.style.pointerEvents = '';
+                }
+                showToast('error', 'No se pudo marcar la notificación.');
+            }
+        })
+        .catch(() => {
+            if (card) {
+                card.style.opacity = '1';
+                card.style.pointerEvents = '';
+            }
+            showToast('error', 'Error de conexión.');
+        });
+    }
+
+    /* ── Mark ALL notifications as read ───────────────────────── */
+    function markAllAsRead() {
+        const btn = document.getElementById('mark-all-btn');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+        }
+
+        fetch('/notificaciones/leer-todas', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': CSRF_TOKEN,
+                'Accept': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                // Update all unread cards visually
+                document.querySelectorAll('.notif-card-new.unread').forEach(card => {
+                    card.classList.remove('unread');
+                    card.classList.add('read');
+                    const actionBtn = card.querySelector('.btn-action-secondary');
+                    if (actionBtn) actionBtn.remove();
+                    const dot = card.querySelector('.unread-indicator');
+                    if (dot) dot.remove();
+                });
+                // Update counts to zero
+                updateUnreadCounts(0, true);
+                // Remove the button
+                if (btn) btn.remove();
+                showToast('success', 'Todas las notificaciones marcadas como leídas.');
+            } else {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-double"></i> Marcar todas';
+                }
+                showToast('error', 'No se pudieron marcar las notificaciones.');
+            }
+        })
+        .catch(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-double"></i> Marcar todas';
+            }
+            showToast('error', 'Error de conexión.');
+        });
+    }
+
+    /* ── Update unread count displays ─────────────────────────── */
+    function updateUnreadCounts(delta, setZero = false) {
+        const heroEl = document.getElementById('hero-unread-count');
+        const statEl = document.getElementById('stat-unread');
+
+        if (setZero) {
+            if (heroEl) heroEl.textContent = '0';
+            if (statEl) statEl.textContent = '0';
+        } else {
+            if (heroEl) {
+                let current = parseInt(heroEl.textContent) || 0;
+                heroEl.textContent = Math.max(0, current + delta);
+            }
+            if (statEl) {
+                let current = parseInt(statEl.textContent) || 0;
+                statEl.textContent = Math.max(0, current + delta);
+            }
+        }
+    }
+
+    /* ── Load more (pagination via AJAX) ──────────────────────── */
+    let currentPage = 1;
+    function loadMore() {
+        const btn = document.getElementById('load-more-btn');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+        }
+
+        currentPage++;
+        const filter = new URLSearchParams(window.location.search).get('filter') || 'all';
+
+        fetch(`/notificaciones?page=${currentPage}&filter=${filter}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+        .then(r => r.text())
+        .then(html => {
+            // The server returns the full page; extract the notif-cards content
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newCards = doc.getElementById('notif-list');
+            if (newCards && newCards.innerHTML.trim()) {
+                document.getElementById('notif-list').insertAdjacentHTML('beforeend', newCards.innerHTML);
+            }
+            // Check if there are more pages
+            const moreBtn = doc.getElementById('load-more-container');
+            if (!moreBtn) {
+                const container = document.getElementById('load-more-container');
+                if (container) container.remove();
+            } else {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-plus"></i> Cargar más';
+                }
+            }
+        })
+        .catch(() => {
+            currentPage--;
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-plus"></i> Cargar más';
+            }
+            showToast('error', 'Error al cargar más notificaciones.');
+        });
+    }
+
+    /* ── Client-side search filter ────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('notif-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const term = this.value.toLowerCase().trim();
+                document.querySelectorAll('.notif-card-new').forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    card.style.display = text.includes(term) ? '' : 'none';
+                });
+                // Toggle date dividers visibility
+                document.querySelectorAll('.date-divider-new').forEach(div => {
+                    let next = div.nextElementSibling;
+                    let hasVisible = false;
+                    while (next && !next.classList.contains('date-divider-new') && !next.classList.contains('mt-4')) {
+                        if (next.classList.contains('notif-card-new') && next.style.display !== 'none') {
+                            hasVisible = true;
+                        }
+                        next = next.nextElementSibling;
+                    }
+                    div.style.display = hasVisible ? '' : 'none';
+                });
+            });
+        }
+
+        // Scroll-to-top button
+        const scrollBtn = document.getElementById('scroll-top');
+        if (scrollBtn) {
+            window.addEventListener('scroll', () => {
+                scrollBtn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+            });
+        }
+    });
+</script>
+@endsection
