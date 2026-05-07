@@ -17,6 +17,20 @@
 
 @section('content')
     <div class="soporte-wrapper">
+        <div class="admin-header-master">
+            <div class="admin-header-icon">
+                <i class="fas fa-headset"></i>
+            </div>
+            <div style="position: relative; z-index: 1;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <span class="admin-badge-hub">Centro de Ayuda</span>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 700;"><i class="far fa-calendar-alt" style="margin-right: 8px;"></i>{{ now()->translatedFormat('l, d F Y') }}</span>
+                </div>
+                <h1 class="admin-header-title">Soporte <span style="color: var(--primary);">Técnico</span></h1>
+                <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 600px; font-weight: 500;">Atiende y responde las consultas de los usuarios de la plataforma.</p>
+            </div>
+        </div>
+
         <div style="display: flex; flex-direction: column; gap: 20px;">
             @forelse($mensajes as $m)
                 <div class="card-base" style="padding: 24px;">
