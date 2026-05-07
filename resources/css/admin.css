@@ -308,8 +308,6 @@
 .premium-table td {
     padding: 16px 20px;
     border-bottom: 1px solid var(--border);
-    word-break: break-word;
-    overflow-wrap: anywhere;
     white-space: normal;
     font-size: var(--text-sm);
 }
@@ -365,7 +363,7 @@
 /* --- ADMIN PROJECT GRID --- */
 .admin-project-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 28px;
 }
 
@@ -423,10 +421,19 @@
     color: #dc2626;
 }
 
+@media (max-width: 1400px) {
+    .admin-project-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 1200px) {
     .admin-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
     .admin-header-master { padding: 48px 32px; }
     .admin-header-title { font-size: 38px; }
+    .admin-filter-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
+
+@media (max-width: 900px) {
+    .admin-filter-grid { grid-template-columns: repeat(2, 1fr) !important; }
 }
 
 @media (max-width: 1024px) {
@@ -450,7 +457,7 @@
     .admin-map-container { height: 200px; }
     .admin-quality-score { font-size: var(--text-3xl); }
     .premium-table th, .premium-table td { padding: 12px 14px; font-size: 13px; }
-    .admin-project-grid { grid-template-columns: 1fr; }
+    .admin-project-grid { grid-template-columns: 1fr; gap: 20px; }
 }
 
 @media (max-width: 640px) {
@@ -486,80 +493,40 @@
     .admin-quality-score { font-size: var(--text-xl); }
 }
 
-/* Minimal fixes to project card typography and overflow
-   - keep original colors and visual treatment
-   - prevent title/labels from overflowing their boxes
-*/
-.admin-project-card {
-    overflow: hidden;
-    padding: 0; /* keep header/body paddings as defined inline */
-}
-.admin-project-card-header h3 {
-    margin: 0;
-    font-size: var(--text-lg);
-    font-weight: var(--font-black);
-    line-height: 1.25;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* limitar a 2 líneas */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Estilo específico del título del proyecto (solo tipografía/color) */
-.admin-project-title {
-    color: var(--text) !important;
-    font-weight: var(--font-black);
-    text-shadow: 0 1px 0 rgba(255,255,255,0.03);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 .admin-project-card-body .aprendiz-badge-portal,
 .admin-project-card-body span { 
     word-break: break-word;
 }
 
-/* Additional refinements for project card layout */
-.admin-project-card-header {
-    padding: 18px 20px;
-    position: relative;
-    background: transparent;
-}
-.admin-project-card-header h3 { color: var(--text); font-size: 1.15rem; }
-.admin-project-card-header i.fa-rocket {
-    position: absolute; right: -10px; bottom: -10px;
-    font-size: 80px; color: rgba(0,0,0,0.035); transform: rotate(-15deg);
-    pointer-events: none; z-index: 0;
-}
-.admin-project-card-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
-.admin-project-card { border-radius: 16px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
-.admin-project-card * { box-sizing: border-box; }
-
-/* --- Enhanced project card visuals (overrides, non-intrusive) ---
+/* --- Enhanced project card visuals ---
    Improves spacing, subtle depth and title hierarchy while keeping colors.
 */
 .admin-project-card {
+    display: flex;
+    flex-direction: column;
     position: relative;
     background: linear-gradient(180deg, var(--surface) 0%, rgba(255,255,255,0.96) 100%);
-    border:1px solid rgba(6,95,70,0.06);
+    border: 1px solid rgba(6,95,70,0.06);
     box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-    padding: 0;
     border-radius: var(--radius);
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     box-sizing: border-box;
+    height: 100%;
 }
 .admin-project-card::before {
     content: '';
     position: absolute;
     left: 0; right: 0; top: 0;
-    height: 6px;
+    height: 3px;
     background: linear-gradient(90deg, var(--primary), var(--primary-hover));
-    opacity: 0.08;
+    opacity: 0;
+    transition: opacity 0.3s ease;
     pointer-events: none;
+    z-index: 2;
+}
+.admin-project-card:hover::before {
+    opacity: 1;
 }
 .admin-project-card::after {
     content: '';
@@ -576,38 +543,176 @@
     border-color: rgba(62,180,137,0.2);
     background: white;
 }
-
-.admin-project-card::before {
-    content: '';
-    position: absolute;
-    left:0; right:0; top:0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary), var(--primary-hover));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.admin-project-card:hover::before {
-    opacity: 1;
-}
 .admin-project-card-header {
-    padding: 18px 22px;
+    padding: 18px 22px 14px;
+    position: relative;
+    background: transparent;
 }
 .admin-project-card-body {
-    padding: 18px 22px 22px 22px;
+    padding: 0 22px 22px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.admin-project-card-footer {
+    padding: 16px 22px;
+    border-top: 1px solid rgba(0,0,0,0.04);
+    background: rgba(0,0,0,0.02);
+    margin-top: auto;
 }
 .admin-project-card .admin-project-title {
     font-size: 1.18rem;
     line-height: 1.18;
     color: var(--text) !important;
 }
+.admin-project-card-header h3 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 10px 0 4px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.admin-project-company {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
 .admin-project-badge {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(0,0,0,0.04);
-    padding: 6px 12px;
-    font-size: var(--text-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 700;
     border-radius: 999px;
+    letter-spacing: 0.3px;
+}
+
+.admin-mentor-section {
+    margin-bottom: 0;
+}
+.admin-mentor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.admin-mentor-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.admin-mentor-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+}
+.admin-mentor-badge.status-pending-validation {
+    color: #dc2626;
+    background: #fef2f2;
+}
+.admin-mentor-badge.status-assigned {
+    color: var(--primary);
+    background: var(--primary-soft);
+}
+.admin-mentor-badge.status-unassigned {
+    color: #f97316;
+    background: #fff7ed;
+}
+.admin-mentor-form {
+    display: flex;
+    gap: 8px;
+}
+.admin-mentor-select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    background: #f8fafc;
+    outline: none;
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+.admin-mentor-select:focus {
+    border-color: var(--primary);
+}
+.admin-mentor-select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.admin-mentor-save {
+    width: 42px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: white;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.admin-mentor-save:hover:not(:disabled) {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+}
+.admin-mentor-save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.admin-card-actions {
+    display: grid;
+    gap: 10px;
+}
+.admin-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #334155;
+    width: 100%;
+    box-sizing: border-box;
+}
+.admin-action-btn i {
+    font-size: 10px;
+    opacity: 0.7;
+}
+.admin-action-btn.primary:hover {
+    background: #f8fafc;
+    color: #0f172a;
+}
+.admin-action-btn.danger {
+    color: #dc2626;
+    border-color: #fee2e2;
+}
+.admin-action-btn.danger:hover {
+    background: #fef2f2;
 }
 
 /* Reusable inline pill/badge used across admin pages */
