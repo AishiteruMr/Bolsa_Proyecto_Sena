@@ -9,13 +9,13 @@ use App\Http\Requests\ValidarLoginRequest;
 use App\Mail\RecuperarContraseña;
 use App\Mail\RegistroExitoso;
 use App\Models\User;
+use App\Jobs\SendEmailJob;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -253,7 +253,7 @@ class AuthController extends Controller
                     'created_at' => now(),
                 ]);
 
-                Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
+                SendEmailJob::dispatch($request->correo, new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
                 // ------------------------
 
                 return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
@@ -307,7 +307,7 @@ class AuthController extends Controller
                     'created_at' => now(),
                 ]);
 
-                Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
+                SendEmailJob::dispatch($request->correo, new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
                 // ------------------------
 
                 return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
@@ -361,7 +361,7 @@ class AuthController extends Controller
                     'created_at' => now(),
                 ]);
 
-                Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre_empresa, $otp));
+                SendEmailJob::dispatch($request->correo, new \App\Mail\VerificarCorreoOTP($request->nombre_empresa, $otp));
                 // ------------------------
 
                 return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
@@ -414,11 +414,7 @@ class AuthController extends Controller
 
     private function enviarCorreoBienvenida(string $correo, string $nombre, string $apellido): void
     {
-        try {
-            Mail::to($correo)->send(new RegistroExitoso($nombre, $apellido));
-        } catch (\Exception $e) {
-            Log::error('Error al enviar correo de bienvenida: '.$e->getMessage());
-        }
+        SendEmailJob::dispatch($correo, new RegistroExitoso($nombre, $apellido));
     }
 
     // ─── RECUPERACIÓN DE CONTRASEÑA ──────────────────────────────────────────
@@ -472,7 +468,7 @@ class AuthController extends Controller
 
         // Enviar correo
         try {
-            Mail::to($correo)->send(new RecuperarContraseña($nombre, $enlaceRecuperacion));
+            SendEmailJob::dispatch($correo, new RecuperarContraseña($nombre, $enlaceRecuperacion));
 
             return back()->with('success', '✅ Se envió un enlace de recuperación a tu correo. Revisa tu bandeja de entrada.');
         } catch (\Exception $e) {

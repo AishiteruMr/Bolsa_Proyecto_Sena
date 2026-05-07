@@ -6,6 +6,7 @@ use App\Http\Requests\ActualizarPerfilRequest;
 use App\Http\Requests\CalificarEvidenciaRequest;
 use App\Http\Requests\GestionarEtapaRequest;
 use App\Http\Requests\GestionarPostulacionRequest;
+use App\Mail\NuevaEtapaCreada;
 use App\Mail\PostulacionEstadoCambiado;
 use App\Models\Aprendiz;
 use App\Models\Etapa;
@@ -16,12 +17,12 @@ use App\Models\Proyecto;
 use App\Models\User;
 use App\Notifications\AppNotification;
 use App\Services\PerfilService;
+use App\Jobs\SendEmailJob;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -305,12 +306,11 @@ class InstructorController extends Controller
                 if ($aprendiz && $proyecto) {
                     // Display: "Aprobada" for user, but save "aceptada" to DB
                     $displayEstado = $estadoInput === 'aceptada' ? 'Aprobada' : ucfirst($estadoInput);
-                    Mail::to($aprendiz->usuario->correo)
-                        ->send(new PostulacionEstadoCambiado(
-                            $aprendiz->nombres,
-                            $proyecto,
-                            $displayEstado
-                        ));
+                    SendEmailJob::dispatch($aprendiz->usuario->correo, new PostulacionEstadoCambiado(
+                        $aprendiz->nombres,
+                        $proyecto,
+                        $displayEstado
+                    ));
                 }
             } catch (\Exception $e) {
                 Log::error('Error al enviar correo de estado de postulación: '.$e->getMessage());
@@ -329,12 +329,32 @@ class InstructorController extends Controller
             ->where('instructor_usuario_id', $usrId)
             ->firstOrFail();
 
-        Etapa::create([
+        $etapa = Etapa::create([
             'proyecto_id' => $proId,
             'orden' => $request->orden,
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
         ]);
+
+        // Notificar a los aprendices aceptados (async via queue)
+        $postulaciones = Postulacion::where('proyecto_id', $proId)
+            ->where('estado', 'aceptada')
+            ->with('aprendiz.usuario')
+            ->get();
+
+        foreach ($postulaciones as $postulacion) {
+            if ($postulacion->aprendiz?->usuario) {
+                SendEmailJob::dispatch(
+                    $postulacion->aprendiz->usuario->correo,
+                    new NuevaEtapaCreada(
+                        $postulacion->aprendiz->nombres,
+                        $proyecto->titulo,
+                        $etapa->nombre,
+                        $etapa->descripcion,
+                    )
+                );
+            }
+        }
 
         return back()->with('success', 'Etapa creada correctamente.');
     }

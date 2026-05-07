@@ -17,11 +17,11 @@ use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use App\Notifications\AppNotification;
+use App\Jobs\SendEmailJob;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -293,7 +293,7 @@ class AdminController extends Controller
                 try {
                     $instructorUsuario = User::where('id', $instructorUsuarioId)->with('instructor')->first();
                     if ($instructorUsuario && $instructorUsuario->instructor) {
-                        Mail::to($instructorUsuario->correo)->send(new InstructorDesasignado($instructorUsuario->instructor->nombres, $proyectoActual->titulo, $proyectoActual->empresa->nombre));
+                        SendEmailJob::dispatch($instructorUsuario->correo, new InstructorDesasignado($instructorUsuario->instructor->nombres, $proyectoActual->titulo, $proyectoActual->empresa->nombre));
 
                         $instructorUsuario->notify(new AppNotification(
                             'Desasignado de proyecto',
@@ -354,12 +354,11 @@ class AdminController extends Controller
                     ->where('estado', 'pendiente')
                     ->count();
 
-                Mail::to($instructorUsuario->correo)
-                    ->send(new InstructorAsignado(
-                        $instructorUsuario->instructor->nombres,
-                        $proyecto,
-                        $totalPostulaciones
-                    ));
+                SendEmailJob::dispatch($instructorUsuario->correo, new InstructorAsignado(
+                    $instructorUsuario->instructor->nombres,
+                    $proyecto,
+                    $totalPostulaciones
+                ));
 
                 $instructorUsuario->notify(new AppNotification(
                     'Proyecto Asignado',
@@ -393,7 +392,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            Mail::to($mensaje->email)->send(new RespuestaSoporte(
+            SendEmailJob::dispatch($mensaje->email, new RespuestaSoporte(
                 $mensaje->nombre,
                 $mensaje->motivo,
                 $mensaje->mensaje,
