@@ -30,7 +30,7 @@
         <!-- FILTROS DE BÚSQUEDA -->
         <div class="glass-card" style="padding: 24px; margin-bottom: 24px; background: white;">
             <form method="GET" action="{{ route('admin.proyectos') }}">
-                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px; align-items: end;">
+                <div class="admin-filter-grid" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px; align-items: end;">
                     <div>
                         <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Buscar</label>
                         <input type="text" name="buscar" value="{{ request('buscar') }}" placeholder="Título, descripción o empresa..." style="width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 600; outline: none;">
@@ -88,54 +88,48 @@
         <div class="admin-project-grid">
             @forelse($proyectos as $p)
             <div class="glass-card admin-project-card">
-                {{-- Header Decorativo --}}
+                @php
+                    $hasCalidad = !empty($p->calidad_aprobada);
+                    $statusStyles = match($p->estado) {
+                        'completado' => ['bg' => '#065f46', 'color' => '#ffffff', 'icon' => 'fa-check'],
+                        'aprobado' => ['bg' => '#10b981', 'color' => '#ffffff', 'icon' => 'fa-check'],
+                        'pendiente' => ['bg' => '#f59e0b', 'color' => '#ffffff', 'icon' => 'fa-clock'],
+                        'rechazado' => ['bg' => '#ef4444', 'color' => '#ffffff', 'icon' => 'fa-ban'],
+                        'cerrado' => ['bg' => '#64748b', 'color' => '#ffffff', 'icon' => 'fa-lock'],
+                        'en_progreso' => ['bg' => '#3b82f6', 'color' => '#ffffff', 'icon' => 'fa-spinner'],
+                        default => ['bg' => '#64748b', 'color' => '#ffffff', 'icon' => 'fa-info-circle']
+                    };
+                @endphp
+
                 <div class="admin-project-card-header">
-                    <div style="position:relative; z-index:1;">
-                        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                                    @php
-                                    $statusStyles = match($p->estado) {
-                                        'completado' => ['bg' => '#065f46', 'border' => '#065f46', 'color' => '#ffffff', 'icon' => 'fa-check'],
-                                        'aprobado' => ['bg' => '#10b981', 'border' => '#bbf7d0', 'color' => '#ffffff', 'icon' => 'fa-check'],
-                                        'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'color' => '#ffffff', 'icon' => 'fa-clock'],
-                                        'rechazado' => ['bg' => '#ef4444', 'border' => '#fecaca', 'color' => '#ffffff', 'icon' => 'fa-ban'],
-                                        'cerrado' => ['bg' => '#64748b', 'border' => '#e2e8f0', 'color' => '#ffffff', 'icon' => 'fa-lock'],
-                                        'en_progreso' => ['bg' => '#3b82f6', 'border' => '#bfdbfe', 'color' => '#ffffff', 'icon' => 'fa-spinner'],
-                                        default => ['bg' => '#64748b', 'border' => '#e2e8f0', 'color' => '#ffffff', 'icon' => 'fa-info-circle']
-                                    };
-                                @endphp
-                            <span class="admin-project-badge" style="background: {{ $statusStyles['bg'] }}; color: {{ $statusStyles['color'] }};">
-                                <i class="fas {{ $statusStyles['icon'] }}"></i>
-                                {{ Str::title(str_replace('_', ' ', $p->estado)) }}
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <h3 style="font-size: 17px; font-weight: 900; color: #0f172a; margin: 0 0 6px 0; line-height: 1.4;">{{ Str::limit($p->titulo, 55) }}</h3>
-                    <p style="font-size: 13px; color: #64748b; margin: 0; font-weight: 500; display: flex; align-items: center; gap: 6px;">
-                        <span style="width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1;"></span>
+                    <span class="admin-project-badge" style="background: {{ $statusStyles['bg'] }}; color: {{ $statusStyles['color'] }};">
+                        <i class="fas {{ $statusStyles['icon'] }}"></i>
+                        {{ Str::title(str_replace('_', ' ', $p->estado)) }}
+                    </span>
+                    <h3>{{ Str::limit($p->titulo, 55) }}</h3>
+                    <p class="admin-project-company">
+                        <i class="fas fa-building" style="font-size: 10px; opacity: 0.5;"></i>
                         {{ $p->empresa_nombre }}
                     </p>
                 </div>
 
-                <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
-                    
-                    @php $hasCalidad = !empty($p->calidad_aprobada); @endphp
-                    <div style="margin-bottom: 24px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <label style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Mentor Asignado</label>
+                <div class="admin-project-card-body">
+                    <div class="admin-mentor-section">
+                        <div class="admin-mentor-header">
+                            <span class="admin-mentor-label">Mentor Asignado</span>
                             @if(!$hasCalidad)
-                                <span style="font-size: 10px; color: #dc2626; font-weight: 700; background: #fef2f2; padding: 2px 8px; border-radius: 10px;">Pendiente Validación</span>
+                                <span class="admin-mentor-badge status-pending-validation">Pendiente Validación</span>
                             @elseif($p->instructor_nombre)
-                                <span style="font-size: 10px; color: var(--primary); font-weight: 700; background: var(--primary-soft); padding: 2px 8px; border-radius: 10px;">Asignado</span>
+                                <span class="admin-mentor-badge status-assigned">Asignado</span>
                             @else
-                                <span style="font-size: 10px; color: #f97316; font-weight: 700; background: #fff7ed; padding: 2px 8px; border-radius: 10px;">Sin Asignar</span>
+                                <span class="admin-mentor-badge status-unassigned">Sin Asignar</span>
                             @endif
                         </div>
                         
                         <form action="{{ route('admin.proyectos.asignar', $p->id) }}" method="POST">
                             @csrf
-                            <div style="display: flex; gap: 8px;">
-                                <select name="instructor_usuario_id" style="flex: 1; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; font-weight: 600; color: #334155; background: #f8fafc; outline: none; transition: border-color 0.2s; cursor: pointer;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e2e8f0'" required {{ !$hasCalidad ? 'disabled' : '' }}>
+                            <div class="admin-mentor-form">
+                                <select name="instructor_usuario_id" class="admin-mentor-select" required {{ !$hasCalidad ? 'disabled' : '' }}>
                                     <option value="" disabled selected>{{ $hasCalidad ? 'Seleccionar Instructor...' : 'Validar calidad primero' }}</option>
                                     @if($hasCalidad)
                                         @foreach($instructores as $ins)
@@ -145,24 +139,25 @@
                                         @endforeach
                                     @endif
                                 </select>
-                                <button type="submit" style="width: 42px; border: 1px solid #e2e8f0; border-radius: 10px; background: white; color: var(--primary); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.02); {{ !$hasCalidad ? 'opacity: 0.5; cursor: not-allowed;' : '' }}" {{ !$hasCalidad ? 'disabled' : '' }} title="{{ $hasCalidad ? 'Actualizar' : 'Valida la calidad del proyecto primero' }}">
-                                    <i class="fas fa-save"></i>
+                                <button type="submit" class="admin-mentor-save" {{ !$hasCalidad ? 'disabled' : '' }} title="{{ $hasCalidad ? 'Guardar asignación' : 'Valida la calidad del proyecto primero' }}">
+                                    <i class="fas fa-check"></i>
                                 </button>
                             </div>
                         </form>
                     </div>
+                </div>
 
-                    <div style="margin-top: auto; display: grid; grid-template-columns: {{ $p->estado == 'aprobado' ? '1fr 1fr' : '1fr' }}; gap: 10px;">
-                        <a href="{{ route('admin.proyectos.revisar', $p->id) }}" style="text-align: center; padding: 10px; background: white; color: #334155; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 12px; font-weight: 700; text-decoration: none; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#f8fafc'; this.style.color='#0f172a';" onmouseout="this.style.background='white'; this.style.color='#334155';">
-                            Ver Detalles <i class="fas fa-arrow-right" style="margin-left: 4px; font-size: 10px; opacity: 0.7;"></i>
+                <div class="admin-project-card-footer">
+                    <div class="admin-card-actions" style="grid-template-columns: {{ $p->estado == 'aprobado' ? '1fr 1fr' : '1fr' }};">
+                        <a href="{{ route('admin.proyectos.revisar', $p->id) }}" class="admin-action-btn primary">
+                            Ver Detalles <i class="fas fa-arrow-right"></i>
                         </a>
-
                         @if($p->estado == 'aprobado')
-                        <form action="{{ route('admin.proyectos.estado', $p->id) }}" method="POST" style="width: 100%; margin: 0;">
+                        <form action="{{ route('admin.proyectos.estado', $p->id) }}" method="POST">
                             @csrf
                             <input type="hidden" name="estado" value="cerrado">
-                            <button type="submit" style="width: 100%; text-align: center; padding: 10px; background: white; color: #dc2626; border: 1px solid #fee2e2; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.02);" onmouseover="this.style.background='#fef2f2';" onmouseout="this.style.background='white';">
-                                Pausar Proyecto <i class="fas fa-ban" style="margin-left: 4px; font-size: 10px; opacity: 0.7;"></i>
+                            <button type="submit" class="admin-action-btn danger">
+                                Pausar Proyecto <i class="fas fa-pause"></i>
                             </button>
                         </form>
                         @endif

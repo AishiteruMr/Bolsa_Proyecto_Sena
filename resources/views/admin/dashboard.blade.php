@@ -123,50 +123,88 @@
         </div>
 
         <div class="admin-main-grid" style="margin-top: 24px;">
-            <div class="glass-card admin-table-card" style="background: white;">
-                <div class="admin-table-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">Proyectos por Auditar</h3>
-                    <a href="{{ route('admin.proyectos') }}" class="btn-premium" style="padding: 8px 16px; font-size: 11px; background: #f8fafc; color: var(--primary); border: 1px solid var(--primary-soft); box-shadow: none;">Ir al Banco</a>
+            <div class="glass-card admin-table-card" style="background: white; display: flex; flex-direction: column;">
+                <div class="admin-table-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 40px; height: 40px; background: var(--primary-soft); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 16px;">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 1rem; font-weight: 800; color: var(--text); margin: 0;">Proyectos por Auditar</h3>
+                            <span style="font-size: 11px; color: var(--text-lighter); font-weight: 600;">{{ $proyectosRecientes->count() }} proyecto(s) reciente(s)</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.proyectos') }}" class="btn-premium" style="padding: 8px 16px; font-size: 11px; background: #f8fafc; color: var(--primary); border: 1px solid var(--primary-soft); box-shadow: none; white-space: nowrap;">Ir al Banco</a>
                 </div>
-                <div class="premium-table-container">
+                <div class="premium-table-container" style="flex: 1;">
+                    @php
+                        $avatarColors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#f43f5e', '#06b6d4', '#84cc16'];
+                    @endphp
                     <table class="premium-table">
                         <thead>
                             <tr>
-                                <th>Proyecto</th>
+                                <th style="padding-left: 24px;">Proyecto</th>
                                 <th>Empresa</th>
                                 <th>Estado</th>
-                                <th style="text-align: right;">Acciones</th>
+                                <th style="text-align: right; padding-right: 24px;">Acción</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($proyectosRecientes as $p)
+                            @forelse($proyectosRecientes as $i => $p)
+                                @php
+                                    $statusStyles = match($p->estado) {
+                                        'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
+                                        'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
+                                        'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
+                                        'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
+                                        'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
+                                        'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
+                                        default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
+                                    };
+                                    $initial = strtoupper(substr($p->titulo, 0, 1));
+                                    $avatarColor = $avatarColors[$i % count($avatarColors)];
+                                @endphp
                                 <tr>
-                                    <td style="font-weight: 800; color: var(--text);">{{ Str::limit($p->titulo, 40) }}</td>
-                                    <td style="color: var(--text-light); font-weight: 600;">{{ $p->empresa_nombre }}</td>
+                                    <td style="padding-left: 24px;">
+                                        <div style="display: flex; align-items: center; gap: 14px;">
+                                            <div style="width: 38px; height: 38px; border-radius: 10px; background: {{ $avatarColor }}15; color: {{ $avatarColor }}; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; border: 1px solid {{ $avatarColor }}25; flex-shrink: 0;">
+                                                {{ $initial }}
+                                            </div>
+                                            <div>
+                                                <div style="font-weight: 700; color: var(--text); font-size: 13px; line-height: 1.5;">{{ $p->titulo }}</div>
+                                                @if($p->categoria)
+                                                    <span style="font-size: 10px; color: var(--text-lighter); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">{{ $p->categoria }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td>
-                                        @php
-                                            $statusStyles = match($p->estado) {
-                                                'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
-                                                'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
-                                                'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
-                                                'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
-                                                'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
-                                                'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
-                                                default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
-                                            };
-                                        @endphp
-                                        <span style="background: {{ $statusStyles['bg'] }}; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;">
+                                        <div style="display: flex; align-items: center; gap: 8px; color: var(--text-light); font-weight: 600; font-size: 13px;">
+                                            <i class="fas fa-building" style="font-size: 11px; opacity: 0.4;"></i>
+                                            {{ $p->empresa_nombre }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span style="background: {{ $statusStyles['bg'] }}15; color: {{ $statusStyles['bg'] }}; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; border: 1px solid {{ $statusStyles['bg'] }}25;">
                                             <i class="fas {{ $statusStyles['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $p->estado)) }}
                                         </span>
                                     </td>
-                                    <td style="text-align: right;">
-                                        <a href="{{ route('admin.proyectos.revisar', $p->id) }}" class="btn-premium" style="width: 32px; height: 32px; padding: 0; justify-content: center; background: var(--primary-soft); color: var(--primary); box-shadow: none; border-radius: 8px;">
-                                            <i class="fas fa-chevron-right"></i>
+                                    <td style="text-align: right; padding-right: 24px;">
+                                        <a href="{{ route('admin.proyectos.revisar', $p->id) }}" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 11px; font-weight: 700; text-decoration: none; transition: all 0.2s; white-space: nowrap;" onmouseover="this.style.background='var(--primary)'; this.style.color='#fff'" onmouseout="this.style.background='var(--primary-soft)'; this.style.color='var(--primary)'">
+                                            Revisar <i class="fas fa-arrow-right" style="font-size: 10px;"></i>
                                         </a>
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--text-lighter); font-weight: 600;">No hay proyectos pendientes.</td></tr>
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 60px 24px;">
+                                        <div style="width: 64px; height: 64px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #cbd5e1;">
+                                            <i class="fas fa-inbox" style="font-size: 28px;"></i>
+                                        </div>
+                                        <div style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Todo al día</div>
+                                        <div style="font-size: 13px; color: var(--text-lighter); font-weight: 500;">No hay proyectos pendientes de revisión.</div>
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
