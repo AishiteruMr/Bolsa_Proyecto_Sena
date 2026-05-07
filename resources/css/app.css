@@ -58,7 +58,7 @@
     --font-regular: 400;
     --font-medium: 500;
     --font-bold: 700;
-    --font-black: 900;
+    --font-black: 800;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
