@@ -17,11 +17,11 @@ use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use App\Notifications\AppNotification;
+use App\Jobs\SendEmailJob;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -93,7 +93,15 @@ class AdminController extends Controller
                 $anterior,
                 ['activo' => $request->estado]
             );
-        } else {
+
+            // Enviar correo de bienvenida al activar cuenta
+            if ($request->estado == 1 && $usrToNotify) {
+                $perfil = $this->getPerfilUsuario($usrToNotify->id, $usrToNotify->rol_id);
+                $nombre = $perfil->nombre ?? '';
+                $apellido = $perfil->apellido ?? '';
+                $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
+            }
+        } elseif ($request->tipo === 'instructor') {
             $instructor = Instructor::with('usuario')->findOrFail($id);
             $anterior = ['activo' => $instructor->activo];
             $instructor->update(['activo' => $request->estado]);
@@ -110,6 +118,41 @@ class AdminController extends Controller
                 $anterior,
                 ['activo' => $request->estado]
             );
+
+            // Enviar correo de bienvenida al activar cuenta
+            if ($request->estado == 1 && $usrToNotify) {
+                $perfil = $this->getPerfilUsuario($usrToNotify->id, $usrToNotify->rol_id);
+                $nombre = $perfil->nombre ?? '';
+                $apellido = $perfil->apellido ?? '';
+                $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
+            }
+        } else {
+            // Para empresas
+            $empresa = Empresa::with('usuario')->findOrFail($id);
+            $anterior = ['activo' => $empresa->activo];
+            $empresa->update(['activo' => $request->estado]);
+            Cache::forget('admin_stats');
+            $usrToNotify = $empresa->usuario;
+
+            // Audit log detallado
+            AuditLog::registrarCambio(
+                $usrId,
+                'cambiar_estado',
+                'empresas',
+                'empresas',
+                $id,
+                $anterior,
+                ['activo' => $request->estado]
+            );
+
+            // Enviar correo de bienvenida al activar cuenta
+            if ($request->estado == 1 && $usrToNotify) {
+                // Para empresas, el nombre es el nombre de la empresa
+                $nombre = $empresa->nombre ?? '';
+                $apellido = ''; // No aplica para empresas
+                $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
+            }
+        }
         }
 
         try {
@@ -293,7 +336,7 @@ class AdminController extends Controller
                 try {
                     $instructorUsuario = User::where('id', $instructorUsuarioId)->with('instructor')->first();
                     if ($instructorUsuario && $instructorUsuario->instructor) {
-                        Mail::to($instructorUsuario->correo)->send(new InstructorDesasignado($instructorUsuario->instructor->nombres, $proyectoActual->titulo, $proyectoActual->empresa->nombre));
+                        SendEmailJob::dispatch($instructorUsuario->correo, new InstructorDesasignado($instructorUsuario->instructor->nombres, $proyectoActual->titulo, $proyectoActual->empresa->nombre));
 
                         $instructorUsuario->notify(new AppNotification(
                             'Desasignado de proyecto',
@@ -354,12 +397,11 @@ class AdminController extends Controller
                     ->where('estado', 'pendiente')
                     ->count();
 
-                Mail::to($instructorUsuario->correo)
-                    ->send(new InstructorAsignado(
-                        $instructorUsuario->instructor->nombres,
-                        $proyecto,
-                        $totalPostulaciones
-                    ));
+                SendEmailJob::dispatch($instructorUsuario->correo, new InstructorAsignado(
+                    $instructorUsuario->instructor->nombres,
+                    $proyecto,
+                    $totalPostulaciones
+                ));
 
                 $instructorUsuario->notify(new AppNotification(
                     'Proyecto Asignado',
@@ -393,7 +435,7 @@ class AdminController extends Controller
         ]);
 
         try {
-            Mail::to($mensaje->email)->send(new RespuestaSoporte(
+            SendEmailJob::dispatch($mensaje->email, new RespuestaSoporte(
                 $mensaje->nombre,
                 $mensaje->motivo,
                 $mensaje->mensaje,

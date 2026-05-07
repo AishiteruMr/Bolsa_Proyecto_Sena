@@ -34,11 +34,18 @@ Plataforma integral premium para la conexión entre empresas, instructores y apr
 
 * PHP 8.4+
 * Laravel 11.x
-* Vite
+* Laravel Sanctum (autenticación API)
+* Vite 8.x
 * Blade Templates
 * MySQL / MariaDB
-* PHPMailer
-* Pusher
+* PHPMailer 6.x
+* Pusher (WebSockets)
+* Laravel Echo
+* Chart.js 4.x
+* Axios
+* Intervention Image 3.x
+* PHPUnit 11.x
+* Laravel Pint (estilo de código)
 
 ---
 
@@ -51,8 +58,9 @@ git clone https://github.com/AishiteruMr/Bolsa_Proyecto_Sena.git
 # Entrar a la carpeta
 cd Bolsa_Proyecto_Sena
 
-# Instalar dependenci
+# Instalar dependencias PHP
 composer install
+
 # Instalar dependencias Node
 npm install
 
@@ -89,7 +97,6 @@ php artisan backup:list
 
 # Eliminar backup
 php artisan backup:delete nombre_del_archivo.sql
-
 ```
 
 ---
@@ -98,6 +105,15 @@ php artisan backup:delete nombre_del_archivo.sql
 
 1. Accede a `http://localhost:8000` después de ejecutar `php artisan serve`
 2. Inicia sesión con las credenciales de prueba
+
+---
+
+## Testing
+
+```bash
+# Ejecutar pruebas unitarias y funcionales
+php artisan test
+```
 
 ---
 
@@ -131,13 +147,15 @@ app/
 ├── Notifications/
 ├── Mail/
 ├── Traits/
+├── Helpers/
 ├── Providers/
 └── Console/Commands/
 database/
 ├── migrations/
 └── seeders/
 resources/
-└── views/
+├── views/
+└── js/
 routes/
 public/
 tests/
@@ -148,14 +166,14 @@ tests/
 ## Notas de Seguridad 
 
 ### Autenticación
-- Implementar Laravel Fortify para autenticación robusta
-- Usar Redis para rate limiting en producción
-- Habilitar 2FA para administradores
+- Usar Laravel Sanctum para autenticación API
+- Usar Redis para rate limiting en producción (opcional)
+- Habilitar 2FA para administradores (recomendado)
 
 ### Base de Datos
-- Usar PostgreSQL en producción para mejor rendimiento
+- Compatible con MySQL / MariaDB (por defecto) o PostgreSQL en producción
 - Configurar read replicas si hay alta carga
-- Implementar backup automático
+- Backup automático incluido (comandos artisan personalizados)
 
 ---
 

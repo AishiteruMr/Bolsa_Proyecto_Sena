@@ -14,13 +14,13 @@ use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use App\Services\PerfilService;
+use App\Jobs\SendEmailJob;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class EmpresaController extends Controller
@@ -360,13 +360,11 @@ class EmpresaController extends Controller
             $aprendiz = $postulacion->aprendiz;
             $usuarioCorreo = optional($aprendiz->usuario)->correo;
             if ($usuarioCorreo) {
-                Mail::to($usuarioCorreo)->send(
-                    new PostulacionEstadoCambiado(
-                        $aprendiz->nombres ?? 'Aprendiz',
-                        $postulacion->proyecto,
-                        ucfirst($estadoInput)
-                    )
-                );
+                SendEmailJob::dispatch($usuarioCorreo, new PostulacionEstadoCambiado(
+                    $aprendiz->nombres ?? 'Aprendiz',
+                    $postulacion->proyecto,
+                    ucfirst($estadoInput)
+                ));
             }
         } catch (\Exception $e) {
             Log::error('Error enviando email de estado postulación: '.$e->getMessage());

@@ -26,6 +26,7 @@ export default defineConfig({
                 'resources/css/instructor.css',
                 'resources/css/login.css',
                 'resources/css/nosotros.css',
+                'resources/css/notificaciones.css',
                 'resources/css/soporte.css'
             ],
             refresh: true,
