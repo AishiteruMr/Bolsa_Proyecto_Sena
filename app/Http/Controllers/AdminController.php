@@ -186,7 +186,10 @@ class AdminController extends Controller
         ]);
 
         $query = Proyecto::with(['empresa', 'instructor.usuario'])
-            ->withCount('postulaciones');
+            ->withCount([
+                'postulaciones',
+                'postulacionesAprobadas as postulaciones_aprobadas_count',
+            ]);
 
         if (! empty($validated['buscar'])) {
             $buscar = addcslashes($validated['buscar'], '%_\\');
@@ -234,6 +237,7 @@ class AdminController extends Controller
                 'empresa_nombre' => $proyecto->empresa?->nombre,
                 'instructor_nombre' => $proyecto->instructor?->nombres,
                 'postulaciones_count' => $proyecto->postulaciones_count ?? 0,
+                'postulaciones_aprobadas_count' => $proyecto->postulaciones_aprobadas_count ?? 0,
             ];
         });
 

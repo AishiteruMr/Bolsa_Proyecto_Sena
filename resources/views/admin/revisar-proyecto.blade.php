@@ -260,8 +260,8 @@
                     </form>
                     @endif
 
-                    @if(count($calidad['fallos']) > 0 && $proyecto->estado == 'pendiente')
-                    <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST">
+                    @if($proyecto->estado == 'pendiente')
+                    <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de rechazar este proyecto? Esta acción no se puede deshacer.');">
                         @csrf
                         <input type="hidden" name="estado" value="rechazado">
                         <button type="submit" class="btn-premium" style="width: 100%; background: #ef4444; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
