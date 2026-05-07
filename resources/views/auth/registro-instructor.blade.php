@@ -2,15 +2,11 @@
 
 @section('title', 'Registro Instructor')
 @section('styles')
-<<<<<<< HEAD
 @vite(['resources/css/register.css'])
 <style>
     .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 600px) { .input-row { grid-template-columns: 1fr; } }
 </style>
-=======
-@vite(['resources/css/login.css'])
->>>>>>> 7a18bc6ad067ae940201b66339f79853ee892358
 @endsection
 
 @section('content')
@@ -47,22 +43,11 @@
             </div>
 
             <div class="brand-footer">
-                Bolsa de Proyectos & Talentos
+                Bolsa de Proyectos &amp; Talentos
             </div>
         </div>
 
-<<<<<<< HEAD
         <div class="register-content">
-=======
-        <div class="login-brand login-brand-show">
-            <div class="brand-header">
-                <img src="{{ asset('assets/logo.webp') }}" alt="SENA">
-                <span>Inspírate<br>SENA</span>
-            </div>
-        </div>
-
-        <div class="login-content">
->>>>>>> 7a18bc6ad067ae940201b66339f79853ee892358
             <div class="content-header">
                 <h3>Registro Instructor</h3>
                 <p>Crea tu cuenta de instructor</p>
@@ -166,26 +151,9 @@
                     <button type="button" class="btn-next">Siguiente <i class="fas fa-arrow-right"></i></button>
                     <button type="submit" class="btn-submit" style="display:none;">Crear Cuenta</button>
                 </div>
-<<<<<<< HEAD
-=======
 
-                <div class="form-group">
-                    <label>Confirmar Contraseña <i class="fas fa-question-circle hint-icon" data-hint="Debe ser idéntica a la contraseña"></i></label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="terminos" name="terminos" required>
-                        <label for="terminos">Acepto los Términos y Condiciones</label>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-submit">Crear Cuenta</button>
->>>>>>> 7a18bc6ad067ae940201b66339f79853ee892358
+                <!-- Botón submit para desktop -->
+                <button type="submit" class="btn-submit desktop-submit">Crear Cuenta</button>
             </form>
 
             <div class="divider">¿Ya tienes cuenta?</div>
@@ -202,14 +170,19 @@
 @vite(['resources/js/login.js'])
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    if (window.innerWidth > 640) return;
+    const desktopSubmit = document.querySelector('.desktop-submit');
+    if (window.innerWidth <= 640) {
+        if (desktopSubmit) desktopSubmit.style.display = 'none';
+    } else {
+        return;
+    }
     
     const form = document.getElementById('registroForm');
     const steps = form.querySelectorAll('.form-step');
     const dots = form.querySelectorAll('.step-dot');
     const btnPrev = form.querySelector('.btn-prev');
     const btnNext = form.querySelector('.btn-next');
-    const btnSubmit = form.querySelector('.btn-submit');
+    const btnSubmit = form.querySelector('.step-navigation .btn-submit');
     let currentStep = 1;
     
     function showStep(step) {

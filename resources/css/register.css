@@ -336,6 +336,12 @@ label .hint-icon {
     .form-step { display: block !important; }
     .step-title { display: none; }
     .step-indicators, .step-navigation { display: none !important; }
+    .desktop-submit { display: block; margin-top: 8px; }
+}
+
+/* Hide desktop submit on mobile */
+@media (max-width: 640px) {
+    .desktop-submit { display: none !important; }
 }
 
 /* Mobile: step navigation */
