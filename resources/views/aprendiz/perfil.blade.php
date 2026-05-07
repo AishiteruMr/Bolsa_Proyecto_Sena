@@ -27,6 +27,150 @@
 
 @section('styles')
     @vite(['resources/css/aprendiz.css'])
+    <style>
+    @media (max-width: 1024px) {
+        .instructor-hero {
+            padding: 32px 20px !important;
+        }
+        .instructor-hero h1 {
+            font-size: 24px !important;
+        }
+        .instructor-hero p {
+            font-size: 14px !important;
+        }
+        .instructor-hero-bg-icon {
+            font-size: 120px !important;
+        }
+        .instructor-hero .instructor-hero-bg-icon {
+            width: 80px !important;
+            height: 80px !important;
+            font-size: 32px !important;
+        }
+        .instructor-hero .instructor-hero-bg-icon div:first-child {
+            width: 80px !important;
+            height: 80px !important;
+            font-size: 32px !important;
+        }
+        .instructor-stat-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 16px !important;
+        }
+        .apr-stat-chip {
+            padding: 16px !important;
+        }
+        .apr-stat-chip div:first-child {
+            font-size: 24px !important;
+        }
+        .apr-stat-chip div:last-child {
+            font-size: 9px !important;
+        }
+    }
+    @media (max-width: 768px) {
+        .animate-fade-in {
+            padding-bottom: 20px !important;
+        }
+        .instructor-hero {
+            padding: 24px 16px !important;
+            flex-direction: column !important;
+            text-align: center !important;
+            gap: 24px !important;
+        }
+        .instructor-hero h1 {
+            font-size: 20px !important;
+        }
+        .instructor-hero p {
+            font-size: 13px !important;
+        }
+        .instructor-hero-bg-icon {
+            width: 60px !important;
+            height: 60px !important;
+            font-size: 24px !important;
+        }
+        .instructor-hero .instructor-hero-bg-icon div:first-child {
+            width: 60px !important;
+            height: 60px !important;
+            font-size: 24px !important;
+        }
+        .instructor-stat-grid {
+            grid-template-columns: 1fr !important;
+        }
+        .apr-stat-chip {
+            padding: 12px !important;
+            justify-content: center !important;
+        }
+        .apr-stat-chip div:first-child {
+            font-size: 20px !important;
+        }
+        .apr-stat-chip div:last-child {
+            font-size: 8px !important;
+        }
+        .main-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+        }
+        .glass-card {
+            padding: 20px !important;
+        }
+        .aprendiz-form-group {
+            margin-bottom: 16px !important;
+        }
+        .btn-aprendiz-action {
+            padding: 12px 24px !important;
+            font-size: 14px !important;
+        }
+    }
+    @media (max-width: 480px) {
+        .animate-fade-in {
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 16px !important;
+        }
+        .instructor-hero {
+            padding: 20px 12px !important;
+        }
+        .instructor-hero h1 {
+            font-size: 18px !important;
+        }
+        .instructor-hero p {
+            font-size: 12px !important;
+        }
+        .instructor-hero-bg-icon {
+            width: 50px !important;
+            height: 50px !important;
+            font-size: 20px !important;
+        }
+        .instructor-hero .instructor-hero-bg-icon div:first-child {
+            width: 50px !important;
+            height: 50px !important;
+            font-size: 20px !important;
+        }
+        .instructor-stat-grid {
+            gap: 12px !important;
+        }
+        .apr-stat-chip {
+            padding: 10px !important;
+        }
+        .apr-stat-chip div:first-child {
+            font-size: 18px !important;
+        }
+        .apr-stat-chip div:last-child {
+            font-size: 7px !important;
+        }
+        .main-grid {
+            gap: 16px !important;
+        }
+        .glass-card {
+            padding: 16px !important;
+        }
+        .aprendiz-form-group {
+            margin-bottom: 12px !important;
+        }
+        .btn-aprendiz-action {
+            padding: 10px 20px !important;
+            font-size: 13px !important;
+        }
+    }
+    </style>
 @endsection
 
 @section('content')
