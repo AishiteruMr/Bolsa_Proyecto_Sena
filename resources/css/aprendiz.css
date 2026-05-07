@@ -732,3 +732,646 @@
         font-size: 9px !important;
     }
 }
+
+/* ════════════════════════════════════════════════
+   RESPONSIVE PANEL APRENDIZ - VERSIÓN COMPLETA
+   ════════════════════════════════════════════════ */
+
+/* ── SIDEBAR RESPONSIVE (Unificado con dashboard.css) ─── */
+@media (max-width: 1200px) {
+    .sidebar {
+        width: 80px !important;
+    }
+    .sidebar-logo span, .nav-label, .user-name, .user-role { display: none !important; }
+    .sidebar-logo { padding: 32px 0 !important; justify-content: center !important; min-height: 100px !important; }
+    .sidebar-logo img { width: 36px !important; height: 36px !important; padding: 6px !important; }
+    .sidebar-nav .nav-item { justify-content: center !important; padding: 14px !important; }
+    .sidebar-nav .nav-item i { margin: 0 !important; }
+    .sidebar-nav .nav-item span { display: none !important; }
+    .sidebar-footer { justify-content: center !important; }
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        position: fixed !important;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 85vw !important;
+        max-width: 300px;
+        overflow-y: auto;
+        z-index: 1002 !important;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        padding: 20px 0;
+        box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+    }
+    .sidebar.open {
+        transform: translateX(0) !important;
+    }
+    .sidebar .nav-item {
+        white-space: normal !important;
+        word-break: break-word;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        padding: 12px 16px !important;
+        font-size: var(--text-sm);
+        line-height: 1.4;
+        display: flex !important;
+        align-items: center;
+        gap: 10px;
+    }
+    .sidebar .nav-item span { display: inline !important; }
+    .sidebar .nav-label { display: block !important; }
+    .sidebar .nav-item i { margin: 0 !important; flex-shrink: 0; width: 18px; text-align: center; }
+    .sidebar-logo { display: flex !important; }
+    .sidebar-logo span { display: inline !important; }
+    .user-name, .user-role { display: block !important; }
+    .sidebar-footer { justify-content: normal !important; }
+    .main { margin-left: 0 !important; }
+    .sidebar-toggle { display: block !important; }
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1001;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* ── 1024px ─────────────────────────────────────── */
+@media (max-width: 1024px) {
+    div[style*="grid-template-columns: 2fr 1fr"]:not(.no-resp) {
+        grid-template-columns: 1fr !important;
+    }
+    div[style*="grid-template-columns: 1fr 1fr"]:not(.no-resp),
+    div[style*="grid-template-columns: 1fr 1fr; gap: 24px"]:not(.no-resp) {
+        grid-template-columns: 1fr !important;
+    }
+    .instructor-hero[style*="padding: 48px"] > div[style*="display: flex"] {
+        flex-direction: column !important;
+        text-align: center;
+    }
+    .instructor-hero > div > div[style*="flex-shrink:0"] + div[style*="flex: 1"] + div[style*="display:grid"],
+    .instructor-hero > div > div[style*="flex-shrink: 0"] + div[style*="flex: 1"] + div[style*="display:grid"] {
+        grid-template-columns: repeat(3, 1fr) !important;
+        width: 100% !important;
+    }
+    .instructor-stat-grid > div.glass-card[style*="grid-column: span 2"] {
+        grid-column: span 2 !important;
+    }
+    .glass-card[style*="display: flex; align-items: center; gap: 20px"] > div:last-child {
+        min-width: 0 !important;
+        overflow: hidden !important;
+    }
+    .glass-card[style*="display: flex; align-items: center; gap: 32px"] {
+        flex-direction: column !important;
+        text-align: center;
+        gap: 20px !important;
+    }
+    .glass-card[style*="display: flex; align-items: center; gap: 32px"] > div:first-child {
+        flex-shrink: 0 !important;
+    }
+    div[style*="height: 120px; flex-shrink: 0"],
+    div[style*="height:120px; flex-shrink:0"] {
+        width: 100px !important;
+        height: 100px !important;
+    }
+    div[style*="display: flex; align-items: center; gap: 32px"][style*="position: relative"] {
+        flex-direction: column !important;
+        text-align: center;
+    }
+}
+
+/* ── 768px ──────────────────────────────────────── */
+@media (max-width: 768px) {
+    .instructor-hero {
+        padding: 32px 20px !important;
+    }
+    .instructor-hero[style*="padding: 40px 48px"] {
+        padding: 28px 20px !important;
+    }
+    .instructor-hero[style*="padding: 48px"] {
+        padding: 28px 20px !important;
+    }
+    .instructor-hero[style*="padding: 60px 48px"] {
+        padding: 32px 20px !important;
+    }
+    .instructor-hero > div[style*="position: relative"] > h1[style*="font-size: 36px"],
+    .instructor-hero > div[style*="position: relative"] h1[style*="font-size:36px"] {
+        font-size: 26px !important;
+    }
+    .instructor-hero h2[style*="font-size: 38px"],
+    .instructor-hero h2[style*="font-size:38px"] {
+        font-size: 26px !important;
+    }
+    .instructor-hero > div > div[style*="display: flex; align-items: center; gap: 16px"] {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+    .instructor-hero form[style*="max-width: 700px"] {
+        max-width: 100% !important;
+    }
+    .instructor-hero input[type="text"][style*="padding: 20px 24px 20px 60px"] {
+        padding: 16px 20px 16px 48px !important;
+        font-size: 14px !important;
+    }
+    .instructor-hero button[type="submit"][style*="position: absolute"] {
+        position: static !important;
+        width: 100% !important;
+        margin-top: 12px !important;
+        padding: 14px !important;
+        border-radius: 14px !important;
+    }
+    .instructor-hero form[style*="position: relative"] {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .instructor-stat-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .instructor-stat-grid > div.glass-card[style*="grid-column: span 2"] {
+        grid-column: span 1 !important;
+    }
+    .glass-card[style*="display: flex; align-items: center; gap: 20px"] {
+        flex-direction: column !important;
+        text-align: center !important;
+        padding: 20px !important;
+    }
+    .glass-card[style*="padding: 24px; display: flex; align-items: center; gap: 20px"] {
+        padding: 20px !important;
+    }
+    .glass-card > div[style*="display: flex; align-items: center; gap: 12px"] {
+        justify-content: center !important;
+    }
+    .glass-card div[style*="font-size: 32px; font-weight: 800"],
+    .glass-card div[style*="font-size:32px; font-weight:800"] {
+        font-size: 24px !important;
+    }
+
+    /* Postulation cards */
+    div[class="glass-card"][style*="padding: 0; overflow: hidden; display: flex; align-items: center"],
+    .glass-card[style*="padding: 0; overflow: hidden;"] {
+        flex-direction: column !important;
+    }
+    div[style*="width: 140px; height: 120px; flex-shrink: 0"] {
+        width: 100% !important;
+        height: 140px !important;
+    }
+    div[style*="flex: 1; padding: 24px; min-width: 0"] {
+        padding: 20px !important;
+        width: 100% !important;
+    }
+    div[style*="padding: 24px; display: flex; align-items: center; gap: 20px; flex-shrink: 0"] {
+        padding: 0 20px 20px !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+    /* Section headers with flex space-between */
+    div[style*="display: flex; align-items: center; justify-content: space-between"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+    div[style*="display: flex; align-items: center; justify-content: space-between; margin: 40px 0 28px"] {
+        margin: 28px 0 20px !important;
+    }
+    h3[style*="font-size: 24px; font-weight: 900"] {
+        font-size: 20px !important;
+    }
+    h3[style*="font-size: 20px; font-weight: 800"] {
+        font-size: 17px !important;
+    }
+    h4[style*="font-size: 18px; font-weight: 800"] {
+        font-size: 16px !important;
+    }
+    h2[style*="font-size: 22px"] {
+        font-size: 18px !important;
+    }
+
+    /* Evidence items */
+    div[style*="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    div[style*="flex: 1; min-width: 280px"] {
+        min-width: 0 !important;
+    }
+    div[style*="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0"] {
+        align-items: stretch !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+
+    /* Detalle-proyecto: stages */
+    div[style*="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px"] {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    div[style*="display: flex; justify-content: space-between; align-items: center"][style*="background: white"] {
+        flex-direction: column !important;
+        gap: 12px !important;
+        text-align: center !important;
+    }
+
+    /* Stage evidence upload form */
+    div[style*="display: flex; gap: 16px; align-items: center"] {
+        flex-direction: column !important;
+    }
+    div[style*="display: flex; gap: 16px; align-items: center"] > div[style*="flex: 1"] {
+        width: 100% !important;
+    }
+    .btn-premium[style*="white-space: nowrap"] {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    /* Grid in description (detalle proyecto) */
+    div[style*="background: #f8fafc; padding: 20px; border-radius: 16px"] {
+        padding: 16px !important;
+    }
+
+    /* Perfil hero stats */
+    .instructor-hero div[style*="flex-shrink:0"] + div[style*="flex: 1"] + div[style*="display:grid"] {
+        grid-template-columns: repeat(3, 1fr) !important;
+        width: 100% !important;
+    }
+    .apr-stat-chip {
+        padding: 12px 16px !important;
+    }
+
+    /* Category pills section */
+    div[style*="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px"] {
+        flex-direction: column !important;
+        gap: 12px !important;
+        align-items: flex-start !important;
+    }
+    a[style*="padding: 12px 20px"] {
+        padding: 10px 16px !important;
+        font-size: 12px !important;
+    }
+
+    /* Results feedback bar */
+    div[style*="margin-bottom: 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap"] {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    /* Empty states */
+    div[style*="padding: 80px 40px; text-align: center"] {
+        padding: 48px 24px !important;
+    }
+    div[style*="padding: 5rem 2rem; text-align: center"] {
+        padding: 3rem 1.5rem !important;
+    }
+
+    /* Perfil hero stat chips */
+    .instructor-hero > div[style*="display: flex; align-items: center; gap: 32px"] > div[style*="display:grid"] {
+        grid-template-columns: repeat(3, 1fr) !important;
+        width: 100% !important;
+    }
+
+    /* Cronograma items */
+    div[style*="display: flex; align-items: center; gap: 14px; padding: 14px 16px"] {
+        padding: 12px !important;
+    }
+
+    /* Project section headers */
+    div[style*="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+        text-align: center !important;
+    }
+
+    /* Card grid layouts */
+    div[style*="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr))"],
+    div[style*="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Postulation card inner */
+    div[style*="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap"] {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+    div[style*="display: flex; flex-wrap: wrap; gap: 20px"] {
+        justify-content: center !important;
+    }
+
+    /* historial cards inner */
+    div[style*="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; gap:12px"] {
+        flex-direction: column !important;
+    }
+}
+
+/* ── 640px ──────────────────────────────────────── */
+@media (max-width: 640px) {
+    .instructor-hero form[style*="max-width: 700px"] > input[type="text"] {
+        padding: 14px 18px 14px 44px !important;
+        font-size: 14px !important;
+        border-radius: 14px !important;
+    }
+    .instructor-hero form[style*="max-width: 700px"] > button[type="submit"] {
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+    .instructor-hero h2[style*="font-size: 38px"],
+    .instructor-hero h2[style*="font-size:38px"] {
+        font-size: 22px !important;
+    }
+    .instructor-hero > div > p[style*="font-size: 16px"] {
+        font-size: 14px !important;
+    }
+
+    .glass-card[style*="display: flex; align-items: center; gap: 20px"] {
+        gap: 14px !important;
+        padding: 18px !important;
+    }
+    .glass-card div[style*="font-size: 32px; font-weight: 800"],
+    .glass-card div[style*="font-size:32px; font-weight:800"] {
+        font-size: 22px !important;
+    }
+
+    div[style*="padding: 24px; display: flex; align-items: center; gap: 20px; flex-shrink: 0"] span[style*="padding: 10px 18px"] {
+        padding: 8px 12px !important;
+        font-size: 11px !important;
+    }
+
+    /* Project card inner */
+    div[style*="display: flex; gap: 20px; margin-bottom: 24px; padding: 14px"] {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    /* Perfil page */
+    .instructor-hero[style*="padding: 48px"] {
+        padding: 24px 16px !important;
+    }
+    .instructor-hero div[style*="flex: 1"] h1 {
+        font-size: 24px !important;
+    }
+    .instructor-hero div[style*="flex-shrink:0"] + div[style*="flex: 1"] + div[style*="display:grid"] {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    /* Form section */
+    div[style*="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:20px"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Submit button */
+    div[style*="display:flex; justify-content:flex-end"] button {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    /* Detalle proyecto sidebar */
+    .glass-card[style*="padding: 28px"] {
+        padding: 20px !important;
+    }
+    .glass-card[style*="padding: 24px"] {
+        padding: 18px !important;
+    }
+    .glass-card[style*="padding: 24px; display: flex; align-items: center; gap: 20px"] {
+        padding: 16px !important;
+    }
+
+    /* Stage card */
+    div[style*="display: flex; align-items: center; gap: 14px; margin-bottom: 16px"] {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+
+    /* Evidence item */
+    div[style*="display: flex; justify-content: space-between; align-items: center; background: white; padding: 16px 20px"] {
+        flex-direction: column !important;
+        gap: 12px !important;
+        text-align: center !important;
+    }
+    div[style*="display: flex; align-items: center; gap: 14px"] {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+
+    /* Mis entregas header */
+    div[style*="padding: 24px 32px"][style*="background: linear-gradient"] {
+        padding: 20px !important;
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+    div[style*="padding: 24px 32px; display: grid; gap: 16px"] {
+        padding: 16px !important;
+    }
+
+    /* Perfil actividad items */
+    div[style*="display:flex; align-items:center; justify-content:space-between; padding:14px 16px"] {
+        flex-direction: column !important;
+        gap: 8px !important;
+        text-align: center !important;
+    }
+
+    /* Sidebar cards in perfil */
+    .glass-card[style*="padding:24px"] {
+        padding: 18px !important;
+    }
+    .glass-card[style*="padding:24px; background:linear-gradient"] {
+        padding: 20px !important;
+    }
+
+    /* Security section */
+    div[style*="background:#f8fafc; border:2px dashed"] {
+        padding: 18px !important;
+    }
+
+    /* Category filter all button */
+    a[style*="padding: 12px 20px"] {
+        padding: 8px 14px !important;
+        font-size: 11px !important;
+    }
+    div[style*="display: flex; flex-wrap: wrap; gap: 10px"] {
+        gap: 8px !important;
+        justify-content: center !important;
+    }
+}
+
+/* ── 480px ──────────────────────────────────────── */
+@media (max-width: 480px) {
+    .instructor-hero {
+        padding: 24px 16px !important;
+        border-radius: 20px !important;
+    }
+    .instructor-hero[style*="padding: 40px 48px"] {
+        padding: 20px 14px !important;
+        border-radius: 20px !important;
+    }
+    .instructor-hero[style*="padding: 48px"] {
+        padding: 20px 14px !important;
+    }
+    .instructor-hero[style*="padding: 60px 48px"] {
+        padding: 24px 16px !important;
+    }
+    .instructor-hero h1[style*="font-size: 36px"],
+    .instructor-hero h1[style*="font-size:36px"] {
+        font-size: 22px !important;
+    }
+    .instructor-hero h2[style*="font-size: 38px"],
+    .instructor-hero h2[style*="font-size:38px"] {
+        font-size: 20px !important;
+    }
+    .instructor-hero > div > p[style*="font-size: 16px"] {
+        font-size: 13px !important;
+    }
+    .instructor-title {
+        font-size: 22px !important;
+    }
+    .instructor-tag {
+        font-size: 10px !important;
+        padding: 6px 12px !important;
+    }
+
+    .btn-premium {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    .btn-premium[style*="display: inline-flex"] {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    a.btn-premium[style*="display: inline-flex"] {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    h3[style*="font-size: 24px"] {
+        font-size: 18px !important;
+    }
+
+    div[style*="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr))"],
+    div[style*="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px"] {
+        gap: 16px !important;
+    }
+
+    .glass-card[style*="padding: 24px; display: flex; align-items: center; gap: 20px"] {
+        padding: 14px !important;
+    }
+    .glass-card div[style*="font-size: 32px; font-weight: 800"],
+    .glass-card div[style*="font-size:32px; font-weight:800"] {
+        font-size: 20px !important;
+    }
+    .glass-card div[style*="width: 52px; height: 52px"] {
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 18px !important;
+    }
+
+    /* Postulation card image */
+    div[style*="width: 140px; height: 120px; flex-shrink: 0"],
+    div[style*="width: 140px; height:120px; flex-shrink:0"] {
+        height: 100px !important;
+    }
+
+    /* Stat grid cards */
+    .glass-card[style*="display: flex; align-items: center; gap: 20px"]:not([style*="flex-direction"]) {
+        padding: 14px !important;
+        gap: 12px !important;
+    }
+
+    /* Empty state */
+    div[style*="padding: 80px 40px; text-align: center"] {
+        padding: 36px 20px !important;
+    }
+    div[style*="padding: 5rem 2rem; text-align: center"] {
+        padding: 2.5rem 1.25rem !important;
+    }
+    div[style*="width: 100px; height: 100px; background: rgba(62,180,137,0.1); border-radius: 50%"] {
+        width: 72px !important;
+        height: 72px !important;
+        font-size: 28px !important;
+    }
+
+    /* Perfil hero */
+    .instructor-hero div[style*="flex-shrink:0"] + div[style*="flex: 1"] + div[style*="display:grid"] {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    .instructor-hero div[style*="flex-shrink:0"] + div[style*="flex: 1"] + div[style*="display:grid"] > div > div:first-child {
+        font-size: 20px !important;
+    }
+    .instructor-hero div[style*="flex: 1"] h1 {
+        font-size: 20px !important;
+    }
+
+    .apr-stat-chip {
+        padding: 10px 12px !important;
+    }
+    .apr-stat-chip > div:first-child {
+        font-size: 20px !important;
+    }
+
+    /* Perfil avatar */
+    div[style*="width: 96px; height: 96px; border-radius: 50%"] {
+        width: 72px !important;
+        height: 72px !important;
+        font-size: 28px !important;
+    }
+
+    /* Stage numbers */
+    span[style*="width: 40px; height: 40px; background: linear-gradient"] {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 14px !important;
+    }
+
+    /* Document download row */
+    div[style*="display: flex; align-items: center; gap: 14px"] > a.btn-premium {
+        width: auto !important;
+        padding: 8px 14px !important;
+        font-size: 11px !important;
+    }
+
+    /* Evidence submit button area */
+    button[style*="padding: 14px 24px; white-space: nowrap"] {
+        padding: 12px !important;
+        font-size: 13px !important;
+    }
+
+    /* Mis entregas evidence items */
+    div[style*="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap"] {
+        flex-direction: column !important;
+    }
+    div[style*="flex: 1; min-width: 280px"] {
+        min-width: 0 !important;
+    }
+
+    /* Historial project cards */
+    div[style*="height: 5px; background: linear-gradient"] + img[style*="height:140px"] {
+        height: 120px !important;
+    }
+
+    /* Category pills */
+    a[style*="padding: 12px 20px"] {
+        padding: 8px 12px !important;
+        font-size: 11px !important;
+    }
+
+    /* Sidebar card button */
+    .glass-card a.btn-premium[style*="width:100%; justify-content:center"] {
+        font-size: 12px !important;
+    }
+
+    /* Evidence status */
+    div[style*="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0"] > span {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+}

@@ -80,11 +80,6 @@
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">pendientes</div>
                 </div>
             </div>
-                <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">{{ $pendientes }}</div>
-                    <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Pendientes</div>
-                </div>
-            </div>
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #fecaca;">
                 <div style="width: 52px; height: 52px; border-radius: 16px; background: #ef4444; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-times-circle"></i>
