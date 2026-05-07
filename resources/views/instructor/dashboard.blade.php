@@ -135,26 +135,26 @@
 
         <!-- Right: Activity & Quick Actions -->
         <div>
-            <h3 style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 24px;">Notificaciones</h3>
-            
+            <h3 class="mb-6">Notificaciones</h3>
+             
             <div class="instructor-notification-card">
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(62,180,137,0.1); color: var(--primary); display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-bolt"></i>
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <i class="fas fa-bolt text-primary"></i>
                         </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 13px; color: var(--text-light); font-weight: 600;">Postulaciones (48h)</div>
-                            <div style="font-size: 16px; font-weight: 800; color: var(--text);">{{ $nuevasPostulaciones }} Recientes</div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-medium text-text-light">Postulaciones (48h)</div>
+                            <div class="text-base font-bold text-text">{{ $nuevasPostulaciones }} Recientes</div>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="width: 40px; height: 40px; border-radius: 10px; background: #fff3e0; color: #f59e0b; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-calendar-alt"></i>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-warning"></i>
                         </div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 13px; color: var(--text-light); font-weight: 600;">Próximo Hito</div>
-                            <div style="font-size: 16px; font-weight: 800; color: var(--text);">
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-medium text-text-light">Próximo Hito</div>
+                            <div class="text-base font-bold text-text">
                                 {{ ($proximoCierre && $proximoCierre->fecha_publicacion) ? \Carbon\Carbon::parse($proximoCierre->fecha_publicacion)->addDays($proximoCierre->duracion_estimada_dias ?? 0)->diffForHumans() : 'Sin eventos' }}
                             </div>
                         </div>
