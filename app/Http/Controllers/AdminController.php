@@ -153,7 +153,6 @@ class AdminController extends Controller
                 $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
             }
         }
-        }
 
         try {
             if (isset($usrToNotify)) {
