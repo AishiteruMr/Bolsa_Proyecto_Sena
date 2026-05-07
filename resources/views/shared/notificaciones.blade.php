@@ -3,6 +3,76 @@
 @section('title', 'Notificaciones')
 @section('page-title', 'Mis Notificaciones')
 
+@section('sidebar-nav')
+    @switch(session('rol'))
+        @case(1)
+            <span class="nav-label">Principal</span>
+            <a href="{{ route('aprendiz.dashboard') }}" class="nav-item {{ request()->routeIs('aprendiz.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-home"></i> <span>Principal</span>
+            </a>
+            <a href="{{ route('aprendiz.proyectos') }}" class="nav-item {{ request()->routeIs('aprendiz.proyectos') ? 'active' : '' }}">
+                <i class="fas fa-briefcase"></i> <span>Explorar Proyectos</span>
+            </a>
+            <a href="{{ route('aprendiz.postulaciones') }}" class="nav-item {{ request()->routeIs('aprendiz.postulaciones') ? 'active' : '' }}">
+                <i class="fas fa-paper-plane"></i> <span>Mis Postulaciones</span>
+            </a>
+            <a href="{{ route('aprendiz.historial') }}" class="nav-item {{ request()->routeIs('aprendiz.historial') ? 'active' : '' }}">
+                <i class="fas fa-history"></i> <span>Historial</span>
+            </a>
+            <a href="{{ route('aprendiz.entregas') }}" class="nav-item {{ request()->routeIs('aprendiz.entregas') ? 'active' : '' }}">
+                <i class="fas fa-tasks"></i> <span>Mis Entregas</span>
+            </a>
+            <span class="nav-label">Cuenta</span>
+            <a href="{{ route('aprendiz.perfil') }}" class="nav-item {{ request()->routeIs('aprendiz.perfil') ? 'active' : '' }}">
+                <i class="fas fa-user"></i> <span>Mi Perfil</span>
+            </a>
+            @break
+        @case(2)
+            <span class="nav-label">Principal</span>
+            <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-home"></i> Principal
+            </a>
+            <a href="{{ route('instructor.proyectos') }}" class="nav-item {{ request()->routeIs('instructor.proyectos') ? 'active' : '' }}">
+                <i class="fas fa-project-diagram"></i> Mis Proyectos
+            </a>
+            <a href="{{ route('instructor.historial') }}" class="nav-item {{ request()->routeIs('instructor.historial') ? 'active' : '' }}">
+                <i class="fas fa-history"></i> Historial
+            </a>
+            <a href="{{ route('instructor.aprendices') }}" class="nav-item {{ request()->routeIs('instructor.aprendices') ? 'active' : '' }}">
+                <i class="fas fa-users"></i> Aprendices
+            </a>
+            <span class="nav-label">Cuenta</span>
+            <a href="{{ route('instructor.perfil') }}" class="nav-item {{ request()->routeIs('instructor.perfil') ? 'active' : '' }}">
+                <i class="fas fa-user-circle"></i> Perfil
+            </a>
+            @break
+        @case(3)
+            <span class="nav-label">Portal Empresa</span>
+            <a href="{{ route('empresa.dashboard') }}" class="nav-item {{ request()->routeIs('empresa.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-th-large"></i> Principal
+            </a>
+            <a href="{{ route('empresa.proyectos') }}" class="nav-item {{ request()->routeIs('empresa.proyectos') ? 'active' : '' }}">
+                <i class="fas fa-project-diagram"></i> Mis Proyectos
+            </a>
+            <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}">
+                <i class="fas fa-plus-circle"></i> Publicar Proyecto
+            </a>
+            <span class="nav-label">Configuración</span>
+            <a href="{{ route('empresa.perfil') }}" class="nav-item {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}">
+                <i class="fas fa-building"></i> Perfil Empresa
+            </a>
+            @break
+        @case(4)
+            @include('admin.partials.sidebar-nav')
+            @break
+        @default
+            <span class="nav-label">Navegación</span>
+            <a href="{{ route('home') }}" class="nav-item">
+                <i class="fas fa-home"></i> Inicio
+            </a>
+    @endswitch
+@endsection
+
 @php
     $defaultDashboard = route('home');
     if (auth()->check()) {
@@ -40,6 +110,20 @@
             </p>
         </div>
         <div class="notif-hero-actions">
+            <div class="user-info-notif">
+                <div class="user-avatar-notif">{{ strtoupper(substr(session('nombre', 'U'), 0, 1)) }}</div>
+                <div class="user-details-notif">
+                    <div class="user-name-notif">{{ session('nombre') }} {{ session('apellido') }}</div>
+                    <div class="user-role-notif">
+                        @switch(session('rol'))
+                            @case(1) Aprendiz @break
+                            @case(2) Instructor @break
+                            @case(3) Empresa @break
+                            @case(4) Administrador @break
+                        @endswitch
+                    </div>
+                </div>
+            </div>
             <a href="{{ $returnUrl }}" class="btn-premium outline">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
