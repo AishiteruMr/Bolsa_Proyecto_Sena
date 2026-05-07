@@ -14,7 +14,7 @@ class CambiarEstadoUsuarioRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tipo' => 'required|in:aprendiz,instructor',
+            'tipo' => 'required|in:aprendiz,instructor,empresa',
             'estado' => 'required|in:0,1',
         ];
     }

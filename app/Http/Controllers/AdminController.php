@@ -93,7 +93,15 @@ class AdminController extends Controller
                 $anterior,
                 ['activo' => $request->estado]
             );
-        } else {
+
+            // Enviar correo de bienvenida al activar cuenta
+            if ($request->estado == 1 && $usrToNotify) {
+                $perfil = $this->getPerfilUsuario($usrToNotify->id, $usrToNotify->rol_id);
+                $nombre = $perfil->nombre ?? '';
+                $apellido = $perfil->apellido ?? '';
+                $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
+            }
+        } elseif ($request->tipo === 'instructor') {
             $instructor = Instructor::with('usuario')->findOrFail($id);
             $anterior = ['activo' => $instructor->activo];
             $instructor->update(['activo' => $request->estado]);
@@ -110,6 +118,41 @@ class AdminController extends Controller
                 $anterior,
                 ['activo' => $request->estado]
             );
+
+            // Enviar correo de bienvenida al activar cuenta
+            if ($request->estado == 1 && $usrToNotify) {
+                $perfil = $this->getPerfilUsuario($usrToNotify->id, $usrToNotify->rol_id);
+                $nombre = $perfil->nombre ?? '';
+                $apellido = $perfil->apellido ?? '';
+                $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
+            }
+        } else {
+            // Para empresas
+            $empresa = Empresa::with('usuario')->findOrFail($id);
+            $anterior = ['activo' => $empresa->activo];
+            $empresa->update(['activo' => $request->estado]);
+            Cache::forget('admin_stats');
+            $usrToNotify = $empresa->usuario;
+
+            // Audit log detallado
+            AuditLog::registrarCambio(
+                $usrId,
+                'cambiar_estado',
+                'empresas',
+                'empresas',
+                $id,
+                $anterior,
+                ['activo' => $request->estado]
+            );
+
+            // Enviar correo de bienvenida al activar cuenta
+            if ($request->estado == 1 && $usrToNotify) {
+                // Para empresas, el nombre es el nombre de la empresa
+                $nombre = $empresa->nombre ?? '';
+                $apellido = ''; // No aplica para empresas
+                $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
+            }
+        }
         }
 
         try {

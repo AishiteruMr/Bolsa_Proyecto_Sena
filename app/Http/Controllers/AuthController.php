@@ -191,6 +191,12 @@ class AuthController extends Controller
         $user = User::where('correo', $request->email)->first();
         if ($user) {
             $user->markEmailAsVerified();
+            
+            // Enviar correo de bienvenida tras verificación de correo vía OTP
+            $perfil = $this->getPerfilUsuario($user->id, $user->rol_id);
+            $nombre = $perfil->nombre ?? '';
+            $apellido = $perfil->apellido ?? '';
+            $this->enviarCorreoBienvenida($user->correo, $nombre, $apellido);
         }
 
         DB::table('email_verification_otps')->where('email', $request->email)->delete();
