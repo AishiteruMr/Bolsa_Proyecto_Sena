@@ -2,11 +2,15 @@
 
 @section('title', 'Registro Aprendiz')
 @section('styles')
+<<<<<<< HEAD
 @vite(['resources/css/register.css'])
 <style>
     .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 600px) { .input-row { grid-template-columns: 1fr; } }
 </style>
+=======
+@vite(['resources/css/login.css'])
+>>>>>>> 7a18bc6ad067ae940201b66339f79853ee892358
 @endsection
 
 @section('content')
@@ -23,7 +27,7 @@
             </div>
              
             <div class="brand-quote">
-                <h2>¡Desarrolla tu <span style="color: var(--primary-light);">Talento!</span></h2>
+                <h2>¡Desarrolla tu <span style="color: #4ADE80;">Talento!</span></h2>
                 <p>Participa en proyectos reales y conecta con empresas aliadas.</p>
             </div>
 
@@ -47,7 +51,18 @@
             </div>
         </div>
 
+<<<<<<< HEAD
         <div class="register-content">
+=======
+        <div class="login-brand login-brand-show">
+            <div class="brand-header">
+                <img src="{{ asset('assets/logo.webp') }}" alt="SENA">
+                <span>Inspírate<br>SENA</span>
+            </div>
+        </div>
+
+        <div class="login-content">
+>>>>>>> 7a18bc6ad067ae940201b66339f79853ee892358
             <div class="content-header">
                 <h3>Registro Aprendiz</h3>
                 <p>Crea tu cuenta de aprendiz</p>
@@ -151,11 +166,31 @@
                     <button type="button" class="btn-next">Siguiente <i class="fas fa-arrow-right"></i></button>
                     <button type="submit" class="btn-submit" style="display:none;">Crear Cuenta</button>
                 </div>
+<<<<<<< HEAD
+=======
+
+                <div class="form-group">
+                    <label>Confirmar Contraseña <i class="fas fa-question-circle hint-icon" data-hint="Debe ser idéntica a la contraseña"></i></label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="terminos" name="terminos" required>
+                        <label for="terminos">Acepto los Términos y Condiciones</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Crear Cuenta</button>
+>>>>>>> 7a18bc6ad067ae940201b66339f79853ee892358
             </form>
 
             <div class="divider">¿Ya tienes cuenta?</div>
 
-            <a href="{{ route('login') }}" class="btn-submit" style="text-align: center; text-decoration: none;">
+            <a href="{{ route('login') }}" class="btn-submit" style="text-decoration: none;">
                 Iniciar Sesión
             </a>
         </div>

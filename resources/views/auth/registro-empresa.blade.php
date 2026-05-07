@@ -19,7 +19,7 @@
             </div>
              
             <div class="brand-quote">
-                <h2>Regístrate como <span style="color: var(--primary-light);">Empresa</span></h2>
+                <h2>Regístrate como <span style="color: #4ADE80;">Empresa</span></h2>
                 <p>Únete a nuestra red de empresas y conecta con talentosos aprendices del SENA.</p>
             </div>
 
@@ -43,7 +43,18 @@
             </div>
         </div>
 
+<<<<<<< HEAD
         <div class="register-content">
+=======
+        <div class="login-brand login-brand-show">
+            <div class="brand-header">
+                <img src="{{ asset('assets/logo.webp') }}" alt="SENA">
+                <span>Inspírate<br>SENA</span>
+            </div>
+        </div>
+
+        <div class="login-content">
+>>>>>>> 7a18bc6ad067ae940201b66339f79853ee892358
             <div class="content-header">
                 <h3>Crear Cuenta</h3>
                 <p>Ingresa los datos de tu empresa para comenzar.</p>
@@ -86,6 +97,7 @@
                     </div>
                 </div>
 
+<<<<<<< HEAD
                 <!-- Paso 2: Información de contacto -->
                 <div class="form-step" data-step="2">
                     <h4 class="step-title">Paso 2: Información de contacto</h4>
@@ -112,6 +124,12 @@
                                 <input type="password" name="password_confirmation" placeholder="Confirmar" required>
                             </div>
                         </div>
+=======
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="terminos" name="terminos" required>
+                        <label for="terminos">Acepto los Términos y Condiciones</label>
+>>>>>>> 7a18bc6ad067ae940201b66339f79853ee892358
                     </div>
                 </div>
 
@@ -143,7 +161,7 @@
 
             <div class="divider">¿Ya tienes cuenta?</div>
 
-            <a href="{{ route('login') }}" class="btn-submit" style="text-align: center; text-decoration: none;">
+            <a href="{{ route('login') }}" class="btn-submit" style="text-decoration: none;">
                 Iniciar Sesión
             </a>
         </div>
