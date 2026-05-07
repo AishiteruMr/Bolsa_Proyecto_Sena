@@ -64,21 +64,29 @@
             <div class="topbar-right" style="display: flex; align-items: center; gap: 24px;">
                 @php
                     $unreadCount = 0;
-                    if(session()->has('usr_id')){
+                    $currentRole = session('rol');
+                    $showNotificationMenu = session()->has('usr_id') && in_array($currentRole, [1, 2, 3, 4]);
+
+                    if ($showNotificationMenu) {
                         $usr = \App\Models\User::find(session('usr_id'));
-                        if($usr) $unreadCount = $usr->unreadNotifications()->count();
+                        if ($usr) {
+                            $unreadCount = $usr->unreadNotifications()->count();
+                        }
                     }
                 @endphp
-                <a href="{{ route('notificaciones.index') }}" title="Notificaciones" style="position:relative; color:var(--text); text-decoration:none;">
-                    <div style="width: 40px; height: 40px; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; border: 1px solid var(--border);">
-                        <i class="far fa-bell" style="font-size: 18px;"></i>
-                    </div>
-                    @if($unreadCount > 0)
-                        <span style="position: absolute; top: -4px; right: -4px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; border-radius: 20px; padding: 2px 6px; border: 2px solid #fff;">
-                            {{ $unreadCount > 99 ? '99+' : $unreadCount }}
-                        </span>
-                    @endif
-                </a>
+
+                @if($showNotificationMenu)
+                    <a href="{{ route('notificaciones.index') }}" title="Notificaciones" style="position:relative; color:var(--text); text-decoration:none;">
+                        <div style="width: 40px; height: 40px; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; border: 1px solid var(--border);">
+                            <i class="far fa-bell" style="font-size: 18px;"></i>
+                        </div>
+                        @if($unreadCount > 0)
+                            <span style="position: absolute; top: -4px; right: -4px; background: #ef4444; color: white; font-size: 10px; font-weight: 800; border-radius: 20px; padding: 2px 6px; border: 2px solid #fff;">
+                                {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                            </span>
+                        @endif
+                    </a>
+                @endif
 
                 <span style="font-size:13px; color: var(--text-light); font-weight: 600;">{{ now()->translatedFormat('d M, Y') }}</span>
             </div>
@@ -175,7 +183,6 @@
         document.getElementById('confirm-modal').style.display = 'none';
     }
 
-    // Auto-wire [data-confirm] buttons
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('[data-confirm]').forEach(btn => {
             const title = btn.dataset.confirmTitle || '¿Confirmar acción?';
@@ -192,6 +199,26 @@
         document.querySelector('.sidebar').classList.toggle('open');
         document.getElementById('sidebarOverlay').classList.toggle('active');
     }
+
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdownMenu');
+        const icon = dropdown.previousElementSibling.querySelector('i.fas.fa-chevron-down');
+        dropdown.style.opacity = dropdown.style.opacity === '1' ? '0' : '1';
+        dropdown.style.visibility = dropdown.style.visibility === 'visible' ? 'hidden' : 'visible';
+        dropdown.style.transform = dropdown.style.transform === 'translateY(0px)' ? 'translateY(-10px)' : 'translateY(0px)';
+        icon.style.transform = icon.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdownMenu');
+        const toggleButton = dropdown?.previousElementSibling;
+        if (dropdown && !toggleButton.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.opacity = '0';
+            dropdown.style.visibility = 'hidden';
+            dropdown.style.transform = 'translateY(-10px)';
+            toggleButton.querySelector('i.fas.fa-chevron-down').style.transform = 'rotate(0deg)';
+        }
+    });
 
     document.getElementById('sidebarOverlay').addEventListener('click', function() {
         document.querySelector('.sidebar').classList.remove('open');
