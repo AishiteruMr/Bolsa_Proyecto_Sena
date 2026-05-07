@@ -260,6 +260,8 @@ a {
     display: flex;
     align-items: center;
     gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .menu a {
@@ -329,23 +331,27 @@ a {
 
 /* --- GLOBAL FOOTER --- */
 .footer {
-    background: #0a1a0a; /* Darker green-black */
+    background: #0a1a0a;
     color: rgba(255,255,255,0.7);
-    padding: 100px 8% 40px;
+    padding: 40px 8% 20px;
 }
 
 .footer-container {
-    display: grid;
-    grid-template-columns: 2fr repeat(3, 1fr);
-    gap: 60px;
-    margin-bottom: 60px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.footer-col {
+    max-width: 400px;
+    width: 100%;
 }
 
 .footer-col h3 {
     color: #fff;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 800;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     position: relative;
     display: inline-block;
 }
@@ -353,33 +359,42 @@ a {
 .footer-col h3::after {
     content: '';
     position: absolute;
-    bottom: -8px;
+    bottom: -6px;
     left: 0;
-    width: 30px;
-    height: 3px;
+    width: 25px;
+    height: 2px;
     background: var(--primary);
     border-radius: 10px;
 }
 
-.footer-col ul li {
-    margin-bottom: 14px;
+.footer-col p {
+    font-size: 13px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-col p i {
+    color: var(--primary);
+    width: 16px;
+    text-align: center;
 }
 
 .footer-col a {
-    color: rgba(255,255,255,0.5);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: rgba(255,255,255,0.7);
+    transition: color 0.3s ease;
 }
 
 .footer-col a:hover {
     color: var(--primary);
-    padding-left: 8px;
 }
 
 .footer-bottom {
     border-top: 1px solid rgba(255,255,255,0.05);
-    padding-top: 30px;
+    padding-top: 16px;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
     opacity: 0.6;
 }
 
@@ -393,7 +408,15 @@ a {
         font-size: 13px;
     }
     .footer {
-        padding: 40px 24px 20px;
+        padding: 32px 5% 16px;
+    }
+    .footer-col h3 {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+    .footer-col p {
+        font-size: 12px;
+        margin-bottom: 8px;
     }
 }
 
@@ -408,82 +431,71 @@ a {
     .menu a { font-size: 13px; }
     .btn-login { padding: 10px 18px; font-size: 12px; }
     .navbar .hamburger { display: block; margin-left: 12px; }
-    .footer { padding: 32px 16px 20px; }
-    .footer-container { grid-template-columns: 1fr 1fr; gap: 32px; }
-    .footer-col h3 { font-size: 16px; }
+    .footer { padding: 24px 5% 12px; }
+    .footer-container { justify-content: flex-start; }
+    .footer-col h3 { font-size: 14px; }
+    .footer-col p { font-size: 11px; }
+    .footer-bottom { font-size: 11px; padding-top: 12px; }
 }
 
 @media (max-width: 480px) {
     .navbar { height: 56px; }
     .logo img { width: 32px; height: 32px; }
     .logo span { font-size: 18px; }
-    .btn-login { display: none; }
-    .footer-container { grid-template-columns: 1fr; gap: 24px; text-align: center; }
-    .footer-col h3::after { left: 50%; transform: translateX(-50%); }
-    .footer-col ul li { margin-bottom: 10px; }
-    .footer-bottom { font-size: 12px; }
+    .btn-login { padding: 8px 14px; font-size: 11px; }
+    .footer-container { text-align: center; }
+    .footer-col h3 { 
+        font-size: 13px; 
+        margin-bottom: 10px; 
+    }
+    .footer-col h3::after { 
+        left: 50%; 
+        transform: translateX(-50%); 
+    }
+    .footer-col p { 
+        font-size: 11px; 
+        justify-content: center; 
+    }
+    .footer-bottom { font-size: 10px; }
 }
 
-/* Mobile menu overlay */
-@media (max-width: 480px) {
+/* Mobile menu */
+@media (max-width: 640px) {
     .menu {
-        display: flex;
+        display: none;
         flex-direction: column;
-        position: fixed;
-        top: 56px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255,255,255,0.98);
-        backdrop-filter: blur(10px);
-        padding: 40px 24px;
-        z-index: 999;
-        gap: 0;
-        overflow-y: auto;
-        transform: translateY(-100%);
-        opacity: 0;
-        pointer-events: none;
-        transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-    .menu.active { transform: translateY(0); opacity: 1; pointer-events: auto; }
-    .menu a {
-        font-size: 18px;
-        padding: 16px 0;
-        border-bottom: 1px solid var(--border);
-        width: 100%;
-        text-align: center;
-    }
-    .menu a:last-child { border-bottom: none; }
-    .navbar .hamburger { display: block; }
-}
-
-@media (min-width: 481px) and (max-width: 640px) {
-    .menu {
-        display: flex;
-        flex-direction: column;
-        position: fixed;
+        position: absolute;
         top: 60px;
         left: 0;
         right: 0;
-        bottom: 0;
         background: rgba(255,255,255,0.98);
         backdrop-filter: blur(10px);
-        padding: 40px 24px;
+        padding: 12px 20px;
         z-index: 999;
-        gap: 0;
-        overflow-y: auto;
-        transform: translateY(-100%);
-        opacity: 0;
-        pointer-events: none;
-        transition: transform 0.3s ease, opacity 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-top: 1px solid var(--border);
     }
-    .menu.active { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .menu.active { display: flex; }
     .menu a {
-        font-size: 18px;
-        padding: 16px 0;
-        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+        padding: 10px 0;
         width: 100%;
-        text-align: center;
+        text-align: left;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
     }
     .menu a:last-child { border-bottom: none; }
+    .menu .mobile-login {
+        display: block;
+        text-align: center;
+        margin-top: 8px;
+        padding: 10px;
+        border-bottom: none;
+    }
+    .desktop-login { display: none; }
+    .navbar .hamburger { display: block; margin-left: 12px; }
+}
+
+@media (min-width: 641px) {
+    .mobile-login { display: none !important; }
+    .desktop-login { display: inline-flex !important; }
 }
