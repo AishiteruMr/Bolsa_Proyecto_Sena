@@ -384,29 +384,6 @@ class AuthController extends Controller
 
     // ─── HELPERS PRIVADOS ────────────────────────────────────────────────────────
 
-    private function getPerfilUsuario(int $usrId, int $rol): ?object
-    {
-        return match ($rol) {
-            1 => DB::table('aprendices')
-                ->where('usuario_id', $usrId)
-                ->select('id as id', 'nombres as nombre', 'apellidos as apellido', 'activo as estado')
-                ->first(),
-            2 => DB::table('instructores')
-                ->where('usuario_id', $usrId)
-                ->select('id as id', 'nombres as nombre', 'apellidos as apellido', 'activo as estado')
-                ->first(),
-            3 => DB::table('empresas')
-                ->where('usuario_id', $usrId)
-                ->select('id as id', 'nit as nit', 'nombre as nombre', DB::raw("'' as apellido"), 'activo as estado')
-                ->first(),
-            4 => DB::table('administradores')
-                ->where('usuario_id', $usrId)
-                ->select('id as id', 'nombres as nombre', 'apellidos as apellido', DB::raw('1 as estado'))
-                ->first(),
-            default => null
-        };
-    }
-
     private function redirectByRol(int $rol)
     {
         return match ($rol) {
@@ -416,11 +393,6 @@ class AuthController extends Controller
             4 => redirect()->route('admin.dashboard'),
             default => redirect()->route('login'),
         };
-    }
-
-    private function enviarCorreoBienvenida(string $correo, string $nombre, string $apellido): void
-    {
-        SendEmailJob::dispatch($correo, new RegistroExitoso($nombre, $apellido));
     }
 
     // ─── RECUPERACIÓN DE CONTRASEÑA ──────────────────────────────────────────
