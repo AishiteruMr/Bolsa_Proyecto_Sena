@@ -344,13 +344,11 @@ body {
 @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 @media (max-width: 1200px) {
-    :root { --sidebar-w: 80px; }
-    .sidebar-logo span, .nav-label, .user-name, .user-role { display: none; }
     .sidebar-logo { padding: 32px 0; justify-content: center; min-height: 100px; }
     .sidebar-logo img { width: 36px; height: 36px; padding: 6px; }
-    .nav-item { justify-content: center; padding: 14px; }
+    .nav-item { justify-content: flex-start; padding: 14px; }
     .nav-item i { margin: 0; }
-    .nav-item span { display: none; }
+    .nav-item span { display: inline; }
 }
 
 .notification-bell {

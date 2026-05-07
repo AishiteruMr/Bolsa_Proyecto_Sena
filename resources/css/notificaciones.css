@@ -70,6 +70,45 @@
     overflow: hidden;
 }
 
+/* User info in notifications hero - matching active user menu */
+.user-info-notif {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.user-avatar-notif {
+    width: 40px;
+    height: 40px;
+    background: #f8fafc;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--text);
+    font-size: 1rem;
+    border: 1px solid var(--border);
+}
+
+.user-details-notif {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name-notif {
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: var(--text);
+}
+
+.user-role-notif {
+    font-size: var(--text-xs);
+    color: var(--text-lighter);
+    font-weight: var(--font-medium);
+}
+
 .notif-hero::before {
     content: '';
     position: absolute;
