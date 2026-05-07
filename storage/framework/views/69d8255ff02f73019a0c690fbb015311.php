@@ -1,6 +1,6 @@
 <header class="navbar">
     <a href="<?php echo e(route('home')); ?>" class="logo">
-        <img src="<?php echo e(asset('assets/logo.png')); ?>" alt="Logo SENA">
+        <img src="<?php echo e(asset('assets/logo.webp')); ?>" alt="Logo SENA">
         <span>Inspírate SENA</span>
     </a>
 

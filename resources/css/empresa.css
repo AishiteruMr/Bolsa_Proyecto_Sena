@@ -55,9 +55,8 @@
 
 .instructor-title {
     font-size: var(--text-xl);
-    font-weight: var(--font-bold);
+    font-weight: var(--font-black);
     color: white;
-    letter-spacing: -0.5px;
     margin-bottom: 8px;
 }
 
@@ -276,10 +275,9 @@
 
 .empresa-hero-title {
     font-size: var(--text-2xl);
-    font-weight: var(--font-bold);
+    font-weight: var(--font-black);
     color: white;
     margin-bottom: 12px;
-    letter-spacing: -1.5px;
 }
 
 .empresa-stats-grid {

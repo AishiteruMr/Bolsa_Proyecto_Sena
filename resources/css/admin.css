@@ -46,7 +46,6 @@
     font-weight: var(--font-black);
     color: white;
     margin-bottom: 12px;
-    letter-spacing: -2px;
 }
 
 .admin-stats-grid {
@@ -73,7 +72,6 @@
     font-size: var(--text-3xl);
     font-weight: var(--font-black);
     color: var(--text);
-    letter-spacing: -1px;
 }
 
 .admin-tab-group {
@@ -397,7 +395,6 @@
 .admin-quality-score {
     font-size: 52px;
     font-weight: var(--font-black);
-    letter-spacing: -2px;
     line-height: 1;
 }
 .admin-quality-list {
@@ -475,7 +472,7 @@
 }
 
 @media (max-width: 480px) {
-    .admin-header-title { font-size: 20px; letter-spacing: -0.5px; }
+    .admin-header-title { font-size: 20px; }
     .admin-stats-grid { grid-template-columns: 1fr; }
     .admin-stat-card { padding: 20px; }
     .admin-title-main { font-size: 22px; }
@@ -511,9 +508,8 @@
 
 /* Estilo específico del título del proyecto (solo tipografía/color) */
 .admin-project-title {
-    color: var(--text) !important; /* usar color de texto del tema */
+    color: var(--text) !important;
     font-weight: var(--font-black);
-    letter-spacing: -0.6px;
     text-shadow: 0 1px 0 rgba(255,255,255,0.03);
     display: -webkit-box;
     -webkit-line-clamp: 2;

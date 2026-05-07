@@ -249,9 +249,8 @@
 .aprendiz-hero-title {
     font-size: var(--text-3xl);
     font-weight: var(--font-black);
-    color: var(--text);
-    letter-spacing: -1.2px;
-    margin-bottom: 8px;
+    color: white;
+    margin-bottom: 16px;
 }
 
 .aprendiz-dashboard-grid {
@@ -595,7 +594,6 @@
     font-size: var(--text-3xl);
     font-weight: var(--font-black);
     color: white;
-    letter-spacing: -1px;
     margin-bottom: 8px;
 }
 

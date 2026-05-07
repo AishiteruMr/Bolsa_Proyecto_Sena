@@ -49,9 +49,8 @@
 
 .reg-header h2 {
     font-size: var(--text-xl);
-    font-weight: var(--font-bold);
+    font-weight: var(--font-black);
     color: var(--secondary);
-    letter-spacing: -0.5px;
 }
 
 .form-group {
