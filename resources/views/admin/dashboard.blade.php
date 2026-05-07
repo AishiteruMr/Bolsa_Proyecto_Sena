@@ -72,7 +72,7 @@
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 24px; margin-top: 24px;">
+        <div class="admin-chart-grid" style="margin-top: 24px;">
             <div class="glass-card" style="padding: 28px; background: white;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                     <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
