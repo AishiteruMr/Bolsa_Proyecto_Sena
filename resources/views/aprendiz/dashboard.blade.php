@@ -93,7 +93,7 @@
 
     <!-- FEED SECTION -->
     <div style="display: flex; align-items: center; justify-content: space-between; margin: 40px 0 28px;">
-        <h3 style="font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; display: flex; align-items: center; gap: 12px;">
+        <h3 style="font-size: 24px; font-weight: 900; color: var(--text); display: flex; align-items: center; gap: 12px;">
             <i class="fas fa-fire" style="color: #f97316;"></i> Oportunidades para ti
         </h3>
         <a href="{{ route('aprendiz.proyectos') }}" style="color: #3eb489; font-weight: 700; text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 8px;">

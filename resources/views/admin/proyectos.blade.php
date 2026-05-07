@@ -7,25 +7,7 @@
     @vite(['resources/css/admin.css'])
 @endsection
 @section('sidebar-nav')
-    <span class="nav-label">Administración</span>
-    <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-        <i class="fas fa-th-large"></i> Principal
-    </a>
-    <a href="{{ route('admin.usuarios') }}" class="nav-item {{ request()->routeIs('admin.usuarios') ? 'active' : '' }}">
-        <i class="fas fa-users"></i> Gestión Usuarios
-    </a>
-    <a href="{{ route('admin.empresas') }}" class="nav-item {{ request()->routeIs('admin.empresas') ? 'active' : '' }}">
-        <i class="fas fa-building"></i> Empresas Aliadas
-    </a>
-    <a href="{{ route('admin.proyectos') }}" class="nav-item {{ request()->routeIs('admin.proyectos') ? 'active' : '' }}">
-        <i class="fas fa-project-diagram"></i> Banco Proyectos
-    </a>
-    <span class="nav-label" style="margin-top: 24px; display: flex; align-items: center; gap: 8px; color: var(--primary);">
-        <i class="fas fa-headset" style="font-size: 10px;"></i> Soporte
-    </span>
-    <a href="{{ route('admin.mensajes.soporte') }}" class="nav-item {{ request()->routeIs('admin.mensajes.soporte*') ? 'active' : '' }}">
-        <i class="fas fa-envelope"></i> Mensajes Soporte
-    </a>
+    @include('admin.partials.sidebar-nav')
 @endsection
 
 @section('content')
@@ -128,7 +110,7 @@
                         </div>
                     </div>
                     
-                    <h3 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0; line-height: 1.4; letter-spacing: -0.3px;">{{ Str::limit($p->titulo, 55) }}</h3>
+                    <h3 style="font-size: 17px; font-weight: 900; color: #0f172a; margin: 0 0 6px 0; line-height: 1.4;">{{ Str::limit($p->titulo, 55) }}</h3>
                     <p style="font-size: 13px; color: #64748b; margin: 0; font-weight: 500; display: flex; align-items: center; gap: 6px;">
                         <span style="width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1;"></span>
                         {{ $p->empresa_nombre }}

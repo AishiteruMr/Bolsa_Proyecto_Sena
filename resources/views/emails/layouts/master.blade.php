@@ -16,7 +16,7 @@
                     <tr>
                         <td align="center" style="background: linear-gradient(135deg, #047857 0%, #10b981 100%); padding: 45px 20px; border-bottom: 3px solid #065f46;">
                             <div style="font-size: 42px; margin-bottom: 12px; line-height: 1;">@yield('header_icon', '✉️')</div>
-                            <h1 style="color: #ffffff; font-size: 24px; font-weight: 700; margin: 0; padding: 0; letter-spacing: -0.5px;">@yield('header_title')</h1>
+                            <h1 style="color: #ffffff; font-size: 24px; font-weight: 800; margin: 0; padding: 0;">@yield('header_title')</h1>
                             @hasSection('header_subtitle')
                             <p style="color: #d1fae5; font-size: 15px; margin: 8px 0 0 0; font-weight: 500;">@yield('header_subtitle')</p>
                             @endif

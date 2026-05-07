@@ -52,7 +52,7 @@
                 <span style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.2); padding:4px 14px; border-radius:20px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Instructor SENA</span>
                 <span style="color:rgba(255,255,255,0.5); font-size:13px; font-weight:600;"><i class="fas fa-envelope" style="margin-right:4px;"></i>{{ $usuario->correo }}</span>
             </div>
-            <h2 style="font-size:34px; font-weight:900; letter-spacing:-0.5px; margin-bottom:4px;">
+            <h2 style="font-size:34px; font-weight:900; margin-bottom:4px;">
                 {{ $instructor->nombres }} {{ $instructor->apellidos }}
             </h2>
             <div style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:8px 16px; display:inline-flex; align-items:center; gap:10px; margin-top:8px; font-size:14px; font-weight:600;">

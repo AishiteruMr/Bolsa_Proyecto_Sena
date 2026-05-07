@@ -163,7 +163,7 @@
             </div>
 
             <div class="instructor-quick-actions">
-                <h4 style="font-size: 18px; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px;">Acceso Rápido</h4>
+                <h4 style="font-size: 18px; font-weight: 900; margin-bottom: 16px;">Acceso Rápido</h4>
                 <div style="display: grid; gap: 12px;">
                     <a href="{{ route('instructor.aprendices') }}" class="instructor-action-link">
                         <i class="fas fa-users" style="color: var(--primary);"></i>
