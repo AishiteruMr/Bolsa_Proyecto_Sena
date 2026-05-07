@@ -34,17 +34,17 @@ document.addEventListener('DOMContentLoaded', function () {
 @section('content')
     <div class="animate-fade-in" style="margin-bottom: 40px;">
         <!-- Header tipo dashboard (icono + degradado suave) -->
-        <div class="admin-header-master" style="margin-bottom:18px;">
+        <div class="admin-header-master">
             <div class="admin-header-icon">
                 <i class="fas fa-project-diagram"></i>
             </div>
             <div style="position: relative; z-index: 1;">
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
                     <span class="admin-badge-hub">Banco Proyectos</span>
-                    <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 700;">Panel de administración</span>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 700;"><i class="far fa-calendar-alt" style="margin-right: 8px;"></i>{{ now()->translatedFormat('l, d F Y') }}</span>
                 </div>
                 <h1 class="admin-header-title">Control Central de <span style="color: var(--primary);">Proyectos</span></h1>
-                <p style="color: rgba(255,255,255,0.6); font-size: 16px; max-width: 700px; font-weight: 500;">Monitoreo global y asignación estratégica de instructores.</p>
+                <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 700px; font-weight: 500;">Monitoreo global y asignación estratégica de instructores.</p>
             </div>
         </div>
 

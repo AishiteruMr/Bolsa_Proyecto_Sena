@@ -25,27 +25,29 @@
             </div>
         </div>
 
-        <div style="display:flex; gap:12px; margin:24px 0; position: relative; z-index: 10;">
-            <button id="btn-aprendices" onclick="mostrarTabla('aprendices')" style="display:flex;align-items:center;gap:10px;padding:14px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#2e7d46,#1a5c30);color:white;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(46,125,70,0.4);transition:all 0.3s; z-index: 11;">
+        <div class="users-tab-container" style="display:flex; flex-wrap: wrap; gap:12px; margin:24px 0; position: relative; z-index: 10;">
+            <button id="btn-aprendices" onclick="mostrarTabla('aprendices')" class="user-tab-btn active-tab" style="display:flex;align-items:center;justify-content:center;flex:1;min-width:200px;gap:10px;padding:14px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#2e7d46,#1a5c30);color:white;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(46,125,70,0.4);transition:all 0.3s; z-index: 11;">
                 <i class="fas fa-user-graduate"></i> Aprendices
                 <span style="background:rgba(255,255,255,0.25);padding:2px 10px;border-radius:20px;font-size:12px;">{{ $aprendices->count() }}</span>
             </button>
-            <button id="btn-instructores" onclick="mostrarTabla('instructores')" style="display:flex;align-items:center;gap:10px;padding:14px 28px;border:2px solid #2e7d46;color:#2e7d46;border-radius:14px;background:transparent;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.3s; z-index: 11;">
+            <button id="btn-instructores" onclick="mostrarTabla('instructores')" class="user-tab-btn" style="display:flex;align-items:center;justify-content:center;flex:1;min-width:200px;gap:10px;padding:14px 28px;border:2px solid #2e7d46;color:#2e7d46;border-radius:14px;background:transparent;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.3s; z-index: 11;">
                 <i class="fas fa-chalkboard-teacher"></i> Instructores
                 <span style="background:#2e7d46;color:white;padding:2px 10px;border-radius:20px;font-size:12px;">{{ $instructores->count() }}</span>
             </button>
         </div>
 
         <div id="tabla-aprendices" style="display:block;">
-            <div style="background:white;border-radius:20px;box-shadow:0 8px 30px rgba(46,125,70,0.12);overflow:hidden;border:1px solid rgba(46,125,70,0.1);">
-                <div style="background:linear-gradient(135deg,#0a3d2a,#1a5c30);padding:24px 28px;">
-                    <h3 style="margin:0;font-size:20px;font-weight:800;color:white;display:flex;align-items:center;gap:12px;">
-                        <span style="width:44px;height:44px;background:rgba(255,255,255,0.2);color:white;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;"><i class="fas fa-graduation-cap"></i></span>
+            <div class="glass-card" style="background:white;border-radius:20px;box-shadow:0 8px 30px rgba(46,125,70,0.12);overflow:hidden;border:1px solid rgba(46,125,70,0.1); padding:0;">
+                <div class="admin-table-header" style="padding: 24px 28px; border-bottom: 1px solid rgba(46,125,70,0.1);">
+                    <h3 style="margin:0;font-size:18px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:12px;">
+                        <span class="admin-stat-icon" style="width:36px;height:36px;background:var(--primary-soft);color:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;">
+                            <i class="fas fa-graduation-cap"></i>
+                        </span>
                         Comunidad de Aprendices
                     </h3>
                 </div>
-                <div style="overflow-x:auto;">
-                    <table style="width:100%;border-collapse:collapse;min-width:700px;">
+                <div class="premium-table-container" style="border-radius: 0; border: none; box-shadow: none;">
+                    <table class="premium-table" style="width:100%;border-collapse:collapse; min-width: 600px;">
                         <thead>
                             <tr style="background:#f0f5f2;">
                                 <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Documento</th>
@@ -62,7 +64,7 @@
                                 <td style="padding:18px 20px;font-weight:700;color:#0a3d2a;border-bottom:1px solid #e8f5e9;">{{ $a->usuario->numero_documento ?? '-' }}</td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
                                     <div style="display:flex;align-items:center;gap:12px;">
-                                        <div style="width:36px;height:36px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;">{{ strtoupper(substr($a->nombres,0,1)) }}</div>
+                                        <div class="user-avatar-mini" style="width:38px;height:38px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;flex-shrink:0;">{{ strtoupper(substr($a->nombres,0,1)) }}</div>
                                         <span style="font-weight:600;color:#0a3d2a;">{{ $a->nombres }} {{ $a->apellidos }}</span>
                                     </div>
                                 </td>
@@ -98,15 +100,17 @@
         </div>
 
         <div id="tabla-instructores" style="display:none;">
-            <div style="background:white;border-radius:20px;box-shadow:0 8px 30px rgba(46,125,70,0.12);overflow:hidden;border:1px solid rgba(46,125,70,0.1);">
-                <div style="background:linear-gradient(135deg,#0a3d2a,#1a5c30);padding:24px 28px;">
-                    <h3 style="margin:0;font-size:20px;font-weight:800;color:white;display:flex;align-items:center;gap:12px;">
-                        <span style="width:44px;height:44px;background:rgba(255,255,255,0.2);color:white;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;"><i class="fas fa-chalkboard-teacher"></i></span>
+            <div class="glass-card" style="background:white;border-radius:20px;box-shadow:0 8px 30px rgba(46,125,70,0.12);overflow:hidden;border:1px solid rgba(46,125,70,0.1); padding:0;">
+                <div class="admin-table-header" style="padding: 24px 28px; border-bottom: 1px solid rgba(46,125,70,0.1);">
+                    <h3 style="margin:0;font-size:18px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:12px;">
+                        <span class="admin-stat-icon" style="width:36px;height:36px;background:var(--primary-soft);color:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </span>
                         Cuerpo de Instructores
                     </h3>
                 </div>
-                <div style="overflow-x:auto;">
-                    <table style="width:100%;border-collapse:collapse;min-width:700px;">
+                <div class="premium-table-container" style="border-radius: 0; border: none; box-shadow: none;">
+                    <table class="premium-table" style="width:100%;border-collapse:collapse; min-width: 600px;">
                         <thead>
                             <tr style="background:#f0f5f2;">
                                 <th style="text-align:left;padding:16px 20px;color:#1a5c30;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #2e7d46;">Documento</th>
@@ -123,7 +127,7 @@
                                 <td style="padding:18px 20px;font-weight:700;color:#0a3d2a;border-bottom:1px solid #e8f5e9;">{{ $i->usuario->numero_documento ?? '-' }}</td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
                                     <div style="display:flex;align-items:center;gap:12px;">
-                                        <div style="width:36px;height:36px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;">{{ strtoupper(substr($i->nombres,0,1)) }}</div>
+                                        <div class="user-avatar-mini" style="width:38px;height:38px;background:linear-gradient(135deg,#2e7d46,#4caf50);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:13px;flex-shrink:0;">{{ strtoupper(substr($i->nombres,0,1)) }}</div>
                                         <span style="font-weight:600;color:#0a3d2a;">{{ $i->nombres }} {{ $i->apellidos }}</span>
                                     </div>
                                 </td>
