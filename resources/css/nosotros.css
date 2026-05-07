@@ -7,7 +7,6 @@
 .hero-nosotros h1 {
     font-size: clamp(40px, 5vw, 64px);
     font-weight: var(--font-black);
-    letter-spacing: -2px;
     line-height: 1.1;
     margin-bottom: 24px;
     color:#fff;
@@ -22,7 +21,7 @@
 }
 
 .section-header { text-align: center; margin-bottom: 60px; }
-.section-header h2 { font-size: var(--text-2xl); font-weight: var(--font-black); letter-spacing: -1px; margin-bottom: 16px; }
+.section-header h2 { font-size: var(--text-2xl); font-weight: var(--font-black); margin-bottom: 16px; }
 .section-header p { color: var(--text-light); font-size: var(--text-base); }
 
 .about-grid {
@@ -67,7 +66,7 @@
 .value-title { font-size: 24px; font-weight: 800; margin-bottom: 16px; }
 .value-text { color: var(--text-light); line-height: 1.7; }
 
-.about-heading { font-size: 40px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 24px; }
+.about-heading { font-size: 40px; font-weight: 900; margin-bottom: 24px; }
 .about-heading .text-primary { color: var(--primary); }
 .about-paragraph { font-size: 18px; color: var(--text-light); line-height: 1.8; margin-bottom: 24px; }
 .about-paragraph:last-child { margin-bottom: 0; }
@@ -157,8 +156,7 @@
 
 .info-header h3 {
     font-size: var(--text-2xl);
-    font-weight: var(--font-bold);
-    letter-spacing: -0.5px;
+    font-weight: var(--font-black);
     color: var(--secondary);
     margin-bottom: 4px;
 }
@@ -373,7 +371,7 @@
 
 @media (max-width: 768px) {
     .hero-nosotros { padding: 90px 5% 50px; }
-    .hero-nosotros h1 { letter-spacing: -1px; }
+    .hero-nosotros h1 { }
     .hero-nosotros p { font-size: var(--text-base); }
     .section-header { margin-bottom: 40px; }
     .about-grid { padding: 50px 5%; gap: 40px; }
@@ -407,7 +405,6 @@
 .cta-nosotros h2 {
     font-size: clamp(28px, 4vw, 42px);
     font-weight: 900;
-    letter-spacing: -2px;
     margin-bottom: 32px;
 }
 .cta-nosotros .btn {
@@ -421,7 +418,7 @@
 
 @media (max-width: 480px) {
     .cta-nosotros { padding: 50px 20px; }
-    .cta-nosotros h2 { letter-spacing: -1px; }
+    .cta-nosotros h2 { }
 }
 
 /* Loader while loading map */

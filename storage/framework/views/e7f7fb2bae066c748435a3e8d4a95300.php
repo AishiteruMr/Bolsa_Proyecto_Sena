@@ -35,7 +35,7 @@
 
             <div class="hero-visual">
                 <div class="hero-image-wrapper">
-                    <img src="<?php echo e(asset('assets/sena1.png')); ?>" alt="SENA" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80'">
+                    <img src="<?php echo e(asset('assets/sena1.webp')); ?>" alt="SENA" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80'">
                 </div>
             </div>
         </div>

@@ -114,7 +114,7 @@
 }
 .brand-header span {
     font-size: var(--text-xl); font-weight: var(--font-black); color: #fff;
-    letter-spacing: -1px; line-height: 1.1;
+    line-height: 1.1;
 }
 
 .brand-quote { 
@@ -129,7 +129,7 @@
 }
 .brand-quote h2 {
     font-size: var(--text-2xl); font-weight: var(--font-black); color: #fff;
-    line-height: 1.2; letter-spacing: -1px; margin-bottom: 16px;
+    line-height: 1.2; margin-bottom: 16px;
 }
 .brand-quote p {
     font-size: var(--text-sm); color: rgba(255,255,255,0.75);
@@ -196,9 +196,11 @@
 }
 
 .content-header { margin-bottom: 28px; }
-.content-header h3 { 
-    font-size: var(--text-xl); font-weight: var(--font-bold); color: #1a2e1a; 
-    margin-bottom: 8px; letter-spacing: -0.5px;
+.content-header h3 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--secondary);
+    margin-bottom: 6px;
 }
 .content-header p { font-size: var(--text-sm); color: #6b7c6b; font-weight: var(--font-medium); }
 
