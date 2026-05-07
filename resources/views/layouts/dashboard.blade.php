@@ -7,7 +7,7 @@
     <title>@yield('title', 'Panel') - Inspírate SENA</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     @vite(['resources/css/dashboard.css', 'resources/css/cards-enhanced.css'])
     @yield('styles')
@@ -132,7 +132,7 @@
             padding:16px 20px; min-width:300px; max-width:400px;
             box-shadow:0 8px 32px rgba(0,0,0,0.12);
             animation:slideInToast 0.4s cubic-bezier(0.34,1.56,0.64,1);
-            font-family:'Outfit',sans-serif;
+            font-family:'Open Sans',sans-serif;
         `;
         
         // Sanitize message to prevent XSS

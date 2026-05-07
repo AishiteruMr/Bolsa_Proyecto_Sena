@@ -10,7 +10,7 @@
     {{-- HEADER --}}
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
         <div>
-            <h2 style="font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.5px;">
+            <h2 style="font-size: 28px; font-weight: 900; color: var(--text);">
                 Centro de <span style="color: var(--primary);">Notificaciones</span>
             </h2>
             <p style="font-size: 14px; color: var(--text-light); margin-top: 4px; font-weight: 500;">

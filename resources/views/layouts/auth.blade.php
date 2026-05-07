@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Inspírate SENA')</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     @vite(['resources/css/login.css'])
@@ -31,11 +31,11 @@
             <div class="login-content" style="padding: 36px 32px;">
                 <div class="brand-header" style="display: flex; align-items: center; gap: 14px; margin-bottom: 28px;">
                     <img src="{{ asset('assets/logo.webp') }}" alt="SENA" style="width: 44px; height: 44px; background: #fff; padding: 8px; border-radius: 12px; box-shadow: 0 4px 15px rgba(62,180,137,0.2);">
-                    <span style="font-size: 24px; font-weight: 900; color: var(--secondary); letter-spacing: -1px;">@yield('title', 'Inspírate')</span>
+                    <span style="font-size: 24px; font-weight: 900; color: var(--secondary);">@yield('title', 'Inspírate')</span>
                 </div>
                 
                 <div class="content-header" style="margin-bottom: 24px;">
-                    <h3 style="font-size: 22px; font-weight: 800; color: var(--secondary); margin-bottom: 6px; letter-spacing: -0.5px;">@yield('form-title', 'Crear Cuenta')</h3>
+                    <h3 style="font-size: 22px; font-weight: 900; color: var(--secondary); margin-bottom: 6px;">@yield('form-title', 'Crear Cuenta')</h3>
                     <p style="font-size: 13px; color: var(--text-light); font-weight: 500;">@yield('form-subtitle', 'Completa tus datos')</p>
                 </div>
                 

@@ -25,7 +25,8 @@ export default defineConfig({
                 'resources/css/index.css',
                 'resources/css/instructor.css',
                 'resources/css/login.css',
-                'resources/css/nosotros.css'
+                'resources/css/nosotros.css',
+                'resources/css/soporte.css'
             ],
             refresh: true,
         }),

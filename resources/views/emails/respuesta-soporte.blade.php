@@ -5,7 +5,7 @@
         body { font-family: 'Segoe UI', Roboto, sans-serif; line-height: 1.7; color: #334155; background-color: #f1f5f9; margin: 0; padding: 0; }
         .container { max-width: 600px; margin: 30px auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
         .header { background: #0f172a; color: white; padding: 40px 30px; text-align: center; }
-        .header h2 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+        .header h2 { margin: 0; font-size: 26px; font-weight: 800; }
         .content { padding: 40px 30px; }
         .card { background: #f8fafc; padding: 25px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #e2e8f0; }
         .card h4 { margin: 0 0 12px 0; color: #475569; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }

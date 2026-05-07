@@ -45,7 +45,7 @@
                     Banco de Proyectos
                 </span>
             </div>
-            <h2 style="color: white; font-size: 38px; font-weight: 800; margin-bottom: 12px; letter-spacing: -1px;">Descubre tu Siguiente Desafío</h2>
+            <h2 style="color: white; font-size: 38px; font-weight: 900; margin-bottom: 12px;">Descubre tu Siguiente Desafío</h2>
             <p style="color: rgba(255,255,255,0.7); font-size: 16px; margin-bottom: 40px; max-width: 600px;">Explora cientos de proyectos de empresas líderes buscando el talento SENA que tú representas.</p>
 
             <!-- Search Bar -->
