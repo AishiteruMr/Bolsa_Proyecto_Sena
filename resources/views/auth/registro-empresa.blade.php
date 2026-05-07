@@ -22,7 +22,7 @@
             </div>
             
             <div class="brand-quote">
-                <h2>Regístrate como <span style="color: var(--primary-light);">Empresa</span></h2>
+                <h2>Regístrate como <span style="color: #4ADE80;">Empresa</span></h2>
                 <p>Únete a nuestra red de empresas y conecta con talentosos aprendices del SENA.</p>
             </div>
 
@@ -43,6 +43,13 @@
 
             <div class="brand-footer">
                 Bolsa de Proyectos & Talentos
+            </div>
+        </div>
+
+        <div class="login-brand login-brand-show">
+            <div class="brand-header">
+                <img src="{{ asset('assets/logo.webp') }}" alt="SENA">
+                <span>Inspírate<br>SENA</span>
             </div>
         </div>
 
@@ -110,9 +117,9 @@
                 </div>
 
                 <div class="form-group">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <input type="checkbox" id="terminos" name="terminos" required style="width: 16px; height: 16px; accent-color: var(--primary);">
-                        <label for="terminos" style="margin: 0; font-size: 13px; color: var(--text-light);">Acepto los Términos y Condiciones</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="terminos" name="terminos" required>
+                        <label for="terminos">Acepto los Términos y Condiciones</label>
                     </div>
                 </div>
 
@@ -121,7 +128,7 @@
 
             <div class="divider">¿Ya tienes cuenta?</div>
 
-            <a href="{{ route('login') }}" class="btn-submit" style="text-align: center; text-decoration: none;">
+            <a href="{{ route('login') }}" class="btn-submit" style="text-decoration: none;">
                 Iniciar Sesión
             </a>
         </div>
