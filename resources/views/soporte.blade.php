@@ -3,7 +3,9 @@
 @section('title', 'Soporte | Inspírate SENA')
 
 @section('styles')
-    @vite(['resources/css/soporte.css'])
+    @vitebuilt
+        @vite(['resources/css/soporte.css'])
+    @endvitebuilt
 @endsection
 
 @section('content')

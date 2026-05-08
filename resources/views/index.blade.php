@@ -3,7 +3,9 @@
 @section('title', 'Inspírate SENA - Inicio')
 
 @section('styles')
-    @vite(['resources/css/index.css'])
+    @vitebuilt
+        @vite(['resources/css/index.css'])
+    @endvitebuilt
 @endsection
 
 @section('content')

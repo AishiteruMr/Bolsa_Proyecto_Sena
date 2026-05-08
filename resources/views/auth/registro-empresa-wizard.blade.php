@@ -3,7 +3,9 @@
 @section('title', 'Registro Empresa')
 
 @section('styles')
+@vitebuilt
 @vite(['resources/css/auth_forms.css'])
+@endvitebuilt
 <style>
     .wizard-container {
         max-width: 700px;
@@ -593,5 +595,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+@vitebuilt
 @vite(['resources/js/login.js'])
+@endvitebuilt
 @endsection
