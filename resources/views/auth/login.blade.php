@@ -3,7 +3,9 @@
 @section('title', 'Iniciar Sesión')
 
 @section('styles')
+@vitebuilt
 @vite(['resources/css/login.css'])
+@endvitebuilt
 @endsection
 
 @section('content')
@@ -133,5 +135,7 @@
 @endsection
 
 @section('scripts')
+@vitebuilt
 @vite(['resources/js/login.js'])
+@endvitebuilt
 @endsection

@@ -3,7 +3,9 @@
 @section('title', '¿Olvidaste tu Contraseña?')
 
 @section('styles')
+@vitebuilt
 @vite(['resources/css/auth_forms.css'])
+@endvitebuilt
 @endsection
 
 @section('content')

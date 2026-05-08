@@ -2,7 +2,9 @@
 
 @section('title', 'Registro Instructor')
 @section('styles')
+@vitebuilt
 @vite(['resources/css/register.css'])
+@endvitebuilt
 <style>
     .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 600px) { .input-row { grid-template-columns: 1fr; } }
@@ -167,7 +169,9 @@
 @endsection
 
 @section('scripts')
+@vitebuilt
 @vite(['resources/js/login.js'])
+@endvitebuilt
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const desktopSubmit = document.querySelector('.desktop-submit');

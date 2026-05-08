@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,5 +23,9 @@ class AppServiceProvider extends ServiceProvider
         if (env('APP_ENV') === 'production') {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
+
+        Blade::if('vitebuilt', function () {
+            return file_exists(public_path('build/manifest.json'));
+        });
     }
 }
