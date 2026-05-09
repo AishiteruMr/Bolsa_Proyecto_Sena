@@ -15,6 +15,7 @@ class OwnershipMiddleware
         $usrId = session('usr_id');
         $rol = session('rol');
         $empId = session('emp_id');
+        $nit = session('nit');
 
         $param = $param ?? 'id';
         $resourceId = $request->route($param);
@@ -24,10 +25,10 @@ class OwnershipMiddleware
         }
 
         $hasAccess = match ($resource) {
-            'proyecto' => $this->checkProyectoAccess($resourceId, $rol, $usrId, $empId),
+            'proyecto' => $this->checkProyectoAccess($resourceId, $rol, $usrId, $empId, $nit),
             'etapa' => $this->checkEtapaAccess($resourceId, $rol, $usrId),
             'evidencia' => $this->checkEvidenciaAccess($resourceId, $rol, $usrId),
-            'postulacion' => $this->checkPostulacionAccess($resourceId, $rol, $usrId),
+            'postulacion' => $this->checkPostulacionAccess($resourceId, $rol, $usrId, $nit),
             'aprendiz' => $this->checkAprendizAccess($resourceId, $usrId),
             'empresa' => $this->checkEmpresaAccess($resourceId, $empId),
             'perfil' => $this->checkPerfilAccess($resourceId, $usrId),
@@ -44,7 +45,7 @@ class OwnershipMiddleware
         return $next($request);
     }
 
-    private function checkProyectoAccess(int $proyectoId, ?int $rol, ?int $usrId, ?int $empId): bool
+    private function checkProyectoAccess(int $proyectoId, ?int $rol, ?int $usrId, ?int $empId, ?int $nit): bool
     {
         $proyecto = Proyecto::find($proyectoId);
 
@@ -54,7 +55,7 @@ class OwnershipMiddleware
 
         return match ($rol) {
             2 => $proyecto->instructor_usuario_id === $usrId,
-            3 => $proyecto->empresa_nit === $empId,
+            3 => $proyecto->empresa_nit === $nit,
             4 => true,
             default => false,
         };
@@ -110,7 +111,7 @@ class OwnershipMiddleware
         return false;
     }
 
-    private function checkPostulacionAccess(int $postulacionId, ?int $rol, ?int $usrId): bool
+    private function checkPostulacionAccess(int $postulacionId, ?int $rol, ?int $usrId, ?int $nit): bool
     {
         $postulacion = \App\Models\Postulacion::with('proyecto')->find($postulacionId);
 
@@ -120,7 +121,7 @@ class OwnershipMiddleware
 
         return match ($rol) {
             2 => $postulacion->proyecto->instructor_usuario_id === $usrId,
-            3 => $postulacion->proyecto->empresa_nit === session('emp_id'),
+            3 => $postulacion->proyecto->empresa_nit === $nit,
             4 => true,
             default => false,
         };
