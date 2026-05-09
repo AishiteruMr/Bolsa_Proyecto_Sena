@@ -33,7 +33,7 @@
 
 @section('content')
 <div style="max-width: 1200px; margin: 0 auto;">
-    <div style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div class="rep-header" style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                 <a href="{{ route('empresa.proyectos') }}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
@@ -55,7 +55,7 @@
     </div>
 
     <!-- Analytics Bento Grid -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <div class="rep-stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2.5rem;">
         <div class="glass-card stat-card-rep" style="--c: #3b82f6;">
             <div class="stat-icon-rep"><i class="fas fa-user-graduate"></i></div>
             <div class="stat-info-rep">
@@ -86,7 +86,7 @@
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 320px; gap: 2.5rem; align-items: start;">
+    <div class="rep-main-grid" style="display: grid; grid-template-columns: 1fr 320px; gap: 2.5rem; align-items: start;">
         
         <div style="display: flex; flex-direction: column; gap: 2.5rem;">
             <!-- Apprentice Management Table -->
@@ -97,7 +97,7 @@
                     </span>
                     Matriz de Rendimiento Global
                 </h3>
-                <div style="overflow-x: auto;">
+                <div class="rep-table-wrap" style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
                         <thead>
                             <tr style="text-align: left; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">
@@ -169,7 +169,7 @@
                                 <div style="padding: 1.5rem; background: white; border-radius: 0 0 16px 16px; border: 1px solid var(--border); border-top: none;">
                                     <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">{{ $etapa->descripcion }}</p>
                                     
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                                    <div class="rep-stages-inner" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                                         <div>
                                             <h5 class="sub-label-rep" style="--c: #3b82f6;">Entregas Formales</h5>
                                             @forelse($entregas->where('etapa_id', $etapa->id) as $e)
@@ -401,6 +401,45 @@
      * 7. COLORES DE ESTADO:
      *    - .stat-card-rep, .mini-card-rep = Bordes y fondos simples
      */
+    @media (max-width: 1024px) {
+        .rep-header { flex-direction: column; align-items: flex-start !important; gap: 16px !important; }
+        .rep-header .btn-ver { width: 100% !important; justify-content: center; }
+        .rep-stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
+        .rep-main-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+        .rep-stages-inner { grid-template-columns: 1fr !important; gap: 1rem !important; }
+        .glass-card { padding: 1.5rem !important; }
+        .stat-card-rep { padding: 1rem !important; gap: 0.75rem !important; }
+        .stat-icon-rep { width: 40px !important; height: 40px !important; font-size: 1rem !important; }
+        .stat-value-rep { font-size: 1.3rem !important; }
+    }
+    @media (max-width: 640px) {
+        .rep-stats-grid { grid-template-columns: 1fr !important; gap: 0.75rem !important; margin-bottom: 1.5rem !important; }
+        .rep-header h2 { font-size: 20px !important; }
+        .rep-header p { font-size: 13px !important; }
+        .glass-card { padding: 1rem !important; border-radius: 14px !important; }
+        .glass-card h3 { font-size: 1.1rem !important; gap: 10px !important; }
+        .glass-card h3 span { width: 36px !important; height: 36px !important; font-size: 0.9rem !important; }
+        .rep-table-wrap { margin: 0 -0.5rem; }
+        table { font-size: 0.75rem !important; }
+        table th, table td { padding: 8px !important; }
+        table td:first-child { border-radius: 10px 0 0 10px !important; }
+        table td:last-child { border-radius: 0 10px 10px 0 !important; }
+        .accordion-header-rep { padding: 0.85rem 1rem !important; gap: 8px; }
+        .accordion-header-rep h4 { font-size: 0.85rem !important; }
+        .accordion-header-rep p { font-size: 0.7rem !important; }
+        .stage-num-rep { width: 26px !important; height: 26px !important; font-size: 0.75rem !important; }
+        .accordion-content-rep > div { padding: 1rem !important; }
+        .sub-label-rep { font-size: 0.65rem !important; }
+        .mini-card-rep { flex-direction: column !important; align-items: flex-start !important; gap: 6px; font-size: 0.8rem !important; padding: 8px 12px !important; }
+        .mini-card-rep .badge { align-self: flex-start; }
+        .stat-card-rep { padding: 0.75rem !important; gap: 0.5rem !important; }
+        .stat-icon-rep { width: 36px !important; height: 36px !important; font-size: 0.9rem !important; }
+        .stat-value-rep { font-size: 1.1rem !important; }
+        .stat-label-rep { font-size: 0.65rem !important; }
+        .rep-main-grid > div:last-child > div { position: static !important; }
+        .rep-main-grid > div:last-child > div:last-child { padding: 1rem !important; }
+        .rep-main-grid > div:last-child > div:last-child p:first-child { font-size: 2rem !important; }
+    }
     @media print {
         /* Ocultar navegación */
         .sidebar, .topbar, .btn-ver, .nav-item { display: none !important; }
