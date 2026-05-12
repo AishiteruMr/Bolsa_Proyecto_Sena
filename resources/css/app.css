@@ -339,7 +339,9 @@ a {
 .footer-container {
     display: flex;
     justify-content: center;
+    gap: 60px;
     margin-bottom: 24px;
+    flex-wrap: wrap;
 }
 
 .footer-col {
@@ -398,6 +400,11 @@ a {
     opacity: 0.6;
 }
 
+@media (max-width: 1024px) {
+    .footer-container { gap: 40px; }
+    .footer-col { max-width: 300px; }
+}
+
 @media (max-width: 768px) {
     .navbar {
         padding: 0 20px;
@@ -432,7 +439,8 @@ a {
     .btn-login { padding: 10px 18px; font-size: 12px; }
     .navbar .hamburger { display: block; margin-left: 12px; }
     .footer { padding: 24px 5% 12px; }
-    .footer-container { justify-content: flex-start; }
+    .footer-container { justify-content: flex-start; gap: 32px; }
+    .footer-col { max-width: 100%; }
     .footer-col h3 { font-size: 14px; }
     .footer-col p { font-size: 11px; }
     .footer-bottom { font-size: 11px; padding-top: 12px; }
@@ -464,7 +472,7 @@ a {
     .menu {
         display: none;
         flex-direction: column;
-        position: absolute;
+        position: fixed;
         top: 60px;
         left: 0;
         right: 0;
