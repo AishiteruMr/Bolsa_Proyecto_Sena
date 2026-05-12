@@ -41,7 +41,7 @@ class ProyectoService
      */
     public function obtenerCategorias()
     {
-        return Proyecto::distinct()->pluck('pro_categoria');
+        return Proyecto::whereNotNull('categoria')->distinct()->pluck('categoria')->sort();
     }
 
     /**
@@ -69,7 +69,6 @@ class ProyectoService
     {
         $query = Proyecto::with('empresa')
             ->activos()
-            ->where('pro_fecha_finalizacion', '>', now())
             ->recientes();
 
         if ($limite) {
@@ -101,10 +100,10 @@ class ProyectoService
             'empresa',
             'instructor',
             'etapas' => function ($query) {
-                $query->orderBy('eta_orden');
+                $query->orderBy('orden');
             },
             'postulaciones' => function ($query) {
-                $query->where('pos_estado', 'Aprobada');
+                $query->where('estado', 'aceptada');
             }
         ])->find($proyectoId);
     }
@@ -123,7 +122,7 @@ class ProyectoService
             ->with('aprendiz');
 
         if ($estado) {
-            $query->where('pos_estado', $estado);
+            $query->where('estado', $estado);
         }
 
         return $query->get();
@@ -142,7 +141,7 @@ class ProyectoService
             ->postulaciones();
 
         if ($estado) {
-            $query->where('pos_estado', $estado);
+            $query->where('estado', $estado);
         }
 
         return $query->count();

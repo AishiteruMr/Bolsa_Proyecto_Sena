@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'Soporte | Inspírate SENA')
+@section('meta_description', 'Centro de ayuda de Inspírate SENA. Resuelve tus dudas, contacta soporte y encuentra respuestas a preguntas frecuentes sobre la bolsa de proyectos.')
+@section('og_title', 'Soporte - Inspírate SENA')
 
 @section('styles')
     @vitebuilt

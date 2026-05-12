@@ -398,14 +398,16 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
                 el.classList.add('active');
             });
-            setTimeout(function() {
+
+            requestAnimationFrame(function() {
                 window.print();
-                setTimeout(function() {
-                    document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
-                        el.classList.remove('active');
-                    });
-                }, 100);
-            }, 100);
+            });
+
+            window.onafterprint = function () {
+                document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
+                    el.classList.remove('active');
+                });
+            };
         });
     }
 });

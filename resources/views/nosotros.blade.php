@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'Inspírate SENA - Nosotros')
+@section('meta_description', 'Conoce Inspírate SENA, la bolsa de proyectos que conecta talento de aprendices con empresas en Colombia. Misión, visión y ubicación.')
+@section('og_title', 'Inspírate SENA - Nosotros')
 
 @section('styles')
     @vitebuilt

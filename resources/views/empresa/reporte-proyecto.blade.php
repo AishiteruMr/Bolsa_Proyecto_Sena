@@ -489,39 +489,20 @@
 
 @section('scripts')
 <script>
-/**
- * Función para exportar a PDF
- * 
- * PROBLEMA ORIGINAL:
- * Los acordeones (Bitácora Detallada por Etapas) estaban colapsados por defecto
- * y al imprimir solo salía el contenido visible en pantalla (encabezados de los acordeones).
- * 
- * SOLUCIÓN:
- * 1. Antes de imprimir: Agregamos la clase 'active' a todos los acordeones para expandirlos
- * 2. Esperamos 100ms para que el navegador renderice el contenido expandido
- * 3. Ejecutamos window.print() para abrir el diálogo de impresión
- * 4. Después de imprimir (o cancelar): Removemos la clase 'active' para dejar todo como estaba
- * 
- * La clase 'active' cambia el display de 'none' a 'block' mostrando todo el contenido.
- */
 function exportarPDF() {
-    // PASO 1: Expandir todos los acordeones antes de imprimir
     document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
         el.classList.add('active');
     });
-    
-    // PASO 2: Esperar a que se renderice el contenido expandido
-    setTimeout(function() {
-        // PASO 3: Abrir diálogo de impresión del navegador
+
+    requestAnimationFrame(function() {
         window.print();
-        
-        // PASO 4: Después de imprimir, restaurar estado original (acordeones cerrados)
-        setTimeout(function() {
-            document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
-                el.classList.remove('active');
-            });
-        }, 100);
-    }, 100);
+    });
+
+    window.onafterprint = function () {
+        document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
+            el.classList.remove('active');
+        });
+    };
 }
 </script>
 @endsection
