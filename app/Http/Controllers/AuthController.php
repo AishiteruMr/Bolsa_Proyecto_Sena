@@ -7,7 +7,6 @@ use App\Http\Requests\RegistroEmpresaRequest;
 use App\Http\Requests\RegistroInstructorRequest;
 use App\Http\Requests\ValidarLoginRequest;
 use App\Mail\RecuperarContraseña;
-use App\Mail\RegistroExitoso;
 use App\Models\User;
 use App\Jobs\SendEmailJob;
 use Carbon\Carbon;
@@ -178,6 +177,14 @@ class AuthController extends Controller
             ->where('otp', hash('sha256', (string) $request->otp))
             ->first();
 
+        // Fallback: si el correo no llegó, verificar contra cache (útil en desarrollo)
+        if (! $otpRecord) {
+            $otpCache = \Illuminate\Support\Facades\Cache::get('otp_fallback_' . $request->email);
+            if ($otpCache && (string) $otpCache === $request->otp) {
+                $otpRecord = (object) ['email' => $request->email, 'expires_at' => now()->addMinutes(10)];
+            }
+        }
+
         if (! $otpRecord) {
             return back()->with('error', 'Código OTP inválido.');
         }
@@ -259,7 +266,12 @@ class AuthController extends Controller
                     'created_at' => now(),
                 ]);
 
-                SendEmailJob::dispatch($request->correo, new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
+                try {
+                    \Illuminate\Support\Facades\Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
+                } catch (\Exception $e) {
+                    Log::error('Error enviando OTP a ' . $request->correo . ': ' . $e->getMessage());
+                    \Illuminate\Support\Facades\Cache::put('otp_fallback_' . $request->correo, $otp, now()->addMinutes(10));
+                }
                 // ------------------------
 
                 return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
@@ -313,7 +325,12 @@ class AuthController extends Controller
                     'created_at' => now(),
                 ]);
 
-                SendEmailJob::dispatch($request->correo, new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
+                try {
+                    \Illuminate\Support\Facades\Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
+                } catch (\Exception $e) {
+                    Log::error('Error enviando OTP a ' . $request->correo . ': ' . $e->getMessage());
+                    \Illuminate\Support\Facades\Cache::put('otp_fallback_' . $request->correo, $otp, now()->addMinutes(10));
+                }
                 // ------------------------
 
                 return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
@@ -367,7 +384,12 @@ class AuthController extends Controller
                     'created_at' => now(),
                 ]);
 
-                SendEmailJob::dispatch($request->correo, new \App\Mail\VerificarCorreoOTP($request->nombre_empresa, $otp));
+                try {
+                    \Illuminate\Support\Facades\Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre_empresa, $otp));
+                } catch (\Exception $e) {
+                    Log::error('Error enviando OTP a ' . $request->correo . ': ' . $e->getMessage());
+                    \Illuminate\Support\Facades\Cache::put('otp_fallback_' . $request->correo, $otp, now()->addMinutes(10));
+                }
                 // ------------------------
 
                 return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
