@@ -1,9 +1,13 @@
 @extends('layouts.app')
 
 @section('title', 'Inspírate SENA - Nosotros')
+@section('meta_description', 'Conoce Inspírate SENA, la bolsa de proyectos que conecta talento de aprendices con empresas en Colombia. Misión, visión y ubicación.')
+@section('og_title', 'Inspírate SENA - Nosotros')
 
 @section('styles')
-    @vite(['resources/css/nosotros.css'])
+    @vitebuilt
+        @vite(['resources/css/nosotros.css'])
+    @endvitebuilt
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 @endsection
 
@@ -113,7 +117,9 @@
 
 @section('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+@vitebuilt
 @vite(['resources/js/maps.js'])
+@endvitebuilt
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     initMissionMap('nosotros-map', 10.864339, -74.777721); // Coordenadas para Malambo

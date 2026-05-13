@@ -13,16 +13,17 @@
 
 @section('content')
     <div class="animate-fade-in" style="margin-bottom: 40px;">
-        <div class="admin-header-master" style="margin-bottom: 24px;">
+        <div class="admin-header-master">
             <div class="admin-header-icon">
                 <i class="fas fa-clipboard-list"></i>
             </div>
             <div style="position: relative; z-index: 1;">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
                     <span class="admin-badge-hub">Auditoría</span>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 700;"><i class="far fa-calendar-alt" style="margin-right: 8px;"></i>{{ now()->translatedFormat('l, d F Y') }}</span>
                 </div>
                 <h1 class="admin-header-title">Logs de <span style="color: var(--primary);">Auditoría</span></h1>
-                <p style="color: rgba(255,255,255,0.6); font-size: 16px; max-width: 600px; font-weight: 500;">Historial completo de acciones realizadas en el sistema.</p>
+                <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 600px; font-weight: 500;">Historial completo de acciones realizadas en el sistema.</p>
             </div>
         </div>
 
@@ -70,6 +71,14 @@
         </div>
 
         <div class="glass-card" style="background: white; padding: 0; overflow: hidden;">
+            <div class="admin-table-header" style="padding: 24px 28px; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                <h3 style="margin:0;font-size:18px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:12px;">
+                    <span class="admin-stat-icon" style="width:36px;height:36px;background:var(--primary-soft);color:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;">
+                        <i class="fas fa-list-check"></i>
+                    </span>
+                    Registro de Eventos
+                </h3>
+            </div>
             <div class="premium-table-container">
                 <table class="premium-table">
                     <thead>

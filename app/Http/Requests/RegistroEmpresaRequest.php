@@ -33,7 +33,7 @@ class RegistroEmpresaRequest extends FormRequest
                     }
                 },
             ],
-            'correo' => 'required|email:rfc,dns|max:255|unique:empresas,correo_contacto|unique:usuarios,correo',
+            'correo' => 'required|email|max:255|unique:empresas,correo_contacto|unique:usuarios,correo',
             'password' => [
                 'required',
                 'string',

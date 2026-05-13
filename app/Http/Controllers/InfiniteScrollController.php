@@ -68,8 +68,9 @@ class InfiniteScrollController extends Controller
         if ($request->filled('buscar')) {
             $buscar = addcslashes($request->buscar, '%_\\');
             $query->where(function ($q) use ($buscar) {
-                $q->whereRaw('correo LIKE ?', ["%{$buscar}%"])
-                    ->orWhereRaw('programa LIKE ?', ["%{$buscar}%"]);
+                $q->whereHas('usuario', function ($q) use ($buscar) {
+                    $q->whereRaw('correo LIKE ?', ["%{$buscar}%"]);
+                })->orWhereRaw('programa_formacion LIKE ?', ["%{$buscar}%"]);
             });
         }
 
@@ -84,9 +85,9 @@ class InfiniteScrollController extends Controller
             'data' => $aprendices->map(function ($a) {
                 return [
                     'id' => $a->id,
-                    'nombre' => trim(($a->usuario->nombre ?? '').' '.($a->usuario->apellido ?? '')),
-                    'correo' => $a->usuario->correo ?? 'N/A',
-                    'programa' => $a->programa,
+                    'nombre' => trim(($a->nombres ?? '').' '.($a->apellidos ?? '')),
+                    'correo' => optional($a->usuario)->correo ?? 'N/A',
+                    'programa' => $a->programa_formacion,
                     'activo' => (bool) $a->activo,
                 ];
             }),
@@ -99,11 +100,11 @@ class InfiniteScrollController extends Controller
 
     public function proyectosEmpresa(Request $request)
     {
-        $empId = session('emp_id');
+        $nit = session('nit');
         $page = $request->get('page', 1);
         $perPage = 6;
 
-        $query = Proyecto::where('empresa_nit', $empId)
+        $query = Proyecto::where('empresa_nit', $nit)
             ->with('postulaciones')
             ->orderByDesc('id');
 

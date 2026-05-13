@@ -24,36 +24,7 @@
             z-index: 1;
         }
 
-        .backup-hero {
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #2d5a87 100%);
-            border-radius: 20px;
-            padding: 40px 36px;
-            margin-bottom: 32px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(15, 23, 42, 0.3);
-        }
-        .backup-hero::before {
-            content: '';
-            position: absolute;
-            top: -60px; right: -60px;
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: pulse 4s ease-in-out infinite;
-        }
-        .backup-hero::after {
-            content: '';
-            position: absolute;
-            bottom: -40px; left: 10%;
-            width: 200px; height: 200px;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-        }
+
 
         /* ── Action cards ── */
         .backup-actions {
@@ -427,13 +398,15 @@
 <div class="animate-fade-in">
 
     {{-- ── HERO ── --}}
-    <div class="backup-hero">
+    <div class="admin-header-master">
         <div class="admin-header-icon"><i class="fas fa-database"></i></div>
         <div style="position: relative; z-index: 1;">
-            <h1 class="admin-header-title" style="color:white; font-size:1.8rem; margin-bottom:8px;">Backup de Base de Datos</h1>
-            <p style="color: rgba(255,255,255,.75); font-size:1rem; margin:0; line-height:1.5;">
-                Gestiona copias de seguridad manualmente o déjalo al sistema con los backups automáticos cada 1.5 semanas.
-            </p>
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                <span class="admin-badge-hub">Sistema de Respaldo</span>
+                <span style="color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 700;"><i class="far fa-calendar-alt" style="margin-right: 8px;"></i>{{ now()->translatedFormat('l, d F Y') }}</span>
+            </div>
+            <h1 class="admin-header-title">Backup de <span style="color: var(--primary);">Base de Datos</span></h1>
+            <p style="color: rgba(255,255,255,0.6); font-size: 18px; max-width: 600px; font-weight: 500;">Gestiona copias de seguridad manualmente o deja que el sistema las realice de forma automática.</p>
         </div>
     </div>
 

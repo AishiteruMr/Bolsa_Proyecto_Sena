@@ -67,7 +67,7 @@ class RegistroInstructorRequest extends FormRequest
                 'min:5',
                 'max:150',
             ],
-            'correo' => 'required|email:rfc,dns|max:255|unique:usuarios,correo',
+            'correo' => 'required|email|max:255|unique:usuarios,correo',
             'password' => [
                 'required',
                 'string',

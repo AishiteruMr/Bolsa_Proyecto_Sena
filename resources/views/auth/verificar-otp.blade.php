@@ -3,7 +3,9 @@
 @section('title', 'Verificar Código OTP')
 
 @section('styles')
+@vitebuilt
 @vite(['resources/css/login.css'])
+@endvitebuilt
 @endsection
 
 @section('content')
@@ -107,7 +109,9 @@
 @endsection
 
 @section('scripts')
+@vitebuilt
 @vite(['resources/js/login.js'])
+@endvitebuilt
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Focus on the OTP input when the page loads

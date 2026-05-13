@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Jobs\SendEmailJob;
 use App\Mail\RegistroExitoso;
 use App\Traits\PaginacionTrait;
 use App\Traits\ValidacionMensajes;
-use App\Jobs\SendEmailJob;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -14,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests, ValidacionMensajes, PaginacionTrait;
+
+    // ─── MÉTODOS COMPARTIDOS ────────────────────────────────────────────────────────
 
     protected function getPerfilUsuario(int $usrId, int $rol): ?object
     {

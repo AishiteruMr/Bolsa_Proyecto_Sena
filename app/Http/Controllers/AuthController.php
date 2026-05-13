@@ -307,7 +307,7 @@ class AuthController extends Controller
                     'apellidos' => strip_tags(trim($request->apellido)),
                     'especialidad' => strip_tags(trim($request->especialidad)),
                     'activo' => false,
-                    'disponibilidad' => 'Disponible',
+                    'disponibilidad' => 'disponible',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

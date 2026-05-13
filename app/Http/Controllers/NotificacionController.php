@@ -29,21 +29,29 @@ class NotificacionController extends Controller
         return view('shared.notificaciones', compact('notificaciones', 'usuario', 'filter'));
     }
 
-    public function leer(string $id)
+    public function leer(Request $request, string $id)
     {
         $usuario = User::findOrFail(cuser_id());
         $notificacion = $usuario->notifications()->where('id', $id)->firstOrFail();
         
         $notificacion->markAsRead();
         
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Notificación marcada como leída.']);
+        }
+
         return back()->with('success', 'Notificación marcada como leída.');
     }
 
-    public function leerTodas()
+    public function leerTodas(Request $request)
     {
         $usuario = User::findOrFail(cuser_id());
         $usuario->unreadNotifications->markAsRead();
         
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Todas las notificaciones marcadas como leídas.']);
+        }
+
         return back()->with('success', 'Todas las notificaciones marcadas como leídas.');
     }
 }

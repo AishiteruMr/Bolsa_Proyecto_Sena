@@ -24,7 +24,7 @@
 
 @section('content')
 <div style="max-width: 1200px; margin: 0 auto;">
-    <div style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div class="rep-header" style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                 <a href="{{ route('instructor.proyecto.detalle', $proyecto->id) }}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
@@ -40,7 +40,7 @@
     </div>
 
     <!-- Analytics Bento Grid -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <div class="rep-stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2.5rem;">
         <div class="glass-card stat-card-rep" style="--c: #3b82f6;">
             <div class="stat-icon-rep"><i class="fas fa-user-graduate"></i></div>
             <div class="stat-info-rep">
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 320px; gap: 2.5rem; align-items: start;">
+    <div class="rep-main-grid" style="display: grid; grid-template-columns: 1fr 320px; gap: 2.5rem; align-items: start;">
         
         <div style="display: flex; flex-direction: column; gap: 2.5rem;">
             <!-- Apprentice Management Table -->
@@ -82,7 +82,7 @@
                     </span>
                     Matriz de Rendimiento Global
                 </h3>
-                <div style="overflow-x: auto;">
+                <div class="rep-table-wrap" style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
                         <thead>
                             <tr style="text-align: left; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">
@@ -154,7 +154,7 @@
                                 <div style="padding: 1.5rem; background: white; border-radius: 0 0 16px 16px; border: 1px solid var(--border); border-top: none;">
                                     <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">{{ $etapa->descripcion }}</p>
                                     
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                                    <div class="rep-stages-inner" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                                         <div>
                                             <h5 class="sub-label-rep" style="--c: #3b82f6;">Entregas Formales</h5>
                                             @forelse($entregas->where('etapa_id', $etapa->id) as $e)
@@ -347,6 +347,20 @@
         font-size: 0.85rem;
     }
 
+    @media (max-width: 1024px) {
+        .rep-header { flex-direction: column; align-items: flex-start !important; gap: 16px; }
+        .rep-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        .rep-main-grid { grid-template-columns: 1fr !important; }
+        .rep-stages-inner { grid-template-columns: 1fr !important; }
+    }
+    @media (max-width: 640px) {
+        .rep-stats-grid { grid-template-columns: 1fr !important; }
+        .rep-header h2 { font-size: 22px !important; }
+        .rep-table-wrap { overflow-x: auto; }
+        table { font-size: 0.8rem; }
+        .accordion-header-rep { padding: 1rem !important; }
+        .accordion-header-rep h4 { font-size: 0.9rem !important; }
+    }
     @media print {
         .sidebar, .topbar, .btn-ver, .nav-item { display: none !important; }
         .main { margin-left: 0 !important; }
@@ -384,14 +398,16 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
                 el.classList.add('active');
             });
-            setTimeout(function() {
+
+            requestAnimationFrame(function() {
                 window.print();
-                setTimeout(function() {
-                    document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
-                        el.classList.remove('active');
-                    });
-                }, 100);
-            }, 100);
+            });
+
+            window.onafterprint = function () {
+                document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
+                    el.classList.remove('active');
+                });
+            };
         });
     }
 });

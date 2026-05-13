@@ -17,23 +17,28 @@
             <i class="fas fa-bars" id="hamburgerIcon"></i>
         </button>
     </div>
+    <div id="menuOverlay" onclick="closeMenu()"></div>
 </header>
 
 <script>
 function toggleMenu() {
     const menu = document.getElementById('mainMenu');
     const icon = document.getElementById('hamburgerIcon');
+    const overlay = document.getElementById('menuOverlay');
     menu.classList.toggle('active');
     icon.classList.toggle('fa-bars');
     icon.classList.toggle('fa-times');
+    if (overlay) overlay.classList.toggle('active');
 }
 
 function closeMenu() {
     const menu = document.getElementById('mainMenu');
     const icon = document.getElementById('hamburgerIcon');
+    const overlay = document.getElementById('menuOverlay');
     menu.classList.remove('active');
     icon.classList.remove('fa-times');
     icon.classList.add('fa-bars');
+    if (overlay) overlay.classList.remove('active');
 }
 
 document.querySelectorAll('#mainMenu a').forEach(link => {
@@ -57,10 +62,11 @@ window.addEventListener('resize', function() {
     background: rgba(0,0,0,0.4);
     z-index: 998;
     opacity: 0;
-    animation: fadeIn 0.3s forwards;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
-
-@keyframes fadeIn {
-    to { opacity: 1; }
+#menuOverlay.active {
+    opacity: 1;
+    pointer-events: auto;
 }
 </style>
