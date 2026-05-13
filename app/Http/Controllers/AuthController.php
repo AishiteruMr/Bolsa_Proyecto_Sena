@@ -8,14 +8,12 @@ use App\Http\Requests\RegistroInstructorRequest;
 use App\Http\Requests\ValidarLoginRequest;
 use App\Mail\RecuperarContraseña;
 use App\Models\User;
-use App\Jobs\SendEmailJob;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
@@ -61,15 +59,6 @@ class AuthController extends Controller
 
             if (isset($perfil->estado) && $perfil->estado == 0) {
                 return back()->with('error', 'Tu cuenta está pendiente de activación por un administrador.');
-            }
-
-            if (isset($usuario->email_verified_at) && is_null($usuario->email_verified_at)) {
-                $userModel = User::find($usuario->id);
-                if ($userModel) {
-                    $userModel->sendEmailVerificationNotification();
-                }
-
-                return back()->with('error', 'Debes verificar tu correo electrónico antes de iniciar sesión. Se ha enviado un nuevo enlace de verificación.')->withInput(['correo' => $correo]);
             }
 
             $sessionData = [
@@ -158,59 +147,6 @@ class AuthController extends Controller
         return back()->with('success', 'Se ha enviado un nuevo enlace de verificación a tu correo.');
     }
 
-    // ─── VERIFICACIÓN OTP ────────────────────────────────────────────────────────
-
-    public function showVerificarOTP(string $email): View
-    {
-        return view('auth.verificar-otp', compact('email'));
-    }
-
-    public function verificarOTP(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required|digits:6',
-        ]);
-
-        $otpRecord = DB::table('email_verification_otps')
-            ->where('email', $request->email)
-            ->where('otp', hash('sha256', (string) $request->otp))
-            ->first();
-
-        // Fallback: si el correo no llegó, verificar contra cache (útil en desarrollo)
-        if (! $otpRecord) {
-            $otpCache = \Illuminate\Support\Facades\Cache::get('otp_fallback_' . $request->email);
-            if ($otpCache && (string) $otpCache === $request->otp) {
-                $otpRecord = (object) ['email' => $request->email, 'expires_at' => now()->addMinutes(10)];
-            }
-        }
-
-        if (! $otpRecord) {
-            return back()->with('error', 'Código OTP inválido.');
-        }
-
-        if (Carbon::parse($otpRecord->expires_at)->isPast()) {
-            DB::table('email_verification_otps')->where('email', $request->email)->delete();
-            return redirect()->route('login')->with('error', 'El código ha expirado. Por favor, regístrate de nuevo.');
-        }
-
-        // --- VERIFICAR USUARIO ---
-        $user = User::where('correo', $request->email)->first();
-        if ($user) {
-            $user->markEmailAsVerified();
-            
-            // Enviar correo de bienvenida tras verificación de correo vía OTP
-            $perfil = $this->getPerfilUsuario($user->id, $user->rol_id);
-            $nombre = $perfil->nombre ?? '';
-            $apellido = $perfil->apellido ?? '';
-            $this->enviarCorreoBienvenida($user->correo, $nombre, $apellido);
-        }
-
-        DB::table('email_verification_otps')->where('email', $request->email)->delete();
-
-        return redirect()->route('login')->with('success', '¡Correo verificado exitosamente! Ya puedes iniciar sesión.');
-    }
-
     // ─── VISTAS DE REGISTRO ──────────────────────────────────────────────────────
 
     public function showRegistroAprendiz(): View|RedirectResponse
@@ -257,25 +193,7 @@ class AuthController extends Controller
             });
 
             if ($resultado) {
-                // --- OTP VERIFICATION ---
-                $otp = random_int(100000, 999999);
-                DB::table('email_verification_otps')->insert([
-                    'email' => $request->correo,
-                    'otp' => hash('sha256', (string) $otp),
-                    'expires_at' => now()->addMinutes(10),
-                    'created_at' => now(),
-                ]);
-
-                try {
-                    \Illuminate\Support\Facades\Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
-                } catch (\Exception $e) {
-                    Log::error('Error enviando OTP a ' . $request->correo . ': ' . $e->getMessage());
-                    \Illuminate\Support\Facades\Cache::put('otp_fallback_' . $request->correo, $otp, now()->addMinutes(10));
-                }
-                // ------------------------
-
-                return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
-                    ->with('success', 'Registro exitoso. Introduce el código OTP enviado a tu correo.');
+                return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta pronto.');
             }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
@@ -316,25 +234,7 @@ class AuthController extends Controller
             });
 
             if ($resultado) {
-                // --- OTP VERIFICATION ---
-                $otp = random_int(100000, 999999);
-                DB::table('email_verification_otps')->insert([
-                    'email' => $request->correo,
-                    'otp' => hash('sha256', (string) $otp),
-                    'expires_at' => now()->addMinutes(10),
-                    'created_at' => now(),
-                ]);
-
-                try {
-                    \Illuminate\Support\Facades\Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre, $otp));
-                } catch (\Exception $e) {
-                    Log::error('Error enviando OTP a ' . $request->correo . ': ' . $e->getMessage());
-                    \Illuminate\Support\Facades\Cache::put('otp_fallback_' . $request->correo, $otp, now()->addMinutes(10));
-                }
-                // ------------------------
-
-                return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
-                    ->with('success', 'Registro exitoso. Introduce el código OTP enviado a tu correo.');
+                return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta pronto.');
             }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
@@ -375,25 +275,7 @@ class AuthController extends Controller
             });
 
             if ($resultado) {
-                // --- OTP VERIFICATION ---
-                $otp = random_int(100000, 999999);
-                DB::table('email_verification_otps')->insert([
-                    'email' => $request->correo,
-                    'otp' => hash('sha256', (string) $otp),
-                    'expires_at' => now()->addMinutes(10),
-                    'created_at' => now(),
-                ]);
-
-                try {
-                    \Illuminate\Support\Facades\Mail::to($request->correo)->send(new \App\Mail\VerificarCorreoOTP($request->nombre_empresa, $otp));
-                } catch (\Exception $e) {
-                    Log::error('Error enviando OTP a ' . $request->correo . ': ' . $e->getMessage());
-                    \Illuminate\Support\Facades\Cache::put('otp_fallback_' . $request->correo, $otp, now()->addMinutes(10));
-                }
-                // ------------------------
-
-                return redirect()->route('auth.mostrar-verificar-otp', ['email' => $request->correo])
-                    ->with('success', 'Empresa registrada. Introduce el código OTP enviado a tu correo.');
+                return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta pronto.');
             }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
@@ -468,13 +350,13 @@ class AuthController extends Controller
 
         // Enviar correo
         try {
-            SendEmailJob::dispatch($correo, new RecuperarContraseña($nombre, $enlaceRecuperacion));
+            \Illuminate\Support\Facades\Mail::to($correo)->send(new RecuperarContraseña($nombre, $enlaceRecuperacion));
 
             return back()->with('success', '✅ Se envió un enlace de recuperación a tu correo. Revisa tu bandeja de entrada.');
         } catch (\Exception $e) {
             Log::error('Error al enviar correo de recuperación: '.$e->getMessage());
 
-            return back()->with('error', 'Error al enviar el correo. Intenta más tarde.');
+            return back()->with('error', 'Error al enviar el correo: ' . $e->getMessage());
         }
     }
 
