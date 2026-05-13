@@ -65,6 +65,14 @@
                 </div>
             @endif
 
+            @php $otpFallback = \Illuminate\Support\Facades\Cache::get('otp_fallback_' . $email); @endphp
+            @if($otpFallback)
+                <div class="alert alert-info" style="background: #fef3c7; border-color: #f59e0b; color: #92400e;">
+                    <strong> Depuración:</strong> El correo no pudo enviarse.<br>
+                    Usa este código manualmente: <span style="font-size: 24px; font-weight: bold; letter-spacing: 4px; display: block; text-align: center; margin-top: 8px;">{{ $otpFallback }}</span>
+                </div>
+            @endif
+
             <form action="{{ route('auth.verificar-otp') }}" method="POST">
                 @csrf
                 <input type="hidden" name="email" value="{{ $email ?? old('email') }}">
