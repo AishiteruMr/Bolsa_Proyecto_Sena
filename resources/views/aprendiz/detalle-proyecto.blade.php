@@ -281,6 +281,47 @@
                 @endif
             </div>
 
+            <!-- Método de Trabajo / Estructura del Proyecto -->
+            <div class="glass-card" style="padding: 24px;">
+                <h4 style="font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <i class="fas fa-file-alt" style="color: #3eb489; margin-right: 8px;"></i>Método de Trabajo
+                </h4>
+
+                {{-- Estructura Personalizada (subida por el instructor) --}}
+                @if($proyecto->url_estructura)
+                    <div style="padding: 16px; background: rgba(62,180,137,0.05); border-radius: 12px; border: 1px solid rgba(62,180,137,0.15); margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #3eb489, #2d9d74); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; flex-shrink: 0;">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <p style="font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Estructura Personalizada</p>
+                                <p style="font-size: 11px; color: var(--text-light); margin: 0;">Documento subido por el instructor</p>
+                            </div>
+                            <a href="{{ asset('storage/' . $proyecto->url_estructura) }}" target="_blank" class="btn-premium" style="padding: 8px 16px; font-size: 12px; white-space: nowrap; flex-shrink: 0;">
+                                <i class="fas fa-download" style="margin-right: 6px;"></i>Descargar
+                            </a>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Estructura Predeterminada (siempre disponible) --}}
+                <div style="padding: 16px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #64748b, #475569); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; flex-shrink: 0;">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <p style="font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Estructura Predeterminada</p>
+                            <p style="font-size: 11px; color: var(--text-light); margin: 0;">Documento de planificación estándar</p>
+                        </div>
+                        <a href="{{ asset('assets/default-estructura.pdf') }}" target="_blank" class="btn-premium" style="padding: 8px 16px; font-size: 12px; white-space: nowrap; flex-shrink: 0; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; box-shadow: none;">
+                            <i class="fas fa-download" style="margin-right: 6px;"></i>Descargar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             <!-- Cronograma -->
             <div class="glass-card" style="padding: 24px;">
                 <h4 style="font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
