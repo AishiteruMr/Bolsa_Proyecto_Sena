@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('numero_documento')->unique();  // Número de cédula o NIT
             $table->string('correo', 100)->unique();
             $table->string('contrasena', 255);
+            $table->timestamp('email_verified_at')->nullable();
             $table->foreignId('rol_id')
                   ->constrained('roles', 'id', 'fk_usuarios_rol_id')
                   ->restrictOnDelete()

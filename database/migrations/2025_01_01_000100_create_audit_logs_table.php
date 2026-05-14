@@ -19,6 +19,7 @@ return new class extends Migration
             $table->json('datos_nuevos')->nullable();
             $table->string('ip_address', 45)->nullable();
             $table->string('user_agent')->nullable();
+            $table->text('descripcion')->nullable();
             $table->timestamps();
 
             $table->index(['user_id', 'modulo']);

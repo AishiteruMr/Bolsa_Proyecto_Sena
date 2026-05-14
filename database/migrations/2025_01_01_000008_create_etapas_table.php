@@ -25,6 +25,8 @@ return new class extends Migration
             $table->unsignedTinyInteger('orden');                  // Orden de la etapa dentro del proyecto
             $table->string('nombre', 200);
             $table->text('descripcion');
+            $table->json('documentos_requeridos')->nullable();
+            $table->string('url_documento')->nullable();
 
             $table->timestamps();
 
