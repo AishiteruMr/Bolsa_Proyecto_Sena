@@ -45,7 +45,7 @@
             </div>
 
             <div class="brand-footer">
-                Bolsa de Proyectos & Talentos v2.0
+                Bolsa de Proyectos & Talentos v1.0
             </div>
         </div>
 

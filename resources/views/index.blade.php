@@ -80,11 +80,15 @@
         <div class="bento-stats">
             <div class="bento-stats-item">
                 <div class="bento-stats-number">{{ $totalProyectos }}</div>
-                <div class="bento-stats-label">Proyectos</div>
+                <div class="bento-stats-label">Proyectos Activos</div>
+            </div>
+            <div class="bento-stats-item">
+                <div class="bento-stats-number">{{ $totalInstructores }}</div>
+                <div class="bento-stats-label">Instructores</div>
             </div>
             <div class="bento-stats-item">
                 <div class="bento-stats-number">{{ $totalEmpresas }}</div>
-                <div class="bento-stats-label">Empresas</div>
+                <div class="bento-stats-label">Empresas Aliadas</div>
             </div>
             <div class="bento-stats-item">
                 <div class="bento-stats-number">{{ $totalAprendices }}</div>
