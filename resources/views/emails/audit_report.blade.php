@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Reporte de Auditoría</title>
+    <title>Reporte de Historial de Seguridad</title>
 </head>
 <body>
     <h1>Reporte de Auditoría de Seguridad</h1>

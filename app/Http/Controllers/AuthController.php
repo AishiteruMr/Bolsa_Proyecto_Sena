@@ -7,6 +7,7 @@ use App\Http\Requests\RegistroEmpresaRequest;
 use App\Http\Requests\RegistroInstructorRequest;
 use App\Http\Requests\ValidarLoginRequest;
 use App\Mail\RecuperarContraseña;
+use App\Models\AuditLog;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -91,6 +92,9 @@ class AuthController extends Controller
             session($sessionData);
             $request->session()->regenerate();
             session(['mostrar_loader' => true]); // Flag para mostrar loader en la primera página del panel
+
+            // Registrar inicio de sesión en el historial
+            AuditLog::registrar($usuario->id, 'login', 'autenticacion', "Inicio de sesión exitoso desde ".request()->ip());
 
             return $this->redirectByRol($usuario->rol_id);
         }
@@ -433,6 +437,9 @@ class AuthController extends Controller
             DB::table('usuarios')
                 ->where('id', $usuario->id)
                 ->update(['contrasena' => Hash::make($request->password)]);
+
+            // Registrar cambio de contraseña
+            AuditLog::registrar($usuario->id, 'editar', 'seguridad', 'Se restableció la contraseña mediante el enlace de recuperación.');
 
             $mensaje = 'Usuario';
         } else {

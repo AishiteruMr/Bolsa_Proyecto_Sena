@@ -79,6 +79,7 @@ class AdminController extends Controller
         if ($request->tipo === 'aprendiz') {
             $aprendiz = Aprendiz::with('usuario')->findOrFail($id);
             $anterior = ['activo' => $aprendiz->activo];
+            $nombreTarget = $aprendiz->getFullNameAttribute();
             $aprendiz->update(['activo' => $request->estado]);
             Cache::forget('admin_stats');
             $usrToNotify = $aprendiz->usuario;
@@ -90,20 +91,20 @@ class AdminController extends Controller
                 'usuarios',
                 'aprendices',
                 $id,
-                $anterior,
-                ['activo' => $request->estado]
+                array_merge($anterior, ['nombre_objetivo' => $nombreTarget]),
+                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget]
             );
 
             // Enviar correo de bienvenida al activar cuenta
             if ($request->estado == 1 && $usrToNotify) {
-                $perfil = $this->getPerfilUsuario($usrToNotify->id, $usrToNotify->rol_id);
-                $nombre = $perfil->nombre ?? '';
-                $apellido = $perfil->apellido ?? '';
+                $nombre = $aprendiz->nombres ?? '';
+                $apellido = $aprendiz->apellidos ?? '';
                 $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
             }
         } elseif ($request->tipo === 'instructor') {
             $instructor = Instructor::with('usuario')->findOrFail($id);
             $anterior = ['activo' => $instructor->activo];
+            $nombreTarget = $instructor->nombres . ' ' . $instructor->apellidos;
             $instructor->update(['activo' => $request->estado]);
             Cache::forget('admin_stats');
             $usrToNotify = $instructor->usuario;
@@ -115,21 +116,21 @@ class AdminController extends Controller
                 'usuarios',
                 'instructores',
                 $id,
-                $anterior,
-                ['activo' => $request->estado]
+                array_merge($anterior, ['nombre_objetivo' => $nombreTarget]),
+                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget]
             );
 
             // Enviar correo de bienvenida al activar cuenta
             if ($request->estado == 1 && $usrToNotify) {
-                $perfil = $this->getPerfilUsuario($usrToNotify->id, $usrToNotify->rol_id);
-                $nombre = $perfil->nombre ?? '';
-                $apellido = $perfil->apellido ?? '';
+                $nombre = $instructor->nombres ?? '';
+                $apellido = $instructor->apellidos ?? '';
                 $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
             }
         } else {
             // Para empresas
             $empresa = Empresa::with('usuario')->findOrFail($id);
             $anterior = ['activo' => $empresa->activo];
+            $nombreTarget = $empresa->nombre;
             $empresa->update(['activo' => $request->estado]);
             Cache::forget('admin_stats');
             $usrToNotify = $empresa->usuario;
@@ -138,19 +139,16 @@ class AdminController extends Controller
             AuditLog::registrarCambio(
                 $usrId,
                 'cambiar_estado',
-                'empresas',
+                'usuarios',
                 'empresas',
                 $id,
-                $anterior,
-                ['activo' => $request->estado]
+                array_merge($anterior, ['nombre_objetivo' => $nombreTarget]),
+                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget]
             );
 
             // Enviar correo de bienvenida al activar cuenta
             if ($request->estado == 1 && $usrToNotify) {
-                // Para empresas, el nombre es el nombre de la empresa
-                $nombre = $empresa->nombre ?? '';
-                $apellido = ''; // No aplica para empresas
-                $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
+                $this->enviarCorreoBienvenida($usrToNotify->correo, $empresa->nombre, 'Empresa');
             }
         }
 
@@ -196,8 +194,8 @@ class AdminController extends Controller
             'empresas',
             'empresas',
             $id,
-            $anterior,
-            ['activo' => $request->estado]
+            array_merge($anterior, ['nombre_objetivo' => $empresa->nombre]),
+            ['activo' => $request->estado, 'nombre_objetivo' => $empresa->nombre]
         );
 
         try {
@@ -321,6 +319,17 @@ class AdminController extends Controller
             Cache::forget('admin_stats');
             Cache::forget('admin_proyectos_recientes');
 
+            // Audit log detallado
+            AuditLog::registrarCambio(
+                session('usr_id'),
+                'cambiar_estado',
+                'proyectos',
+                'proyectos',
+                $id,
+                ['estado' => $proyecto->getOriginal('estado'), 'nombre_objetivo' => $proyectoActual->titulo],
+                ['estado' => $request->estado, 'nombre_objetivo' => $proyectoActual->titulo]
+            );
+
             // Notificar a la empresa
             if ($empresaUsr) {
                 $empresaUsr->notify(new AppNotification(
@@ -354,6 +363,17 @@ class AdminController extends Controller
             ]);
             Cache::forget('admin_stats');
             Cache::forget('admin_proyectos_recientes');
+
+            // Audit log detallado
+            AuditLog::registrarCambio(
+                session('usr_id'),
+                'cambiar_estado',
+                'proyectos',
+                'proyectos',
+                $id,
+                ['estado' => $proyecto->getOriginal('estado'), 'nombre_objetivo' => $proyecto->titulo],
+                ['estado' => $request->estado, 'nombre_objetivo' => $proyecto->titulo]
+            );
             $proyectoActual = $proyecto->load('empresa');
             $empresaUsr = $proyectoActual->empresa->usuario ?? null;
             if ($empresaUsr) {
@@ -382,6 +402,16 @@ class AdminController extends Controller
 
         $proyecto->update(['instructor_usuario_id' => $request->instructor_usuario_id]);
         Cache::forget('admin_stats');
+
+        AuditLog::registrarCambio(
+            session('usr_id'),
+            'asignar',
+            'proyectos',
+            'proyectos',
+            $id,
+            ['instructor_usuario_id' => $proyecto->getOriginal('instructor_usuario_id'), 'nombre_objetivo' => $proyecto->titulo],
+            ['instructor_usuario_id' => $request->instructor_usuario_id, 'nombre_objetivo' => $proyecto->titulo]
+        );
 
         // Enviar correo de notificación al instructor asignado
         try {
@@ -432,6 +462,8 @@ class AdminController extends Controller
             'respuesta' => $request->respuesta,
             'estado' => 'respondido',
         ]);
+
+        AuditLog::registrar(session('usr_id'), 'editar', 'soporte', "Se respondió al mensaje de soporte #{$id} de {$mensaje->nombre}");
 
         try {
             SendEmailJob::dispatch($mensaje->email, new RespuestaSoporte(

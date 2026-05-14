@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -31,6 +32,8 @@ class BackupController extends Controller
             $zipPath   = $this->generarZipBackup($nombre);
 
             Log::info("Backup manual creado: {$nombre}");
+            
+            AuditLog::registrar(session('usr_id'), 'crear', 'backups', "Se creó un backup manual de la base de datos: {$nombre}");
 
             return back()->with('success', "Backup '{$nombre}' creado exitosamente.");
         } catch (\Exception $e) {
@@ -118,6 +121,8 @@ class BackupController extends Controller
 
             Log::info('Base de datos restaurada desde importación manual. Archivo: ' . $archivo->getClientOriginalName());
 
+            AuditLog::registrar(session('usr_id'), 'editar', 'backups', "Se restauró la base de datos desde el archivo: " . $archivo->getClientOriginalName());
+
             return back()->with('success', '✅ Base de datos restaurada correctamente desde el archivo importado.');
         } catch (\Exception $e) {
             if (isset($tmpDir) && File::exists($tmpDir)) {
@@ -192,6 +197,8 @@ class BackupController extends Controller
         }
 
         Log::info("Backup eliminado: {$nombre}");
+
+        AuditLog::registrar(session('usr_id'), 'eliminar', 'backups', "Se eliminó permanentemente el archivo de backup: {$nombre}");
 
         return back()->with('success', "Backup '{$nombre}' eliminado.");
     }
