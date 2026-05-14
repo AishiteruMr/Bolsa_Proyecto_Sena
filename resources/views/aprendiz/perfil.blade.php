@@ -327,25 +327,41 @@
         {{-- SIDEBAR --}}
         <div style="display:flex; flex-direction:column; gap:20px;">
 
-            {{-- Actividad --}}
+            {{-- Contacto --}}
             <div class="glass-card" style="padding:24px;">
-                <h4 style="font-size:12px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:20px;">Tu Actividad</h4>
+                <h4 style="font-size:12px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:20px;">Datos de Contacto</h4>
                 <div style="display:grid; gap:12px;">
-                    @foreach([
-                        ['icon'=>'fa-paper-plane','bg'=>'rgba(62,180,137,0.1)','color'=>'#3eb489','label'=>'Postulaciones','value'=>$totalPost],
-                        ['icon'=>'fa-check-circle','bg'=>'#eff6ff','color'=>'#3b82f6','label'=>'Proyectos OK','value'=>$aprobadas],
-                        ['icon'=>'fa-file-alt','bg'=>'#fffbeb','color'=>'#f59e0b','label'=>'Evidencias','value'=>$evidencias],
-                    ] as $s)
-                    <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:{{ $s['bg'] }}; border-radius:14px; border:1px solid rgba(0,0,0,0.05);">
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <div style="width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,0.7); color:{{ $s['color'] }}; display:flex; align-items:center; justify-content:center; font-size:14px;">
-                                <i class="fas {{ $s['icon'] }}"></i>
-                            </div>
-                            <span style="font-size:13px; font-weight:700; color:#475569;">{{ $s['label'] }}</span>
+                    <div style="display:flex; align-items:center; gap:14px; padding:14px 16px; background:#eff6ff; border-radius:14px; border:1px solid rgba(0,0,0,0.05);">
+                        <div style="width:36px; height:36px; border-radius:10px; background:rgba(59,130,246,0.1); color:#3b82f6; display:flex; align-items:center; justify-content:center; font-size:14px;">
+                            <i class="fas fa-envelope"></i>
                         </div>
-                        <span style="font-size:20px; font-weight:900; color:#1e293b;">{{ $s['value'] }}</span>
+                        <div style="min-width:0;">
+                            <span style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; display:block;">Correo</span>
+                            <span style="font-size:13px; font-weight:700; color:var(--text); word-break:break-all;">{{ $usuario->correo }}</span>
+                        </div>
                     </div>
-                    @endforeach
+                    <div style="display:flex; align-items:center; gap:14px; padding:14px 16px; background:rgba(62,180,137,0.1); border-radius:14px; border:1px solid rgba(62,180,137,0.1);">
+                        <div style="width:36px; height:36px; border-radius:10px; background:rgba(62,180,137,0.1); color:#3eb489; display:flex; align-items:center; justify-content:center; font-size:14px;">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <span style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; display:block;">Programa</span>
+                            <span style="font-size:14px; font-weight:700; color:var(--text);">{{ $aprendiz->programa_formacion }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Estudiante card --}}
+            <div style="padding:28px; background:linear-gradient(135deg, #0f172a, #1e293b); border:none; color:white; position:relative; overflow:hidden; border-radius:var(--radius); box-shadow:var(--shadow); box-sizing:border-box;">
+                <div style="position:absolute; right:-15px; bottom:-15px; font-size:90px; color:rgba(255,255,255,0.04);"><i class="fas fa-award"></i></div>
+                <div style="width:48px; height:48px; background:rgba(62,180,137,0.2); border:1px solid rgba(62,180,137,0.3); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; color:#86efac; margin-bottom:16px;">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h4 style="font-size:17px; font-weight:900; margin-bottom:8px; color:white;">Aprendiz SENA</h4>
+                <p style="font-size:13px; color:rgba(255,255,255,0.5); line-height:1.6; font-weight:500; margin-bottom:20px;">Formándote para el futuro laboral con proyectos reales.</p>
+                <div style="background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px 16px; text-align:center; font-size:12px; font-weight:700; color:rgba(255,255,255,0.4);">
+                    <i class="fas fa-check-circle" style="color:#86efac; margin-right:6px;"></i> Cuenta Verificada
                 </div>
             </div>
 
@@ -355,20 +371,6 @@
                 <h4 style="font-size:12px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; position:relative;">Programa Activo</h4>
                 <p style="font-size:17px; font-weight:800; line-height:1.4; position:relative; margin-bottom:16px;">{{ $aprendiz->programa_formacion }}</p>
                 <span style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.25); padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; position:relative;">En Formación</span>
-            </div>
-
-            {{-- Ayuda --}}
-            <div class="glass-card" style="padding:24px;">
-                <div style="display:flex; align-items:center; gap:14px; margin-bottom:12px;">
-                    <div style="width:40px; height:40px; border-radius:12px; background:#fef2f2; color:#ef4444; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;">
-                        <i class="fas fa-question-circle"></i>
-                    </div>
-                    <h4 style="font-size:15px; font-weight:800; color:var(--text);">¿Necesitas ayuda?</h4>
-                </div>
-                <p style="font-size:13px; color:var(--text-light); font-weight:500; line-height:1.5; margin-bottom:16px;">Si tienes problemas con tu información institucional, contacta a la coordinación.</p>
-                <a href="mailto:soporte@sena.edu.co" class="btn-premium" style="width:100%; justify-content:center; padding:12px;">
-                    <i class="fas fa-envelope"></i> Contactar Soporte
-                </a>
             </div>
         </div>
     </div>
