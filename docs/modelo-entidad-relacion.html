@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo Entidad-Relación — Bolsa de Proyectos SENA</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        .diagram-container {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            backdrop-filter: blur(10px);
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .legend-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.2rem;
+            backdrop-filter: blur(8px);
+        }
+        .legend-card h3 {
+            font-size: 1rem;
+            color: #3a7bd5;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .legend-card h3 .badge {
+            font-size: 0.7rem;
+            background: rgba(58,123,213,0.2);
+            color: #7db4ff;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+        .legend-card p {
+            font-size: 0.85rem;
+            color: #bbb;
+            line-height: 1.5;
+        }
+        .legend-card ul {
+            list-style: none;
+            margin-top: 0.5rem;
+        }
+        .legend-card ul li {
+            font-size: 0.8rem;
+            color: #999;
+            padding: 2px 0;
+        }
+        .legend-card ul li::before {
+            content: "→ ";
+            color: #3a7bd5;
+        }
+        .relations-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .relations-table th {
+            background: rgba(58,123,213,0.15);
+            color: #7db4ff;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+        .relations-table td {
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.82rem;
+            color: #ccc;
+        }
+        .relations-table tr:hover td {
+            background: rgba(255,255,255,0.03);
+        }
+        .section-title {
+            font-size: 1.3rem;
+            color: #7db4ff;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        code {
+            background: rgba(58,123,213,0.15);
+            color: #7db4ff;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Modelo Entidad-Relaci&oacute;n</h1>
+    <p class="subtitle">Bolsa de Proyectos SENA &mdash; Laravel 11.x &bull; MySQL / MariaDB</p>
+
+    <div class="diagram-container">
+        <div class="mermaid">
+erDiagram
+
+    roles {
+        BIGINT id PK
+        VARCHAR nombre UK
+        VARCHAR nombre_visible
+    }
+
+    usuarios {
+        BIGINT id PK
+        BIGINT numero_documento UK
+        VARCHAR correo UK
+        VARCHAR contrasena
+        TIMESTAMP email_verified_at
+        BIGINT rol_id FK
+    }
+
+    aprendices {
+        BIGINT id PK
+        BIGINT usuario_id FK
+        VARCHAR nombres
+        VARCHAR apellidos
+        VARCHAR programa_formacion
+        BOOLEAN activo
+    }
+
+    instructores {
+        BIGINT id PK
+        BIGINT usuario_id FK
+        VARCHAR nombres
+        VARCHAR apellidos
+        VARCHAR especialidad
+        BOOLEAN activo
+        ENUM disponibilidad
+    }
+
+    administradores {
+        BIGINT id PK
+        BIGINT usuario_id FK
+        VARCHAR nombres
+        VARCHAR apellidos
+        BOOLEAN activo
+    }
+
+    empresas {
+        BIGINT id PK
+        BIGINT usuario_id FK
+        BIGINT nit UK
+        VARCHAR nombre
+        VARCHAR representante
+        VARCHAR correo_contacto UK
+        VARCHAR ubicacion
+        DECIMAL latitud
+        DECIMAL longitud
+        BOOLEAN activo
+    }
+
+    proyectos {
+        BIGINT id PK
+        BIGINT empresa_nit FK
+        BIGINT instructor_usuario_id FK
+        VARCHAR titulo
+        VARCHAR categoria
+        TEXT descripcion
+        DATE fecha_publicacion
+        SMALLINT duracion_estimada_dias
+        ENUM estado
+        BOOLEAN calidad_aprobada
+        VARCHAR imagen_url
+        VARCHAR url_estructura
+        INT numero_postulantes
+    }
+
+    postulaciones {
+        BIGINT id PK
+        BIGINT aprendiz_id FK
+        BIGINT proyecto_id FK
+        TIMESTAMP fecha_postulacion
+        ENUM estado
+    }
+
+    etapas {
+        BIGINT id PK
+        BIGINT proyecto_id FK
+        TINYINT orden
+        VARCHAR nombre
+        TEXT descripcion
+        JSON documentos_requeridos
+        VARCHAR url_documento
+    }
+
+    evidencias {
+        BIGINT id PK
+        BIGINT aprendiz_id FK
+        BIGINT etapa_id FK
+        BIGINT proyecto_id FK
+        VARCHAR ruta_archivo
+        ENUM estado
+        TEXT comentario_instructor
+        TIMESTAMP fecha_envio
+    }
+
+    entregas_etapa {
+        BIGINT id PK
+        BIGINT aprendiz_id FK
+        BIGINT etapa_id FK
+        BIGINT proyecto_id FK
+        VARCHAR url_archivo
+        TEXT descripcion
+        ENUM estado
+    }
+
+    audit_logs {
+        BIGINT id PK
+        BIGINT user_id FK
+        VARCHAR accion
+        VARCHAR modulo
+        VARCHAR tabla_afectada
+        BIGINT registro_id
+        JSON datos_anteriores
+        JSON datos_nuevos
+        VARCHAR ip_address
+        TEXT descripcion
+    }
+
+    audit_reports {
+        BIGINT id PK
+        INT total_scanned
+        INT vulnerabilities_found
+    }
+
+    audit_entries {
+        BIGINT id PK
+        BIGINT report_id FK
+        VARCHAR uri
+        INT expected
+        INT status
+        VARCHAR result
+        TEXT remediation
+    }
+
+    mensajes_soporte {
+        BIGINT id PK
+        VARCHAR nombre
+        VARCHAR email
+        VARCHAR motivo
+        TEXT mensaje
+    }
+
+    email_verification_otps {
+        BIGINT id PK
+        VARCHAR email
+        VARCHAR otp
+        TIMESTAMP expires_at
+    }
+
+    password_reset_tokens {
+        VARCHAR email PK
+        VARCHAR token
+        TIMESTAMP expires_at
+    }
+
+    notifications {
+        UUID id PK
+        VARCHAR type
+        VARCHAR notifiable_type
+        BIGINT notifiable_id
+        TEXT data
+        TIMESTAMP read_at
+    }
+
+    roles ||--o{ usuarios : "tiene"
+    usuarios ||--o| aprendices : "perfil"
+    usuarios ||--o| instructores : "perfil"
+    usuarios ||--o| administradores : "perfil"
+    usuarios ||--o| empresas : "perfil"
+    empresas ||--o{ proyectos : "publica"
+    usuarios ||--o{ proyectos : "supervisa"
+    aprendices ||--o{ postulaciones : "se postula"
+    proyectos ||--o{ postulaciones : "recibe"
+    proyectos ||--o{ etapas : "tiene"
+    aprendices ||--o{ evidencias : "sube"
+    etapas ||--o{ evidencias : "recibe"
+    proyectos ||--o{ evidencias : "agrupa"
+    aprendices ||--o{ entregas_etapa : "entrega"
+    etapas ||--o{ entregas_etapa : "recibe"
+    proyectos ||--o{ entregas_etapa : "agrupa"
+    usuarios ||--o{ audit_logs : "genera"
+    audit_reports ||--o{ audit_entries : "contiene"
+        </div>
+    </div>
+
+    <h2 class="section-title">Entidades del Dominio Principal</h2>
+    <div class="legend">
+        <div class="legend-card">
+            <h3>roles <span class="badge">Cat&aacute;logo</span></h3>
+            <p>Cat&aacute;logo de roles: Aprendiz (1), Instructor (2), Empresa (3), Administrador (4).</p>
+            <ul>
+                <li>1:N con <code>usuarios</code></li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>usuarios <span class="badge">Autenticaci&oacute;n</span></h3>
+            <p>Credenciales de todos los usuarios. Cada usuario tiene exactamente un perfil seg&uacute;n su rol.</p>
+            <ul>
+                <li>N:1 con <code>roles</code> (rol_id)</li>
+                <li>1:1 con <code>aprendices</code> | <code>instructores</code> | <code>administradores</code> | <code>empresas</code></li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>aprendices <span class="badge">Perfil</span></h3>
+            <p>Aprendices SENA con programa de formaci&oacute;n. Pueden postularse a proyectos y subir evidencias/entregas.</p>
+            <ul>
+                <li>1:1 con <code>usuarios</code> (usuario_id)</li>
+                <li>1:N con <code>postulaciones</code>, <code>evidencias</code>, <code>entregas_etapa</code></li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>instructores <span class="badge">Perfil</span></h3>
+            <p>Instructores SENA que supervisan proyectos. Tienen especialidad y disponibilidad.</p>
+            <ul>
+                <li>1:1 con <code>usuarios</code> (usuario_id)</li>
+                <li>Referenciado por <code>proyectos</code> v&iacute;a instructor_usuario_id</li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>empresas <span class="badge">Perfil</span></h3>
+            <p>Empresas que publican proyectos. Identificadas por NIT &uacute;nico. Soportan soft delete.</p>
+            <ul>
+                <li>1:1 con <code>usuarios</code> (usuario_id)</li>
+                <li>1:N con <code>proyectos</code> (v&iacute;a nit)</li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>proyectos <span class="badge">Core</span></h3>
+            <p>Proyectos publicados por empresas. Estados: pendiente, aprobado, rechazado, en_progreso, completado, cerrado.</p>
+            <ul>
+                <li>N:1 con <code>empresas</code> (empresa_nit &rarr; empresas.nit)</li>
+                <li>N:1 con <code>usuarios</code> (instructor, nullable)</li>
+                <li>1:N con <code>postulaciones</code>, <code>etapas</code>, <code>evidencias</code>, <code>entregas_etapa</code></li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>postulaciones <span class="badge">Proceso</span></h3>
+            <p>Postulaciones de aprendices a proyectos. Restricci&oacute;n UNIQUE(aprendiz_id, proyecto_id).</p>
+            <ul>
+                <li>N:1 con <code>aprendices</code> y <code>proyectos</code></li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>etapas <span class="badge">Estructura</span></h3>
+            <p>Fases ordenadas de un proyecto. Pueden tener documentos requeridos (JSON).</p>
+            <ul>
+                <li>N:1 con <code>proyectos</code></li>
+                <li>1:N con <code>evidencias</code> y <code>entregas_etapa</code></li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>evidencias <span class="badge">Seguimiento</span></h3>
+            <p>Archivos subidos por aprendices por etapa. El instructor puede aprobar/rechazar y comentar.</p>
+            <ul>
+                <li>N:1 con <code>aprendices</code>, <code>etapas</code>, <code>proyectos</code></li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>entregas_etapa <span class="badge">Seguimiento</span></h3>
+            <p>Entregas formales por etapa del proyecto. Similar a evidencias pero con descripci&oacute;n y URL.</p>
+            <ul>
+                <li>N:1 con <code>aprendices</code>, <code>etapas</code>, <code>proyectos</code></li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>audit_logs <span class="badge">Auditor&iacute;a</span></h3>
+            <p>Registro de todas las acciones del sistema con datos anteriores/nuevos en JSON.</p>
+            <ul>
+                <li>N:1 con <code>usuarios</code> (user_id)</li>
+            </ul>
+        </div>
+        <div class="legend-card">
+            <h3>audit_reports / audit_entries <span class="badge">Seguridad</span></h3>
+            <p>Reportes de auditor&iacute;a de seguridad con entradas individuales por URI escaneada.</p>
+            <ul>
+                <li><code>audit_entries</code> N:1 con <code>audit_reports</code> (report_id)</li>
+            </ul>
+        </div>
+    </div>
+
+    <h2 class="section-title">Tabla Completa de Relaciones</h2>
+    <div class="diagram-container">
+        <table class="relations-table">
+            <thead>
+                <tr>
+                    <th>Relaci&oacute;n</th>
+                    <th>Tipo</th>
+                    <th>FK</th>
+                    <th>Referencia</th>
+                    <th>ON DELETE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>usuarios &rarr; roles</td><td>N:1</td><td><code>rol_id</code></td><td><code>roles.id</code></td><td>RESTRICT</td></tr>
+                <tr><td>aprendices &rarr; usuarios</td><td>1:1</td><td><code>usuario_id</code></td><td><code>usuarios.id</code></td><td>CASCADE</td></tr>
+                <tr><td>instructores &rarr; usuarios</td><td>1:1</td><td><code>usuario_id</code></td><td><code>usuarios.id</code></td><td>CASCADE</td></tr>
+                <tr><td>administradores &rarr; usuarios</td><td>1:1</td><td><code>usuario_id</code></td><td><code>usuarios.id</code></td><td>CASCADE</td></tr>
+                <tr><td>empresas &rarr; usuarios</td><td>1:1</td><td><code>usuario_id</code></td><td><code>usuarios.id</code></td><td>CASCADE</td></tr>
+                <tr><td>proyectos &rarr; empresas</td><td>N:1</td><td><code>empresa_nit</code></td><td><code>empresas.nit</code></td><td>RESTRICT</td></tr>
+                <tr><td>proyectos &rarr; usuarios (instructor)</td><td>N:1</td><td><code>instructor_usuario_id</code></td><td><code>usuarios.id</code></td><td>SET NULL</td></tr>
+                <tr><td>postulaciones &rarr; aprendices</td><td>N:1</td><td><code>aprendiz_id</code></td><td><code>aprendices.id</code></td><td>CASCADE</td></tr>
+                <tr><td>postulaciones &rarr; proyectos</td><td>N:1</td><td><code>proyecto_id</code></td><td><code>proyectos.id</code></td><td>CASCADE</td></tr>
+                <tr><td>etapas &rarr; proyectos</td><td>N:1</td><td><code>proyecto_id</code></td><td><code>proyectos.id</code></td><td>CASCADE</td></tr>
+                <tr><td>evidencias &rarr; aprendices</td><td>N:1</td><td><code>aprendiz_id</code></td><td><code>aprendices.id</code></td><td>CASCADE</td></tr>
+                <tr><td>evidencias &rarr; etapas</td><td>N:1</td><td><code>etapa_id</code></td><td><code>etapas.id</code></td><td>CASCADE</td></tr>
+                <tr><td>evidencias &rarr; proyectos</td><td>N:1</td><td><code>proyecto_id</code></td><td><code>proyectos.id</code></td><td>CASCADE</td></tr>
+                <tr><td>entregas_etapa &rarr; aprendices</td><td>N:1</td><td><code>aprendiz_id</code></td><td><code>aprendices.id</code></td><td>CASCADE</td></tr>
+                <tr><td>entregas_etapa &rarr; etapas</td><td>N:1</td><td><code>etapa_id</code></td><td><code>etapas.id</code></td><td>CASCADE</td></tr>
+                <tr><td>entregas_etapa &rarr; proyectos</td><td>N:1</td><td><code>proyecto_id</code></td><td><code>proyectos.id</code></td><td>CASCADE</td></tr>
+                <tr><td>audit_logs &rarr; usuarios</td><td>N:1</td><td><code>user_id</code></td><td><code>usuarios.id</code></td><td>CASCADE</td></tr>
+                <tr><td>audit_entries &rarr; audit_reports</td><td>N:1</td><td><code>report_id</code></td><td><code>audit_reports.id</code></td><td>&mdash;</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            er: {
+                diagramPadding: 20,
+                layoutDirection: 'TB',
+                minEntityWidth: 100,
+                minEntityHeight: 75,
+                entityPadding: 15,
+                useMaxWidth: true,
+            },
+            themeVariables: {
+                fontSize: '14px',
+            }
+        });
+    </script>
+</body>
+</html>
