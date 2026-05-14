@@ -41,9 +41,11 @@ return new class extends Migration
             $table->string('habilidades_requeridas', 300)->nullable();
             $table->date('fecha_publicacion');
             $table->unsignedSmallInteger('duracion_estimada_dias');       // Duración en días
-            $table->enum('estado', ['pendiente', 'aprobado', 'rechazado', 'en_progreso', 'completado'])
+            $table->enum('estado', ['pendiente', 'aprobado', 'rechazado', 'en_progreso', 'completado', 'cerrado'])
                   ->default('pendiente');
+            $table->boolean('calidad_aprobada')->default(false);
             $table->string('imagen_url', 255)->nullable();
+            $table->string('url_estructura')->nullable();
             $table->unsignedInteger('numero_postulantes')->default(0);
 
             // Ubicación geográfica
