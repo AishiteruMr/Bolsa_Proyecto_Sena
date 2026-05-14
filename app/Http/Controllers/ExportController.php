@@ -7,6 +7,7 @@ use App\Models\Empresa;
 use App\Models\Instructor;
 use App\Models\Proyecto;
 use App\Models\User;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 
 class ExportController extends Controller
@@ -18,6 +19,8 @@ class ExportController extends Controller
         $proyectos = Proyecto::with(['empresa', 'instructor.usuario'])
             ->orderByDesc('id')
             ->get();
+
+        AuditLog::registrar(session('usr_id'), 'exportar', 'proyectos', "Se exportó la lista de proyectos en formato: {$format}");
 
         $data = $proyectos->map(function ($p) {
             return [
@@ -46,6 +49,8 @@ class ExportController extends Controller
         $format = $request->get('format', 'csv');
 
         $usuarios = User::orderByDesc('id')->get();
+
+        AuditLog::registrar(session('usr_id'), 'exportar', 'usuarios', "Se exportó la lista de usuarios globales en formato: {$format}");
 
         $data = $usuarios->map(function ($u) {
             return [
@@ -77,6 +82,8 @@ class ExportController extends Controller
 
         $empresas = Empresa::with('usuario')->orderByDesc('id')->get();
 
+        AuditLog::registrar(session('usr_id'), 'exportar', 'empresas', "Se exportó el directorio de empresas en formato: {$format}");
+
         $data = $empresas->map(function ($e) {
             return [
                 'NIT' => $e->nit,
@@ -103,6 +110,8 @@ class ExportController extends Controller
 
         $aprendices = Aprendiz::with('usuario')->orderByDesc('id')->get();
 
+        AuditLog::registrar(session('usr_id'), 'exportar', 'usuarios', "Se exportó la lista de aprendices en formato: {$format}");
+
         $data = $aprendices->map(function ($a) {
             return [
                 'ID' => $a->id,
@@ -127,6 +136,8 @@ class ExportController extends Controller
         $format = $request->get('format', 'csv');
 
         $instructores = Instructor::with('usuario')->orderByDesc('id')->get();
+
+        AuditLog::registrar(session('usr_id'), 'exportar', 'usuarios', "Se exportó la lista de instructores en formato: {$format}");
 
         $data = $instructores->map(function ($i) {
             return [

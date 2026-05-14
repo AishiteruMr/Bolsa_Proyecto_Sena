@@ -183,7 +183,7 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
     Route::get('/exportar/aprendices', [ExportController::class, 'aprendices'])->name('exportar.aprendices')->middleware('throttle:10,1');
     Route::get('/exportar/instructores', [ExportController::class, 'instructores'])->name('exportar.instructores')->middleware('throttle:10,1');
 
-    Route::get('/audit', [AuditLogController::class, 'index'])->name('audit');
+    Route::get('/historial', [AuditLogController::class, 'index'])->name('historial');
     Route::get('/mensajes-soporte', [AdminController::class, 'mensajesSoporte'])->name('mensajes.soporte');
     Route::post('/mensajes-soporte/{id}/responder', [AdminController::class, 'responderMensajeSoporte'])->name('mensajes.soporte.responder');
 

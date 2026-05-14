@@ -15,8 +15,8 @@
 <a href="{{ route('admin.backup') }}" class="nav-item {{ request()->routeIs('admin.backup*') ? 'active' : '' }}">
     <i class="fas fa-database"></i> Backup
 </a>
-<a href="{{ route('admin.audit') }}" class="nav-item {{ request()->routeIs('admin.audit*') ? 'active' : '' }}">
-    <i class="fas fa-clipboard-list"></i> Auditoría
+<a href="{{ route('admin.historial') }}" class="nav-item {{ request()->routeIs('admin.historial*') ? 'active' : '' }}">
+    <i class="fas fa-clipboard-list"></i> Historial
 </a>
 <span class="nav-label" style="margin-top: 24px; display: flex; align-items: center; gap: 8px; color: var(--primary);">
     <i class="fas fa-headset" style="font-size: 10px;"></i> Soporte
