@@ -104,6 +104,8 @@ class EmpresaController extends Controller
             'requisitos_especificos' => $request->requisitos,
             'habilidades_requeridas' => $request->habilidades,
             'duracion_estimada_dias' => 183,
+            'oferta' => $request->oferta,
+            'oferta_otro' => $request->oferta === 'otro' ? $request->oferta_otro : null,
         ]))->calidadProyecto();
 
         $fallos = array_filter($calidad['detalles'], fn($d) => !$d['ok'] && !($d['opcional'] ?? false));
@@ -154,6 +156,8 @@ class EmpresaController extends Controller
             'imagen_url' => $imagenUrl,
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
+            'oferta' => $request->oferta,
+            'oferta_otro' => $request->oferta === 'otro' ? $request->oferta_otro : null,
         ]);
 
         return redirect()->route('empresa.proyectos')->with('success', ' Proyecto enviado para revisión. Aparecerá como "Activo" una vez el administrador lo apruebe.');
@@ -175,9 +179,18 @@ class EmpresaController extends Controller
             'titulo' => 'required|string|max:200',
             'categoria' => 'required|string|max:100',
             'descripcion' => 'required|string|min:80|max:5000',
-            'requisitos' => 'required|string|max:200',
+            'requisitos' => 'required|string|max:400',
             'habilidades' => 'required|string|max:200',
             'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'latitud' => 'nullable|numeric',
+            'longitud' => 'nullable|numeric',
+            'oferta' => 'required|string|in:pasantias,contrato_aprendizaje,auxilio_transporte,otro',
+            'oferta_otro' => 'required_if:oferta,otro|nullable|string|max:100',
+        ], [
+            'oferta.required' => 'El tipo de oferta es obligatorio.',
+            'oferta.in' => 'El tipo de oferta seleccionado no es válido.',
+            'oferta_otro.required_if' => 'Debe especificar el tipo de oferta alternativa en el campo "¿Cuál?".',
+            'oferta_otro.max' => 'La descripción de la oferta alternativa no puede exceder 100 caracteres.',
         ]);
 
         $nit = session('nit');
@@ -194,6 +207,8 @@ class EmpresaController extends Controller
             'habilidades_requeridas' => $request->habilidades,
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
+            'oferta' => $request->oferta,
+            'oferta_otro' => $request->oferta === 'otro' ? $request->oferta_otro : null,
         ];
 
         if ($request->hasFile('imagen')) {

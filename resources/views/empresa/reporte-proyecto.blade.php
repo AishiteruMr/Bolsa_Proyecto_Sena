@@ -120,10 +120,26 @@
                                             <div style="width: 38px; height: 38px; background: white; color: var(--primary); border: 2px solid var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">
                                                 {{ substr($aprendiz->nombres, 0, 1) }}
                                             </div>
-                                            <div>
-                                                <p style="font-weight: 700; color: var(--text-main); font-size: 0.9rem;">{{ $aprendiz->nombres }} {{ $aprendiz->apellidos }}</p>
-                                                <p style="font-size: 0.75rem; color: var(--text-muted);">{{ $correoAprendiz }}</p>
-                                            </div>
+                    <div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Categoría del Proyecto</p>
+                        <p style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">
+                            {{ $proyecto->categoria ?? 'General' }}
+                        </p>
+                    </div>
+                    @if($proyecto->oferta)
+                    <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Beneficio Ofrecido</p>
+                        <p style="font-weight: 800; color: #7c3aed; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(124,58,237,0.06)); padding: 4px 14px 4px 10px; border-radius: 20px; border: 1px solid rgba(139,92,246,0.12);">
+                            <i class="fas fa-gift" style="font-size: 11px;"></i>
+                            @switch($proyecto->oferta)
+                                @case('pasantias') Pasantías @break
+                                @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                @case('auxilio_transporte') Auxilio transporte @break
+                                @case('otro') {{ $proyecto->oferta_otro }} @break
+                            @endswitch
+                        </p>
+                    </div>
+                    @endif
                                         </div>
                                     </td>
                                     <td style="padding: 16px; text-align: center;">

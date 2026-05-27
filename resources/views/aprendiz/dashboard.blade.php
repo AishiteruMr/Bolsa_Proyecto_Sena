@@ -117,8 +117,21 @@
                     </div>
                     <h4 style="font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 16px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $p->titulo }}</h4>
                     
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px; color: var(--text-light); font-weight: 600;"><i class="fas fa-bolt" style="margin-right: 6px; color: #f59e0b;"></i>{{ $p->pro_duracion ?? '8 semanas' }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <span style="font-size: 13px; color: var(--text-light); font-weight: 600;"><i class="fas fa-bolt" style="margin-right: 6px; color: #f59e0b;"></i>{{ $p->pro_duracion ?? '8 semanas' }}</span>
+                            @if($p->oferta)
+                            <span style="font-size: 11px; font-weight: 800; background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.08)); color: #7c3aed; padding: 4px 12px 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(139,92,246,0.15); box-shadow: 0 2px 6px rgba(139,92,246,0.08);">
+                                <i class="fas fa-gift" style="font-size: 9px;"></i>
+                                @switch($p->oferta)
+                                    @case('pasantias') Pasantías @break
+                                    @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                    @case('auxilio_transporte') Auxilio transporte @break
+                                    @case('otro') {{ $p->oferta_otro }} @break
+                                @endswitch
+                            </span>
+                            @endif
+                        </div>
                         @if(in_array($p->id, $proyectosAprobados))
                             <a href="{{ route('aprendiz.proyecto.detalle', $p->id) }}" class="btn-premium" style="padding: 10px 20px; font-size: 13px;">Gestionar</a>
                         @else

@@ -36,6 +36,8 @@ class Proyecto extends Model
         'ubicacion',
         'latitud',
         'longitud',
+        'oferta',
+        'oferta_otro',
     ];
 
     protected $casts = [

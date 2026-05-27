@@ -98,6 +98,24 @@
                             <p style="font-weight:800;color:#ef4444;font-size:0.9rem;">{{ $proyecto->fecha_publicacion ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias ?? 0)->format('d M, Y') : 'No estimado' }}</p>
                         </div>
                     </div>
+                    @if($proyecto->oferta)
+                    <div style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(124,58,237,0.04));padding:1.25rem;border-radius:14px;border:1px solid rgba(139,92,246,0.2);display:flex;align-items:center;gap:12px;box-shadow:0 4px 12px rgba(139,92,246,0.08);">
+                        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 10px rgba(139,92,246,0.3);">
+                            <i class="fas fa-gift" style="font-size:14px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size:0.65rem;color:#6d28d9;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;font-weight:700;">Beneficio Ofrecido</p>
+                            <p style="font-weight:800;color:#4c1d95;font-size:0.9rem;">
+                                @switch($proyecto->oferta)
+                                    @case('pasantias') Pasantías @break
+                                    @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                    @case('auxilio_transporte') Auxilio transporte @break
+                                    @case('otro') {{ $proyecto->oferta_otro }} @break
+                                @endswitch
+                            </p>
+                        </div>
+                    </div>
+                    @endif
                 </div>
 
                 {{-- Mapa de ubicación --}}

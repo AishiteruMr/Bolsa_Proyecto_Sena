@@ -142,6 +142,19 @@
                                 <i class="fas fa-calendar-alt" style="width:16px; color:#f59e0b;"></i>
                                 <span>Postulé el {{ \Carbon\Carbon::parse($p->fecha_postulacion)->format('d M, Y') }}</span>
                             </div>
+                            @if($p->oferta)
+                            <div style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(124,58,237,0.06)); color:#7c3aed; padding:4px 12px 4px 8px; border-radius:20px; border:1px solid rgba(139,92,246,0.12); width:fit-content;">
+                                <i class="fas fa-gift" style="font-size:10px;"></i>
+                                <span>
+                                    @switch($p->oferta)
+                                        @case('pasantias') Pasantías @break
+                                        @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                        @case('auxilio_transporte') Auxilio transporte @break
+                                        @case('otro') {{ $p->oferta_otro }} @break
+                                    @endswitch
+                                </span>
+                            </div>
+                            @endif
                         </div>
 
                         <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:12px 16px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;">

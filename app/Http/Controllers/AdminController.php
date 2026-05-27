@@ -8,6 +8,7 @@ use App\Http\Requests\GestionarProyectoRequest;
 use App\Mail\InstructorAsignado;
 use App\Mail\InstructorDesasignado;
 use App\Mail\RespuestaSoporte;
+use App\Mail\ProyectoConOfertaAprobado;
 use App\Models\Aprendiz;
 use App\Models\AuditLog;
 use App\Models\Empresa;
@@ -382,6 +383,24 @@ class AdminController extends Controller
                     'El estado de tu proyecto "'.Str::limit($proyectoActual->titulo, 30).'" es: '.$request->estado,
                     'fa-info-circle'
                 ));
+            }
+
+            // Notificar a todos los aprendices si el proyecto tiene una oferta
+            if ($request->estado === 'aprobado' && !empty($proyectoActual->oferta)) {
+                try {
+                    $aprendices = Aprendiz::where('activo', true)->with('usuario')->get();
+                    foreach ($aprendices as $aprendiz) {
+                        $correo = optional($aprendiz->usuario)->correo;
+                        if ($correo) {
+                            SendEmailJob::dispatch($correo, new ProyectoConOfertaAprobado(
+                                $aprendiz->nombres ?? 'Aprendiz',
+                                $proyectoActual
+                            ));
+                        }
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Error al enviar correos de oferta a aprendices: ' . $e->getMessage());
+                }
             }
         }
 

@@ -175,6 +175,17 @@
                                                 @if($p->categoria)
                                                     <span style="font-size: 10px; color: var(--text-lighter); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;">{{ $p->categoria }}</span>
                                                 @endif
+                                                @if($p->oferta)
+                                                    <span style="display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; font-size: 10px; background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.08)); color: #7c3aed; padding: 2px 10px 2px 6px; border-radius: 20px; font-weight: 800; border: 1px solid rgba(139,92,246,0.15); box-shadow: 0 2px 4px rgba(139,92,246,0.06);">
+                                                        <i class="fas fa-gift" style="font-size: 8px;"></i>
+                                                        @switch($p->oferta)
+                                                            @case('pasantias') Pasantías @break
+                                                            @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                                            @case('auxilio_transporte') Auxilio transporte @break
+                                                            @case('otro') {{ $p->oferta_otro }} @break
+                                                        @endswitch
+                                                    </span>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>

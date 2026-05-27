@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <form action="{{ route('empresa.proyectos.update', $proyecto->id) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('empresa.proyectos.update', $proyecto->id) }}" method="POST" enctype="multipart/form-data" id="editar-proyecto-form">
         @csrf
         @method('PUT')
 
@@ -149,6 +149,48 @@
                 </div>
             </section>
 
+            {{-- SECCIÓN 5: BENEFICIO / OFERTA --}}
+            <section>
+                <div class="empresa-form-section">
+                    <span class="empresa-form-step-number" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 10px rgba(139,92,246,0.3);">
+                        <i class="fas fa-gift" style="font-size: 15px;"></i>
+                    </span>
+                    <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Beneficio y Oferta del Proyecto</h3>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; margin-bottom: 16px;">
+                    <div class="form-group">
+                        <label class="empresa-form-label">Tipo de Oferta *</label>
+                        <div class="empresa-input-container">
+                            <i class="fas fa-gift empresa-input-icon" style="color: #8b5cf6;"></i>
+                            <select name="oferta" id="oferta-select" required class="empresa-form-control" style="background: white; appearance: none;">
+                                <option value="">Seleccionar Oferta...</option>
+                                <option value="pasantias" {{ old('oferta', $proyecto->oferta) === 'pasantias' ? 'selected' : '' }}>Pasantías</option>
+                                <option value="contrato_aprendizaje" {{ old('oferta', $proyecto->oferta) === 'contrato_aprendizaje' ? 'selected' : '' }}>Contrato de aprendizaje</option>
+                                <option value="auxilio_transporte" {{ old('oferta', $proyecto->oferta) === 'auxilio_transporte' ? 'selected' : '' }}>Auxilio de transporte</option>
+                                <option value="otro" {{ old('oferta', $proyecto->oferta) === 'otro' ? 'selected' : '' }}>Otro</option>
+                            </select>
+                            <i class="fas fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+                        </div>
+                    </div>
+
+                    <div id="otro-oferta-container" class="form-group" style="display: {{ old('oferta', $proyecto->oferta) === 'otro' ? 'block' : 'none' }};">
+                        <label class="empresa-form-label">¿Cuál oferta? *</label>
+                        <div class="empresa-input-container">
+                            <i class="fas fa-pen empresa-input-icon" style="color: #8b5cf6;"></i>
+                            <input type="text" name="oferta_otro" id="oferta_otro" value="{{ old('oferta_otro', $proyecto->oferta_otro) }}" class="empresa-form-control" placeholder="Ej: Bolsa de estudio, Bonificación...">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding: 16px 20px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(124,58,237,0.04)); border: 1.5px solid rgba(139,92,246,0.15); border-radius: 12px; font-size: 13px; color: #6d28d9; font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(139,92,246,0.06);">
+                    <div style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas fa-star" style="font-size: 11px;"></i>
+                    </div>
+                    <span>La oferta seleccionada se otorgará únicamente al aprendiz que logre el mejor desempeño en el proyecto.</span>
+                </div>
+            </section>
+
             {{-- ACTIONS --}}
             <div style="display: flex; gap: 16px; justify-content: flex-end; padding-top: 24px; border-top: 2px solid #f1f5f9;">
                 <a href="{{ route('empresa.proyectos') }}" class="btn-premium" style="background: white; color: var(--text-light); border: 1px solid #e2e8f0; box-shadow: none; padding: 14px 28px;">
@@ -168,6 +210,53 @@
 @vite(['resources/js/maps.js'])
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Oferta select toggle
+    const ofertaSelect = document.getElementById('oferta-select');
+    const otroContainer = document.getElementById('otro-oferta-container');
+    const otroInput = document.getElementById('oferta_otro');
+
+    if (ofertaSelect && otroContainer) {
+        ofertaSelect.addEventListener('change', function() {
+            if (this.value === 'otro') {
+                otroContainer.style.display = 'block';
+                otroInput.setAttribute('required', 'required');
+            } else {
+                otroContainer.style.display = 'none';
+                otroInput.removeAttribute('required');
+                otroInput.value = '';
+            }
+        });
+    }
+
+    // Form confirmation
+    const form = document.getElementById('editar-proyecto-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Si el HTML5 reportValidity falla, no hacer nada
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            let ofertaTexto = ofertaSelect.options[ofertaSelect.selectedIndex].text;
+            if (ofertaSelect.value === 'otro') {
+                ofertaTexto = otroInput.value.trim() ? otroInput.value.trim() : 'la oferta especificada';
+            }
+
+            const msg = `¿Está de acuerdo con la oferta seleccionada ("${ofertaTexto}")? Este beneficio se otorgará únicamente al aprendiz con el mejor desempeño en el proyecto.`;
+            
+            openConfirm(
+                'Confirmar Edición',
+                msg,
+                function() {
+                    form.submit();
+                }
+            );
+        });
+    }
+
     // ── MAP ──────────────────────────────────────────────────────
     const instancia = initEditorMap('map-editar', {
         lat: {{ old('latitud', $proyecto->latitud ?? 10.8642) }},

@@ -102,6 +102,7 @@
                         <tr style="background: #f8fafc;">
                             <th style="padding: 16px 24px; text-align: left; font-size: 11px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px;">Proyecto</th>
                             <th style="padding: 16px 24px; text-align: left; font-size: 11px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px;">Categoría</th>
+                            <th style="padding: 16px 24px; text-align: left; font-size: 11px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px;">Oferta</th>
                             <th style="padding: 16px 24px; text-align: left; font-size: 11px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px;">Estado</th>
                             <th style="padding: 16px 24px; text-align: left; font-size: 11px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px;">Duración</th>
                             <th style="padding: 16px 24px; text-align: left; font-size: 11px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px;">Publicado</th>
@@ -130,6 +131,21 @@
                                     <span style="background: #f1f5f9; color: var(--text-light); padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase;">
                                         {{ $proyecto->categoria }}
                                     </span>
+                                </td>
+                                <td style="padding: 20px 24px;">
+                                    @if($proyecto->oferta)
+                                        <span style="background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.08)); color: #7c3aed; padding: 5px 14px 5px 10px; border-radius: 30px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; border: 1px solid rgba(139,92,246,0.15); box-shadow: 0 2px 6px rgba(139,92,246,0.08);">
+                                            <i class="fas fa-gift" style="font-size: 10px;"></i>
+                                            @switch($proyecto->oferta)
+                                                @case('pasantias') Pasantías @break
+                                                @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                                @case('auxilio_transporte') Auxilio transporte @break
+                                                @case('otro') {{ $proyecto->oferta_otro }} @break
+                                            @endswitch
+                                        </span>
+                                    @else
+                                        <span style="color: var(--text-lighter); font-size: 12px; font-weight: 600;">—</span>
+                                    @endif
                                 </td>
                                 <td style="padding: 20px 24px;">
                                     @php

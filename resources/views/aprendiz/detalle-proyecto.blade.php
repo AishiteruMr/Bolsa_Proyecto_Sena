@@ -281,6 +281,37 @@
                 @endif
             </div>
 
+            <!-- Oferta / Beneficio -->
+            @if($proyecto->oferta)
+            <div class="glass-card" style="padding: 0; overflow: hidden; border: 1.5px solid rgba(139,92,246,0.2); box-shadow: 0 4px 16px rgba(139,92,246,0.1);">
+                <div style="height: 4px; background: linear-gradient(90deg, #8b5cf6, #6d28d9, #8b5cf6);"></div>
+                <div style="padding: 20px 24px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 4px 12px rgba(139,92,246,0.3);">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 11px; font-weight: 800; color: #6d28d9; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Beneficio del Proyecto</p>
+                            <p style="font-size: 15px; font-weight: 800; color: #4c1d95; margin: 2px 0 0 0;">
+                                @switch($proyecto->oferta)
+                                    @case('pasantias') Pasantías @break
+                                    @case('contrato_aprendizaje') Contrato de aprendizaje @break
+                                    @case('auxilio_transporte') Auxilio de transporte @break
+                                    @case('otro') {{ $proyecto->oferta_otro }} @break
+                                @endswitch
+                            </p>
+                        </div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(139,92,246,0.03)); border-radius: 10px; padding: 10px 14px; border: 1px solid rgba(139,92,246,0.1);">
+                        <p style="font-size: 11px; color: #7c3aed; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-star" style="font-size: 10px;"></i>
+                            Solo aplicable al aprendiz con mejor desempeño.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Método de Trabajo / Estructura del Proyecto -->
             <div class="glass-card" style="padding: 24px;">
                 <h4 style="font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">

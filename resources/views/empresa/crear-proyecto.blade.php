@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <form action="{{ route('empresa.proyectos.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('empresa.proyectos.store') }}" method="POST" enctype="multipart/form-data" id="crear-proyecto-form">
         @csrf
         
         <div class="glass-card" style="padding: 0; overflow: hidden;">
@@ -167,6 +167,48 @@
                     </div>
                 </div>
 
+                <!-- Step 5: Oferta o Beneficio del Proyecto -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(139,92,246,0.1);">
+                        <span style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 4px 10px rgba(139,92,246,0.3);">
+                            <i class="fas fa-gift" style="font-size: 15px;"></i>
+                        </span>
+                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Beneficio y Oferta del Proyecto</h3>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; margin-bottom: 20px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Tipo de Oferta *</label>
+                            <div style="position: relative;">
+                                <i class="fas fa-gift" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b5cf6;"></i>
+                                <select name="oferta" id="oferta-select" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; background: white; appearance: none;">
+                                    <option value="">Seleccionar Oferta...</option>
+                                    <option value="pasantias" {{ old('oferta') === 'pasantias' ? 'selected' : '' }}>Pasantías</option>
+                                    <option value="contrato_aprendizaje" {{ old('oferta') === 'contrato_aprendizaje' ? 'selected' : '' }}>Contrato de aprendizaje</option>
+                                    <option value="auxilio_transporte" {{ old('oferta') === 'auxilio_transporte' ? 'selected' : '' }}>Auxilio de transporte</option>
+                                    <option value="otro" {{ old('oferta') === 'otro' ? 'selected' : '' }}>Otro</option>
+                                </select>
+                                <i class="fas fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+                            </div>
+                        </div>
+
+                        <div id="otro-oferta-container" style="display: {{ old('oferta') === 'otro' ? 'block' : 'none' }};">
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">¿Cuál oferta? *</label>
+                            <div style="position: relative;">
+                                <i class="fas fa-pen" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b5cf6;"></i>
+                                <input type="text" name="oferta_otro" id="oferta_otro" value="{{ old('oferta_otro') }}" style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Ej: Bolsa de estudio, Bonificación...">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 16px; padding: 16px 20px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(124,58,237,0.04)); border: 1.5px solid rgba(139,92,246,0.15); border-radius: 12px; font-size: 13px; color: #6d28d9; font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(139,92,246,0.06);">
+                        <div style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-star" style="font-size: 11px;"></i>
+                        </div>
+                        <span>La oferta seleccionada se otorgará únicamente al aprendiz que logre el mejor desempeño en el proyecto.</span>
+                    </div>
+                </div>
+
                 <!-- Actions -->
                 <div style="display: flex; gap: 20px; justify-content: flex-end; padding-top: 32px; border-top: 2px solid #f1f5f9;">
                     <a href="{{ route('empresa.proyectos') }}" class="btn-premium" style="background: white; color: var(--text-light); border: 1px solid #e2e8f0; box-shadow: none; padding: 14px 28px;">
@@ -187,6 +229,53 @@
 @vite(['resources/js/maps.js', 'resources/js/forms.js'])
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Oferta select toggle
+    const ofertaSelect = document.getElementById('oferta-select');
+    const otroContainer = document.getElementById('otro-oferta-container');
+    const otroInput = document.getElementById('oferta_otro');
+
+    if (ofertaSelect && otroContainer) {
+        ofertaSelect.addEventListener('change', function() {
+            if (this.value === 'otro') {
+                otroContainer.style.display = 'block';
+                otroInput.setAttribute('required', 'required');
+            } else {
+                otroContainer.style.display = 'none';
+                otroInput.removeAttribute('required');
+                otroInput.value = '';
+            }
+        });
+    }
+
+    // Form confirmation
+    const form = document.getElementById('crear-proyecto-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Si el HTML5 reportValidity falla (campos obligatorios vacíos), no hacer nada y dejar que el navegador valide
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            let ofertaTexto = ofertaSelect.options[ofertaSelect.selectedIndex].text;
+            if (ofertaSelect.value === 'otro') {
+                ofertaTexto = otroInput.value.trim() ? otroInput.value.trim() : 'la oferta especificada';
+            }
+
+            const msg = `¿Está de acuerdo con la oferta seleccionada ("${ofertaTexto}")? Este beneficio se otorgará únicamente al aprendiz con el mejor desempeño en el proyecto.`;
+            
+            openConfirm(
+                'Confirmar Convocatoria',
+                msg,
+                function() {
+                    form.submit();
+                }
+            );
+        });
+    }
+
     // Map
     const config = {
         lat: {{ old('latitud') ?? 10.8642 }},
