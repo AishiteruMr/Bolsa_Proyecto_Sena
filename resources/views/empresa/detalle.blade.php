@@ -135,6 +135,20 @@
                     <span style="font-size: 13px; color: var(--text-light); font-weight: 600;">Duración:</span>
                     <span style="font-size: 14px; font-weight: 800; color: var(--text);">{{ $proyecto->duracion_estimada_dias }} días</span>
                 </div>
+                @if($proyecto->oferta)
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 13px; color: var(--text-light); font-weight: 600;">Beneficio:</span>
+                    <span style="font-size: 12px; font-weight: 800; background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.08)); color: #7c3aed; padding: 3px 12px 3px 8px; border-radius: 20px; border: 1px solid rgba(139,92,246,0.15); display: inline-flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-gift" style="font-size: 9px;"></i>
+                        @switch($proyecto->oferta)
+                            @case('pasantias') Pasantías @break
+                            @case('contrato_aprendizaje') Contrato aprendizaje @break
+                            @case('auxilio_transporte') Auxilio transporte @break
+                            @case('otro') {{ $proyecto->oferta_otro }} @break
+                        @endswitch
+                    </span>
+                </div>
+                @endif
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="font-size: 13px; color: var(--text-light); font-weight: 600;">Publicado:</span>
                     <span style="font-size: 14px; font-weight: 800; color: var(--text);">{{ \Carbon\Carbon::parse($proyecto->fecha_publicacion)->format('d/m/Y') }}</span>

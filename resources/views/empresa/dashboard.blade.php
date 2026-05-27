@@ -98,6 +98,7 @@
                     <tr>
                         <th>Proyecto</th>
                         <th>Categoría</th>
+                        <th>Oferta</th>
                         <th>Estado</th>
                         <th>Postulaciones</th>
                         <th style="text-align:center;">Ver</th>
@@ -123,6 +124,21 @@
                             </td>
                             <td>
                                 <span class="emp-category">{{ $p->categoria }}</span>
+                            </td>
+                            <td>
+                                @if($p->oferta)
+                                    <span style="background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.08)); color: #7c3aed; padding: 3px 12px 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(139,92,246,0.15); box-shadow: 0 2px 4px rgba(139,92,246,0.06);">
+                                        <i class="fas fa-gift" style="font-size: 9px;"></i>
+                                        @switch($p->oferta)
+                                            @case('pasantias') Pasantías @break
+                                            @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                            @case('auxilio_transporte') Auxilio transporte @break
+                                            @case('otro') {{ $p->oferta_otro }} @break
+                                        @endswitch
+                                    </span>
+                                @else
+                                    <span style="color: var(--text-lighter); font-size: 12px;">—</span>
+                                @endif
                             </td>
                             <td>
                                 @php

@@ -122,6 +122,17 @@
                             <i class="far fa-calendar-check" style="width: 16px;"></i>
                             Postulado: {{ \Carbon\Carbon::parse($post->fecha_postulacion)->format('d M, Y') }}
                         </div>
+                        @if($post->proyecto && $post->proyecto->oferta)
+                        <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(124,58,237,0.06)); color: #7c3aed; padding: 3px 12px 3px 8px; border-radius: 20px; border: 1px solid rgba(139,92,246,0.12);">
+                            <i class="fas fa-gift" style="font-size: 10px;"></i>
+                            @switch($post->proyecto->oferta)
+                                @case('pasantias') Pasantías @break
+                                @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                @case('auxilio_transporte') Auxilio transporte @break
+                                @case('otro') {{ $post->proyecto->oferta_otro }} @break
+                            @endswitch
+                        </div>
+                        @endif
                     </div>
                 </div>
 

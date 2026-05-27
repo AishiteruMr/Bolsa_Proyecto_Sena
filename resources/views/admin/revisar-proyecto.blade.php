@@ -63,6 +63,45 @@
                     </p>
                 </div>
 
+                <!-- Oferta / Beneficio -->
+                <div style="margin-bottom: 32px; padding: 0; overflow: hidden; border-radius: 16px; border: 1.5px solid rgba(139,92,246,0.2); box-shadow: 0 4px 16px rgba(139,92,246,0.1);">
+                    <div style="height: 4px; background: linear-gradient(90deg, #8b5cf6, #6d28d9, #8b5cf6);"></div>
+                    <div style="padding: 20px 24px; background: linear-gradient(135deg, rgba(139,92,246,0.04), rgba(124,58,237,0.02));">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(139,92,246,0.3);">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: #6d28d9; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Oferta y Beneficio</label>
+                                <p style="font-size: 16px; font-weight: 800; color: #4c1d95; margin: 0;">
+                                    @switch($proyecto->oferta)
+                                        @case('pasantias')
+                                            Pasantías
+                                            @break
+                                        @case('contrato_aprendizaje')
+                                            Contrato de aprendizaje
+                                            @break
+                                        @case('auxilio_transporte')
+                                            Auxilio de transporte
+                                            @break
+                                        @case('otro')
+                                            {{ $proyecto->oferta_otro }}
+                                            @break
+                                        @default
+                                            Sin oferta especificada
+                                    @endswitch
+                                </p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 12px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(139,92,246,0.03)); border-radius: 10px; padding: 10px 14px; border: 1px solid rgba(139,92,246,0.1);">
+                            <p style="font-size: 11px; color: #7c3aed; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-star" style="font-size: 10px;"></i>
+                                Solo aplicable al aprendiz con mejor desempeño.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                     <div>
                         <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Requisitos Específicos</label>
@@ -250,29 +289,54 @@
                 @endif
                 
                 <div style="display: grid; gap: 12px;">
-                    @if($calidad['puede_publicarse'])
-                    <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="estado" value="aprobado">
-                        <button type="submit" class="btn-premium" style="width: 100%; background: #22c55e; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);">
-                            <i class="fas fa-flag-checkered" style="margin-right: 10px;"></i> Publicar Proyecto
-                        </button>
-                    </form>
-                    @endif
-
                     @if($proyecto->estado == 'pendiente')
-                    <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de rechazar este proyecto? Esta acción no se puede deshacer.');">
-                        @csrf
-                        <input type="hidden" name="estado" value="rechazado">
-                        <button type="submit" class="btn-premium" style="width: 100%; background: #ef4444; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
-                            <i class="fas fa-ban" style="margin-right: 10px;"></i> Rechazar Proyecto
-                        </button>
-                    </form>
+                        @if($calidad['puede_publicarse'])
+                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="estado" value="aprobado">
+                            <button type="submit" class="btn-premium" style="width: 100%; background: #22c55e; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);">
+                                <i class="fas fa-flag-checkered" style="margin-right: 10px;"></i> Publicar Proyecto
+                            </button>
+                        </form>
+                        @endif
+                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de rechazar este proyecto? Esta acción no se puede deshacer.');">
+                            @csrf
+                            <input type="hidden" name="estado" value="rechazado">
+                            <button type="submit" class="btn-premium" style="width: 100%; background: #ef4444; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
+                                <i class="fas fa-ban" style="margin-right: 10px;"></i> Rechazar Proyecto
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="estado" value="en_progreso">
+                            <button type="submit" class="btn-premium" style="width: 100%; background: #3b82f6; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(59,130,246,0.4);">
+                                <i class="fas fa-play-circle" style="margin-right: 10px;"></i> Iniciar Proyecto
+                            </button>
+                        </form>
+                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="estado" value="completado">
+                            <button type="submit" class="btn-premium" style="width: 100%; background: #8b5cf6; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(139,92,246,0.4);">
+                                <i class="fas fa-check-double" style="margin-right: 10px;"></i> Marcar Completado
+                            </button>
+                        </form>
+                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Cerrar este proyecto? No se podrán recibir más postulaciones.');">
+                            @csrf
+                            <input type="hidden" name="estado" value="cerrado">
+                            <button type="submit" class="btn-premium" style="width: 100%; background: #64748b; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
+                                <i class="fas fa-lock" style="margin-right: 10px;"></i> Cerrar Proyecto
+                            </button>
+                        </form>
                     @endif
                 </div>
 
                 <p style="font-size: 11px; margin-top: 20px; opacity: 0.5; text-align: center; font-weight: 600; line-height: 1.5;">
-                    La aprobación activará la visibilidad pública y notificará a la empresa proponente.
+                    @if($proyecto->estado == 'pendiente')
+                        La aprobación activará la visibilidad pública y notificará a la empresa proponente.
+                    @else
+                        Gestione el ciclo de vida del proyecto una vez aprobado.
+                    @endif
                 </p>
             </div>
         </div>

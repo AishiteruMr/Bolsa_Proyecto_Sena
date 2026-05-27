@@ -216,6 +216,21 @@ document.addEventListener('DOMContentLoaded', function () {
                         </span>
                     </span>
                     <span class="admin-meta-item">
+                        <i class="fas fa-gift" style="color: #8b5cf6;"></i>
+                        @if(isset($p->oferta) && $p->oferta)
+                            <span style="background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.08)); color: #7c3aed; padding: 2px 10px 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 800; border: 1px solid rgba(139,92,246,0.15); display: inline-flex; align-items: center; gap: 4px;">
+                                @switch($p->oferta)
+                                    @case('pasantias') Pasantías @break
+                                    @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                    @case('auxilio_transporte') Auxilio transporte @break
+                                    @case('otro') {{ $p->oferta_otro }} @break
+                                @endswitch
+                            </span>
+                        @else
+                            <span style="color: var(--text-lighter); font-size: 10px;">—</span>
+                        @endif
+                    </span>
+                    <span class="admin-meta-item">
                         <i class="fas fa-users"></i>
                         {{ $p->postulaciones_count ?? 0 }} postulante(s)
                     </span>

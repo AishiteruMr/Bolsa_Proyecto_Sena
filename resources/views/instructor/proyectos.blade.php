@@ -63,16 +63,29 @@
         <div style="flex: 1; display: flex; flex-direction: column; padding: 24px;">
             <h4 style="font-size:1.15rem; font-weight:700; margin-bottom:0.75rem; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $p->titulo }}</h4>
             
-            <div style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-light);">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <i class="fas fa-building" style="color:#3eb489; width: 16px;"></i>
-                    <span style="font-weight: 600;">{{ $p->nombre }}</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-tag" style="color:#3eb489; width: 16px;"></i>
-                    <span style="font-weight: 600;">{{ $p->categoria }}</span>
-                </div>
-            </div>
+                            <div style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-light);">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <i class="fas fa-building" style="color:#3eb489; width: 16px;"></i>
+                                    <span style="font-weight: 600;">{{ $p->nombre }}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-tag" style="color:#3eb489; width: 16px;"></i>
+                                    <span style="font-weight: 600;">{{ $p->categoria }}</span>
+                                </div>
+                                @if($p->oferta)
+                                <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(124,58,237,0.06)); color: #7c3aed; padding: 3px 12px 3px 8px; border-radius: 20px; border: 1px solid rgba(139,92,246,0.12); width: fit-content;">
+                                    <i class="fas fa-gift" style="font-size: 10px;"></i>
+                                    <span>
+                                        @switch($p->oferta)
+                                            @case('pasantias') Pasantías @break
+                                            @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                            @case('auxilio_transporte') Auxilio transporte @break
+                                            @case('otro') {{ $p->oferta_otro }} @break
+                                        @endswitch
+                                    </span>
+                                </div>
+                                @endif
+                            </div>
 
             <div style="margin-top: auto;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--text-lighter);">

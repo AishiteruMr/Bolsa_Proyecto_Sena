@@ -108,7 +108,18 @@
                             </div>
                         </div>
                         <div style="padding: 24px; flex: 1; display: flex; flex-direction: column;">
-                            <h4 class="instructor-project-title" style="font-size: 17px; margin-bottom:16px;">{{ $p->titulo }}</h4>
+                            <h4 class="instructor-project-title" style="font-size: 17px; margin-bottom:8px;">{{ $p->titulo }}</h4>
+                            @if($p->oferta)
+                            <div style="font-size: 11px; font-weight: 800; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 5px; background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.08)); color: #7c3aed; padding: 4px 12px 4px 8px; border-radius: 20px; border: 1px solid rgba(139,92,246,0.15); box-shadow: 0 2px 6px rgba(139,92,246,0.08);">
+                                <i class="fas fa-gift" style="font-size: 10px;"></i>
+                                @switch($p->oferta)
+                                    @case('pasantias') Pasantías @break
+                                    @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                    @case('auxilio_transporte') Auxilio transporte @break
+                                    @case('otro') {{ $p->oferta_otro }} @break
+                                @endswitch
+                            </div>
+                            @endif
                             <div style="display: flex; gap: 12px; margin-bottom: 20px;">
                                 <div class="instructor-small-stat">
                                     <span class="count">{{ $p->postulaciones->where('estado', 'aceptada')->count() }}</span>

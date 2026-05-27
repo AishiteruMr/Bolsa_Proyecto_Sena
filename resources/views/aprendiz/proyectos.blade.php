@@ -154,6 +154,17 @@
                             <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-light); font-weight: 600;">
                                 <i class="fas fa-users" style="color: #3eb489;"></i> {{ $p->postulados_count ?? 0 }} postulados
                             </div>
+                            @if($p->oferta)
+                            <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(124,58,237,0.08)); color: #7c3aed; padding: 4px 12px 4px 10px; border-radius: 20px; border: 1px solid rgba(139,92,246,0.15); box-shadow: 0 2px 8px rgba(139,92,246,0.1);">
+                                <i class="fas fa-gift" style="font-size: 10px;"></i>
+                                @switch($p->oferta)
+                                    @case('pasantias') Pasantías @break
+                                    @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                    @case('auxilio_transporte') Auxilio transporte @break
+                                    @case('otro') {{ $p->oferta_otro }} @break
+                                @endswitch
+                            </div>
+                            @endif
                         </div>
 
                         <div style="margin-top: auto;">

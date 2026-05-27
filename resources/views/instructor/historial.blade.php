@@ -78,6 +78,19 @@
                                 <i class="fas fa-tag" style="color: #3eb489; width: 16px;"></i>
                                 <span style="font-weight: 600;">{{ $proyecto->categoria }}</span>
                             </div>
+                            @if($proyecto->oferta)
+                            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(124,58,237,0.06)); color: #7c3aed; padding: 3px 12px 3px 8px; border-radius: 20px; border: 1px solid rgba(139,92,246,0.12); width: fit-content;">
+                                <i class="fas fa-gift" style="font-size: 10px;"></i>
+                                <span>
+                                    @switch($proyecto->oferta)
+                                        @case('pasantias') Pasantías @break
+                                        @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                        @case('auxilio_transporte') Auxilio transporte @break
+                                        @case('otro') {{ $proyecto->oferta_otro }} @break
+                                    @endswitch
+                                </span>
+                            </div>
+                            @endif
                         </div>
 
                         <div style="background: rgba(62,180,137,0.05); padding: 1rem; border-radius: 14px; border: 1px solid rgba(62,180,137,0.1); display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; text-align: center;">
