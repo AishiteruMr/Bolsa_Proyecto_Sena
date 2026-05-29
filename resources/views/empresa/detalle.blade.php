@@ -24,6 +24,7 @@
     @vite(['resources/css/empresa.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('empresa.dashboard')], ['label' => 'Proyectos', 'url' => route('empresa.proyectos')], ['label' => 'Detalle']]; @endphp
 @section('content')
 <div class="animate-fade-in" style="display: grid; grid-template-columns: 2fr 1fr; gap: 28px; padding-bottom: 40px; align-items: start;">
     
@@ -33,7 +34,7 @@
         <!-- Hero Image -->
         <div class="glass-card" style="padding: 0; overflow: hidden;">
             <div style="width: 100%; height: 240px; position: relative;">
-                <img src="{{ $proyecto->imagen_url ?: asset('assets/proyecto_default.jpg') }}" alt="Proyecto" style="width: 100%; height: 100%; object-fit: cover;">
+                <img src="{{ $proyecto->imagen_url ?: asset('assets/proyecto_default.jpg') }}" loading="lazy" alt="Proyecto" style="width: 100%; height: 100%; object-fit: cover;">
                 <div style="position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 60%);"></div>
                 <div style="position: absolute; bottom: 20px; left: 24px;">
                     <span style="background: #3eb489; color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; display: inline-block;">{{ $proyecto->categoria }}</span>

@@ -130,10 +130,10 @@ class Postulacion extends Model
                          ->exists();
         
         if ($rechazada) {
-            return [false, 'Tu postulación a este proyecto fue rechazada. No puedes postularte nuevamente.'];
+            return [false, 'Tu postulación fue rechazada. No puedes postularte de nuevo.'];
         }
 
-        return [true, 'Validación exitosa'];
+        return [true, 'Todo correcto'];                    
     }
 
     /**

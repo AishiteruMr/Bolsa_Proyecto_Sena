@@ -11,6 +11,7 @@
     @vite(['resources/css/admin.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('admin.dashboard')], ['label' => 'Usuarios']]; @endphp
 @section('content')
     <div class="animate-fade-in" style="margin-bottom: 40px;">
         <div class="admin-header-master">

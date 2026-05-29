@@ -19,7 +19,7 @@ class AuthMiddleware
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login')->with('error', 'Debes iniciar sesión para continuar.');
+            return redirect()->route('login')->with('error', 'Inicia sesión para continuar.');
         }
 
         // Validar que existe un rol válido
@@ -28,7 +28,7 @@ class AuthMiddleware
             // Rol inválido - cerrar sesión
             session()->flush();
 
-            return redirect()->route('login')->with('error', 'Sesión inválida. Por favor inicia sesión nuevamente.');
+            return redirect()->route('login')->with('error', 'Sesión inválida. Inicia sesión de nuevo.');
         }
 
         // Verificar si el usuario o empresa sigue activo y tiene perfil
@@ -46,7 +46,7 @@ class AuthMiddleware
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login')->with('error', 'Tu sesión ha expirado o tu perfil no fue encontrado.');
+            return redirect()->route('login')->with('error', 'Tu sesión expiró o no se encontró tu perfil.');
         }
 
         // AUTO-HEAL: Asegurar que variables críticas estén en sesión
@@ -86,7 +86,7 @@ class AuthMiddleware
                 'user_id' => $session->get('usr_id'),
             ]);
             // Invalidar sesión por seguridad
-            $this->invalidateSession($request, 'Sesión iniciada desde otra ubicación.');
+            $this->invalidateSession($request, 'Se detectó otro inicio de sesión. Ingresa de nuevo.');
 
             return;
         }

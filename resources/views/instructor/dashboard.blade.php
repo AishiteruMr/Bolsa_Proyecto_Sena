@@ -27,6 +27,7 @@
     @vite(['resources/css/instructor.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio']]; @endphp
 @section('content')
 <div class="animate-fade-in dashboard-wrapper">
     
@@ -102,7 +103,7 @@
                 @forelse($proyectos as $p)
                     <div class="instructor-project-card">
                         <div style="height: 160px; position: relative;">
-                            <img src="{{ $p->imagen_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img src="{{ $p->imagen_url }}" loading="lazy" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                             <div class="instructor-project-image-badge">
                                 {{ $p->categoria }}
                             </div>

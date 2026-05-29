@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\PostulacionExitosa;
 use App\Models\Aprendiz;
+use App\Models\AuditLog;
 use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
@@ -22,7 +23,7 @@ class PostulacionService
     {
         $aprendiz = DB::table('aprendices')->where('id', $aprendizId)->first();
         if (!$aprendiz) {
-            return [false, 'No se encontró tu perfil de aprendiz.'];
+            return [false, 'Perfil de aprendiz no encontrado.'];
         }
 
         $proyecto = Proyecto::find($proyectoId);
@@ -35,17 +36,17 @@ class PostulacionService
         }
 
         if (!$proyecto->fecha_publicacion) {
-            return [false, 'Este proyecto no tiene fecha de publicación válida.'];
+            return [false, 'El proyecto no tiene fecha de publicación.'];
         }
 
         $fechaPublicacion = Carbon::parse($proyecto->fecha_publicacion);
         if ($fechaPublicacion->isFuture()) {
-            return [false, 'El período de postulación aún no ha iniciado.'];
+            return [false, 'Las postulaciones aún no están abiertas.'];
         }
 
         $fechaLimite = $fechaPublicacion->copy()->addDays($proyecto->duracion_estimada_dias ?? 0);
         if (now()->greaterThan($fechaLimite)) {
-            return [false, 'El período de postulación para este proyecto ha vencido.'];
+            return [false, 'El plazo de postulación ya venció.'];
         }
 
         $yaPostulado = DB::table('postulaciones')
@@ -63,7 +64,7 @@ class PostulacionService
             ->count();
 
         if ($totalPostulaciones >= self::MAX_POSTULACIONES) {
-            return [false, "Has alcanzado el límite máximo de ".self::MAX_POSTULACIONES." postulaciones activas."];
+            return [false, "Llegaste al límite de ".self::MAX_POSTULACIONES." postulaciones activas."];
         }
 
         return [true, null];
@@ -87,12 +88,27 @@ class PostulacionService
                 'updated_at' => now(),
             ]);
 
+            $aprendiz = DB::table('aprendices')->where('id', $aprendizId)->first();
+            $proyecto = Proyecto::find($proyectoId);
+            if ($aprendiz && $proyecto) {
+                AuditLog::registrar(
+                    $aprendiz->usuario_id,
+                    'postularse',
+                    'postulaciones',
+                    'postulaciones',
+                    $proyectoId,
+                    null,
+                    ['nombre_objetivo' => $aprendiz->nombres.' '.$aprendiz->apellidos, 'proyecto' => $proyecto->titulo, 'aprendiz_id' => $aprendizId],
+                    "El aprendiz {$aprendiz->nombres} {$aprendiz->apellidos} se ha postulado al proyecto: {$proyecto->titulo}."
+                );
+            }
+
             $this->enviarNotificaciones($aprendizId, $proyectoId);
 
-            return [true, 'Postulación enviada correctamente.'];
+            return [true, 'Postulación enviada con éxito.'];
         } catch (\Exception $e) {
             Log::error('Error al crear postulación: '.$e->getMessage());
-            return [false, 'Error al procesar la postulación.'];
+            return [false, 'Error al enviar la postulación.'];
         }
     }
 

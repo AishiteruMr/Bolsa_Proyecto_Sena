@@ -6,6 +6,9 @@
 @section('styles')
     @vite(['resources/css/admin.css'])
 @endsection
+
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('admin.dashboard')], ['label' => 'Proyectos']]; @endphp
+
 @section('scripts')
 @parent
 <script>

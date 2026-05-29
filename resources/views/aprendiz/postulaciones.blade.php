@@ -30,6 +30,7 @@
     @vite(['resources/css/aprendiz.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('aprendiz.dashboard')], ['label' => 'Mis Postulaciones']]; @endphp
 @section('content')
 <div class="animate-fade-in" style="padding-bottom: 40px;">
     
@@ -99,7 +100,7 @@
             <div class="glass-card" style="padding: 0; overflow: hidden; display: flex; align-items: center; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 32px rgba(62,180,137,0.12)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
                 <div style="width: 140px; height: 120px; flex-shrink: 0;">
                     @if($post->proyecto && $post->proyecto->imagen_url)
-                        <img src="{{ $post->proyecto->imagen_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ $post->proyecto->imagen_url }}" loading="lazy" alt="" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
                         <div style="width: 100%; height: 100%; background: linear-gradient(135deg, rgba(62,180,137,0.1), rgba(62,180,137,0.05)); display: flex; align-items: center; justify-content: center; color: #3eb489; font-size: 2.5rem;">
                             <i class="fas fa-rocket"></i>

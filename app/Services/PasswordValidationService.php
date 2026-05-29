@@ -30,8 +30,8 @@ class PasswordValidationService
         return [
             'rules' => self::rules(true),
             'messages' => [
-                'password.min' => "La contraseña debe tener al menos {$minLength} caracteres.",
-                'password.confirmed' => 'Las contraseñas no coinciden.',
+                'password.min' => "Mínimo {$minLength} caracteres.",
+                'password.confirmed' => 'Las contraseñas no son iguales.',
             ],
         ];
     }

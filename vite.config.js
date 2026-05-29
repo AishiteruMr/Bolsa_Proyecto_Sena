@@ -10,6 +10,7 @@ export default defineConfig({
             input: [
                 'resources/js/app.js',
                 'resources/js/admin.js',
+                'resources/js/admin-audit.js',
                 'resources/js/bootstrap.js',
                 'resources/js/dashboard.js',
                 'resources/js/forms.js',

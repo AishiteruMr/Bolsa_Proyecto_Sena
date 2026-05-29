@@ -26,6 +26,7 @@
     @vite(['resources/css/instructor.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('instructor.dashboard')], ['label' => 'Evidencias']]; @endphp
 @section('content')
 <div class="animate-fade-in" style="max-width: 1000px; margin: 0 auto;">
     <div style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
@@ -39,7 +40,7 @@
             <p style="color:var(--text-light); font-size:15px; margin-top:4px; font-weight: 500;">Proyecto: <span style="color: var(--text); font-weight: 800;">{{ $proyecto->titulo }}</span></p>
         </div>
         <div class="aprendiz-badge-portal" style="background: #eff6ff; border-color: #dbeafe; color: #3b82f6; padding: 8px 16px; font-weight: 800;">
-            {{ count($evidencias) }} Entregas Pendientes
+            {{ $evidencias->total() }} Entregas Pendientes
         </div>
     </div>
 
@@ -168,5 +169,11 @@
             </div>
         @endforelse
     </div>
+
+    @if($evidencias->hasPages())
+        <div style="margin-top: 40px; display: flex; justify-content: center;">
+            {{ $evidencias->withQueryString()->links() }}
+        </div>
+    @endif
 </div>
 @endsection

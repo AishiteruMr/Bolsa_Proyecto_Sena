@@ -35,14 +35,14 @@ class ActualizarPerfilRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.max' => 'El nombre no puede exceder 50 caracteres.',
-            'apellido.required' => 'El apellido es obligatorio.',
-            'apellido.max' => 'El apellido no puede exceder 50 caracteres.',
-            'programa.required' => 'El programa de formación es obligatorio.',
-            'programa.max' => 'El programa no puede exceder 100 caracteres.',
-            'password.min' => 'La contraseña debe tener al menos '.config('app_config.password.min_length', 8).' caracteres.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
+            'nombre.required' => 'Escribe tu nombre.',
+            'nombre.max' => 'Máximo 50 caracteres.',
+            'apellido.required' => 'Escribe tu apellido.',
+            'apellido.max' => 'Máximo 50 caracteres.',
+            'programa.required' => 'Escribe tu programa de formación.',
+            'programa.max' => 'Máximo 100 caracteres.',
+            'password.min' => 'Mínimo '.config('app_config.password.min_length', 8).' caracteres.',
+            'password.confirmed' => 'Las contraseñas no son iguales.',
         ];
     }
 }

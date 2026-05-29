@@ -97,8 +97,10 @@ php artisan backup:list
 
 # Eliminar backup
 php artisan backup:delete nombre_del_archivo.sql
-```
 
+# procesen en segundo plano (asíncrono)
+php artisan queue:work
+```
 ---
 
 ## Uso
@@ -113,6 +115,8 @@ php artisan backup:delete nombre_del_archivo.sql
 ```bash
 # Ejecutar pruebas unitarias y funcionales
 php artisan test
+
+vendor\bin\phpunit --testdox 2>&1
 ```
 
 ---
@@ -161,19 +165,6 @@ public/
 tests/
 ```
 
----
-
-## Notas de Seguridad 
-
-### Autenticación
-- Usar Laravel Sanctum para autenticación API
-- Usar Redis para rate limiting en producción (opcional)
-- Habilitar 2FA para administradores (recomendado)
-
-### Base de Datos
-- Compatible con MySQL / MariaDB (por defecto) o PostgreSQL en producción
-- Configurar read replicas si hay alta carga
-- Backup automático incluido (comandos artisan personalizados)
 
 ---
 

@@ -13,11 +13,11 @@ class RolMiddleware
         $rolSesion = session('rol');
 
         if (!session()->has('usr_id')) {
-            return redirect()->route('login')->with('error', 'Sesión expirada o no autorizada.');
+            return redirect()->route('login')->with('error', 'Sesión expirada. Inicia sesión.');
         }
 
         if (!in_array($rolSesion, $roles)) {
-            abort(403, 'No tienes permiso para acceder a esta sección.');
+            abort(403, 'No tienes permiso para acceder.');
         }
 
         return $next($request);

@@ -29,6 +29,7 @@
     @vite(['resources/css/aprendiz.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('aprendiz.dashboard')], ['label' => 'Historial']]; @endphp
 @section('content')
 <div class="animate-fade-in" style="padding-bottom: 40px;">
 
@@ -43,13 +44,6 @@
             <p style="color: rgba(255,255,255,0.75); font-size: 16px; font-weight: 500;">Tu trayectoria académica completa — todos los proyectos a los que te has postulado.</p>
         </div>
     </div>
-
-    @php
-        $total = collect($proyectos)->count();
-        $aprobadas = collect($proyectos)->where('estado','aceptada')->count();
-        $pendientes = collect($proyectos)->where('estado','pendiente')->count();
-        $rechazadas = collect($proyectos)->where('estado','rechazada')->count();
-    @endphp
 
     @if($total > 0)
         <div class="instructor-stat-grid" style="margin-bottom: 32px;">
@@ -110,7 +104,7 @@
                     <div style="height: 5px; background: linear-gradient(90deg, {{ $estadoColor['text'] }}, {{ $estadoColor['border'] }});"></div>
 
                     @if($p->imagen_url)
-                        <img src="{{ $p->imagen_url }}" alt="Imagen del proyecto" style="width:100%; height:140px; object-fit:cover;">
+                        <img src="{{ $p->imagen_url }}" loading="lazy" alt="Imagen del proyecto" style="width:100%; height:140px; object-fit:cover;">
                     @else
                         <div style="height: 100px; background: linear-gradient(135deg, rgba(62,180,137,0.15), rgba(62,180,137,0.05)); display:flex; align-items:center; justify-content:center;">
                             <i class="fas fa-project-diagram" style="font-size:36px; color:#3eb489; opacity:0.5;"></i>
@@ -177,6 +171,12 @@
                 </div>
             @endforeach
         </div>
+
+        @if($proyectos->hasPages())
+            <div style="margin-top: 40px; display: flex; justify-content: center;">
+                {{ $proyectos->withQueryString()->links() }}
+            </div>
+        @endif
     @else
         <div class="glass-card" style="padding: 80px 40px; text-align: center;">
             <div style="width:100px; height:100px; background:rgba(62,180,137,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 24px; font-size:40px; color:#3eb489;">

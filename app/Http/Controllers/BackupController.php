@@ -35,10 +35,10 @@ class BackupController extends Controller
             
             AuditLog::registrar(session('usr_id'), 'crear', 'backups', "Se creó un backup manual de la base de datos: {$nombre}");
 
-            return back()->with('success', "Backup '{$nombre}' creado exitosamente.");
+            return back()->with('success', "Backup '{$nombre}' creado.");
         } catch (\Exception $e) {
             Log::error('Error al crear backup: ' . $e->getMessage());
-            return back()->with('error', 'Error al crear el backup: ' . $e->getMessage());
+            return back()->with('error', 'Error al crear el backup.');
         }
     }
 
@@ -58,7 +58,7 @@ class BackupController extends Controller
             ])->deleteFileAfterSend(false);
         } catch (\Exception $e) {
             Log::error('Error al exportar backup: ' . $e->getMessage());
-            return back()->with('error', 'Error al exportar: ' . $e->getMessage());
+            return back()->with('error', 'Error al exportar el backup.');
         }
     }
 
@@ -70,9 +70,9 @@ class BackupController extends Controller
         $request->validate([
             'archivo_backup' => 'required|file|extensions:sql,zip,txt|max:51200', // máx 50 MB
         ], [
-            'archivo_backup.required' => 'Debes seleccionar un archivo.',
-            'archivo_backup.extensions' => 'Solo se aceptan archivos .sql o .zip.',
-            'archivo_backup.max'      => 'El archivo no debe superar los 50 MB.',
+            'archivo_backup.required' => 'Selecciona un archivo.',
+            'archivo_backup.extensions' => 'Solo archivos .sql o .zip.',
+            'archivo_backup.max'      => 'Máximo 50 MB.',
         ]);
 
         try {
@@ -89,7 +89,7 @@ class BackupController extends Controller
 
                 if (!class_exists('ZipArchive')) {
                     File::deleteDirectory($tmpDir);
-                    return back()->with('error', 'ZipArchive no está disponible en este servidor. Sube directamente el archivo .sql.');
+                    return back()->with('error', 'ZipArchive no disponible. Sube un archivo .sql.');
                 }
 
                 $zip = new \ZipArchive();
@@ -105,7 +105,7 @@ class BackupController extends Controller
 
                 if (!$sqlFile) {
                     File::deleteDirectory($tmpDir);
-                    return back()->with('error', 'No se encontró un archivo database.sql dentro del ZIP.');
+                    return back()->with('error', 'No se encontró database.sql en el ZIP.');
                 }
             } else {
                 // Es un .sql directo
@@ -123,13 +123,13 @@ class BackupController extends Controller
 
             AuditLog::registrar(session('usr_id'), 'editar', 'backups', "Se restauró la base de datos desde el archivo: " . $archivo->getClientOriginalName());
 
-            return back()->with('success', '✅ Base de datos restaurada correctamente desde el archivo importado.');
+            return back()->with('success', 'Base de datos restaurada correctamente.');
         } catch (\Exception $e) {
             if (isset($tmpDir) && File::exists($tmpDir)) {
                 File::deleteDirectory($tmpDir);
             }
             Log::error('Error al importar backup: ' . $e->getMessage());
-            return back()->with('error', 'Error al importar: ' . $e->getMessage());
+            return back()->with('error', 'Error al importar el backup.');
         }
     }
 

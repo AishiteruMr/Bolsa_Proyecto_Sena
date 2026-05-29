@@ -55,11 +55,11 @@ class AuthController extends Controller
             $perfil = $this->getPerfilUsuario($usuario->id, $usuario->rol_id);
 
             if (! $perfil) {
-                return back()->with('error', 'Perfil de usuario no encontrado.')->withInput(['correo' => $correo]);
+                return back()->with('error', 'Perfil no encontrado.')->withInput(['correo' => $correo]);
             }
 
             if (isset($perfil->estado) && $perfil->estado == 0) {
-                return back()->with('error', 'Tu cuenta está pendiente de activación por un administrador.');
+                return back()->with('error', 'Tu cuenta está pendiente de activación.');
             }
 
             $sessionData = [
@@ -110,7 +110,7 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         $request->session()->flush();
 
-        return redirect()->route('login')->with('success', 'Sesión cerrada correctamente.');
+        return redirect()->route('login')->with('success', 'Sesión cerrada.');
     }
 
     public function verifyEmail(Request $request, int $id, string $hash): RedirectResponse
@@ -118,37 +118,37 @@ class AuthController extends Controller
         $user = User::findOrFail($id);
 
         if (! hash_equals(hash('sha256', $user->getAttribute('correo')), $hash)) {
-            return redirect()->route('login')->with('error', 'Enlace de verificación inválido.');
+            return redirect()->route('login')->with('error', 'Enlace de verificación no válido.');
         }
 
         if ($user->hasVerifiedEmail()) {
-            return redirect()->route('login')->with('info', 'Tu correo ya ha sido verificado.');
+            return redirect()->route('login')->with('info', 'Tu correo ya está verificado.');
         }
 
         $user->markEmailAsVerified();
 
-        return redirect()->route('login')->with('success', '¡Correo verificado exitosamente! Ya puedes iniciar sesión.');
+        return redirect()->route('login')->with('success', 'Correo verificado. Ya puedes iniciar sesión.');
     }
 
     public function resendVerification(Request $request): RedirectResponse
     {
         if (! $request->filled('correo')) {
-            return back()->with('error', 'Debes proporcionar tu correo electrónico.');
+            return back()->with('error', 'Escribe tu correo.');
         }
 
         $user = User::where('correo', $request->correo)->first();
 
         if (! $user) {
-            return back()->with('error', 'No se encontró un usuario con ese correo.');
+            return back()->with('error', 'No hay una cuenta con ese correo.');
         }
 
         if ($user->hasVerifiedEmail()) {
-            return back()->with('info', 'Este correo ya ha sido verificado.');
+            return back()->with('info', 'Este correo ya está verificado.');
         }
 
         $user->sendEmailVerificationNotification();
 
-        return back()->with('success', 'Se ha enviado un nuevo enlace de verificación a tu correo.');
+        return back()->with('success', 'Nuevo enlace de verificación enviado a tu correo.');
     }
 
     // ─── VISTAS DE REGISTRO ──────────────────────────────────────────────────────
@@ -197,14 +197,16 @@ class AuthController extends Controller
             });
 
             if ($resultado) {
-                return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta pronto.');
+                $nombreCompleto = strip_tags(trim($request->nombre)).' '.strip_tags(trim($request->apellido));
+                AuditLog::registrar($resultado, 'crear', 'usuarios', 'aprendices', $resultado, null, ['nombre_objetivo' => $nombreCompleto, 'tipo' => 'aprendiz'], "Se ha registrado un nuevo aprendiz en el sistema: {$nombreCompleto}. Su cuenta está pendiente de activación por un administrador.");
+                return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta.');
             }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
         } catch (\Exception $e) {
             Log::error('Error en registro aprendiz: '.$e->getMessage());
 
-            return back()->with('error', 'Error al procesar el registro. Intenta de nuevo.')->withInput();
+            return back()->with('error', 'Error al registrarte. Intenta de nuevo.')->withInput();
         }
     }
 
@@ -238,14 +240,16 @@ class AuthController extends Controller
             });
 
             if ($resultado) {
-                return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta pronto.');
+                $nombreCompleto = strip_tags(trim($request->nombre)).' '.strip_tags(trim($request->apellido));
+                AuditLog::registrar($resultado, 'crear', 'usuarios', 'instructores', $resultado, null, ['nombre_objetivo' => $nombreCompleto, 'tipo' => 'instructor'], "Se ha registrado un nuevo instructor en el sistema: {$nombreCompleto}. Su cuenta está pendiente de activación por un administrador.");
+                return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta.');
             }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
         } catch (\Exception $e) {
             Log::error('Error en registro instructor: '.$e->getMessage());
 
-            return back()->with('error', 'Error al procesar el registro. Intenta de nuevo.')->withInput();
+            return back()->with('error', 'Error al registrarte. Intenta de nuevo.')->withInput();
         }
     }
 
@@ -279,14 +283,16 @@ class AuthController extends Controller
             });
 
             if ($resultado) {
-                return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta pronto.');
+                $nombreEmpresa = strip_tags(trim($request->nombre_empresa));
+                AuditLog::registrar($resultado, 'crear', 'usuarios', 'empresas', $resultado, null, ['nombre_objetivo' => $nombreEmpresa, 'tipo' => 'empresa'], "Se ha registrado una nueva empresa en el sistema: {$nombreEmpresa}. Su cuenta está pendiente de activación por un administrador.");
+                return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta.');
             }
 
             return back()->with('error', 'Error en el registro. Intenta de nuevo.')->withInput();
         } catch (\Exception $e) {
             Log::error('Error en registro empresa: '.$e->getMessage());
 
-            return back()->with('error', 'Error al procesar el registro. Intenta de nuevo.')->withInput();
+            return back()->with('error', 'Error al registrarte. Intenta de nuevo.')->withInput();
         }
     }
 
@@ -331,7 +337,7 @@ class AuthController extends Controller
         }
 
         if (! $nombre) {
-            return back()->with('warning', 'Si existe una cuenta con este correo, recibirás un enlace de recuperación.');
+            return back()->with('warning', 'Si el correo existe, recibirás un enlace de recuperación.');
         }
 
         // ✅ SEGURIDAD: Generar token único y seguro
@@ -356,11 +362,11 @@ class AuthController extends Controller
         try {
             \Illuminate\Support\Facades\Mail::to($correo)->send(new RecuperarContraseña($nombre, $enlaceRecuperacion));
 
-            return back()->with('success', '✅ Se envió un enlace de recuperación a tu correo. Revisa tu bandeja de entrada.');
+            return back()->with('success', 'Enlace de recuperación enviado a tu correo.');
         } catch (\Exception $e) {
             Log::error('Error al enviar correo de recuperación: '.$e->getMessage());
 
-            return back()->with('error', 'Error al enviar el correo: ' . $e->getMessage());
+            return back()->with('error', 'Error al enviar el correo.');
         }
     }
 
@@ -376,7 +382,7 @@ class AuthController extends Controller
             ->first();
 
         if (! $registro) {
-            return redirect()->route('login')->with('error', 'El enlace de recuperación es inválido o ha expirado.');
+            return redirect()->route('login')->with('error', 'El enlace de recuperación ya no es válido.');
         }
 
         $correo = $registro->email;
@@ -385,7 +391,7 @@ class AuthController extends Controller
         if ($registro->expires_at && Carbon::parse($registro->expires_at)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
-            return redirect()->route('login')->with('error', 'El enlace de recuperación ha expirado. Solicita uno nuevo.');
+            return redirect()->route('login')->with('error', 'El enlace expiró. Solicita uno nuevo.');
         }
 
         return view('auth.restablecer-contraseña', compact('token', 'correo'));
@@ -419,14 +425,14 @@ class AuthController extends Controller
             ->first();
 
         if (! $registro) {
-            return back()->with('error', 'El enlace de recuperación es inválido o ha expirado.');
+            return back()->with('error', 'El enlace de recuperación ya no es válido.');
         }
 
         // Verificar que no haya expirado (usar expires_at)
         if ($registro->expires_at && Carbon::parse($registro->expires_at)->isPast()) {
             DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
-            return back()->with('error', 'El enlace de recuperación ha expirado.');
+            return back()->with('error', 'El enlace expiró. Solicita uno nuevo.');
         }
 
         // Buscar usuario
@@ -449,6 +455,6 @@ class AuthController extends Controller
         // Eliminar token usado
         DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
-        return redirect()->route('login')->with('success', '✅ Contraseña actualizada correctamente. Ya puedes iniciar sesión.');
+        return redirect()->route('login')->with('success', 'Contraseña actualizada. Ya puedes iniciar sesión.');
     }
 }

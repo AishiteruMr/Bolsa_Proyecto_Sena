@@ -329,19 +329,19 @@ class Proyecto extends Model
             'empresa_activa' => [
                 'ok' => $empresaActiva,
                 'peso' => 20,
-                'descripcion' => $empresa ? 'Empresa '.($empresaActiva ? 'verificada y activa' : 'en estado inactivo') : 'Empresa no encontrada',
+                'descripcion' => $empresa ? 'Empresa '.($empresaActiva ? 'verificada y activa' : 'inactiva') : 'Empresa no encontrada',
             ],
             'titulo' => [
                 'ok' => $tituloValido,
                 'peso' => 15,
-                'descripcion' => $tituloLongitud < 10 ? 'Título muy corto (mín. 10 caracteres)' : ($tituloLongitud > 200 ? 'Título muy largo (máx. 200 caracteres)' : 'Título descriptivo y conciso'),
+                'descripcion' => $tituloLongitud < 10 ? 'Título muy corto (mín. 10 caracteres)' : ($tituloLongitud > 200 ? 'Título muy largo (máx. 200 caracteres)' : 'Título descriptivo'),
                 'valor' => $tituloLongitud,
                 'palabras' => $tituloPalabras,
             ],
             'descripcion' => [
                 'ok' => $descripcionValida,
                 'peso' => 25,
-                'descripcion' => $descripcionPalabras < 20 ? 'Descripción sin contenido real (mín. 20 palabras)' : ($descripcionLongitud > 5000 ? 'Descripción muy extensa' : 'Describe claramente el objetivo del proyecto'),
+                'descripcion' => $descripcionPalabras < 20 ? 'Descripción muy corta (mín. 20 palabras)' : ($descripcionLongitud > 5000 ? 'Descripción muy larga' : 'Describe el objetivo del proyecto'),
                 'valor' => $descripcionLongitud,
                 'palabras' => $descripcionPalabras,
                 'detalles' => [
@@ -352,21 +352,21 @@ class Proyecto extends Model
             'requisitos' => [
                 'ok' => $requisitosValidos,
                 'peso' => 15,
-                'descripcion' => $requisitosPalabras < 3 ? 'Requisitos poco específicos (mín. 3 palabras)' : 'Requisitos bien definidos',
+                'descripcion' => $requisitosPalabras < 3 ? 'Requisitos muy cortos (mín. 3 palabras)' : 'Requisitos bien definidos',
                 'valor' => $requisitosLongitud,
                 'palabras' => $requisitosPalabras,
             ],
             'habilidades' => [
                 'ok' => $habilidadesValidas,
                 'peso' => 15,
-                'descripcion' => $habilidadesPalabras < 2 ? 'Habilidades no especificadas (mín. 2 palabras)' : 'Habilidades blandas definidas',
+                'descripcion' => $habilidadesPalabras < 2 ? 'Habilidades muy cortas (mín. 2 palabras)' : 'Habilidades definidas',
                 'valor' => $habilidadesLongitud,
                 'palabras' => $habilidadesPalabras,
             ],
             'coherencia' => [
                 'ok' => $tieneCoherencia,
                 'peso' => 5,
-                'descripcion' => $tieneCoherencia ? 'Requisitos y habilidades son coherentes' : 'Falta coherencia entre requisitos y habilidades',
+                'descripcion' => $tieneCoherencia ? 'Coherente' : 'Falta coherencia entre requisitos y habilidades',
             ],
             'categoria' => [
                 'ok' => $categoriaValida,
@@ -376,7 +376,7 @@ class Proyecto extends Model
             'duracion' => [
                 'ok' => $duracionValida,
                 'peso' => 2,
-                'descripcion' => ! $this->duracion_estimada_dias ? 'Duración no especificada' : ($duracionValida ? "Duración adecuada ({$this->duracion_estimada_dias} días)" : 'Duración fuera de rango'),
+                'descripcion' => ! $this->duracion_estimada_dias ? 'Duración no especificada' : ($duracionValida ? "Duración: {$this->duracion_estimada_dias} días" : 'Duración fuera del rango'),
                 'valor' => $this->duracion_estimada_dias,
             ],
             'ubicacion' => [
@@ -409,21 +409,21 @@ class Proyecto extends Model
         $erroresCriticos = [];
 
         if ($empresa && $empresa->activo != 1) {
-            $erroresCriticos[] = 'La empresa proponente está inactiva';
+            $erroresCriticos[] = 'La empresa no está activa';
         }
         if (! $descripcionValida) {
             if ($descripcionPalabras < 20) {
-                $erroresCriticos[] = 'La descripción debe expresar claramente el objetivo y alcance del proyecto';
+                $erroresCriticos[] = 'La descripción debe explicar el objetivo y alcance del proyecto';
             }
         }
         if (! $tituloValido) {
-            $erroresCriticos[] = 'El título debe ser descriptivo y conciso';
+            $erroresCriticos[] = 'El título debe ser más descriptivo';
         }
         if (! $requisitosValidos) {
-            $warnings[] = 'Los requisitos técnicos deben estar mejor definidos';
+            $warnings[] = 'Define mejor los requisitos técnicos';
         }
         if (! $habilidadesValidas) {
-            $warnings[] = 'Las habilidades blandas requeridas deben especificarse';
+            $warnings[] = 'Especifica las habilidades requeridas';
         }
 
         return [
@@ -436,7 +436,7 @@ class Proyecto extends Model
             'warnings' => $warnings,
             'errores_criticos' => $erroresCriticos,
             'puede_publicarse' => $porcentaje >= 75 && $empresaActiva && $descripcionValida,
-            'razon_rechazo' => ! $empresaActiva ? 'Empresa inactiva' : (! $descripcionValida ? 'La descripción no expresa claramente el objetivo del proyecto' : ($porcentaje < 75 ? 'No cumple con los criterios mínimos de calidad' : null)),
+            'razon_rechazo' => ! $empresaActiva ? 'Empresa inactiva' : (! $descripcionValida ? 'La descripción no explica bien el proyecto' : ($porcentaje < 75 ? 'No cumple los requisitos mínimos de calidad' : null)),
         ];
     }
 }

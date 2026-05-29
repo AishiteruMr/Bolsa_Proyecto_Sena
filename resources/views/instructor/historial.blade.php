@@ -27,6 +27,7 @@
     @vite(['resources/css/instructor.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('instructor.dashboard')], ['label' => 'Historial']]; @endphp
 @section('content')
 <div class="instructor-hero" style="padding: 40px 48px; margin-bottom: 32px;">
     <div class="instructor-hero-bg-icon"><i class="fas fa-history"></i></div>
@@ -113,6 +114,12 @@
                 </div>
             @endforeach
         </div>
+
+        @if($proyectos->hasPages())
+            <div style="margin-top: 40px; display: flex; justify-content: center;">
+                {{ $proyectos->withQueryString()->links() }}
+            </div>
+        @endif
     @else
         <div style="padding: 5rem 2rem; text-align: center; background: white; border-radius: 20px; border: 1px dashed rgba(62,180,137,0.2);">
             <i class="fas fa-history" style="font-size: 4rem; color: #3eb489; margin-bottom: 1.5rem; opacity: 0.5;"></i>

@@ -21,8 +21,8 @@ class GestionarPostulacionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'estado.required' => 'El estado es obligatorio.',
-            'estado.in' => 'El estado debe ser uno de los valores permitidos.',
+            'estado.required' => 'Selecciona un estado.',
+            'estado.in' => 'Estado no válido.',
         ];
     }
 }

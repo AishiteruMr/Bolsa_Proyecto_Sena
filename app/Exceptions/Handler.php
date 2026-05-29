@@ -52,8 +52,8 @@ class Handler extends ExceptionHandler
                 $seconds = is_numeric($retryAfter) ? $retryAfter : 60;
                 $minutes = ceil($seconds / 60);
 
-                $message = 'Has superado el límite de intentos. ';
-                $message .= "Por favor, espera {$minutes} minuto".($minutes > 1 ? 's' : '').' antes de intentar de nuevo.';
+                $message = 'Demasiados intentos. ';
+                $message .= "Espera {$minutes} minuto".($minutes > 1 ? 's' : '').' e intenta de nuevo.';
 
                 if ($request->expectsJson()) {
                     return response()->json([
@@ -69,7 +69,7 @@ class Handler extends ExceptionHandler
             if ($e instanceof ModelNotFoundException) {
                 if ($request->expectsJson()) {
                     return response()->json([
-                        'error' => 'Recurso no encontrado',
+                        'error' => 'Recurso no encontrado.',
                     ], 404);
                 }
 
@@ -80,7 +80,7 @@ class Handler extends ExceptionHandler
             if ($e instanceof AuthenticationException) {
                 if ($request->expectsJson()) {
                     return response()->json([
-                        'error' => 'No autenticado',
+                        'error' => 'No autenticado.',
                     ], 401);
                 }
 

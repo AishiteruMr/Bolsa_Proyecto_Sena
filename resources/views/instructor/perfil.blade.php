@@ -26,6 +26,7 @@
     @vite(['resources/css/instructor.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('instructor.dashboard')], ['label' => 'Perfil']]; @endphp
 @section('content')
 @php
     $camposCompletos = 0;

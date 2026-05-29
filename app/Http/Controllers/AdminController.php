@@ -92,8 +92,8 @@ class AdminController extends Controller
                 'usuarios',
                 'aprendices',
                 $id,
-                array_merge($anterior, ['nombre_objetivo' => $nombreTarget]),
-                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget]
+                array_merge($anterior, ['nombre_objetivo' => $nombreTarget, 'tipo' => 'aprendiz']),
+                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'aprendiz']
             );
 
             // Enviar correo de bienvenida al activar cuenta
@@ -117,8 +117,8 @@ class AdminController extends Controller
                 'usuarios',
                 'instructores',
                 $id,
-                array_merge($anterior, ['nombre_objetivo' => $nombreTarget]),
-                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget]
+                array_merge($anterior, ['nombre_objetivo' => $nombreTarget, 'tipo' => 'instructor']),
+                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'instructor']
             );
 
             // Enviar correo de bienvenida al activar cuenta
@@ -143,8 +143,8 @@ class AdminController extends Controller
                 'usuarios',
                 'empresas',
                 $id,
-                array_merge($anterior, ['nombre_objetivo' => $nombreTarget]),
-                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget]
+                array_merge($anterior, ['nombre_objetivo' => $nombreTarget, 'tipo' => 'empresa']),
+                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'empresa']
             );
 
             // Enviar correo de bienvenida al activar cuenta
@@ -195,8 +195,8 @@ class AdminController extends Controller
             'empresas',
             'empresas',
             $id,
-            array_merge($anterior, ['nombre_objetivo' => $empresa->nombre]),
-            ['activo' => $request->estado, 'nombre_objetivo' => $empresa->nombre]
+            array_merge($anterior, ['nombre_objetivo' => $empresa->nombre, 'tipo' => 'empresa']),
+            ['activo' => $request->estado, 'nombre_objetivo' => $empresa->nombre, 'tipo' => 'empresa']
         );
 
         try {
@@ -212,7 +212,7 @@ class AdminController extends Controller
             Log::error('Error al notificar estado de empresa: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
         }
 
-        return back()->with('success', 'Estado de la empresa actualizado.');
+        return back()->with('success', 'Estado de empresa actualizado.');
     }
 
     public function proyectos(Request $request): View
@@ -345,7 +345,10 @@ class AdminController extends Controller
                 try {
                     $instructorUsuario = User::where('id', $instructorUsuarioId)->with('instructor')->first();
                     if ($instructorUsuario && $instructorUsuario->instructor) {
-                        SendEmailJob::dispatch($instructorUsuario->correo, new InstructorDesasignado($instructorUsuario->instructor->nombres, $proyectoActual->titulo, $proyectoActual->empresa->nombre));
+                        $instructorNombre = $instructorUsuario->instructor->nombres.' '.$instructorUsuario->instructor->apellidos;
+                        AuditLog::registrar(session('usr_id'), 'desasignar', 'proyectos', 'proyectos', $id, ['instructor_usuario_id' => $instructorUsuarioId, 'nombre_objetivo' => $proyectoActual->titulo], ['instructor_usuario_id' => null, 'nombre_objetivo' => $proyectoActual->titulo, 'instructor' => $instructorNombre], "Se ha destituido al instructor {$instructorNombre} del proyecto \"{$proyectoActual->titulo}\" debido al cierre o rechazo del proyecto.");
+
+                        SendEmailJob::dispatch($instructorUsuario->correo, new InstructorDesasignado($instructorNombre, $proyectoActual->titulo, $proyectoActual->empresa->nombre));
 
                         $instructorUsuario->notify(new AppNotification(
                             'Desasignado de proyecto',
@@ -416,10 +419,14 @@ class AdminController extends Controller
         $proyecto = Proyecto::findOrFail($id);
 
         if (!in_array($proyecto->estado, ['pendiente', 'aprobado'])) {
-            return back()->with('error', 'No se puede asignar instructor a un proyecto que está '.$proyecto->estado.'.');
+            return back()->with('error', 'No se puede asignar instructor a un proyecto en estado '.$proyecto->estado.'.');
         }
 
-        $proyecto->update(['instructor_usuario_id' => $request->instructor_usuario_id]);
+        $updateData = ['instructor_usuario_id' => $request->instructor_usuario_id];
+        if ($proyecto->estado === 'aprobado') {
+            $updateData['estado'] = 'en_progreso';
+        }
+        $proyecto->update($updateData);
         Cache::forget('admin_stats');
 
         AuditLog::registrarCambio(
@@ -461,7 +468,7 @@ class AdminController extends Controller
             Log::error('Error al enviar correo de asignación de instructor: '.$e->getMessage());
         }
 
-        return back()->with('success', 'Instructor asignado correctamente');
+        return back()->with('success', 'Instructor asignado.');
     }
 
     public function mensajesSoporte(): View
@@ -493,10 +500,10 @@ class AdminController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Error al enviar respuesta de soporte: ' . $e->getMessage());
-            return back()->with('error', 'Respuesta guardada pero ocurrió un error al enviar el email.');
+            return back()->with('error', 'Respuesta guardada, pero error al enviar el correo.');
         }
 
-        return back()->with('success', 'Respuesta enviada correctamente.');
+        return back()->with('success', 'Respuesta enviada.');
     }
 
     public function revisarProyecto(int $id): View
@@ -504,6 +511,11 @@ class AdminController extends Controller
         $proyecto = Proyecto::with('empresa')->findOrFail($id);
         $calidad = $proyecto->calidadProyecto();
 
-        return view('admin.revisar-proyecto', compact('proyecto', 'calidad'));
+        $instructores = \App\Models\User::where('rol_id', 2)
+            ->whereHas('instructor', fn($q) => $q->where('activo', true))
+            ->with('instructor')
+            ->get();
+
+        return view('admin.revisar-proyecto', compact('proyecto', 'calidad', 'instructores'));
     }
 }

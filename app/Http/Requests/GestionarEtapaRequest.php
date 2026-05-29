@@ -31,13 +31,13 @@ class GestionarEtapaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'nombre.required' => 'El nombre es obligatorio.',
-            'nombre.max' => 'El nombre no puede exceder 200 caracteres.',
-            'descripcion.required' => 'La descripción es obligatoria.',
-            'descripcion.max' => 'La descripción no puede exceder 1000 caracteres.',
-            'orden.required' => 'El orden es obligatorio.',
-            'orden.integer' => 'El orden debe ser un número entero.',
-            'orden.min' => 'El orden debe ser al menos 1.',
+            'nombre.required' => 'Escribe un nombre.',
+            'nombre.max' => 'Máximo 200 caracteres.',
+            'descripcion.required' => 'Escribe una descripción.',
+            'descripcion.max' => 'Máximo 1000 caracteres.',
+            'orden.required' => 'Escribe el orden.',
+            'orden.integer' => 'Debe ser un número entero.',
+            'orden.min' => 'Mínimo 1.',
         ];
     }
 }

@@ -23,6 +23,7 @@
     @vite(['resources/css/empresa.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('empresa.dashboard')], ['label' => 'Publicar']]; @endphp
 @section('content')
 <div class="animate-fade-in" style="max-width: 900px; margin: 0 auto; padding-bottom: 40px;">
     

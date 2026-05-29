@@ -22,10 +22,10 @@ class CambiarEstadoUsuarioRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'tipo.required' => 'El tipo de usuario es obligatorio.',
-            'tipo.in' => 'El tipo debe ser aprendiz o instructor.',
-            'estado.required' => 'El estado es obligatorio.',
-            'estado.in' => 'El estado debe ser 0 (inactivo) o 1 (activo).',
+            'tipo.required' => 'Selecciona el tipo de usuario.',
+            'tipo.in' => 'Tipo no válido.',
+            'estado.required' => 'Selecciona un estado.',
+            'estado.in' => 'Estado no válido.',
         ];
     }
 }

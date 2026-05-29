@@ -26,6 +26,7 @@
     @vite(['resources/css/instructor.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('instructor.dashboard')], ['label' => 'Proyectos', 'url' => route('instructor.proyectos')], ['label' => 'Detalle']]; @endphp
 @section('content')
 <div style="margin-bottom: 24px;">
     <a href="{{ route('instructor.proyectos') }}" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-light); text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; padding: 8px 16px; background: white; border-radius: 12px; border: 1px solid rgba(62,180,137,0.1); box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onmouseover="this.style.color='#3eb489'; this.style.borderColor='rgba(62,180,137,0.3)'; this.style.transform='translateX(-4px)'" onmouseout="this.style.color='var(--text-light)'; this.style.borderColor='rgba(62,180,137,0.1)'; this.style.transform='translateX(0)'">
@@ -41,7 +42,7 @@
         <!-- Project Hero Card -->
         <div style="background: white; border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1);">
             <div class="instructor-project-hero">
-                <img src="{{ $proyecto->imagen_url }}?t={{ time() }}" alt="" style="width:100%; height:100%; object-fit:cover;">
+                <img src="{{ $proyecto->imagen_url }}?t={{ time() }}" loading="lazy" alt="" style="width:100%; height:100%; object-fit:cover;">
                 <div class="instructor-hero-overlay"></div>
                 
                 <div class="instructor-hero-content">

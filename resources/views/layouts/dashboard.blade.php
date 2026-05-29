@@ -104,6 +104,7 @@
         </header>
 
         <div class="page-content">
+            @include('partials.breadcrumbs')
             @yield('content')
         </div>
     </div>

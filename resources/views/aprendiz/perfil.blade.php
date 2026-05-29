@@ -173,6 +173,7 @@
     </style>
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('aprendiz.dashboard')], ['label' => 'Perfil']]; @endphp
 @section('content')
 @php
     $camposCompletos = 0;

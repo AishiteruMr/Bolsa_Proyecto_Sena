@@ -6,23 +6,40 @@
 @section('header_subtitle', 'Paso final para activar tu cuenta')
 
 @section('content')
-<p style="font-size: 16px; color: #334155; margin: 0 0 20px 0;">
-    Hola <strong style="color: #0f172a;">{{ $nombre }}</strong>,
+<p style="font-size: 16px; color: #334155; margin: 0 0 20px 0; line-height: 1.6;">
+    Hola <strong style="color: #065f46;">{{ $nombre }}</strong>,
 </p>
 
-<p style="font-size: 15px; color: #475569; line-height: 1.6; margin: 0 0 16px 0;">
-    Gracias por registrarte en la <strong>Bolsa de Proyecto SENA</strong>. Para proteger tu seguridad, necesitamos que verifiques tu correo electrónico utilizando el siguiente código:
+<p style="font-size: 15px; color: #475569; line-height: 1.7; margin: 0 0 24px 0;">
+    Gracias por registrarte en la <strong>Bolsa de Proyecto SENA</strong>. Para proteger tu seguridad, verifica tu correo electrónico utilizando el siguiente código:
 </p>
 
-<div style="text-align: center; margin: 30px 0;">
-    <div style="display: inline-block; background-color: #f1f5f9; padding: 15px 30px; border-radius: 10px; font-size: 32px; font-weight: 700; color: #047857; letter-spacing: 5px;">
-        {{ $otp }}
-    </div>
-</div>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 28px;">
+    <tr>
+        <td align="center">
+            <table cellpadding="0" cellspacing="0" border="0" style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 2px dashed #10b981; border-radius: 12px;">
+                <tr>
+                    <td align="center" style="padding: 24px 48px; letter-spacing: 12px; font-size: 38px; font-weight: 800; color: #065f46; font-family: 'Courier New', Courier, monospace;">
+                        {{ $otp }}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 
-<div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
-    <p style="margin: 0; font-size: 14px; color: #b45309; line-height: 1.5;">
-        <strong>Importante:</strong> Este código de verificación expirará en <strong>10 minutos</strong>. Si no solicitaste este registro, ignora este correo.
-    </p>
-</div>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fffbeb; border-radius: 10px; margin-bottom: 0;">
+    <tr>
+        <td style="padding: 16px 20px;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td width="40" valign="top" style="font-size: 20px; color: #f59e0b; line-height: 1;">⏳</td>
+                    <td style="font-size: 14px; color: #92400e; line-height: 1.5;">
+                        <strong>Importante:</strong> Este c&oacute;digo expirar&aacute; en <strong>10 minutos</strong>. Si no solicitaste este registro, ignora este correo.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 @endsection
