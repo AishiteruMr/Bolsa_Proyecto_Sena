@@ -15,6 +15,7 @@
     @include('admin.partials.sidebar-nav')
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('admin.dashboard')], ['label' => 'Mensajes de Soporte']]; @endphp
 @section('content')
     <div class="soporte-wrapper">
         <div class="admin-header-master">

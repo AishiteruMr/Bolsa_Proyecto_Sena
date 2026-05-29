@@ -22,9 +22,9 @@ class EnviarEvidenciaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'descripcion.required' => 'La descripción es obligatoria.',
-            'descripcion.max' => 'La descripción no puede exceder 1000 caracteres.',
-            'archivo.max' => 'El archivo no puede ser mayor a 5MB.',
+            'descripcion.required' => 'Escribe una descripción.',
+            'descripcion.max' => 'Máximo 1000 caracteres.',
+            'archivo.max' => 'Máximo 5MB.',
             'archivo.mimes' => 'Tipo de archivo no permitido.',
         ];
     }

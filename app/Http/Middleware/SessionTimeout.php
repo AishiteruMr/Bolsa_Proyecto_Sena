@@ -36,7 +36,7 @@ class SessionTimeout
                 $request->session()->regenerateToken();
 
                 return redirect()->route('login')
-                    ->with('error', 'Tu sesión ha expirado por inactividad.');
+                    ->with('error', 'Sesión expirada por inactividad.');
             }
         }
 
@@ -51,7 +51,7 @@ class SessionTimeout
             $request->session()->regenerateToken();
 
             return redirect()->route('login')
-                ->with('error', 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.');
+                ->with('error', 'Sesión expirada. Inicia sesión de nuevo.');
         }
 
         $request->session()->put('last_activity', $now);

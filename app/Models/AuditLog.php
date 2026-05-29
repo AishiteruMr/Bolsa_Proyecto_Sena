@@ -86,6 +86,9 @@ class AuditLog extends Model
             'editar' => "Modificación de parámetros operativos en {$moduloLimpio} para {$nombreTarget}{$targetDesc}. Resumen de los campos actualizados: " . ($cambiosTexto ? $cambiosTexto : "atributos generales del registro") . ".",
             'eliminar' => "Baja definitiva y remoción de registro en la sección de {$moduloLimpio} para {$nombreTarget}{$targetDesc}. Se ha completado el protocolo de eliminación.",
             'asignar' => "Gestión de asignación y vinculación en {$moduloLimpio} para {$nombreTarget}{$targetDesc}. " . ($cambiosTexto ? "Detalles: {$cambiosTexto}" : "Se ha designado un nuevo responsable para la gestión de este elemento."),
+            'postularse' => "El {$moduloLimpio}{$targetDesc} ha formalizado su postulación a un proyecto en el sistema. Se ha registrado correctamente su solicitud de participación.",
+            'publicar' => "Se ha registrado y publicado un nuevo {$moduloLimpio}{$targetDesc} en la plataforma. El contenido ha sido creado y está pendiente de revisión administrativa.",
+            'desasignar' => "Procedimiento de desvinculación completado en {$moduloLimpio} para {$nombreTarget}{$targetDesc}. Se ha removido al instructor responsable del proyecto.",
             'login' => "Autenticación de seguridad procesada. Acceso autorizado al centro de control administrativo.",
             'logout' => "Finalización de sesión exitosa. La conexión del usuario ha sido cerrada por protocolos de seguridad.",
             'subir_archivo' => "Carga de nuevo material documental en {$moduloLimpio} para {$nombreTarget}{$targetDesc}. Recurso almacenado con éxito.",
@@ -189,6 +192,9 @@ class AuditLog extends Model
             'login' => 'fa-sign-in-alt text-success',
             'logout' => 'fa-sign-out-alt text-secondary',
             'exportar' => 'fa-file-export text-info',
+            'postularse' => 'fa-paper-plane text-primary',
+            'publicar' => 'fa-upload text-success',
+            'desasignar' => 'fa-user-minus text-danger',
             default => 'fa-circle text-muted',
         };
     }

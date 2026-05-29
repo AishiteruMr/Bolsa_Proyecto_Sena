@@ -86,20 +86,20 @@ class RegistroInstructorRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'required' => 'El campo :attribute es obligatorio.',
-            'email' => 'Ingresa un correo electrónico válido y existente.',
-            'unique' => 'Este :attribute ya está registrado.',
-            'min' => 'El campo :attribute debe tener al menos :min caracteres.',
-            'max' => 'El campo :attribute no puede exceder :max caracteres.',
-            'numeric' => 'El campo :attribute debe ser numérico.',
-            'digits_between' => 'El documento debe tener entre :min y :max dígitos.',
-            'accepted' => 'Debes aceptar los términos y condiciones.',
-            'regex' => 'El campo :attribute solo puede contener letras y espacios.',
-            'password.confirmed' => 'Las contraseñas no coinciden.',
-            'password.letters' => 'La contraseña debe tener al menos una letra.',
-            'password.mixedCase' => 'La contraseña debe tener al menos una mayúscula y una minúscula.',
-            'password.numbers' => 'La contraseña debe tener al menos un número.',
-            'password.symbols' => 'La contraseña debe tener al menos un carácter especial.',
+            'required' => 'Completa este campo.',
+            'email' => 'Correo no válido.',
+            'unique' => 'Este :attribute ya está en uso.',
+            'min' => 'Mínimo :min caracteres.',
+            'max' => 'Máximo :max caracteres.',
+            'numeric' => 'Solo números.',
+            'digits_between' => 'Entre :min y :max dígitos.',
+            'accepted' => 'Acepta los términos para continuar.',
+            'regex' => 'Solo letras y espacios.',
+            'password.confirmed' => 'Las contraseñas no son iguales.',
+            'password.letters' => 'Debe tener al menos una letra.',
+            'password.mixedCase' => 'Usa mayúsculas y minúsculas.',
+            'password.numbers' => 'Debe tener al menos un número.',
+            'password.symbols' => 'Debe tener un carácter especial.',
         ];
     }
 }

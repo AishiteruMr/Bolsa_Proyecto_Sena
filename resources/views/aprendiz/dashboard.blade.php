@@ -30,6 +30,7 @@
     @vite(['resources/css/aprendiz.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio']]; @endphp
 @section('content')
     <!-- BIENVENIDA PREMIUM -->
     <div class="instructor-hero" style="padding: 40px 48px; margin-bottom: 32px;">
@@ -105,7 +106,7 @@
         @forelse($proyectosRecientes as $p)
             <div style="background: white; border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s;">
                 <div style="height: 180px; position: relative;">
-                    <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="{{ $p->imagen_url }}" loading="lazy" alt="" style="width:100%; height:100%; object-fit:cover;">
                     <div style="position: absolute; top: 16px; left: 16px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; padding: 5px 14px; border-radius: 20px; font-size: 10px; font-weight: 700;">
                         {{ $p->categoria }}
                     </div>
@@ -135,7 +136,7 @@
                         @if(in_array($p->id, $proyectosAprobados))
                             <a href="{{ route('aprendiz.proyecto.detalle', $p->id) }}" class="btn-premium" style="padding: 10px 20px; font-size: 13px;">Gestionar</a>
                         @else
-                            <a href="{{ route('aprendiz.proyectos') }}" style="padding: 10px 20px; font-size: 13px; background: rgba(62,180,137,0.1); color: #3eb489; border-radius: 10px; font-weight: 700; text-decoration: none;">Detalles</a>
+                            <a href="{{ route('aprendiz.proyecto.detalle', $p->id) }}" style="padding: 10px 20px; font-size: 13px; background: rgba(62,180,137,0.1); color: #3eb489; border-radius: 10px; font-weight: 700; text-decoration: none;">Ver Detalle</a>
                         @endif
                     </div>
                 </div>

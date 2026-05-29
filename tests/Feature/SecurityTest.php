@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -13,6 +12,12 @@ use Illuminate\Support\Facades\Hash;
 class SecurityTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->setUpRoles();
+    }
 
     #[Test]
     public function guest_cannot_access_protected_routes()
@@ -34,23 +39,31 @@ class SecurityTest extends TestCase
     #[Test]
     public function user_cannot_access_other_role_dashboard()
     {
-        // 1. Crear un aprendiz
-        $usrId = DB::table('usuario')->insertGetId([
-            'usr_documento' => 111111,
-            'usr_correo'    => 'test_sec@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 1, // Aprendiz
+        $usrId = DB::table('usuarios')->insertGetId([
+            'numero_documento' => 111111,
+            'correo'           => 'test_sec@gmail.com',
+            'contrasena'       => Hash::make('password123'),
+            'rol_id'           => 1,
+            'created_at'       => now(),
+            'updated_at'       => now(),
+        ]);
+        DB::table('aprendices')->insert([
+            'usuario_id'         => $usrId,
+            'nombres'            => 'Test',
+            'apellidos'          => 'User',
+            'programa_formacion' => 'ADSO',
+            'activo'             => true,
+            'created_at'         => now(),
+            'updated_at'         => now(),
         ]);
 
-        // Intentar acceder a admin dashboard como aprendiz
         $response = $this->withSession([
             'usr_id' => $usrId,
-            'rol'    => 1
+            'rol'    => 1,
+            'nombre' => 'Test',
         ])->get(route('admin.dashboard'));
 
-        // El RolMiddleware debería redirigir de vuelta al dashboard del aprendiz
-        $response->assertStatus(302);
-        $response->assertRedirect(route('aprendiz.dashboard'));
+        $response->assertStatus(403);
     }
 
     #[Test]
@@ -95,12 +108,13 @@ class SecurityTest extends TestCase
     #[Test]
     public function registration_validation_fails_with_duplicate_email()
     {
-        // 1. Crear un usuario existente
-        DB::table('usuario')->insert([
-            'usr_documento' => 222222,
-            'usr_correo'    => 'duplicate@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 1,
+        DB::table('usuarios')->insert([
+            'numero_documento' => 222222,
+            'correo'           => 'duplicate@gmail.com',
+            'contrasena'       => Hash::make('password123'),
+            'rol_id'           => 1,
+            'created_at'       => now(),
+            'updated_at'       => now(),
         ]);
 
         $response = $this->post(route('registro.aprendiz.post'), [
@@ -108,7 +122,7 @@ class SecurityTest extends TestCase
             'apellido' => 'User',
             'documento' => '333333',
             'programa' => 'ADSO',
-            'correo' => 'duplicate@gmail.com', // Duplicado
+            'correo' => 'duplicate@gmail.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'terminos' => 'on'
@@ -120,17 +134,22 @@ class SecurityTest extends TestCase
     #[Test]
     public function deactivated_account_cannot_login()
     {
-        // 1. Crear usuario desactivado
-        $usrId = DB::table('usuario')->insertGetId([
-            'usr_documento' => 444444,
-            'usr_correo'    => 'deactivated@gmail.com',
-            'usr_contrasena'=> Hash::make('password123'),
-            'rol_id'        => 1,
+        $usrId = DB::table('usuarios')->insertGetId([
+            'numero_documento' => 444444,
+            'correo'           => 'deactivated@gmail.com',
+            'contrasena'       => Hash::make('password123'),
+            'rol_id'           => 1,
+            'created_at'       => now(),
+            'updated_at'       => now(),
         ]);
-        DB::table('aprendiz')->insert([
-            'usr_id' => $usrId,
-            'apr_nombre' => 'A', 'apr_apellido' => 'B', 'apr_programa' => 'P',
-            'apr_estado' => 0 // Desactivado
+        DB::table('aprendices')->insert([
+            'usuario_id'         => $usrId,
+            'nombres'            => 'A',
+            'apellidos'          => 'B',
+            'programa_formacion' => 'P',
+            'activo'             => false,
+            'created_at'         => now(),
+            'updated_at'         => now(),
         ]);
 
         $response = $this->post(route('login.post'), [
@@ -139,6 +158,6 @@ class SecurityTest extends TestCase
         ]);
 
         $response->assertSessionHas('error');
-        $this->assertStringContainsString('cuenta está desactivada', session('error'));
+        $this->assertStringContainsString('cuenta está pendiente de activación', session('error'));
     }
 }

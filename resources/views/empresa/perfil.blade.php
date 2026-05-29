@@ -23,6 +23,7 @@
     @vite(['resources/css/empresa.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('empresa.dashboard')], ['label' => 'Perfil']]; @endphp
 @section('content')
 @php
     $camposCompletos = 0;

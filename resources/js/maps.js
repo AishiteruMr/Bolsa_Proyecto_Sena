@@ -82,7 +82,7 @@ function initEditorMap(elementId, config) {
 function detectarUbicacion(btnId) {
     const btn = document.getElementById(btnId);
     if (!navigator.geolocation) {
-        alert('Tu navegador no soporta geolocalización.');
+        alert('Tu navegador no tiene geolocalización.');
         return;
     }
 
@@ -132,7 +132,7 @@ function detectarUbicacion(btnId) {
                 btn.innerHTML = '<i class="fas fa-location-arrow"></i> Sincronizar GPS';
                 btn.disabled = false;
             }
-            alert('No se pudo obtener la ubicación. Por favor, haz clic en el mapa manualmente.');
+            alert('No se pudo obtener tu ubicación. Haz clic en el mapa.');
         },
         { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -240,8 +240,8 @@ function detectUserLocation() {
 
             if (errorDiv) {
                 let mensaje = 'No se pudo detectar tu ubicación.';
-                if (error.code === 1) mensaje = 'Permiso denegado. Permite el acceso a ubicación en tu navegador.';
-                else if (error.code === 2) mensaje = 'Ubicación no disponible. Verifica tu GPS y conexión.';
+                if (error.code === 1) mensaje = 'Permiso denegado. Activa la ubicación en tu navegador.';
+                else if (error.code === 2) mensaje = 'Ubicación no disponible. Revisa tu GPS.';
                 else if (error.code === 3) mensaje = 'Tiempo agotado. Intenta de nuevo.';
                 errorDiv.innerText = mensaje;
                 errorDiv.style.display = 'block';

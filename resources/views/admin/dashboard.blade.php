@@ -11,6 +11,7 @@
     @include('admin.partials.sidebar-nav')
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio']]; @endphp
 @section('content')
     <div class="animate-fade-in">
         <div class="admin-header-master">

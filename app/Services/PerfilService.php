@@ -53,7 +53,7 @@ class PerfilService
                 }
             }
 
-            return [true, 'Perfil actualizado correctamente.'];
+            return [true, 'Perfil actualizado con éxito.'];
         } catch (\Exception $e) {
             return [false, 'Error al actualizar el perfil.'];
         }

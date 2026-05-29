@@ -27,6 +27,7 @@
     @vite(['resources/css/instructor.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('instructor.dashboard')], ['label' => 'Proyectos']]; @endphp
 @section('content')
 <div class="instructor-hero" style="padding: 40px 48px; margin-bottom: 32px;">
     <div class="instructor-hero-bg-icon"><i class="fas fa-project-diagram"></i></div>
@@ -43,7 +44,7 @@
     @forelse($proyectos as $p)
     <div class="instructor-catalog-card" style="background: rgba(255,255,255,0.9); border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s;">
         <div style="height: 180px; position: relative;">
-            <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
+            <img src="{{ $p->imagen_url }}" loading="lazy" alt="" style="width:100%; height:100%; object-fit:cover;">
             @php
                 $statusStyles = match($p->estado) {
                     'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
@@ -108,4 +109,10 @@
     </div>
     @endforelse
 </div>
+
+@if($proyectos->hasPages())
+    <div style="margin-top: 40px; display: flex; justify-content: center;">
+        {{ $proyectos->withQueryString()->links() }}
+    </div>
+@endif
 @endsection

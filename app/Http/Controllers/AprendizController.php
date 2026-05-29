@@ -29,7 +29,7 @@ class AprendizController extends Controller
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
 
         if (!$aprendiz) {
-            return redirect()->route('login')->with('error', 'No se encontro tu perfil de aprendiz.');
+            return redirect()->route('login')->with('error', 'Perfil de aprendiz no encontrado.');
         }
 
         $totalPostulaciones = $aprendiz->postulaciones()->count();
@@ -113,7 +113,7 @@ class AprendizController extends Controller
         $aprendiz = DB::table('aprendices')->where('usuario_id', $usrId)->first();
 
         if (!$aprendiz) {
-            return back()->with('error', 'No se encontro tu perfil de aprendiz.');
+            return back()->with('error', 'Perfil de aprendiz no encontrado.');
         }
 
         [$exito, $mensaje] = $this->postulacionService->crear($aprendiz->id, $id);
@@ -122,7 +122,7 @@ class AprendizController extends Controller
             return back()->with('error', $mensaje);
         }
 
-        return back()->with('success', 'Postulacion enviada. Revisa tu correo para la confirmacion.');
+        return back()->with('success', 'Postulación enviada. Revisa tu correo.');
     }
 
     public function postular(Request $request, int $id): RedirectResponse
@@ -147,7 +147,7 @@ class AprendizController extends Controller
         return view('aprendiz.postulaciones', compact('postulaciones'));
     }
 
-    public function historial(): View|RedirectResponse
+    public function historial(Request $request): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -156,11 +156,17 @@ class AprendizController extends Controller
             return redirect()->route('login')->with('error', 'No se encontro tu perfil de aprendiz.');
         }
 
-        $proyectos = Postulacion::where('aprendiz_id', $aprendiz->id)
+        $query = Postulacion::where('aprendiz_id', $aprendiz->id)
             ->with(['proyecto.empresa', 'proyecto.instructor'])
-            ->orderByDesc('fecha_postulacion')
-            ->get()
-            ->map(function ($postulacion) {
+            ->orderByDesc('fecha_postulacion');
+
+        $total = (clone $query)->count();
+        $aprobadas = (clone $query)->where('estado', 'aceptada')->count();
+        $pendientes = (clone $query)->where('estado', 'pendiente')->count();
+        $rechazadas = (clone $query)->where('estado', 'rechazada')->count();
+
+        $proyectos = $query->paginate($this->getPerPage($request, 10, 5, 30))
+            ->through(function ($postulacion) {
                 $proyecto = $postulacion->proyecto;
 
                 return (object) [
@@ -180,13 +186,15 @@ class AprendizController extends Controller
                     'instructor_nombre' => $proyecto->instructor
                         ? $proyecto->instructor->nombres.' '.$proyecto->instructor->apellidos
                         : 'No asignado',
+                    'oferta' => $proyecto->oferta,
+                    'oferta_otro' => $proyecto->oferta_otro,
                 ];
             });
 
-        return view('aprendiz.historial', compact('proyectos'));
+        return view('aprendiz.historial', compact('proyectos', 'total', 'aprobadas', 'pendientes', 'rechazadas'));
     }
 
-    public function misEntregas(): View|RedirectResponse
+    public function misEntregas(Request $request): View|RedirectResponse
     {
         $usrId = session('usr_id');
         $aprendiz = Aprendiz::where('usuario_id', $usrId)->first();
@@ -197,8 +205,9 @@ class AprendizController extends Controller
 
         $proyectos = Proyecto::whereHas('postulaciones', function ($q) use ($aprendiz) {
             $q->where('aprendiz_id', $aprendiz->id)->where('estado', 'aceptada');
-        })->with('empresa')->get()
-            ->map(function ($p) {
+        })->with('empresa')
+            ->paginate($this->getPerPage($request, 10, 5, 30))
+            ->through(function ($p) {
                 $p->emp_nombre = $p->empresa->nombre ?? 'No asignada';
                 return $p;
             });
@@ -221,37 +230,44 @@ class AprendizController extends Controller
             return redirect()->route('login')->with('error', 'No se encontro tu perfil de aprendiz.');
         }
 
-        $postulacion = Postulacion::where('aprendiz_id', $aprendiz->id)
-            ->where('proyecto_id', $proId)
-            ->where('estado', 'aceptada')
-            ->first();
-
-        if (!$postulacion) {
-            return back()->with('error', 'No tienes acceso a este proyecto.');
-        }
-
         $proyecto = Proyecto::with(['empresa', 'instructor'])->findOrFail($proId);
         $proyecto->emp_nombre = $proyecto->empresa->nombre ?? 'No asignada';
         $proyecto->instructor_nombre = $proyecto->instructor
             ? $proyecto->instructor->nombres.' '.$proyecto->instructor->apellidos
             : 'No asignado';
 
-        $etapas = $proyecto->etapasOrdenadas();
+        $postulacion = Postulacion::where('aprendiz_id', $aprendiz->id)
+            ->where('proyecto_id', $proId)
+            ->first();
 
-        $evidencias = $aprendiz->evidencias()
-            ->where('evidencias.proyecto_id', $proId)
-            ->with('etapa')
-            ->join('etapas', 'evidencias.etapa_id', '=', 'etapas.id')
-            ->select(
-                'evidencias.*',
-                'etapas.nombre as eta_nombre',
-                'etapas.orden as eta_orden'
-            )
-            ->orderBy('etapas.orden')
-            ->orderByDesc('evidencias.fecha_envio')
-            ->get();
+        if ($postulacion && $postulacion->estado === 'aceptada') {
+            $etapas = $proyecto->etapasOrdenadas();
 
-        return view('aprendiz.detalle-proyecto', compact('proyecto', 'etapas', 'evidencias', 'aprendiz'));
+            $evidencias = $aprendiz->evidencias()
+                ->where('evidencias.proyecto_id', $proId)
+                ->with('etapa')
+                ->join('etapas', 'evidencias.etapa_id', '=', 'etapas.id')
+                ->select(
+                    'evidencias.*',
+                    'etapas.nombre as eta_nombre',
+                    'etapas.orden as eta_orden'
+                )
+                ->orderBy('etapas.orden')
+                ->orderByDesc('evidencias.fecha_envio')
+                ->get();
+
+            return view('aprendiz.detalle-proyecto', compact('proyecto', 'etapas', 'evidencias', 'aprendiz'));
+        }
+
+        [$puedePostular, $mensaje] = $this->postulacionService->puedePostular($aprendiz->id, $proId);
+
+        return view('aprendiz.detalle-proyecto-publico', compact(
+            'proyecto',
+            'aprendiz',
+            'postulacion',
+            'puedePostular',
+            'mensaje'
+        ));
     }
 
     public function enviarEvidencia(EnviarEvidenciaRequest $request, int $proId, int $etaId): RedirectResponse
@@ -287,16 +303,16 @@ class AprendizController extends Controller
 
             $allowedExts = array_unique(array_merge(...array_map(fn($v) => (array) $v, array_values($allowedMimes))));
             if (!in_array($extension, $allowedExts)) {
-                return back()->with('error', 'Extension de archivo no permitida: .'.$extension);
+                return back()->with('error', 'Extensión no permitida: .'.$extension);
             }
 
             if (!isset($allowedMimes[$mime])) {
-                return back()->with('error', 'Tipo MIME no permitido: '.$mime);
+                return back()->with('error', 'Tipo de archivo no permitido.');
             }
 
             $validExts = is_array($allowedMimes[$mime]) ? $allowedMimes[$mime] : [$allowedMimes[$mime]];
             if (!in_array($extension, $validExts)) {
-                return back()->with('error', 'El archivo no coincide con su tipo MIME.');
+                return back()->with('error', 'El archivo no coincide con su formato.');
             }
 
             $fileService = new FileProcessingService();
@@ -324,7 +340,7 @@ class AprendizController extends Controller
             'updated_at' => now(),
         ]);
 
-        return back()->with('success', 'Evidencia enviada correctamente.');
+        return back()->with('success', 'Evidencia enviada.');
     }
 
     public function perfil(): View|RedirectResponse
@@ -361,6 +377,6 @@ class AprendizController extends Controller
 
         session(['nombre' => $request->nombre, 'apellido' => $request->apellido]);
 
-        return back()->with('success', 'Perfil actualizado correctamente.');
+        return back()->with('success', 'Perfil actualizado.');
     }
 }

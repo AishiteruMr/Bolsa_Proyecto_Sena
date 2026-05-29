@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ── Validation rules per field ──────────────────────────────────────
     const validators = {
         nombre: (v) => {
-            if (!v) return 'El nombre es obligatorio.';
+            if (!v) return 'Escribe tu nombre.';
             if (v.length < 2) return 'Mínimo 2 caracteres.';
             if (v.length > 50) return 'Máximo 50 caracteres.';
             if (!/^[a-zA-ZÀ-ÿÑñ\s.]+$/u.test(v)) return 'Solo letras y espacios.';
@@ -167,14 +167,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (words.length > 4) return 'Máximo 4 palabras.';
             for (const w of words) {
                 if (w[0] !== w[0].toUpperCase() || w[0] === w[0].toLowerCase()) {
-                    // check it's actually a letter
-                    if (/[a-zA-ZÀ-ÿÑñ]/.test(w[0])) return 'Mayúscula inicial en cada palabra.';
+                    if (/[a-zA-ZÀ-ÿÑñ]/.test(w[0])) return 'Mayúscula al inicio de cada palabra.';
                 }
             }
             return null;
         },
         apellido: (v) => {
-            if (!v) return 'El apellido es obligatorio.';
+            if (!v) return 'Escribe tu apellido.';
             if (v.length < 2) return 'Mínimo 2 caracteres.';
             if (v.length > 50) return 'Máximo 50 caracteres.';
             if (!/^[a-zA-ZÀ-ÿÑñ\s.]+$/u.test(v)) return 'Solo letras y espacios.';
@@ -182,57 +181,57 @@ document.addEventListener('DOMContentLoaded', function() {
             if (words.length > 4) return 'Máximo 4 palabras.';
             for (const w of words) {
                 if (w[0] !== w[0].toUpperCase() || w[0] === w[0].toLowerCase()) {
-                    if (/[a-zA-ZÀ-ÿÑñ]/.test(w[0])) return 'Mayúscula inicial en cada palabra.';
+                    if (/[a-zA-ZÀ-ÿÑñ]/.test(w[0])) return 'Mayúscula al inicio de cada palabra.';
                 }
             }
             return null;
         },
         documento: (v) => {
-            if (!v) return 'El documento es obligatorio.';
-            if (!/^\d+$/.test(v)) return 'Solo números (sin puntos ni espacios).';
+            if (!v) return 'Escribe tu documento.';
+            if (!/^\d+$/.test(v)) return 'Solo números.';
             if (v.length < 8 || v.length > 12) return 'Entre 8 y 12 dígitos.';
             return null;
         },
         programa: (v) => {
-            if (!v) return 'El programa es obligatorio.';
+            if (!v) return 'Escribe tu programa.';
             if (v.length < 5) return 'Mínimo 5 caracteres.';
             if (v.length > 150) return 'Máximo 150 caracteres.';
             return null;
         },
         especialidad: (v) => {
-            if (!v) return 'La especialidad es obligatoria.';
+            if (!v) return 'Escribe tu especialidad.';
             if (v.length < 5) return 'Mínimo 5 caracteres.';
             if (v.length > 150) return 'Máximo 150 caracteres.';
             return null;
         },
         nombre_empresa: (v) => {
-            if (!v) return 'El nombre de empresa es obligatorio.';
+            if (!v) return 'Escribe el nombre de la empresa.';
             if (v.length > 150) return 'Máximo 150 caracteres.';
             return null;
         },
         nit: (v) => {
-            if (!v) return 'El NIT es obligatorio.';
+            if (!v) return 'Escribe el NIT.';
             if (!/^\d+$/.test(v)) return 'Solo números.';
             if (v.length < 6 || v.length > 15) return 'Entre 6 y 15 dígitos.';
             return null;
         },
         representante: (v) => {
-            if (!v) return 'El representante es obligatorio.';
+            if (!v) return 'Escribe el representante.';
             if (v.length < 10) return 'Mínimo 10 caracteres.';
             if (v.length > 100) return 'Máximo 100 caracteres.';
             if (!/^[a-zA-ZÀ-ÿ\s]+$/u.test(v)) return 'Solo letras y espacios.';
             const words = v.trim().split(/\s+/).filter(Boolean);
-            if (words.length < 2) return 'Incluye nombre y apellido (mín. 2 palabras).';
+            if (words.length < 2) return 'Nombre y apellido (mín. 2 palabras).';
             return null;
         },
         correo: (v) => {
-            if (!v) return 'El correo es obligatorio.';
+            if (!v) return 'Escribe tu correo.';
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Correo no válido.';
             if (v.length > 255) return 'Máximo 255 caracteres.';
             return null;
         },
         password: (v) => {
-            if (!v) return null; // don't validate empty on blur for password
+            if (!v) return null;
             const checks = [];
             if (v.length < 8) checks.push('mín. 8 caracteres');
             if (!/[a-z]/.test(v)) checks.push('una minúscula');
@@ -245,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
         password_confirmation: (v) => {
             if (!v) return null;
             const pw = registroForm.querySelector('[name="password"]');
-            if (pw && pw.value && v !== pw.value) return 'Las contraseñas no coinciden.';
+            if (pw && pw.value && v !== pw.value) return 'Las contraseñas no son iguales.';
             return null;
         },
     };

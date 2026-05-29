@@ -807,7 +807,8 @@
 
 /* ── 1024px ─────────────────────────────────────── */
 @media (max-width: 1024px) {
-    div[style*="grid-template-columns: 2fr 1fr"]:not(.no-resp) {
+    div[style*="grid-template-columns: 2fr 1fr"]:not(.no-resp),
+    div[style*="grid-template-columns: 1.5fr 1fr"]:not(.no-resp) {
         grid-template-columns: 1fr !important;
     }
     div[style*="grid-template-columns: 1fr 1fr"]:not(.no-resp),
@@ -1059,6 +1060,18 @@
         grid-template-columns: 1fr !important;
     }
 
+    /* Sidebar cards with border-left accent */
+    .glass-card[style*="border-left: 4px solid"] {
+        flex-direction: row !important;
+        gap: 14px !important;
+        padding: 16px !important;
+    }
+
+    /* Description area grid */
+    div[style*="background: #f8fafc; border-radius: 14px; padding: 20px"] {
+        padding: 16px !important;
+    }
+
     /* Postulation card inner */
     div[style*="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap"] {
         justify-content: center !important;
@@ -1093,6 +1106,10 @@
         font-size: 14px !important;
     }
 
+    .glass-card[style*="display: flex; align-items: center; gap: 16px"] {
+        gap: 12px !important;
+        padding: 14px !important;
+    }
     .glass-card[style*="display: flex; align-items: center; gap: 20px"] {
         gap: 14px !important;
         padding: 18px !important;
@@ -1261,6 +1278,10 @@
         gap: 16px !important;
     }
 
+    .glass-card[style*="padding: 20px; display: flex; align-items: center; gap: 16px"] {
+        padding: 12px !important;
+        gap: 10px !important;
+    }
     .glass-card[style*="padding: 24px; display: flex; align-items: center; gap: 20px"] {
         padding: 14px !important;
     }
@@ -1272,6 +1293,11 @@
         width: 44px !important;
         height: 44px !important;
         font-size: 18px !important;
+    }
+    .glass-card div[style*="width: 44px; height: 44px"] {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 15px !important;
     }
 
     /* Postulation card image */

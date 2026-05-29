@@ -25,12 +25,12 @@ class ValidarLoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'correo.required' => 'El correo es obligatorio.',
-            'correo.email' => 'Ingresa un correo válido.',
-            'correo.max' => 'El correo no puede tener más de 255 caracteres.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.max' => 'La contraseña no puede exceder 100 caracteres.',
+            'correo.required' => 'Escribe tu correo.',
+            'correo.email' => 'Correo no válido.',
+            'correo.max' => 'Máximo 255 caracteres.',
+            'password.required' => 'Escribe tu contraseña.',
+            'password.min' => 'Mínimo 8 caracteres.',
+            'password.max' => 'Máximo 100 caracteres.',
         ];
     }
 }

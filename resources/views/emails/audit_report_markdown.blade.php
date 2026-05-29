@@ -1,7 +1,7 @@
 @component('mail::message')
-# Auditoría de Seguridad: Bolsa SENA
+# Auditor&iacute;a de Seguridad: Bolsa SENA
 
-## 📊 Resumen Ejecutivo
+## Resumen Ejecutivo
 @php
     $total = 0;
     $failed = 0;
@@ -19,7 +19,7 @@
     $roleFailed = array_filter($results, fn($r) => $r['result'] === '❌ FALLO');
 @endphp
 @if(count($roleFailed) > 0)
-## 🛡️ Hallazgos: Rol {{ $role ?? 'Invitado' }}
+## Hallazgos: Rol {{ $role ?? 'Invitado' }}
 
 | URI | Estado | Sugerencia |
 | :--- | :--- | :--- |
@@ -29,7 +29,7 @@
 @endif
 @endforeach
 @else
-✅ No se detectaron fallos de seguridad en esta ejecución.
+No se detectaron fallos de seguridad en esta ejecuci&oacute;n.
 @endif
 
 @component('mail::button', ['url' => config('app.url')])

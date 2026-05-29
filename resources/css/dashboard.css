@@ -757,3 +757,140 @@ body {
         font-size: 20px !important;
     }
 }
+
+/* ════════════════════════════════════════════════════════
+   SENA PAGINATION - Premium Design
+   ════════════════════════════════════════════════════════ */
+.sena-pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 0 8px;
+}
+
+.sena-pagination-info {
+    font-size: var(--text-sm);
+    color: var(--text-light);
+    font-weight: var(--font-medium);
+}
+
+.sena-pagination-info strong {
+    color: var(--text);
+    font-weight: var(--font-bold);
+}
+
+.sena-pagination-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    padding: 6px 8px;
+    border-radius: 16px;
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.sena-page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 12px;
+    font-size: var(--text-sm);
+    font-weight: var(--font-bold);
+    color: var(--text-light);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.sena-page i {
+    font-size: 12px;
+}
+
+.sena-page:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.sena-page:active {
+    transform: translateY(0);
+}
+
+.sena-page-active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    color: #fff;
+    box-shadow: 0 8px 16px -4px var(--primary-glow);
+    cursor: default;
+}
+
+.sena-page-active:hover {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    color: #fff;
+    transform: none;
+}
+
+.sena-page-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.sena-page-disabled:hover {
+    background: none;
+    color: var(--text-light);
+    transform: none;
+}
+
+@media (max-width: 640px) {
+    .sena-pagination {
+        gap: 12px;
+        padding: 16px 0 4px;
+    }
+
+    .sena-pagination-links {
+        padding: 4px 6px;
+        border-radius: 12px;
+        gap: 4px;
+    }
+
+    .sena-page {
+        min-width: 34px;
+        height: 34px;
+        font-size: var(--text-xs);
+        padding: 0 8px;
+        border-radius: 10px;
+    }
+
+    .sena-page i {
+        font-size: 10px;
+    }
+
+    .sena-pagination-info {
+        font-size: var(--text-xs);
+    }
+}
+
+@media (max-width: 480px) {
+    .sena-pagination-links {
+        padding: 3px 4px;
+        gap: 3px;
+    }
+
+    .sena-page {
+        min-width: 30px;
+        height: 30px;
+        font-size: 11px;
+        padding: 0 6px;
+        border-radius: 8px;
+    }
+}

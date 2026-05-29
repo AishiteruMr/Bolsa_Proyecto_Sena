@@ -17,6 +17,59 @@ class FileProcessingService
     }
 
     /**
+     * Optimizar imagen: redimensionar y comprimir
+     */
+    public function optimize(UploadedFile $file, int $maxWidth = 1920, int $quality = 80): string
+    {
+        $image = $this->imageManager->read($file->getRealPath());
+
+        $image->scaleDown(width: $maxWidth);
+
+        $path = 'proyectos/optimized_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension();
+        $fullPath = storage_path('app/public/' . $path);
+
+        $image->save($fullPath);
+
+        $this->compressImage($fullPath, $quality);
+
+        return $path;
+    }
+
+    /**
+     * Comprimir imagen según formato
+     */
+    private function compressImage(string $path, int $quality): void
+    {
+        $info = getimagesize($path);
+        if (!$info) return;
+
+        switch ($info['mime']) {
+            case 'image/jpeg':
+                $img = imagecreatefromjpeg($path);
+                if ($img) {
+                    imagejpeg($img, $path, $quality);
+                    imagedestroy($img);
+                }
+                break;
+            case 'image/png':
+                $pngQuality = (int) round((100 - $quality) / 10);
+                $img = imagecreatefrompng($path);
+                if ($img) {
+                    imagepng($img, $path, $pngQuality);
+                    imagedestroy($img);
+                }
+                break;
+            case 'image/webp':
+                $img = imagecreatefromwebp($path);
+                if ($img) {
+                    imagewebp($img, $path, $quality);
+                    imagedestroy($img);
+                }
+                break;
+        }
+    }
+
+    /**
      * Aplicar watermark a imagen
      */
     public function applyWatermark(UploadedFile $file, ?string $text = null): string
@@ -63,7 +116,7 @@ class FileProcessingService
         
         if ($scanPath === null) {
             Log::warning('ClamAV no está instalado en el servidor. Virus scanning omitido.');
-            return [true, 'ClamAV no disponible - escaneo omitido'];
+            return [true, 'Escaneo de virus no disponible'];
         }
 
         $output = [];
@@ -77,10 +130,10 @@ class FileProcessingService
         
         if ($returnVar === 1) {
             @unlink($path);
-            return [false, 'Virus detectado: ' . implode(' ', $output)];
+            return [false, 'Se detectó un virus en el archivo.'];
         }
         
-        return [false, 'Error en escaneo: ' . implode(' ', $output)];
+        return [false, 'Error al escanear el archivo.'];
     }
 
     /**
@@ -127,6 +180,9 @@ class FileProcessingService
         $applyWatermark = $options['watermark'] ?? true;
         $scanVirus = $options['scan_virus'] ?? true;
         $maxSize = $options['max_size'] ?? 5120; // 5MB por defecto
+        $optimize = $options['optimize'] ?? true;
+        $maxWidth = $options['max_width'] ?? 1920;
+        $quality = $options['quality'] ?? 80;
 
         // Validar tamaño
         if ($file->getSize() > $maxSize * 1024) {
@@ -142,17 +198,25 @@ class FileProcessingService
             }
         }
 
-        // Aplicar watermark si es imagen
-        $filename = null;
-        if ($this->isImage($file) && $applyWatermark) {
+        // Optimizar imagen (redimensionar y comprimir)
+        if ($this->isImage($file) && $optimize) {
+            try {
+                $filename = $this->optimize($file, $maxWidth, $quality);
+            } catch (\Exception $e) {
+                Log::error("Error optimizando imagen: " . $e->getMessage());
+                $filename = $file->storeAs($directory, 'imagen_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension(), 'public');
+            }
+        } else {
+            $filename = $file->storeAs($directory, 'archivo_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension(), 'public');
+        }
+
+        // Aplicar watermark si es imagen (después de optimizar)
+        if ($filename && $this->isImage($file) && $applyWatermark && !$optimize) {
             try {
                 $filename = $this->applyWatermark($file, $options['watermark_text'] ?? null);
             } catch (\Exception $e) {
                 Log::error("Error aplicando watermark: " . $e->getMessage());
-                $filename = $file->storeAs($directory, 'evidencia_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension(), 'public');
             }
-        } else {
-            $filename = $file->storeAs($directory, 'evidencia_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension(), 'public');
         }
 
         return $filename;

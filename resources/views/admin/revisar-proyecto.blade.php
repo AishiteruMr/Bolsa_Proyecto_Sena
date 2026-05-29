@@ -11,6 +11,7 @@
     @include('admin.partials.sidebar-nav')
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('admin.dashboard')], ['label' => 'Proyectos', 'url' => route('admin.proyectos')], ['label' => 'Revisar']]; @endphp
 @section('content')
 <div class="animate-fade-in" style="max-width: 1100px; margin: 0 auto;">
     <div style="margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between;">
@@ -120,7 +121,7 @@
                 @if($proyecto->imagen_url)
                 <div style="margin-top: 32px;">
                     <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Identidad Visual</label>
-                    <img src="{{ $proyecto->imagen_url }}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+                    <img src="{{ $proyecto->imagen_url }}" loading="lazy" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
                 </div>
                 @endif
             </div>
@@ -306,21 +307,31 @@
                                 <i class="fas fa-ban" style="margin-right: 10px;"></i> Rechazar Proyecto
                             </button>
                         </form>
-                    @else
-                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="estado" value="en_progreso">
-                            <button type="submit" class="btn-premium" style="width: 100%; background: #3b82f6; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(59,130,246,0.4);">
-                                <i class="fas fa-play-circle" style="margin-right: 10px;"></i> Iniciar Proyecto
-                            </button>
-                        </form>
-                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="estado" value="completado">
-                            <button type="submit" class="btn-premium" style="width: 100%; background: #8b5cf6; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(139,92,246,0.4);">
-                                <i class="fas fa-check-double" style="margin-right: 10px;"></i> Marcar Completado
-                            </button>
-                        </form>
+                    @elseif($proyecto->estado == 'aprobado')
+                        @if($proyecto->instructor_usuario_id)
+                            <div style="background: rgba(59,130,246,0.2); border: 1px solid rgba(59,130,246,0.4); border-radius: 12px; padding: 16px; margin-bottom: 8px; text-align: center;">
+                                <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #60a5fa; margin-bottom: 6px;"></i>
+                                <div style="font-weight: 800; font-size: 13px; color: #60a5fa;">Instructor Asignado</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px;">El proyecto pasará a <strong>En Progreso</strong> al iniciarse.</div>
+                            </div>
+                        @else
+                            <form action="{{ route('admin.proyectos.asignar', $proyecto->id) }}" method="POST">
+                                @csrf
+                                <div style="margin-bottom: 12px;">
+                                    <label style="display: block; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Asignar Instructor</label>
+                                    <select name="instructor_usuario_id" required style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 14px; font-weight: 600; outline: none;">
+                                        <option value="" disabled selected>Seleccione un instructor...</option>
+                                        @foreach($instructores as $instructor)
+                                            <option value="{{ $instructor->id }}" style="color: #000;">{{ $instructor->instructor->nombres }} {{ $instructor->instructor->apellidos }} - {{ $instructor->instructor->especialidad }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn-premium" style="width: 100%; background: #3b82f6; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(59,130,246,0.4);">
+                                    <i class="fas fa-user-plus" style="margin-right: 10px;"></i> Asignar e Iniciar Proyecto
+                                </button>
+                            </form>
+                        @endif
+                    @elseif($proyecto->estado == 'en_progreso')
                         <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Cerrar este proyecto? No se podrán recibir más postulaciones.');">
                             @csrf
                             <input type="hidden" name="estado" value="cerrado">
@@ -334,8 +345,10 @@
                 <p style="font-size: 11px; margin-top: 20px; opacity: 0.5; text-align: center; font-weight: 600; line-height: 1.5;">
                     @if($proyecto->estado == 'pendiente')
                         La aprobación activará la visibilidad pública y notificará a la empresa proponente.
-                    @else
-                        Gestione el ciclo de vida del proyecto una vez aprobado.
+                    @elseif($proyecto->estado == 'aprobado')
+                        Asigne un instructor para iniciar el proyecto. El estado cambiará a En Progreso automáticamente.
+                    @elseif($proyecto->estado == 'en_progreso')
+                        Cierre el proyecto cuando todas las etapas hayan sido completadas.
                     @endif
                 </p>
             </div>

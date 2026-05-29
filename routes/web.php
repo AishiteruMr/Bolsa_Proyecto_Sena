@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ExportController;
+
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\NotificacionController;
@@ -71,6 +72,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
     Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'leerTodas'])->name('notificaciones.leer_todas');
     Route::post('/notificaciones/{id}/leer', [NotificacionController::class, 'leer'])->name('notificaciones.leer');
+
 });
 
 /*
@@ -105,6 +107,7 @@ Route::middleware(['auth.custom', 'rol:3'])->prefix('empresa')->name('empresa.')
     Route::get('/proyectos', [EmpresaController::class, 'proyectos'])->name('proyectos');
     Route::get('/proyectos/crear', [EmpresaController::class, 'crearProyecto'])->name('proyectos.crear');
     Route::post('/proyectos', [EmpresaController::class, 'guardarProyecto'])->name('proyectos.store');
+    Route::get('/proyectos/{id}/detalle', [EmpresaController::class, 'verDetalle'])->name('proyectos.detalle')->middleware('ownership:proyecto,id');
     Route::get('/proyectos/{id}/editar', [EmpresaController::class, 'editarProyecto'])->name('proyectos.edit')->middleware('ownership:proyecto,id');
     Route::put('/proyectos/{id}', [EmpresaController::class, 'actualizarProyecto'])->name('proyectos.update')->middleware('ownership:proyecto,id');
     Route::delete('/proyectos/{id}', [EmpresaController::class, 'eliminarProyecto'])->name('proyectos.destroy')->middleware('ownership:proyecto,id');

@@ -7,6 +7,7 @@ use App\Http\Requests\GestionarPostulacionRequest;
 use App\Http\Requests\GestionarProyectoRequest;
 use App\Mail\PostulacionEstadoCambiado;
 use App\Models\Aprendiz;
+use App\Models\AuditLog;
 use App\Models\Empresa;
 use App\Models\Etapa;
 use App\Models\Evidencia;
@@ -33,7 +34,7 @@ class EmpresaController extends Controller
         $empresa = Empresa::where('nit', $nit)->first();
 
         if (! $empresa) {
-            return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
+            return redirect()->route('login')->with('error', 'Perfil de empresa no encontrado.');
         }
 
         // Obtener proyectos de la empresa (una sola consulta)
@@ -47,7 +48,7 @@ class EmpresaController extends Controller
 
         // Proyectos recientes con eager loading y conteo de postulaciones
         $proyectosRecientes = $empresa->proyectos()
-            ->with(['instructor'])
+            ->with(['instructor', 'postulaciones.aprendiz'])
             ->withCount('postulaciones')
             ->orderByDesc('id')
             ->limit(5)
@@ -73,10 +74,12 @@ class EmpresaController extends Controller
         $empresa = Empresa::where('nit', $nit)->first();
 
         if (! $empresa) {
-            return redirect()->route('login')->with('error', 'No se encontró el perfil de tu empresa.');
+            return redirect()->route('login')->with('error', 'Perfil de empresa no encontrado.');
         }
 
         $proyectos = $empresa->proyectos()
+            ->with('instructor')
+            ->withCount(['postulaciones', 'etapas', 'postulaciones as postulaciones_pendientes' => fn($q) => $q->where('estado', 'pendiente')])
             ->orderByDesc('id')
             ->paginate($this->getPerPage($request, 10, 5, 30));
 
@@ -111,7 +114,7 @@ class EmpresaController extends Controller
         $fallos = array_filter($calidad['detalles'], fn($d) => !$d['ok'] && !($d['opcional'] ?? false));
         if (count($fallos) > 0) {
             $mensajes = array_column($fallos, 'descripcion');
-            return back()->with('error', 'El proyecto no cumple los requisitos mínimos de calidad: '.implode(', ', $mensajes))->withInput();
+            return back()->with('error', 'El proyecto no cumple los requisitos mínimos de calidad.')->withInput();
         }
 
         $imagenUrl = null;
@@ -143,7 +146,7 @@ class EmpresaController extends Controller
         $duracion = 183;
         $fechaFinalizacion = $fechaPublicacion->copy()->addDays($duracion);
 
-        Proyecto::create([
+        $proyecto = Proyecto::create([
             'empresa_nit' => $nit,
             'titulo' => $request->titulo,
             'categoria' => $request->categoria,
@@ -160,7 +163,44 @@ class EmpresaController extends Controller
             'oferta_otro' => $request->oferta === 'otro' ? $request->oferta_otro : null,
         ]);
 
-        return redirect()->route('empresa.proyectos')->with('success', ' Proyecto enviado para revisión. Aparecerá como "Activo" una vez el administrador lo apruebe.');
+        AuditLog::registrar(session('usr_id'), 'publicar', 'proyectos', 'proyectos', $proyecto->id, null, ['nombre_objetivo' => $proyecto->titulo, 'empresa' => $empresa->nombre], "La empresa {$empresa->nombre} ha publicado un nuevo proyecto: {$proyecto->titulo}. Está pendiente de revisión administrativa.");
+
+        return redirect()->route('empresa.proyectos')->with('success', 'Proyecto enviado para revisión.');
+    }
+
+    public function verDetalle(Request $request, int $id): View
+    {
+        $nit = session('nit');
+        $proyecto = Proyecto::with(['instructor', 'empresa', 'etapas' => fn($q) => $q->orderBy('orden')])
+            ->withCount([
+                'postulaciones',
+                'etapas',
+                'postulaciones as postulaciones_pendientes' => fn($q) => $q->where('estado', 'pendiente'),
+                'postulaciones as postulaciones_aceptadas' => fn($q) => $q->where('estado', 'aceptada'),
+            ])
+            ->where('id', $id)
+            ->where('empresa_nit', $nit)
+            ->firstOrFail();
+
+        $postulantes = $proyecto->postulaciones()
+            ->with(['aprendiz.usuario'])
+            ->orderByDesc('fecha_postulacion')
+            ->limit(5)
+            ->get()
+            ->map(function ($p) {
+                return (object) [
+                    'id' => $p->id,
+                    'estado' => $p->estado,
+                    'fecha' => $p->fecha_postulacion,
+                    'nombre' => $p->aprendiz->nombres ?? '',
+                    'apellido' => $p->aprendiz->apellidos ?? '',
+                    'programa' => $p->aprendiz->programa_formacion ?? '',
+                    'correo' => optional($p->aprendiz->usuario)->correo ?? '',
+                ];
+            });
+
+        $etapas = $proyecto->etapas;
+        return view('empresa.detalle', compact('proyecto', 'postulantes', 'etapas'));
     }
 
     public function editarProyecto(int $id): View
@@ -235,7 +275,7 @@ class EmpresaController extends Controller
 
         $proyecto->update($datos);
 
-        return redirect()->route('empresa.proyectos')->with('success', 'Proyecto actualizado correctamente.');
+        return redirect()->route('empresa.proyectos')->with('success', 'Proyecto actualizado.');
     }
 
     public function eliminarProyecto(int $id): RedirectResponse
@@ -251,7 +291,7 @@ class EmpresaController extends Controller
             // Solo cerrar el proyecto (no eliminar)
             $proyecto->update(['estado' => 'cerrado']);
 
-            return redirect()->route('empresa.proyectos')->with('success', 'Proyecto cerrado correctamente. Ya no será visible para nuevos aprendices.');
+            return redirect()->route('empresa.proyectos')->with('success', 'Proyecto cerrado.');
         } catch (ModelNotFoundException $e) {
             return redirect()->route('empresa.proyectos')->with('error', 'Proyecto no encontrado.');
         } catch (\Exception $e) {
@@ -259,7 +299,7 @@ class EmpresaController extends Controller
         }
     }
 
-    public function verPostulantes(int $id): View
+    public function verPostulantes(Request $request, int $id): View
     {
         $nit = session('nit');
 
@@ -267,31 +307,46 @@ class EmpresaController extends Controller
             ->where('empresa_nit', $nit)
             ->firstOrFail();
 
-        // Obtener postulantes con relaciones eager loaded
-        $postulantes = $proyecto->postulaciones()
-            ->with(['aprendiz.usuario'])
-            ->orderByDesc('fecha_postulacion')
-            ->get()
-            ->map(function ($postulacion) {
+        $query = $proyecto->postulaciones()->with(['aprendiz.usuario']);
+
+        if ($request->filled('estado') && in_array($request->estado, ['pendiente', 'aceptada', 'rechazada', 'en_progreso'])) {
+            $query->where('estado', $request->estado);
+        }
+
+        $baseQuery = $proyecto->postulaciones();
+        $counts = [
+            'total'      => (clone $baseQuery)->count(),
+            'pendiente'  => (clone $baseQuery)->where('estado', 'pendiente')->count(),
+            'aceptada'   => (clone $baseQuery)->where('estado', 'aceptada')->count(),
+            'rechazada'  => (clone $baseQuery)->where('estado', 'rechazada')->count(),
+        ];
+
+        $postulantes = $query->orderByDesc('fecha_postulacion')
+            ->paginate($this->getPerPage($request, 10, 5, 30))
+            ->through(function ($postulacion) {
                 return (object) [
-                    'pos_id' => $postulacion->id,
-                    'pos_estado' => $postulacion->estado,
-                    'pos_fecha' => $postulacion->fecha_postulacion,
-                    'apr_nombre' => $postulacion->aprendiz->nombres,
+                    'pos_id'       => $postulacion->id,
+                    'pos_estado'   => $postulacion->estado,
+                    'pos_fecha'    => $postulacion->fecha_postulacion,
+                    'apr_id'       => $postulacion->aprendiz->id,
+                    'apr_nombre'   => $postulacion->aprendiz->nombres,
                     'apr_apellido' => $postulacion->aprendiz->apellidos,
                     'apr_programa' => $postulacion->aprendiz->programa_formacion,
-                    'usr_correo' => $postulacion->aprendiz->usuario->correo,
+                    'apr_activo'   => $postulacion->aprendiz->activo,
+                    'usr_correo'   => $postulacion->aprendiz->usuario->correo,
                 ];
             });
 
-        return view('empresa.postulantes', compact('proyecto', 'postulantes'));
+        $currentFilter = $request->estado;
+
+        return view('empresa.postulantes', compact('proyecto', 'postulantes', 'counts', 'currentFilter'));
     }
 
-    public function verParticipantes(int $id): View
+    public function verParticipantes(Request $request, int $id): View
     {
         $nit = session('nit');
 
-        $proyecto = Proyecto::with(['instructor', 'empresa'])
+        $proyecto = Proyecto::with(['instructor.usuario', 'empresa'])
             ->where('id', $id)
             ->where('empresa_nit', $nit)
             ->firstOrFail();
@@ -300,8 +355,8 @@ class EmpresaController extends Controller
         $aprendices = Postulacion::where('proyecto_id', $id)
             ->where('estado', 'aceptada')
             ->with(['aprendiz.usuario'])
-            ->get()
-            ->map(function ($post) {
+            ->paginate($this->getPerPage($request, 10, 5, 30))
+            ->through(function ($post) {
                 return (object) [
                     'apr_id' => $post->aprendiz->id,
                     'apr_nombre' => $post->aprendiz->nombres,
@@ -323,8 +378,7 @@ class EmpresaController extends Controller
 
         $proyecto = Proyecto::where('id', $id)
             ->where('empresa_nit', $nit)
-            ->where('estado', 'aprobado')
-            ->with(['instructor', 'empresa'])
+            ->with(['instructor.usuario', 'empresa'])
             ->firstOrFail();
 
         $etapas = Etapa::where('proyecto_id', $id)
@@ -370,6 +424,31 @@ class EmpresaController extends Controller
 
         $postulacion->update(['estado' => $estadoInput]);
 
+        // Invalidar otras postulaciones pendientes cuando es aceptado
+        $totalInvalidadas = 0;
+        if ($estadoInput === 'aceptada') {
+            $otrasPendientes = Postulacion::where('aprendiz_id', $postulacion->aprendiz_id)
+                ->where('id', '!=', $postulacion->id)
+                ->whereIn('estado', ['pendiente', 'en_revision'])
+                ->get();
+
+            foreach ($otrasPendientes as $otra) {
+                $otra->update(['estado' => 'rechazada']);
+                AuditLog::registrar(
+                    session('usr_id'),
+                    'invalidar_postulacion',
+                    'postulaciones',
+                    'postulaciones',
+                    $otra->id,
+                    null,
+                    ['proyecto_id' => $otra->proyecto_id, 'motivo' => 'Aceptado en otro proyecto'],
+                    "Postulación #{$otra->id} invalidada automáticamente porque el aprendiz fue aceptado en otro proyecto."
+                );
+            }
+
+            $totalInvalidadas = $otrasPendientes->count();
+        }
+
         // Send email notification to aprendiz
         try {
             $aprendiz = $postulacion->aprendiz;
@@ -378,14 +457,15 @@ class EmpresaController extends Controller
                 SendEmailJob::dispatch($usuarioCorreo, new PostulacionEstadoCambiado(
                     $aprendiz->nombres ?? 'Aprendiz',
                     $postulacion->proyecto,
-                    ucfirst($estadoInput)
+                    ucfirst($estadoInput),
+                    $totalInvalidadas
                 ));
             }
         } catch (\Exception $e) {
             Log::error('Error enviando email de estado postulación: '.$e->getMessage());
         }
 
-        return back()->with('success', 'Estado de postulación actualizado y aprendiz notificado.');
+        return back()->with('success', 'Estado de postulación actualizado.');
     }
 
     public function perfil(): View

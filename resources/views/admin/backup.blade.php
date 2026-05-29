@@ -394,6 +394,7 @@
     </style>
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('admin.dashboard')], ['label' => 'Backup']]; @endphp
 @section('content')
 <div class="animate-fade-in">
 

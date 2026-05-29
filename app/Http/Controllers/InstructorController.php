@@ -9,6 +9,7 @@ use App\Http\Requests\GestionarPostulacionRequest;
 use App\Mail\NuevaEtapaCreada;
 use App\Mail\PostulacionEstadoCambiado;
 use App\Models\Aprendiz;
+use App\Models\AuditLog;
 use App\Models\Etapa;
 use App\Models\Evidencia;
 use App\Models\Instructor;
@@ -37,7 +38,7 @@ class InstructorController extends Controller
         $instructor = Instructor::where('usuario_id', $usrId)->first();
 
         if (! $instructor) {
-            return redirect()->route('login')->with('error', 'No se encontró tu perfil de instructor.');
+            return redirect()->route('login')->with('error', 'Perfil de instructor no encontrado.');
         }
 
         $proyectoIds = Proyecto::where('instructor_usuario_id', $usrId)
@@ -83,14 +84,14 @@ class InstructorController extends Controller
         ));
     }
 
-    public function proyectos(): View
+    public function proyectos(Request $request): View
     {
         $usrId = session('usr_id');
         $proyectos = Proyecto::where('instructor_usuario_id', $usrId)
             ->whereIn('estado', ['aprobado', 'en_progreso'])
             ->with('empresa')
             ->orderByDesc('id')
-            ->get();
+            ->paginate($this->getPerPage($request, 9, 5, 30));
 
         return view('instructor.proyectos', compact('proyectos'));
     }
@@ -121,7 +122,7 @@ class InstructorController extends Controller
         $instructor = Instructor::where('usuario_id', $usrId)->first();
 
         if (! $instructor) {
-            return redirect()->route('login')->with('error', 'No se encontró tu perfil de instructor.');
+            return redirect()->route('login')->with('error', 'Perfil de instructor no encontrado.');
         }
 
         $usuario = User::findOrFail($usrId);
@@ -177,7 +178,7 @@ class InstructorController extends Controller
     }
 
     // ── HISTORIAL DE PROYECTOS ──
-    public function historial(): View
+    public function historial(Request $request): View
     {
         $usrId = session('usr_id');
 
@@ -185,8 +186,8 @@ class InstructorController extends Controller
         $proyectos = Proyecto::where('instructor_usuario_id', $usrId)
             ->with(['empresa', 'postulaciones'])
             ->orderByDesc('fecha_publicacion')
-            ->get()
-            ->map(function ($proyecto) {
+            ->paginate($this->getPerPage($request, 10, 5, 30))
+            ->through(function ($proyecto) {
                 $totalAprendices = $proyecto->postulaciones->count();
                 $aprendicesAprobados = $proyecto->postulaciones
                     ->where('estado', 'aceptada')
@@ -297,6 +298,30 @@ class InstructorController extends Controller
 
         $postulacion->update(['estado' => $estadoInput]);
 
+        // Invalidar otras postulaciones pendientes cuando es aceptado
+        if ($estadoInput === 'aceptada') {
+            $otrasPendientes = Postulacion::where('aprendiz_id', $postulacion->aprendiz_id)
+                ->where('id', '!=', $postulacion->id)
+                ->whereIn('estado', ['pendiente', 'en_revision'])
+                ->get();
+
+            foreach ($otrasPendientes as $otra) {
+                $otra->update(['estado' => 'rechazada']);
+                AuditLog::registrar(
+                    $usrId,
+                    'invalidar_postulacion',
+                    'postulaciones',
+                    'postulaciones',
+                    $otra->id,
+                    null,
+                    ['proyecto_id' => $otra->proyecto_id, 'motivo' => 'Aceptado en otro proyecto'],
+                    "Postulación #{$otra->id} invalidada automáticamente porque el aprendiz fue aceptado en otro proyecto."
+                );
+            }
+
+            $totalInvalidadas = $otrasPendientes->count();
+        }
+
         // Enviar correo al aprendiz si se aprueba o rechaza
         if (in_array($estadoInput, ['aceptada', 'rechazada'])) {
             try {
@@ -304,12 +329,15 @@ class InstructorController extends Controller
                 $proyecto = $postulacion->proyecto;
 
                 if ($aprendiz && $proyecto) {
+                    $otrasPendientes = $totalInvalidadas ?? 0;
+
                     // Display: "Aprobada" for user, but save "aceptada" to DB
                     $displayEstado = $estadoInput === 'aceptada' ? 'Aprobada' : ucfirst($estadoInput);
                     SendEmailJob::dispatch($aprendiz->usuario->correo, new PostulacionEstadoCambiado(
                         $aprendiz->nombres,
                         $proyecto,
-                        $displayEstado
+                        $displayEstado,
+                        $otrasPendientes
                     ));
                 }
             } catch (\Exception $e) {
@@ -317,7 +345,7 @@ class InstructorController extends Controller
             }
         }
 
-        return back()->with('success', 'Estado de postulación actualizado correctamente.');
+        return back()->with('success', 'Estado de postulación actualizado.');
     }
 
     // ✅ MÉTODO PARA CREAR ETAPA
@@ -356,7 +384,7 @@ class InstructorController extends Controller
             }
         }
 
-        return back()->with('success', 'Etapa creada correctamente.');
+        return back()->with('success', 'Etapa creada.');
     }
 
     // ✅ MÉTODO PARA EDITAR ETAPA
@@ -375,7 +403,7 @@ class InstructorController extends Controller
             'descripcion' => $request->descripcion,
         ]);
 
-        return back()->with('success', 'Etapa actualizada correctamente.');
+        return back()->with('success', 'Etapa actualizada.');
     }
 
     // ✅ MÉTODO PARA ELIMINAR ETAPA
@@ -391,7 +419,7 @@ class InstructorController extends Controller
 
         $etapa->delete();
 
-        return back()->with('success', 'Etapa eliminada correctamente.');
+        return back()->with('success', 'Etapa eliminada.');
     }
 
     // ✅ MÉTODO PARA SUBIR DOCUMENTO/GUÍA A ETAPA
@@ -440,7 +468,7 @@ class InstructorController extends Controller
             }
         }
 
-        return back()->with('success', 'Documento subido correctamente.');
+        return back()->with('success', 'Documento subido.');
     }
 
     // ✅ MÉTODO PARA SUBIR ESTRUCTURA DEL PROYECTO (MAPA DE RUTA)
@@ -482,7 +510,7 @@ class InstructorController extends Controller
             $proyecto->update(['url_estructura' => $path]);
         }
 
-        return back()->with('success', 'Estructura del proyecto subida correctamente.');
+        return back()->with('success', 'Estructura subida.');
     }
 
     // ✅ MÉTODO PARA ELIMINAR ESTRUCTURA DEL PROYECTO
@@ -499,7 +527,7 @@ class InstructorController extends Controller
             $proyecto->update(['url_estructura' => null]);
         }
 
-        return back()->with('success', 'Estructura eliminada correctamente.');
+        return back()->with('success', 'Estructura eliminada.');
     }
 
     // ✅ MÉTODO PARA SUBIR IMAGEN AL PROYECTO
@@ -535,7 +563,7 @@ class InstructorController extends Controller
 
             $proyecto->update(['imagen_url' => $imagenUrl]);
 
-            return back()->with('success', 'Imagen del proyecto actualizada correctamente.');
+            return back()->with('success', 'Imagen actualizada.');
         }
 
         return back()->with('error', 'No se pudo guardar la imagen.');
@@ -559,7 +587,7 @@ class InstructorController extends Controller
             ->orderBy('etapas.orden')
             ->orderByDesc('evidencias.fecha_envio')
             ->select('evidencias.*')
-            ->get();
+            ->paginate(10);
 
         return view('instructor.evidencias', compact('proyecto', 'evidencias'));
     }
@@ -602,6 +630,6 @@ class InstructorController extends Controller
             Log::error('Error al notificar calificación de evidencia: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
         }
 
-        return back()->with('success', 'Evidencia calificada correctamente.');
+        return back()->with('success', 'Evidencia calificada.');
     }
 }

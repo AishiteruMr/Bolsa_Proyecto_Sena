@@ -8,23 +8,11 @@ use Illuminate\Support\Facades\Hash;
 
 class AprendizService
 {
-    /**
-     * Obtener aprendiz por usuario ID
-     *
-     * @param  int  $usuarioId
-     * @return Aprendiz|null
-     */
     public function obtenerPorUsuario(int $usuarioId): ?Aprendiz
     {
-        return Aprendiz::where('usr_id', $usuarioId)->first();
+        return Aprendiz::where('usuario_id', $usuarioId)->first();
     }
 
-    /**
-     * Obtener información completa del aprendiz
-     *
-     * @param  int  $aprendizId
-     * @return array
-     */
     public function obtenerInformacion(int $aprendizId): array
     {
         $aprendiz = Aprendiz::find($aprendizId);
@@ -43,12 +31,6 @@ class AprendizService
         ];
     }
 
-    /**
-     * Obtener estadísticas del aprendiz
-     *
-     * @param  int  $aprendizId
-     * @return array
-     */
     public function obtenerEstadisticas(int $aprendizId): array
     {
         $aprendiz = Aprendiz::with('evidencias')->find($aprendizId);
@@ -65,22 +47,12 @@ class AprendizService
             'postulacionesPendientes' => $aprendiz->postulacionesPendientes()->count(),
             'postulacionesRechazadas' => $aprendiz->postulacionesRechazadas()->count(),
             'totalEvidencias' => $evidencias->count(),
-            'evidenciasAprobadas' => $evidencias->where('evid_estado', 'Aprobada')->count(),
-            'evidenciasPendientes' => $evidencias->where('evid_estado', 'Pendiente')->count(),
-            'evidenciasRechazadas' => $evidencias->where('evid_estado', 'Rechazada')->count(),
+            'evidenciasAprobadas' => $evidencias->where('estado', 'aceptada')->count(),
+            'evidenciasPendientes' => $evidencias->where('estado', 'pendiente')->count(),
+            'evidenciasRechazadas' => $evidencias->where('estado', 'rechazada')->count(),
         ];
     }
 
-    /**
-     * Actualizar perfil del aprendiz
-     *
-     * @param  int  $aprendizId
-     * @param  string  $nombre
-     * @param  string  $apellido
-     * @param  string  $programa
-     * @param  string|null  $contrasena
-     * @return bool
-     */
     public function actualizarPerfil(
         int $aprendizId,
         string $nombre,
@@ -95,19 +67,17 @@ class AprendizService
                 return false;
             }
 
-            // Actualizar aprendiz
             $aprendiz->update([
-                'apr_nombre'   => $nombre,
-                'apr_apellido' => $apellido,
-                'apr_programa' => $programa,
+                'nombres'            => $nombre,
+                'apellidos'          => $apellido,
+                'programa_formacion' => $programa,
             ]);
 
-            // Actualizar contraseña si se proporciona
             if ($contrasena) {
                 $usuario = $aprendiz->usuario;
                 if ($usuario) {
                     $usuario->update([
-                        'usr_contrasena' => Hash::make($contrasena),
+                        'contrasena' => Hash::make($contrasena),
                     ]);
                 }
             }
@@ -118,71 +88,37 @@ class AprendizService
         }
     }
 
-    /**
-     * Obtener proyectos aprobados del aprendiz
-     *
-     * @param  int  $aprendizId
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
     public function obtenerProyectosAprobados(int $aprendizId)
     {
         return Aprendiz::find($aprendizId)
             ?->proyectosAprobados()
-            ->get() ?? collect();
+            ?? collect();
     }
 
-    /**
-     * Obtener proyectos postulados del aprendiz
-     *
-     * @param  int  $aprendizId
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
     public function obtenerProyectosPostulados(int $aprendizId)
     {
         return Aprendiz::find($aprendizId)
             ?->proyectosPostulados()
-            ->get() ?? collect();
+            ?? collect();
     }
 
-    /**
-     * Verificar si el aprendiz está activo
-     *
-     * @param  int  $aprendizId
-     * @return bool
-     */
     public function estaActivo(int $aprendizId): bool
     {
         $aprendiz = Aprendiz::find($aprendizId);
         return $aprendiz ? $aprendiz->isActivo() : false;
     }
 
-    /**
-     * Obtener nombre completo del aprendiz
-     *
-     * @param  int  $aprendizId
-     * @return string
-     */
     public function obtenerNombreCompleto(int $aprendizId): string
     {
         $aprendiz = Aprendiz::find($aprendizId);
         return $aprendiz ? $aprendiz->getFullNameAttribute() : '';
     }
 
-    /**
-     * Obtener todos los aprendices activos
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
     public function obtenerActivos()
     {
         return Aprendiz::activos()->get();
     }
 
-    /**
-     * Contar aprendices activos
-     *
-     * @return int
-     */
     public function contarActivos(): int
     {
         return Aprendiz::activos()->count();

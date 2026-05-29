@@ -31,8 +31,10 @@
 </style>
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('empresa.dashboard')], ['label' => 'Proyectos', 'url' => route('empresa.proyectos')], ['label' => 'Etapas']]; @endphp
 @section('content')
 <div style="max-width: 1200px; margin: 0 auto;">
+
     <div class="rep-header" style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">

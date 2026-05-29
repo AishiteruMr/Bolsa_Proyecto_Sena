@@ -17,7 +17,8 @@ class PostulacionEstadoCambiado extends Mailable
     public function __construct(
         public string $aprendizNombre,
         public object $proyecto,
-        public string $nuevoEstado
+        public string $nuevoEstado,
+        public int $otrasPendientes = 0
     ) {
         $this->proyectoTitulo = $proyecto->pro_titulo_proyecto ?? $proyecto->titulo ?? 'Proyecto';
     }

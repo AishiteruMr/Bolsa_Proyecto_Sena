@@ -27,6 +27,7 @@
     @vite(['resources/css/instructor.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('instructor.dashboard')], ['label' => 'Aprendices']]; @endphp
 @section('content')
 <div class="instructor-hero" style="padding: 40px 48px; margin-bottom: 32px;">
     <div class="instructor-hero-bg-icon"><i class="fas fa-users"></i></div>

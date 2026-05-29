@@ -30,6 +30,7 @@
     @vite(['resources/css/aprendiz.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('aprendiz.dashboard')], ['label' => 'Explorar Proyectos']]; @endphp
 @section('content')
 <div style="max-width: 1200px; margin: 0 auto; padding-bottom: 60px;">
     
@@ -129,7 +130,7 @@
             @foreach($proyectos as $p)
                 <div style="background: white; border-radius: 24px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 40px rgba(62,180,137,0.15)'" onmouseout="this.style.transform='none'; this.style.boxShadow='none'">
                     <div style="height: 200px; position: relative;">
-                        <img src="{{ $p->imagen_url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
+                        <img src="{{ $p->imagen_url }}" loading="lazy" alt="" style="width:100%; height:100%; object-fit:cover;">
                         <div style="position: absolute; top: 16px; left: 16px; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700;">
                             {{ $p->categoria }}
                         </div>

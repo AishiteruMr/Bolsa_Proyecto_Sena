@@ -10,7 +10,6 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Roles base del sistema
         $this->call(RoleSeeder::class);
 
         $adminRoleId      = DB::table('roles')->where('nombre', 'administrador')->value('id');
@@ -18,118 +17,105 @@ class DatabaseSeeder extends Seeder
         $instructorRoleId = DB::table('roles')->where('nombre', 'instructor')->value('id');
         $apprenticeRoleId = DB::table('roles')->where('nombre', 'aprendiz')->value('id');
 
-// 2. Administrador
-        $adminUserId = DB::table('usuarios')->where('correo', 'geniszully@gmail.com')->value('id');
-        if (!$adminUserId) {
-            $adminUserId = DB::table('usuarios')->insertGetId([
-                'numero_documento' => 1043277456,
-                'correo'           => 'geniszully@gmail.com',
-                'contrasena'       => Hash::make('Admin123@'),
-                'rol_id'           => $adminRoleId,
+        $credentials = [];
+
+        $admins = [
+            ['doc' => 1043277456, 'email' => 'geniszully@gmail.com', 'pass' => 'Admin123@', 'name' => 'Admin', 'last' => 'SENA'],
+        ];
+        foreach ($admins as $a) {
+            $uid = $this->ensureUser($a['doc'], $a['email'], $a['pass'], $adminRoleId);
+            $this->ensureProfile('administradores', ['usuario_id' => $uid, 'nombres' => $a['name'], 'apellidos' => $a['last'], 'activo' => true]);
+            $credentials[] = "   -> {$a['email']} / {$a['pass']}";
+        }
+
+        $companies = [
+            ['doc' => 12345475784, 'email' => 'camilopineda182@gmail.com', 'pass' => 'Camilo123@', 'name' => 'Cristian Padilla', 'rep' => 'Cristian Padilla', 'contact' => 'camilopineda182@gmail.com', 'loc' => 'Bogotá D.C., Colombia', 'lat' => 4.711, 'lng' => -74.0721],
+            ['doc' => 9012345678, 'email' => 'contacto@techsolutions.co', 'pass' => 'Tech123@', 'name' => 'TechSolutions Colombia SAS', 'rep' => 'Carlos Mendoza', 'contact' => 'contacto@techsolutions.co', 'loc' => 'Medellín, Colombia', 'lat' => 6.2476, 'lng' => -75.5658],
+            ['doc' => 9012345679, 'email' => 'info@disenastudio.co', 'pass' => 'Disena123@', 'name' => 'DiseñaStudio Creativo', 'rep' => 'María Fernández', 'contact' => 'info@disenastudio.co', 'loc' => 'Cali, Colombia', 'lat' => 3.4516, 'lng' => -76.5319],
+            ['doc' => 9012345680, 'email' => 'proyectos@ingepro.co', 'pass' => 'Inge123@', 'name' => 'IngeProyectos LTDA', 'rep' => 'Roberto Vega', 'contact' => 'proyectos@ingepro.co', 'loc' => 'Barranquilla, Colombia', 'lat' => 10.9685, 'lng' => -74.7813],
+        ];
+        foreach ($companies as $c) {
+            $uid = $this->ensureUser($c['doc'], $c['email'], $c['pass'], $companyRoleId);
+            $this->ensureProfile('empresas', [
+                'nit' => $c['doc'], 'usuario_id' => $uid, 'nombre' => $c['name'],
+                'representante' => $c['rep'], 'correo_contacto' => $c['contact'],
+                'ubicacion' => $c['loc'], 'latitud' => $c['lat'], 'longitud' => $c['lng'], 'activo' => true,
+            ], 'nit');
+            $credentials[] = "   -> {$c['email']} / {$c['pass']}";
+        }
+
+        $instructors = [
+            ['doc' => 20123, 'email' => 'sherelynrocha939@gmail.com', 'pass' => 'Sherelyn123@', 'name' => 'Sherelyn', 'last' => 'Rocha', 'spec' => 'Desarrollo de Software'],
+            ['doc' => 30123, 'email' => 'carlos.mendoza@sena.edu.co', 'pass' => 'Carlos123@', 'name' => 'Carlos', 'last' => 'Mendoza', 'spec' => 'Redes y Telecomunicaciones'],
+            ['doc' => 40123, 'email' => 'andrea.patino@sena.edu.co', 'pass' => 'Andrea123@', 'name' => 'Andrea', 'last' => 'Patiño', 'spec' => 'Diseño Gráfico y Multimedia'],
+            ['doc' => 50123, 'email' => 'roberto.vega@sena.edu.co', 'pass' => 'Roberto123@', 'name' => 'Roberto', 'last' => 'Vega', 'spec' => 'Electricidad Industrial'],
+        ];
+        foreach ($instructors as $i) {
+            $uid = $this->ensureUser($i['doc'], $i['email'], $i['pass'], $instructorRoleId);
+            $this->ensureProfile('instructores', [
+                'usuario_id' => $uid, 'nombres' => $i['name'], 'apellidos' => $i['last'],
+                'especialidad' => $i['spec'], 'activo' => true, 'disponibilidad' => 'disponible',
+            ]);
+            $credentials[] = "   -> {$i['email']} / {$i['pass']}";
+        }
+
+        $apprentices = [
+            ['doc' => 1016555423, 'email' => 'liyen_sanjuan@soy.sena.edu.co', 'pass' => 'Liyen123@', 'name' => 'Liyen', 'last' => 'San Juan', 'prog' => 'Análisis y Desarrollo de Software'],
+            ['doc' => 1016555424, 'email' => 'juan_perez@soy.sena.edu.co', 'pass' => 'Juan123@', 'name' => 'Juan', 'last' => 'Pérez', 'prog' => 'Análisis y Desarrollo de Software'],
+            ['doc' => 1016555425, 'email' => 'maria_garcia@soy.sena.edu.co', 'pass' => 'Maria123@', 'name' => 'María', 'last' => 'García', 'prog' => 'Diseño Gráfico'],
+            ['doc' => 1016555426, 'email' => 'carlos_lopez@soy.sena.edu.co', 'pass' => 'Carlos123@', 'name' => 'Carlos', 'last' => 'López', 'prog' => 'Análisis y Desarrollo de Software'],
+            ['doc' => 1016555427, 'email' => 'ana_martinez@soy.sena.edu.co', 'pass' => 'Ana123@', 'name' => 'Ana', 'last' => 'Martínez', 'prog' => 'Gestión Empresarial'],
+            ['doc' => 1016555428, 'email' => 'pedro_ramirez@soy.sena.edu.co', 'pass' => 'Pedro123@', 'name' => 'Pedro', 'last' => 'Ramírez', 'prog' => 'Electricidad Industrial'],
+            ['doc' => 1016555429, 'email' => 'laura_torres@soy.sena.edu.co', 'pass' => 'Laura123@', 'name' => 'Laura', 'last' => 'Torres', 'prog' => 'Análisis y Desarrollo de Software'],
+            ['doc' => 1016555430, 'email' => 'diego_sanchez@soy.sena.edu.co', 'pass' => 'Diego123@', 'name' => 'Diego', 'last' => 'Sánchez', 'prog' => 'Marketing Digital'],
+            ['doc' => 1016555431, 'email' => 'valentina_ortiz@soy.sena.edu.co', 'pass' => 'Vale123@', 'name' => 'Valentina', 'last' => 'Ortiz', 'prog' => 'Diseño Gráfico'],
+            ['doc' => 1016555432, 'email' => 'santiago_morales@soy.sena.edu.co', 'pass' => 'Santiago123@', 'name' => 'Santiago', 'last' => 'Morales', 'prog' => 'Análisis y Desarrollo de Software'],
+        ];
+        foreach ($apprentices as $ap) {
+            $uid = $this->ensureUser($ap['doc'], $ap['email'], $ap['pass'], $apprenticeRoleId);
+            $this->ensureProfile('aprendices', [
+                'usuario_id' => $uid, 'nombres' => $ap['name'], 'apellidos' => $ap['last'],
+                'programa_formacion' => $ap['prog'], 'activo' => true,
+            ]);
+            $credentials[] = "   -> {$ap['email']} / {$ap['pass']}";
+        }
+
+        $this->call(ProjectSeeder::class);
+        $this->call(PostulacionSeeder::class);
+        $this->call(EtapaSeeder::class);
+
+        $this->command->info('Datos de ejemplo insertados correctamente.');
+        foreach ($credentials as $line) {
+            $this->command->info($line);
+        }
+    }
+
+    private function ensureUser($numDoc, $correo, $pass, $rolId): int
+    {
+        $id = DB::table('usuarios')->where('correo', $correo)->value('id');
+        if (!$id) {
+            $id = DB::table('usuarios')->insertGetId([
+                'numero_documento'  => $numDoc,
+                'correo'            => $correo,
+                'contrasena'        => Hash::make($pass),
+                'rol_id'            => $rolId,
                 'email_verified_at' => now(),
-                'created_at'       => now(),
-                'updated_at'      => now(),
+                'created_at'        => now(),
+                'updated_at'        => now(),
             ]);
         }
-        $admin = DB::table('administradores')->where('usuario_id', $adminUserId)->first();
-        if (!$admin) {
-            DB::table('administradores')->insert([
-                'usuario_id' => $adminUserId,
-                'nombres' => 'Admin',
-                'apellidos' => 'SENA',
-                'activo' => true,
+        return $id;
+    }
+
+    private function ensureProfile(string $table, array $data, string $lookupKey = 'usuario_id'): void
+    {
+        $value = $data[$lookupKey] ?? null;
+        $exists = $value ? DB::table($table)->where($lookupKey, $value)->exists() : false;
+        if (!$exists) {
+            DB::table($table)->insert(array_merge($data, [
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]);
+            ]));
         }
-
-// 3. Empresa
-        $companyUserId = DB::table('usuarios')->where('correo', 'camilopineda182@gmail.com')->value('id');
-        if (!$companyUserId) {
-            $companyUserId = DB::table('usuarios')->insertGetId([
-                'numero_documento' => 12345475784,
-                'correo'           => 'camilopineda182@gmail.com',
-                'contrasena'       => Hash::make('Camilo123@'),
-                'rol_id'           => $companyRoleId,
-                'email_verified_at' => now(),
-                'created_at'       => now(),
-                'updated_at'      => now(),
-            ]);
-        }
-        $empresa = DB::table('empresas')->where('nit', 12345475784)->first();
-        if (!$empresa) {
-            DB::table('empresas')->insert([
-                'nit'            => 12345475784,
-                'usuario_id'      => $companyUserId,
-                'nombre'          => 'Cristian Padilla',
-                'representante'   => 'Representante Legal',
-                'correo_contacto' => 'camilopineda182@gmail.com',
-                'activo'          => true,
-                'created_at'      => now(),
-                'updated_at'      => now(),
-            ]);
-        }
-
-// 4. Instructor
-        $instructorUserId = DB::table('usuarios')->where('correo', 'sherelynrocha939@gmail.com')->value('id');
-        if (!$instructorUserId) {
-            $instructorUserId = DB::table('usuarios')->insertGetId([
-                'numero_documento' => 20123,
-                'correo'           => 'sherelynrocha939@gmail.com',
-                'contrasena'       => Hash::make('Sherelyn123@'),
-                'rol_id'           => $instructorRoleId,
-                'email_verified_at' => now(),
-                'created_at'       => now(),
-                'updated_at'      => now(),
-            ]);
-        }
-        $instructor = DB::table('instructores')->where('usuario_id', $instructorUserId)->first();
-        if (!$instructor) {
-            DB::table('instructores')->insert([
-                'usuario_id'    => $instructorUserId,
-                'nombres'        => 'Sherelyn',
-                'apellidos'      => 'Rocha',
-                'especialidad'   => 'Desarrollo de Software',
-                'activo'         => true,
-                'disponibilidad' => 'disponible',
-                'created_at'     => now(),
-                'updated_at'      => now(),
-            ]);
-        }
-
-// 5. Aprendiz
-        $apprenticeUserId = DB::table('usuarios')->where('correo', 'liyen_sanjuan@soy.sena.edu.co')->value('id');
-        if (!$apprenticeUserId) {
-            $apprenticeUserId = DB::table('usuarios')->insertGetId([
-                'numero_documento' => 1016555423,
-                'correo'           => 'liyen_sanjuan@soy.sena.edu.co',
-                'contrasena'       => Hash::make('Liyen123@'),
-                'rol_id'           => $apprenticeRoleId,
-                'email_verified_at' => now(),
-                'created_at'       => now(),
-                'updated_at'      => now(),
-            ]);
-        }
-        $aprendiz = DB::table('aprendices')->where('usuario_id', $apprenticeUserId)->first();
-        if (!$aprendiz) {
-            DB::table('aprendices')->insert([
-                'usuario_id'        => $apprenticeUserId,
-                'nombres'            => 'Liyen',
-                'apellidos'          => 'San Juan',
-                'programa_formacion' => 'Análisis y Desarrollo de Software',
-                'activo'             => true,
-                'created_at'         => now(),
-                'updated_at'          => now(),
-            ]);
-        }
-
-        // 6. Proyectos de ejemplo
-        $this->call(ProjectSeeder::class);
-
-        $this->command->info('✅ Datos iniciales insertados correctamente.');
-        $this->command->info('   → geniszully@gmail.com        / Admin123@');
-        $this->command->info('   → camilopineda182@gmail.com      / Camilo123@');
-        $this->command->info('   → sherelynrocha939@gmail.com   / Sherelyn123@');
-        $this->command->info('   → liyen_sanjuan@soy.sena.edu.co     / Liyen123@');
     }
 }

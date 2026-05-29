@@ -22,9 +22,9 @@ class CalificarEvidenciaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'estado.required' => 'El estado es obligatorio.',
-            'estado.in' => 'El estado debe ser uno de los valores permitidos.',
-            'comentario.max' => 'El comentario no puede exceder 1000 caracteres.',
+            'estado.required' => 'Selecciona un estado.',
+            'estado.in' => 'Estado no válido.',
+            'comentario.max' => 'Máximo 1000 caracteres.',
         ];
     }
 }

@@ -22,8 +22,100 @@
 @section('styles')
     @vite(['resources/css/empresa.css'])
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .oferta-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 24px 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            text-align: center;
+            position: relative;
+            user-select: none;
+        }
+        .oferta-card:hover {
+            border-color: #c4b5fd;
+            background: #faf5ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139,92,246,0.1);
+        }
+        .oferta-card.selected {
+            border-color: #8b5cf6;
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            box-shadow: 0 8px 30px rgba(139,92,246,0.15);
+        }
+        .oferta-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .oferta-check {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .oferta-card.selected .oferta-check {
+            background: #8b5cf6;
+            border-color: #8b5cf6;
+            box-shadow: 0 2px 8px rgba(139,92,246,0.3);
+        }
+        .oferta-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+        .oferta-card.selected .oferta-icon {
+            box-shadow: 0 4px 15px rgba(139,92,246,0.3);
+        }
+        .oferta-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .oferta-card.selected .oferta-title {
+            color: #6d28d9;
+        }
+        .oferta-desc {
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            line-height: 1.3;
+        }
+        .oferta-card.selected .oferta-desc {
+            color: #7c3aed;
+        }
+        @media (max-width: 640px) {
+            .oferta-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('empresa.dashboard')], ['label' => 'Proyectos', 'url' => route('empresa.proyectos')], ['label' => 'Crear']]; @endphp
 @section('content')
 <div class="animate-fade-in" style="max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
     
@@ -127,20 +219,19 @@
                             <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">3</span>
                             <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Localización</h3>
                         </div>
-                            <button type="button" id="btn-detectar" style="display: inline-flex; align-items: center; gap: 8px; background: white; color: #3eb489; border: 1px solid rgba(62,180,137,0.2); padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;">
-                                <i class="fas fa-location-arrow"></i> GPS
-                            </button>
-                        </div>
-                        
-                        <div style="border: 2px dashed #e2e8f0; border-radius: 16px; overflow: hidden; margin-bottom: 12px;">
-                            <div id="map" style="width: 100%; height: 180px;"></div>
-                        </div>
-                        <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud') }}">
-                        <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud') }}">
-                        <p style="font-size: 12px; color: var(--text-lighter); font-weight: 600; text-align: center;">
-                            <i class="fas fa-hand-pointer"></i> Haz clic o arrastra el PIN para precisar la sede.
-                        </p>
+                        <button type="button" id="btn-detectar" style="display: inline-flex; align-items: center; gap: 8px; background: white; color: #3eb489; border: 1px solid rgba(62,180,137,0.2); padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;">
+                            <i class="fas fa-location-arrow"></i> GPS
+                        </button>
                     </div>
+                    
+                    <div style="border: 2px dashed #e2e8f0; border-radius: 16px; overflow: hidden; margin-bottom: 12px;">
+                        <div id="map" style="width: 100%; height: 180px;"></div>
+                    </div>
+                    <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud') }}">
+                    <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud') }}">
+                    <p style="font-size: 12px; color: var(--text-lighter); font-weight: 600; text-align: center;">
+                        <i class="fas fa-hand-pointer"></i> Haz clic o arrastra el PIN para precisar la sede.
+                    </p>
                 </div>
 
                 <!-- Step 4: Material Visual -->
@@ -176,32 +267,46 @@
                         <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Beneficio y Oferta del Proyecto</h3>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; margin-bottom: 20px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Tipo de Oferta *</label>
-                            <div style="position: relative;">
-                                <i class="fas fa-gift" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b5cf6;"></i>
-                                <select name="oferta" id="oferta-select" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; background: white; appearance: none;">
-                                    <option value="">Seleccionar Oferta...</option>
-                                    <option value="pasantias" {{ old('oferta') === 'pasantias' ? 'selected' : '' }}>Pasantías</option>
-                                    <option value="contrato_aprendizaje" {{ old('oferta') === 'contrato_aprendizaje' ? 'selected' : '' }}>Contrato de aprendizaje</option>
-                                    <option value="auxilio_transporte" {{ old('oferta') === 'auxilio_transporte' ? 'selected' : '' }}>Auxilio de transporte</option>
-                                    <option value="otro" {{ old('oferta') === 'otro' ? 'selected' : '' }}>Otro</option>
-                                </select>
-                                <i class="fas fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
-                            </div>
-                        </div>
+                    <div class="oferta-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+                        <label class="oferta-card {{ old('oferta') === 'pasantias' ? 'selected' : '' }}">
+                            <input type="radio" name="oferta" value="pasantias" {{ old('oferta') === 'pasantias' ? 'checked' : '' }} required>
+                            <span class="oferta-check"><i class="fas fa-check"></i></span>
+                            <span class="oferta-icon"><i class="fas fa-briefcase"></i></span>
+                            <span class="oferta-title">Pasantías</span>
+                            <span class="oferta-desc">Experiencia laboral formativa en tu empresa</span>
+                        </label>
+                        <label class="oferta-card {{ old('oferta') === 'contrato_aprendizaje' ? 'selected' : '' }}">
+                            <input type="radio" name="oferta" value="contrato_aprendizaje" {{ old('oferta') === 'contrato_aprendizaje' ? 'checked' : '' }} required>
+                            <span class="oferta-check"><i class="fas fa-check"></i></span>
+                            <span class="oferta-icon"><i class="fas fa-file-contract"></i></span>
+                            <span class="oferta-title">Contrato de aprendizaje</span>
+                            <span class="oferta-desc">Vinculación formal con contrato de aprendizaje</span>
+                        </label>
+                        <label class="oferta-card {{ old('oferta') === 'auxilio_transporte' ? 'selected' : '' }}">
+                            <input type="radio" name="oferta" value="auxilio_transporte" {{ old('oferta') === 'auxilio_transporte' ? 'checked' : '' }} required>
+                            <span class="oferta-check"><i class="fas fa-check"></i></span>
+                            <span class="oferta-icon"><i class="fas fa-bus"></i></span>
+                            <span class="oferta-title">Auxilio de transporte</span>
+                            <span class="oferta-desc">Apoyo económico para movilidad</span>
+                        </label>
+                        <label class="oferta-card {{ old('oferta') === 'otro' ? 'selected' : '' }}">
+                            <input type="radio" name="oferta" value="otro" {{ old('oferta') === 'otro' ? 'checked' : '' }} required>
+                            <span class="oferta-check"><i class="fas fa-check"></i></span>
+                            <span class="oferta-icon"><i class="fas fa-gift"></i></span>
+                            <span class="oferta-title">Otro</span>
+                            <span class="oferta-desc">Otro tipo de beneficio u oferta</span>
+                        </label>
+                    </div>
 
-                        <div id="otro-oferta-container" style="display: {{ old('oferta') === 'otro' ? 'block' : 'none' }};">
-                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">¿Cuál oferta? *</label>
-                            <div style="position: relative;">
-                                <i class="fas fa-pen" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b5cf6;"></i>
-                                <input type="text" name="oferta_otro" id="oferta_otro" value="{{ old('oferta_otro') }}" style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Ej: Bolsa de estudio, Bonificación...">
-                            </div>
+                    <div id="otro-oferta-container" style="display: {{ old('oferta') === 'otro' ? 'block' : 'none' }}; margin-bottom: 20px;">
+                        <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">¿Cuál oferta? *</label>
+                        <div style="position: relative;">
+                            <i class="fas fa-pen" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b5cf6;"></i>
+                            <input type="text" name="oferta_otro" id="oferta_otro" value="{{ old('oferta_otro') }}" style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Ej: Bolsa de estudio, Bonificación...">
                         </div>
                     </div>
-                    
-                    <div style="margin-top: 16px; padding: 16px 20px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(124,58,237,0.04)); border: 1.5px solid rgba(139,92,246,0.15); border-radius: 12px; font-size: 13px; color: #6d28d9; font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(139,92,246,0.06);">
+
+                    <div style="padding: 16px 20px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(124,58,237,0.04)); border: 1.5px solid rgba(139,92,246,0.15); border-radius: 12px; font-size: 13px; color: #6d28d9; font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(139,92,246,0.06);">
                         <div style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                             <i class="fas fa-star" style="font-size: 11px;"></i>
                         </div>
@@ -229,13 +334,17 @@
 @vite(['resources/js/maps.js', 'resources/js/forms.js'])
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Oferta select toggle
-    const ofertaSelect = document.getElementById('oferta-select');
+    // Oferta cards
+    const ofertaRadios = document.querySelectorAll('input[name="oferta"]');
     const otroContainer = document.getElementById('otro-oferta-container');
     const otroInput = document.getElementById('oferta_otro');
 
-    if (ofertaSelect && otroContainer) {
-        ofertaSelect.addEventListener('change', function() {
+    ofertaRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.oferta-card').forEach(c => c.classList.remove('selected'));
+            if (this.checked) {
+                this.closest('.oferta-card').classList.add('selected');
+            }
             if (this.value === 'otro') {
                 otroContainer.style.display = 'block';
                 otroInput.setAttribute('required', 'required');
@@ -245,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 otroInput.value = '';
             }
         });
-    }
+    });
 
     // Form confirmation
     const form = document.getElementById('crear-proyecto-form');
@@ -259,9 +368,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            let ofertaTexto = ofertaSelect.options[ofertaSelect.selectedIndex].text;
-            if (ofertaSelect.value === 'otro') {
-                ofertaTexto = otroInput.value.trim() ? otroInput.value.trim() : 'la oferta especificada';
+            const selectedRadio = document.querySelector('input[name="oferta"]:checked');
+            let ofertaTexto = 'No especificada';
+            if (selectedRadio) {
+                const card = selectedRadio.closest('.oferta-card');
+                if (selectedRadio.value === 'otro') {
+                    ofertaTexto = otroInput.value.trim() ? otroInput.value.trim() : 'la oferta especificada';
+                } else {
+                    ofertaTexto = card.querySelector('.oferta-title').textContent;
+                }
             }
 
             const msg = `¿Está de acuerdo con la oferta seleccionada ("${ofertaTexto}")? Este beneficio se otorgará únicamente al aprendiz con el mejor desempeño en el proyecto.`;

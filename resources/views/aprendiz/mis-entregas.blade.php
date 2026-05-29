@@ -30,6 +30,7 @@
     @vite(['resources/css/aprendiz.css'])
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('aprendiz.dashboard')], ['label' => 'Mis Entregas']]; @endphp
 @section('content')
 <div class="animate-fade-in" style="padding-bottom: 40px;">
 
@@ -169,6 +170,12 @@
                 </div>
             @endforeach
         </div>
+
+        @if($proyectos->hasPages())
+            <div style="margin-top: 40px; display: flex; justify-content: center;">
+                {{ $proyectos->withQueryString()->links() }}
+            </div>
+        @endif
     @else
         <div class="glass-card" style="padding: 80px 40px; text-align: center;">
             <div style="width: 100px; height: 100px; background: rgba(62,180,137,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: #3eb489;">

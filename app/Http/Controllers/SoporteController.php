@@ -27,6 +27,6 @@ class SoporteController extends Controller
             new SoporteMailable($validated)
         );
 
-        return back()->with('success', 'Tu mensaje ha sido enviado correctamente.');
+        return back()->with('success', 'Mensaje enviado. Te responderemos pronto.');
     }
 }

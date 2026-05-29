@@ -26,7 +26,7 @@ class ValidateFileUpload
                 $file = $request->file($field);
 
                 if (! $this->validateFile($file, $field)) {
-                    return back()->with('error', "El archivo {$field} no es válido.");
+                    return back()->with('error', "Archivo no válido.");
                 }
             }
         }

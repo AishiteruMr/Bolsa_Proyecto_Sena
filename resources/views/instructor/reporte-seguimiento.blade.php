@@ -22,6 +22,7 @@
     </a>
 @endsection
 
+@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('instructor.dashboard')], ['label' => 'Reporte']]; @endphp
 @section('content')
 <div style="max-width: 1200px; margin: 0 auto;">
     <div class="rep-header" style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
