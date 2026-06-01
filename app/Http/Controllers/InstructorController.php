@@ -205,6 +205,8 @@ class InstructorController extends Controller
                     'nombre' => $proyecto->empresa->nombre ?? 'No designada',
                     'total_aprendices' => $totalAprendices,
                     'aprendices_aprobados' => $aprendicesAprobados,
+                    'oferta' => $proyecto->oferta,
+                    'oferta_otro' => $proyecto->oferta_otro,
                 ];
             });
 
