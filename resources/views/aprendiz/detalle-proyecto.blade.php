@@ -161,7 +161,12 @@
 
                 <div style="display: grid; gap: 0;">
                     @forelse($etapas as $etapa)
-                        @php $evidenciasEtapa = $evidencias->where('id', $etapa->id); @endphp
+                        @php
+                            $evidenciasEtapa = $evidencias->where('etapa_id', $etapa->id);
+                            $evidenciaCerrada = $evidenciasEtapa->first(function ($e) {
+                                return in_array($e->estado, ['aceptada', 'rechazada']);
+                            });
+                        @endphp
                         <div style="position: relative; padding-left: 52px; padding-bottom: 28px;">
                             @if(!$loop->last)
                                 <div style="position: absolute; left: 24px; top: 40px; bottom: 0; width: 2px; background: linear-gradient(to bottom, rgba(62,180,137,0.25), rgba(62,180,137,0.05));"></div>
@@ -212,7 +217,7 @@
                                                     <i class="fas {{ $stateColor['icon'] }}"></i>
                                                 </div>
                                                 <div style="flex: 1; min-width: 0;">
-                                                    <p style="font-size: 11px; font-weight: 700; color: var(--text); margin: 0;">{{ \Carbon\Carbon::parse($evid->fecha_envio)->format('d M, Y - h:i A') }}</p>
+                                                    <p style="font-size: 11px; font-weight: 700; color: var(--text); margin: 0;">{{ $evid->fecha_envio->format('d M, Y - h:i A') }}</p>
                                                     @if($evid->comentario_instructor)
                                                         <p style="font-size: 10px; color: var(--text-light); margin: 1px 0 0;"><i class="fas fa-comment" style="margin-right: 4px;"></i>{{ $evid->comentario_instructor }}</p>
                                                     @endif
@@ -229,26 +234,43 @@
                                     </div>
                                 @endif
 
-                                <div style="border-top: 1px solid #e2e8f0; padding-top: 16px;">
-                                    <p style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-                                        <i class="fas fa-paper-plane" style="color: #3eb489; font-size: 12px;"></i> Enviar Nueva Evidencia
-                                    </p>
-                                    <form action="{{ route('aprendiz.evidencia.enviar', [$proyecto->id, $etapa->id]) }}" method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                                            <textarea name="descripcion" required placeholder="Comentario sobre tu entrega..." style="width: 100%; padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: 500; min-height: 48px; outline: none; transition: border-color 0.3s; resize: vertical;" onfocus="this.style.borderColor='#3eb489'" onblur="this.style.borderColor='#e2e8f0'"></textarea>
-                                            <div style="display: flex; gap: 10px; align-items: center;">
-                                                <div style="flex: 1; border: 2px dashed rgba(62,180,137,0.25); padding: 10px; border-radius: 8px; background: #fafcff; text-align: center; color: var(--text-light); cursor: pointer; font-size: 11px; font-weight: 600; position: relative; transition: all 0.3s;" onmouseover="this.style.borderColor='#3eb489'; this.style.background='rgba(62,180,137,0.04)'" onmouseout="this.style.borderColor='rgba(62,180,137,0.25)'; this.style.background='#fafcff'">
-                                                    <i class="fas fa-cloud-arrow-up" style="margin-right: 4px; color: #3eb489;"></i> Seleccionar archivo
-                                                    <input type="file" name="archivo" required style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
-                                                </div>
-                                                <button type="submit" class="btn-premium" style="padding: 10px 18px; white-space: nowrap; font-size: 12px;">
-                                                    <i class="fas fa-paper-plane"></i> Entregar
-                                                </button>
-                                            </div>
+                                @if($evidenciaCerrada)
+                                    <div style="border-top: 1px solid #e2e8f0; padding-top: 16px;">
+                                        <div style="background: #f8fafc; border-radius: 10px; padding: 16px; text-align: center; border: 1px solid #e2e8f0;">
+                                            <i class="fas fa-lock" style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 6px; display: block;"></i>
+                                            <p style="font-size: 12px; font-weight: 700; color: #94a3b8; margin: 0;">
+                                                @if($evidenciaCerrada->estado === 'aceptada')
+                                                    Evidencia aprobada — No se requieren más entregas
+                                                @elseif($evidenciaCerrada->estado === 'rechazada')
+                                                    Evidencia evaluada — Opción de entrega cerrada
+                                                @else
+                                                    Opción de entrega cerrada
+                                                @endif
+                                            </p>
                                         </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                @else
+                                    <div style="border-top: 1px solid #e2e8f0; padding-top: 16px;">
+                                        <p style="font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                            <i class="fas fa-paper-plane" style="color: #3eb489; font-size: 12px;"></i> Enviar Nueva Evidencia
+                                        </p>
+                                        <form action="{{ route('aprendiz.evidencia.enviar', [$proyecto->id, $etapa->id]) }}" method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                                <textarea name="descripcion" required placeholder="Comentario sobre tu entrega..." style="width: 100%; padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: 500; min-height: 48px; outline: none; transition: border-color 0.3s; resize: vertical;" onfocus="this.style.borderColor='#3eb489'" onblur="this.style.borderColor='#e2e8f0'"></textarea>
+                                                <div style="display: flex; gap: 10px; align-items: center;">
+                                                    <div style="flex: 1; border: 2px dashed rgba(62,180,137,0.25); padding: 10px; border-radius: 8px; background: #fafcff; text-align: center; color: var(--text-light); cursor: pointer; font-size: 11px; font-weight: 600; position: relative; transition: all 0.3s;" onmouseover="this.style.borderColor='#3eb489'; this.style.background='rgba(62,180,137,0.04)'" onmouseout="this.style.borderColor='rgba(62,180,137,0.25)'; this.style.background='#fafcff'">
+                                                        <i class="fas fa-cloud-arrow-up" style="margin-right: 4px; color: #3eb489;"></i> Seleccionar archivo
+                                                        <input type="file" name="archivo" required style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
+                                                    </div>
+                                                    <button type="submit" class="btn-premium" style="padding: 10px 18px; white-space: nowrap; font-size: 12px;">
+                                                        <i class="fas fa-paper-plane"></i> Entregar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                         @empty

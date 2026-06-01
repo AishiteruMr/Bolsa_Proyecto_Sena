@@ -285,6 +285,16 @@ class AprendizController extends Controller
             ->where('proyecto_id', $proId)
             ->firstOrFail();
 
+        $existing = Evidencia::where('aprendiz_id', $aprendiz->id)
+            ->where('etapa_id', $etaId)
+            ->where('proyecto_id', $proId)
+            ->whereIn('estado', ['aceptada', 'rechazada'])
+            ->first();
+
+        if ($existing) {
+            return back()->with('error', 'No puedes enviar más evidencias para esta etapa porque ya fue evaluada.');
+        }
+
         $archivoUrl = null;
         if ($request->hasFile('archivo')) {
             $file = $request->file('archivo');

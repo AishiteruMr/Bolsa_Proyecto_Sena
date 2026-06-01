@@ -421,8 +421,8 @@
 .instructor-grad-box i {
     font-size: 20px;
 }
-.instructor-grad-radio input[value="Aprobada"]:checked + .instructor-grad-box,
-.instructor-grad-radio input[value="aprobada"]:checked + .instructor-grad-box {
+.instructor-grad-radio input[value="Aceptada"]:checked + .instructor-grad-box,
+.instructor-grad-radio input[value="aceptada"]:checked + .instructor-grad-box {
     border-color: var(--status-approved); background: var(--status-approved-bg); color: var(--status-approved); box-shadow: 0 4px 12px rgba(16,185,129,0.15);
 }
 .instructor-grad-radio input[value="Pendiente"]:checked + .instructor-grad-box,
