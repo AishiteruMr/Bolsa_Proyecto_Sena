@@ -188,4 +188,105 @@ class AprendizTest extends TestCase
             'nombres'  => 'Aprendiz Nuevo'
         ]);
     }
+
+    #[Test]
+    public function aprendiz_cannot_send_evidence_if_already_evaluated()
+    {
+        $proId = DB::table('proyectos')->insertGetId([
+            'empresa_nit'           => 123456780,
+            'titulo'                => 'Proyecto Evidencia Cerrada',
+            'categoria'             => 'Web',
+            'descripcion'           => 'Desc',
+            'requisitos_especificos'=> 'Req',
+            'habilidades_requeridas'=> 'Hab',
+            'fecha_publicacion'     => now()->format('Y-m-d'),
+            'duracion_estimada_dias'=> 180,
+            'estado'                => 'aprobado',
+            'created_at'            => now(),
+            'updated_at'            => now(),
+        ]);
+
+        DB::table('postulaciones')->insert([
+            'aprendiz_id'      => $this->aprendiz->id,
+            'proyecto_id'      => $proId,
+            'estado'           => 'aceptada',
+            'fecha_postulacion'=> now(),
+            'created_at'       => now(),
+            'updated_at'       => now(),
+        ]);
+
+        $etaId = DB::table('etapas')->insertGetId([
+            'proyecto_id' => $proId,
+            'orden'       => 1,
+            'nombre'      => 'Etapa 1',
+            'descripcion' => 'Desc etapa',
+            'created_at'  => now(),
+            'updated_at'  => now(),
+        ]);
+
+        DB::table('evidencias')->insert([
+            'aprendiz_id'  => $this->aprendiz->id,
+            'etapa_id'     => $etaId,
+            'proyecto_id'  => $proId,
+            'ruta_archivo' => 'path/to/file.pdf',
+            'fecha_envio'  => now(),
+            'estado'       => 'aceptada',
+            'created_at'   => now(),
+            'updated_at'   => now(),
+        ]);
+
+        $evidenceData = [
+            'descripcion' => 'Intento de reenvío',
+            'archivo'     => UploadedFile::fake()->create('evidencia.pdf', 500),
+        ];
+
+        $response = $this->withSession([
+            'usr_id' => $this->usuario->id,
+            'rol'    => 1,
+            'apr_id' => $this->aprendiz->id,
+        ])->post(route('aprendiz.evidencia.enviar', ['proId' => $proId, 'etaId' => $etaId]), $evidenceData);
+
+        $response->assertStatus(302);
+        $response->assertSessionHas('error');
+    }
+
+    #[Test]
+    public function aprendiz_can_view_historial()
+    {
+        $response = $this->withSession([
+            'usr_id' => $this->usuario->id,
+            'rol'    => 1,
+            'nombre' => $this->aprendiz->nombres,
+            'apr_id' => $this->aprendiz->id,
+        ])->get(route('aprendiz.historial'));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('aprendiz.historial');
+    }
+
+    #[Test]
+    public function aprendiz_can_view_project_detail()
+    {
+        $proId = DB::table('proyectos')->insertGetId([
+            'empresa_nit'           => 123456780,
+            'titulo'                => 'Proyecto Detalle',
+            'categoria'             => 'Web',
+            'descripcion'           => 'Descripcion detallada',
+            'requisitos_especificos'=> 'Req',
+            'habilidades_requeridas'=> 'Hab',
+            'fecha_publicacion'     => now()->format('Y-m-d'),
+            'duracion_estimada_dias'=> 180,
+            'estado'                => 'aprobado',
+            'created_at'            => now(),
+            'updated_at'            => now(),
+        ]);
+
+        $response = $this->withSession([
+            'usr_id' => $this->usuario->id,
+            'rol'    => 1,
+            'apr_id' => $this->aprendiz->id,
+        ])->get(route('aprendiz.proyecto.detalle', $proId));
+
+        $response->assertStatus(200);
+    }
 }

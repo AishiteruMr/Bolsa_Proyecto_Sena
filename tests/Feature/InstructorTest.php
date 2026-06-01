@@ -195,4 +195,108 @@ class InstructorTest extends TestCase
             'comentario_instructor'=> 'Buen trabajo'
         ]);
     }
+
+    #[Test]
+    public function instructor_can_view_historial_with_offer_data()
+    {
+        $proyectoConOferta = DB::table('proyectos')->insertGetId([
+            'empresa_nit'           => 123456781,
+            'titulo'                => 'Proyecto con Pasantias',
+            'categoria'             => 'Web',
+            'descripcion'           => 'Desc',
+            'requisitos_especificos'=> 'Req',
+            'habilidades_requeridas'=> 'Hab',
+            'fecha_publicacion'     => now()->format('Y-m-d'),
+            'duracion_estimada_dias'=> 180,
+            'estado'                => 'completado',
+            'instructor_usuario_id' => $this->usuario->id,
+            'oferta'                => 'pasantias',
+            'created_at'            => now(),
+            'updated_at'            => now(),
+        ]);
+
+        DB::table('proyectos')->insertGetId([
+            'empresa_nit'           => 123456781,
+            'titulo'                => 'Proyecto con Otra Oferta',
+            'categoria'             => 'Mobile',
+            'descripcion'           => 'Desc',
+            'requisitos_especificos'=> 'Req',
+            'habilidades_requeridas'=> 'Hab',
+            'fecha_publicacion'     => now()->format('Y-m-d'),
+            'duracion_estimada_dias'=> 90,
+            'estado'                => 'completado',
+            'instructor_usuario_id' => $this->usuario->id,
+            'oferta'                => 'otro',
+            'oferta_otro'           => 'Beca educativa',
+            'created_at'            => now(),
+            'updated_at'            => now(),
+        ]);
+
+        $response = $this->withSession([
+            'usr_id'    => $this->usuario->id,
+            'documento' => $this->usuario->numero_documento,
+            'rol'       => 2,
+            'nombre'    => 'Instructor',
+            'ins_id'    => $this->instructor->id,
+        ])->get(route('instructor.historial'));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('instructor.historial');
+        $response->assertSee('Pasantías');
+        $response->assertSee('Beca educativa');
+    }
+
+    #[Test]
+    public function instructor_can_view_evaluated_evidence()
+    {
+        $etaId = DB::table('etapas')->insertGetId([
+            'proyecto_id' => $this->proyecto->id,
+            'orden'       => 1,
+            'nombre'      => 'Etapa 1',
+            'descripcion' => 'Desc',
+            'created_at'  => now(),
+            'updated_at'  => now(),
+        ]);
+
+        $aprUsrId = DB::table('usuarios')->insertGetId([
+            'numero_documento' => 333444555,
+            'correo'           => 'apr_eval@gmail.com',
+            'contrasena'       => Hash::make('password123'),
+            'rol_id'           => 1,
+            'created_at'       => now(),
+            'updated_at'       => now(),
+        ]);
+        $aprId = DB::table('aprendices')->insertGetId([
+            'usuario_id'         => $aprUsrId,
+            'nombres'            => 'A',
+            'apellidos'          => 'B',
+            'programa_formacion' => 'P',
+            'activo'             => true,
+            'created_at'         => now(),
+            'updated_at'         => now(),
+        ]);
+
+        DB::table('evidencias')->insert([
+            'aprendiz_id'          => $aprId,
+            'etapa_id'             => $etaId,
+            'proyecto_id'          => $this->proyecto->id,
+            'ruta_archivo'         => 'path/to/file.pdf',
+            'fecha_envio'          => now(),
+            'estado'               => 'aceptada',
+            'comentario_instructor'=> 'Buen trabajo',
+            'created_at'           => now(),
+            'updated_at'           => now(),
+        ]);
+
+        $response = $this->withSession([
+            'usr_id'    => $this->usuario->id,
+            'documento' => $this->usuario->numero_documento,
+            'rol'       => 2,
+            'ins_id'    => $this->instructor->id,
+        ])->get(route('instructor.evidencias.ver', $this->proyecto->id));
+
+        $response->assertStatus(200);
+        $response->assertSee('Buen trabajo');
+        $response->assertSee('Evaluación cerrada');
+    }
 }

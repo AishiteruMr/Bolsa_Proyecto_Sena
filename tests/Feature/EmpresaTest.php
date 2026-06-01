@@ -173,4 +173,66 @@ class EmpresaTest extends TestCase
             'nombre'       => 'Empresa Nombre Nuevo'
         ]);
     }
+
+    #[Test]
+    public function empresa_can_view_project_detail_with_approved_evidence()
+    {
+        $proId = DB::table('proyectos')->insertGetId([
+            'empresa_nit'           => $this->empresa->nit,
+            'titulo'                => 'Proyecto Detalle Empresa',
+            'categoria'             => 'Web',
+            'descripcion'           => 'Descripcion del proyecto',
+            'requisitos_especificos'=> 'Req',
+            'habilidades_requeridas'=> 'Hab',
+            'fecha_publicacion'     => now()->format('Y-m-d'),
+            'duracion_estimada_dias'=> 180,
+            'estado'                => 'en_progreso',
+            'created_at'            => now(),
+            'updated_at'            => now(),
+        ]);
+
+        $etaId = DB::table('etapas')->insertGetId([
+            'proyecto_id' => $proId,
+            'orden'       => 1,
+            'nombre'      => 'Etapa 1',
+            'descripcion' => 'Desc',
+            'created_at'  => now(),
+            'updated_at'  => now(),
+        ]);
+
+        $aprUsrId = DB::table('usuarios')->insertGetId([
+            'numero_documento' => 777888999,
+            'correo'           => 'apr_empresa_test@gmail.com',
+            'contrasena'       => Hash::make('password123'),
+            'rol_id'           => 1,
+            'created_at'       => now(),
+            'updated_at'       => now(),
+        ]);
+        $aprId = DB::table('aprendices')->insertGetId([
+            'usuario_id'         => $aprUsrId,
+            'nombres'            => 'Aprendiz',
+            'apellidos'          => 'Empresa',
+            'programa_formacion' => 'ADSO',
+            'activo'             => true,
+            'created_at'         => now(),
+            'updated_at'         => now(),
+        ]);
+
+        DB::table('evidencias')->insert([
+            'aprendiz_id'  => $aprId,
+            'etapa_id'     => $etaId,
+            'proyecto_id'  => $proId,
+            'ruta_archivo' => 'path/to/file.pdf',
+            'fecha_envio'  => now(),
+            'estado'       => 'aceptada',
+            'created_at'   => now(),
+            'updated_at'   => now(),
+        ]);
+
+        $response = $this->withSession($this->baseSession())
+            ->get(route('empresa.proyectos.detalle', $proId));
+
+        $response->assertStatus(200);
+        $response->assertSee('Evidencias Aprobadas');
+    }
 }
