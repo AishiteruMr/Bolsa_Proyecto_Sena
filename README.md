@@ -45,7 +45,7 @@ Plataforma integral premium para la conexión entre empresas, instructores y apr
 * Axios
 * Intervention Image 3.x
 * PHPUnit 11.x
-* Laravel Pint (estilo de código)
+
 
 ---
 

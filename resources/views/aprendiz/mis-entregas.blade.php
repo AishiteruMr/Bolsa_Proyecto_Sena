@@ -136,7 +136,7 @@
                                             </div>
                                             <div style="font-size: 13px; color: var(--text-light); font-weight: 600; margin-bottom: 10px;">
                                                 <i class="far fa-clock" style="margin-right: 8px;"></i>
-                                                Entregado: {{ \Carbon\Carbon::parse($evidencia->fecha_envio)->translatedFormat('d M Y, H:i') }}
+                                                Entregado: {{ $evidencia->fecha_envio->translatedFormat('d M Y, H:i') }}
                                             </div>
                                             @if($evidencia->comentario_instructor)
                                                 <div style="background: rgba(255,255,255,0.8); border-radius: 10px; padding: 12px 16px; border: 1px solid rgba(0,0,0,0.05);">

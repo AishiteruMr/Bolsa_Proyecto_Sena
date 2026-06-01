@@ -200,7 +200,16 @@ class EmpresaController extends Controller
             });
 
         $etapas = $proyecto->etapas;
-        return view('empresa.detalle', compact('proyecto', 'postulantes', 'etapas'));
+
+        $evidenciasAprobadas = Evidencia::with(['aprendiz.usuario', 'etapa'])
+            ->where('proyecto_id', $id)
+            ->aprobadas()
+            ->orderBy('etapa_id')
+            ->orderByDesc('fecha_envio')
+            ->get()
+            ->groupBy('etapa_id');
+
+        return view('empresa.detalle', compact('proyecto', 'postulantes', 'etapas', 'evidenciasAprobadas'));
     }
 
     public function editarProyecto(int $id): View

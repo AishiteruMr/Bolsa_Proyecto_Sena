@@ -71,7 +71,7 @@
                     
                     <div style="text-align: right;">
                         <p style="font-size: 0.75rem; color: var(--text-lighter); margin-bottom: 6px; text-transform: uppercase; font-weight: 800;">Fecha de Entrega</p>
-                        <p style="font-size: 0.95rem; font-weight: 700; color: var(--text);">{{ \Carbon\Carbon::parse($evidencia->fecha_envio)->format('d/m/Y - h:i A') }}</p>
+                        <p style="font-size: 0.95rem; font-weight: 700; color: var(--text);">{{ $evidencia->fecha_envio->format('d/m/Y - h:i A') }}</p>
                     </div>
                 </div>
 
@@ -80,46 +80,80 @@
                     <div style="display: grid; grid-template-columns: 1fr 300px; gap: 2.5rem;">
                         
                         <!-- Left: Grading Form -->
-                        <form action="{{ route('instructor.evidencias.calificar', $evidencia->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            
-                            <div style="margin-bottom: 1.5rem;">
-                                <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 1.25rem; letter-spacing: 0.5px;">Resolución de la Entrega</label>
-                                <div style="display: flex; gap: 1rem;">
-                                    <label class="instructor-grad-radio">
-                                        <input type="radio" name="estado" value="aceptada" {{ $evidencia->estado === 'aceptada' ? 'checked' : '' }} required>
-                                        <div class="instructor-grad-box">
-                                            <i class="fas fa-check-double"></i>
-                                            <span>Aprobado</span>
+                        @if($evidencia->estado === 'pendiente')
+                            <form action="{{ route('instructor.evidencias.calificar', $evidencia->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                
+                                <div style="margin-bottom: 1.5rem;">
+                                    <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 1.25rem; letter-spacing: 0.5px;">Resolución de la Entrega</label>
+                                    <div style="display: flex; gap: 1rem;">
+                                        <label class="instructor-grad-radio">
+                                            <input type="radio" name="estado" value="aceptada" {{ $evidencia->estado === 'aceptada' ? 'checked' : '' }} required>
+                                            <div class="instructor-grad-box">
+                                                <i class="fas fa-check-double"></i>
+                                                <span>Aprobado</span>
+                                            </div>
+                                        </label>
+                                        <label class="instructor-grad-radio">
+                                            <input type="radio" name="estado" value="pendiente" {{ $evidencia->estado === 'pendiente' ? 'checked' : '' }} required>
+                                            <div class="instructor-grad-box">
+                                                <i class="fas fa-history"></i>
+                                                <span>Corregir</span>
+                                            </div>
+                                        </label>
+                                        <label class="instructor-grad-radio">
+                                            <input type="radio" name="estado" value="rechazada" {{ $evidencia->estado === 'rechazada' ? 'checked' : '' }} required>
+                                            <div class="instructor-grad-box">
+                                                <i class="fas fa-times-circle"></i>
+                                                <span>Reprobado</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 2rem;">
+                                    <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Retroalimentación Técnica</label>
+                                    <textarea name="comentario" class="instructor-input-control" style="min-height: 120px; padding: 1.25rem;" placeholder="Escribe aquí los comentarios sobre la calidad del entregable...">{{ $evidencia->comentario_instructor }}</textarea>
+                                </div>
+
+                                <button type="submit" class="btn-premium" style="width: 100%; padding: 1rem; font-size: 1rem; justify-content: center;">
+                                    <i class="fas fa-save" style="margin-right: 10px;"></i> Publicar Evaluación
+                                </button>
+                            </form>
+                        @else
+                            <div>
+                                <div style="margin-bottom: 1.5rem;">
+                                    <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 1.25rem; letter-spacing: 0.5px;">Resolución de la Entrega</label>
+                                    <div style="display: flex; gap: 1rem;">
+                                        <div style="flex: 1; padding: 1.25rem; border-radius: 12px; text-align: center; {{ $evidencia->estado === 'aceptada' ? 'background: #f0fdf4; border: 2px solid #10b981; color: #059669;' : 'background: #f8fafc; border: 2px solid #e2e8f0; color: #94a3b8;' }}">
+                                            <i class="fas fa-check-double" style="font-size: 1.5rem; display: block; margin-bottom: 6px;"></i>
+                                            <span style="font-weight: 800; font-size: 0.85rem;">Aprobado</span>
                                         </div>
-                                    </label>
-                                    <label class="instructor-grad-radio">
-                                        <input type="radio" name="estado" value="pendiente" {{ $evidencia->estado === 'pendiente' ? 'checked' : '' }} required>
-                                        <div class="instructor-grad-box">
-                                            <i class="fas fa-history"></i>
-                                            <span>Corregir</span>
+                                        <div style="flex: 1; padding: 1.25rem; border-radius: 12px; text-align: center; {{ $evidencia->estado === 'pendiente' ? 'background: #fffbeb; border: 2px solid #f59e0b; color: #d97706;' : 'background: #f8fafc; border: 2px solid #e2e8f0; color: #94a3b8;' }}">
+                                            <i class="fas fa-history" style="font-size: 1.5rem; display: block; margin-bottom: 6px;"></i>
+                                            <span style="font-weight: 800; font-size: 0.85rem;">Corregir</span>
                                         </div>
-                                    </label>
-                                    <label class="instructor-grad-radio">
-                                        <input type="radio" name="estado" value="rechazada" {{ $evidencia->estado === 'rechazada' ? 'checked' : '' }} required>
-                                        <div class="instructor-grad-box">
-                                            <i class="fas fa-times-circle"></i>
-                                            <span>Reprobado</span>
+                                        <div style="flex: 1; padding: 1.25rem; border-radius: 12px; text-align: center; {{ $evidencia->estado === 'rechazada' ? 'background: #fef2f2; border: 2px solid #ef4444; color: #dc2626;' : 'background: #f8fafc; border: 2px solid #e2e8f0; color: #94a3b8;' }}">
+                                            <i class="fas fa-times-circle" style="font-size: 1.5rem; display: block; margin-bottom: 6px;"></i>
+                                            <span style="font-weight: 800; font-size: 0.85rem;">Reprobado</span>
                                         </div>
-                                    </label>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 2rem;">
+                                    <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Retroalimentación Técnica</label>
+                                    <div class="instructor-input-control" style="min-height: 120px; padding: 1.25rem; background: #f8fafc; border-color: #e2e8f0; color: var(--text-light);">
+                                        {{ $evidencia->comentario_instructor ?: 'Sin comentarios.' }}
+                                    </div>
+                                </div>
+
+                                <div style="padding: 1rem; background: #f8fafc; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0;">
+                                    <i class="fas fa-lock" style="color: #94a3b8; margin-right: 8px;"></i>
+                                    <span style="font-weight: 700; color: #94a3b8; font-size: 0.9rem;">Evaluación cerrada — Evidencia ya calificada</span>
                                 </div>
                             </div>
-
-                            <div style="margin-bottom: 2rem;">
-                                <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Retroalimentación Técnica</label>
-                                <textarea name="comentario" class="instructor-input-control" style="min-height: 120px; padding: 1.25rem;" placeholder="Escribe aquí los comentarios sobre la calidad del entregable...">{{ $evidencia->comentario_instructor }}</textarea>
-                            </div>
-
-                            <button type="submit" class="btn-premium" style="width: 100%; padding: 1rem; font-size: 1rem; justify-content: center;">
-                                <i class="fas fa-save" style="margin-right: 10px;"></i> Publicar Evaluación
-                            </button>
-                        </form>
+                        @endif
 
                         <!-- Right: Deliverable Info -->
                         <div class="instructor-deliverable-info">

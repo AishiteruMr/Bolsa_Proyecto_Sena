@@ -96,6 +96,43 @@
                         <div style="flex: 1; padding-bottom: 20px;">
                             <h5 style="font-weight: 800; color: var(--text); margin-bottom: 4px; font-size: 15px;">{{ $etapa->nombre }}</h5>
                             <p style="font-size: 13px; color: var(--text-light); line-height: 1.6;">{{ $etapa->descripcion }}</p>
+
+                            @if(isset($evidenciasAprobadas[$etapa->id]) && count($evidenciasAprobadas[$etapa->id]) > 0)
+                                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                                    <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #3eb489; font-weight: 800; margin-bottom: 12px;">
+                                        <i class="fas fa-check-circle"></i> Evidencias Aprobadas
+                                    </p>
+                                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                                        @foreach($evidenciasAprobadas[$etapa->id] as $evidencia)
+                                            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px;">
+                                                <div style="width: 32px; height: 32px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                    <i class="fas fa-user-graduate" style="font-size: 12px;"></i>
+                                                </div>
+                                                <div style="flex: 1; min-width: 0;">
+                                                    <p style="font-size: 13px; font-weight: 700; color: var(--text);">
+                                                        {{ $evidencia->aprendiz->nombres ?? '' }} {{ $evidencia->aprendiz->apellidos ?? '' }}
+                                                    </p>
+                                                    <p style="font-size: 11px; color: #16a34a; font-weight: 600;">
+                                                        {{ $evidencia->fecha_envio->format('d/m/Y') }}
+                                                    </p>
+                                                </div>
+                                                @if($evidencia->ruta_archivo)
+                                                    <a href="{{ asset('storage/' . $evidencia->ruta_archivo) }}" target="_blank" style="width: 34px; height: 34px; border-radius: 8px; background: white; border: 1px solid #bbf7d0; color: #16a34a; display: flex; align-items: center; justify-content: center; text-decoration: none; flex-shrink: 0;" title="Descargar archivo">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                @endif
+                                                @if($evidencia->comentario_instructor)
+                                                    <div style="position: relative;" title="{{ $evidencia->comentario_instructor }}">
+                                                        <span style="width: 34px; height: 34px; border-radius: 8px; background: white; border: 1px solid #bbf7d0; color: #6b7280; display: flex; align-items: center; justify-content: center; cursor: help; flex-shrink: 0;">
+                                                            <i class="fas fa-comment"></i>
+                                                        </span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 @empty
