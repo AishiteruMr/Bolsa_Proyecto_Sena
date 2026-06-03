@@ -218,24 +218,20 @@ class InstructorController extends Controller
     {
         $usrId = session('usr_id');
 
-        // Verificar que el proyecto pertenece al instructor
         $proyecto = Proyecto::where('id', $proId)
             ->where('instructor_usuario_id', $usrId)
-            ->with('empresa')
+            ->with(['empresa', 'instructor'])
             ->firstOrFail();
 
-        // Obtener etapas del proyecto
         $etapas = Etapa::where('proyecto_id', $proId)
             ->orderBy('orden')
             ->get();
 
-        // Obtener aprendices aprobados
         $aprendices = Aprendiz::whereHas('postulaciones', function ($query) use ($proId) {
             $query->where('proyecto_id', $proId)
                 ->where('estado', 'aceptada');
         })->with('usuario')->get();
 
-        // Obtener evidencias con datos del aprendiz
         $evidencias = Evidencia::where('evidencias.proyecto_id', $proId)
             ->join('etapas', 'evidencias.etapa_id', '=', 'etapas.id')
             ->join('aprendices', 'evidencias.aprendiz_id', '=', 'aprendices.id')
@@ -633,5 +629,65 @@ class InstructorController extends Controller
         }
 
         return back()->with('success', 'Evidencia calificada.');
+    }
+
+    public function iniciarProyecto($id): RedirectResponse
+    {
+        $proyecto = Proyecto::findOrFail($id);
+
+        if ($proyecto->instructor_usuario_id !== session('usr_id')) {
+            abort(403, 'No tienes permiso para modificar este proyecto.');
+        }
+
+        if ($proyecto->estado !== 'aprobado') {
+            return back()->with('error', 'Solo los proyectos aprobados pueden iniciarse.');
+        }
+
+        $proyecto->update(['estado' => 'en_progreso']);
+
+        AuditLog::registrarCambio(
+            session('usr_id'),
+            'iniciar',
+            'proyectos',
+            'proyectos',
+            $id,
+            ['estado' => 'aprobado'],
+            ['estado' => 'en_progreso']
+        );
+
+        return redirect()->route('instructor.proyecto.detalle', $id)
+            ->with('success', 'Proyecto iniciado exitosamente. Ahora los aprendices pueden ver las etapas y entregar evidencias.');
+    }
+
+    public function marcarCompletado($id): RedirectResponse
+    {
+        $proyecto = Proyecto::findOrFail($id);
+
+        if ($proyecto->instructor_usuario_id !== session('usr_id')) {
+            abort(403, 'No tienes permiso para modificar este proyecto.');
+        }
+
+        if ($proyecto->estado !== 'en_progreso') {
+            return back()->with('error', 'Solo los proyectos en progreso pueden marcarse como completados.');
+        }
+
+        $proyecto->update(['estado' => 'completado']);
+
+        $postulaciones = Postulacion::where('proyecto_id', $id)
+            ->where('estado', 'aceptada')
+            ->with('aprendiz.user')
+            ->get();
+        foreach ($postulaciones as $postulacion) {
+            if ($postulacion->aprendiz && $postulacion->aprendiz->user) {
+                $postulacion->aprendiz->user->notify(new AppNotification(
+                    'Proyecto Completado',
+                    'El proyecto "'.Str::limit($proyecto->titulo, 30).'" ha sido marcado como completado.',
+                    'fa-check-circle'
+                ));
+            }
+        }
+
+        return redirect()->route('instructor.proyectos')
+            ->with('success', 'Proyecto marcado como completado exitosamente.');
     }
 }

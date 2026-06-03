@@ -75,7 +75,7 @@ class Proyecto extends Model
     // ── SCOPES ──
     public function scopeActivos(Builder $query): Builder
     {
-        return $query->where('estado', 'aprobado');
+        return $query->whereIn('estado', ['aprobado', 'en_progreso']);
     }
 
     public function scopePendientes(Builder $query): Builder

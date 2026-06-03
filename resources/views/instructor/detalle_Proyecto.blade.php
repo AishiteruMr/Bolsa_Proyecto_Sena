@@ -383,6 +383,22 @@
                 <a href="{{ route('instructor.evidencias.ver', $proyecto->id) }}" class="btn-premium" style="justify-content: center;">
                     <i class="fas fa-tasks"></i> Calificar Entregas
                 </a>
+                @if($proyecto->estado == 'aprobado')
+                <form action="{{ route('instructor.proyectos.iniciar', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Iniciar el proyecto? Los aprendices podrán ver las etapas y entregar evidencias.');">
+                    @csrf
+                    <button type="submit" class="btn-premium" style="width: 100%; justify-content: center; background: #3b82f6; color: #fff; border: none;">
+                        <i class="fas fa-play"></i> Iniciar Proyecto
+                    </button>
+                </form>
+                @endif
+                @if($proyecto->estado == 'en_progreso')
+                <form action="{{ route('instructor.proyectos.completar', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Confirmas que el proyecto ha sido completado exitosamente?');">
+                    @csrf
+                    <button type="submit" class="btn-premium" style="width: 100%; justify-content: center; background: #065f46; color: #fff; border: none;">
+                        <i class="fas fa-check-double"></i> Marcar como Completado
+                    </button>
+                </form>
+                @endif
             </div>
         </div>
 
