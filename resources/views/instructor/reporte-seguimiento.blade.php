@@ -22,74 +22,138 @@
     </a>
 @endsection
 
-@php $breadcrumbs = [['label' => 'Inicio', 'url' => route('instructor.dashboard')], ['label' => 'Reporte']]; @endphp
+@php
+    $breadcrumbs = [
+        ['label' => 'Inicio', 'url' => route('instructor.dashboard')],
+        ['label' => 'Reporte']
+    ];
+
+    $totalAprobados = $evidencias->where('estado', 'aceptada')->count();
+    $totalPendientes = $evidencias->where('estado', 'pendiente')->count();
+    $totalRechazados = $evidencias->where('estado', 'rechazada')->count();
+    $totalEvidencias = $evidencias->count();
+    $tasaAprobacion = $totalEvidencias > 0 ? round(($totalAprobados / $totalEvidencias) * 100) : 0;
+    $tasaCompletitud = $etapas->count() > 0 && $aprendices->count() > 0
+        ? round(($totalAprobados / ($etapas->count() * $aprendices->count())) * 100)
+        : 0;
+    $diasTranscurridos = $proyecto->fecha_publicacion
+        ? (int) \Carbon\Carbon::parse($proyecto->fecha_publicacion)->diffInDays(now())
+        : 0;
+    $duracionTotal = $proyecto->duracion_estimada_dias ?? 1;
+    $porcentajeTiempo = min(100, round(($diasTranscurridos / $duracionTotal) * 100));
+
+    $puntajeCalidad = min(100, max(0,
+        ($tasaAprobacion * 0.4) +
+        ($tasaCompletitud * 0.35) +
+        (($etapas->count() > 0 ? min(100, ($totalAprobados / $etapas->count()) * 20) : 0) * 0.25)
+    ));
+
+    $letraCalidad = $puntajeCalidad >= 90 ? 'A+' : ($puntajeCalidad >= 80 ? 'A' : ($puntajeCalidad >= 70 ? 'B+' : ($puntajeCalidad >= 60 ? 'B' : ($puntajeCalidad >= 50 ? 'C' : 'D'))));
+@endphp
+
 @section('content')
-<div style="max-width: 1200px; margin: 0 auto;">
-    <div class="rep-header" style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
+<div class="rp-container">
+
+    {{-- ═══ HEADER ═══ --}}
+    <div class="rp-header">
         <div>
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                <a href="{{ route('instructor.proyecto.detalle', $proyecto->id) }}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
-                    <i class="fas fa-arrow-left"></i> Volver a la Gestión
-                </a>
-            </div>
-            <h2 style="font-size:28px; font-weight:800; color:var(--primary-hover)">Auditoría de Progreso</h2>
-            <p style="color:var(--text-muted); font-size:15px; margin-top:4px;">Análisis detallado para: <span style="color: var(--primary); font-weight: 700;">{{ $proyecto->titulo }}</span></p>
+            <a href="{{ route('instructor.proyecto.detalle', $proyecto->id) }}" class="rp-back">
+                <i class="fas fa-arrow-left"></i> Volver a la Gestión
+            </a>
+            <h2 class="rp-title">Auditoría de Progreso</h2>
+            <p class="rp-desc">{{ $proyecto->titulo }} @if($proyecto->categoria)<span class="rp-tag">{{ $proyecto->categoria }}</span>@endif</p>
         </div>
-        <button id="btnExportarPDF" class="btn-ver" style="background: #64748b; padding: 10px 24px; border-radius: 12px; width: auto; position: relative; z-index: 100;">
-            <i class="fas fa-print" style="margin-right: 8px;"></i> Exportar PDF
+        <button id="btnExportarPDF" class="btn-premium" style="flex-shrink:0;padding:10px 24px;font-size:0.85rem;">
+            <i class="fas fa-file-pdf"></i> Exportar PDF
         </button>
     </div>
 
-    <!-- Analytics Bento Grid -->
-    <div class="rep-stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2.5rem;">
-        <div class="glass-card stat-card-rep" style="--c: #3b82f6;">
-            <div class="stat-icon-rep"><i class="fas fa-user-graduate"></i></div>
-            <div class="stat-info-rep">
-                <p class="stat-value-rep">{{ $aprendices->count() }}</p>
-                <p class="stat-label-rep">Aprendices</p>
+    {{-- ═══ STATS ═══ --}}
+    <div class="rp-stats">
+        <div class="rp-stat">
+            <div class="rp-stat-icon" style="color:#3b82f6;"><i class="fas fa-user-graduate"></i></div>
+            <div>
+                <div class="rp-stat-num">{{ $aprendices->count() }}</div>
+                <div class="rp-stat-lbl">Aprendices</div>
             </div>
         </div>
-        <div class="glass-card stat-card-rep" style="--c: #10b981;">
-            <div class="stat-icon-rep"><i class="fas fa-cloud-upload-alt"></i></div>
-            <div class="stat-info-rep">
-                <p class="stat-value-rep">{{ $entregas->count() }}</p>
-                <p class="stat-label-rep">Entregables</p>
+        <div class="rp-stat">
+            <div class="rp-stat-icon" style="color:#10b981;"><i class="fas fa-cloud-upload-alt"></i></div>
+            <div>
+                <div class="rp-stat-num">{{ $totalEvidencias }}</div>
+                <div class="rp-stat-lbl">Entregables</div>
             </div>
         </div>
-        <div class="glass-card stat-card-rep" style="--c: #f59e0b;">
-            <div class="stat-icon-rep"><i class="fas fa-award"></i></div>
-            <div class="stat-info-rep">
-                <p class="stat-value-rep">{{ $evidencias->where('estado', 'aceptada')->count() }}</p>
-                <p class="stat-label-rep">Aprobados</p>
+        <div class="rp-stat">
+            <div class="rp-stat-icon" style="color:#22c55e;"><i class="fas fa-award"></i></div>
+            <div>
+                <div class="rp-stat-num">{{ $totalAprobados }}</div>
+                <div class="rp-stat-lbl">Aprobados</div>
             </div>
         </div>
-        <div class="glass-card stat-card-rep" style="--c: #8b5cf6;">
-            <div class="stat-icon-rep"><i class="fas fa-tasks"></i></div>
-            <div class="stat-info-rep">
-                <p class="stat-value-rep">{{ $etapas->count() }}</p>
-                <p class="stat-label-rep">Etapas</p>
+        <div class="rp-stat">
+            <div class="rp-stat-icon" style="color:#f59e0b;"><i class="fas fa-clock"></i></div>
+            <div>
+                <div class="rp-stat-num">{{ $totalPendientes }}</div>
+                <div class="rp-stat-lbl">Pendientes</div>
+            </div>
+        </div>
+        <div class="rp-stat">
+            <div class="rp-stat-icon" style="color:#ef4444;"><i class="fas fa-ban"></i></div>
+            <div>
+                <div class="rp-stat-num">{{ $totalRechazados }}</div>
+                <div class="rp-stat-lbl">Rechazados</div>
+            </div>
+        </div>
+        <div class="rp-stat">
+            <div class="rp-stat-icon" style="color:#8b5cf6;"><i class="fas fa-tasks"></i></div>
+            <div>
+                <div class="rp-stat-num">{{ $etapas->count() }}</div>
+                <div class="rp-stat-lbl">Etapas</div>
             </div>
         </div>
     </div>
 
-    <div class="rep-main-grid" style="display: grid; grid-template-columns: 1fr 320px; gap: 2.5rem; align-items: start;">
-        
-        <div style="display: flex; flex-direction: column; gap: 2.5rem;">
-            <!-- Apprentice Management Table -->
-            <div class="glass-card" style="padding: 2.5rem; border-top: 5px solid #3b82f6; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1); border-radius: 20px;">
-                <h3 style="font-size: 1.4rem; font-weight: 900; color: var(--text-main); margin-bottom: 2rem; display: flex; align-items: center; gap: 15px;">
-                    <span style="background: rgba(59, 130, 246, 0.1); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; color: #3b82f6;">
-                        <i class="fas fa-chart-line" style="font-size: 1.2rem;"></i> 
-                    </span>
-                    Matriz de Rendimiento Global
-                </h3>
-                <div class="rep-table-wrap" style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+    {{-- ═══ PROGRESS BAR ═══ --}}
+    @if($totalEvidencias > 0)
+    <div class="rp-progress">
+        <div class="rp-progress-bar">
+            <div class="rp-progress-seg" style="width:{{ ($totalAprobados/$totalEvidencias)*100 }}%;background:#22c55e;" title="Aprobados {{ $totalAprobados }}"></div>
+            <div class="rp-progress-seg" style="width:{{ ($totalPendientes/$totalEvidencias)*100 }}%;background:#f59e0b;" title="Pendientes {{ $totalPendientes }}"></div>
+            <div class="rp-progress-seg" style="width:{{ ($totalRechazados/$totalEvidencias)*100 }}%;background:#ef4444;" title="Rechazados {{ $totalRechazados }}"></div>
+        </div>
+        <div class="rp-progress-lbl">
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:4px;"></span>{{ round(($totalAprobados/$totalEvidencias)*100) }}% aprobado</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-right:4px;"></span>{{ round(($totalPendientes/$totalEvidencias)*100) }}% pendiente</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:4px;"></span>{{ round(($totalRechazados/$totalEvidencias)*100) }}% rechazado</span>
+        </div>
+    </div>
+    @endif
+
+    {{-- ═══ MAIN LAYOUT ═══ --}}
+    <div class="rp-grid">
+
+        {{-- LEFT --}}
+        <div class="rp-left">
+
+            {{-- ─── MATRIZ DE RENDIMIENTO ─── --}}
+            <div class="rp-card">
+                <div class="rp-card-hd">
+                    <i class="fas fa-chart-line" style="color:#3b82f6;"></i>
+                    <h3>Rendimiento por Aprendiz</h3>
+                </div>
+
+                @if($aprendices->count() > 0)
+                <div class="rp-tbl-wrap">
+                    <table class="rp-tbl">
                         <thead>
-                            <tr style="text-align: left; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">
-                                <th style="padding: 12px;">Aprendiz</th>
-                                <th style="padding: 12px; text-align: center;">Entregas</th>
-                                <th style="padding: 12px; text-align: center;">Estatus</th>
+                            <tr>
+                                <th>Aprendiz</th>
+                                <th class="rp-tc">Entregas</th>
+                                <th class="rp-tc">Aprob.</th>
+                                <th class="rp-tc">Pend.</th>
+                                <th class="rp-tc">Rech.</th>
+                                <th>Progreso</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -97,30 +161,56 @@
                                 @php
                                     $e_count = $entregas->where('aprendiz_id', $aprendiz->id)->count();
                                     $a_count = $evidencias->where('aprendiz_id', $aprendiz->id)->where('estado', 'aceptada')->count();
-                                    $progreso = $etapas->count() > 0 ? ($a_count / $etapas->count()) * 100 : 0;
-                                    $correoAprendiz = $aprendiz->usuario ? $aprendiz->usuario->correo : 'N/A';
+                                    $p_count = $evidencias->where('aprendiz_id', $aprendiz->id)->where('estado', 'pendiente')->count();
+                                    $r_count = $evidencias->where('aprendiz_id', $aprendiz->id)->where('estado', 'rechazada')->count();
+                                    $progreso = $etapas->count() > 0 ? min(100, round(($a_count / $etapas->count()) * 100)) : 0;
+                                    $correo = $aprendiz->usuario ? $aprendiz->usuario->correo : 'N/A';
                                 @endphp
-                                <tr style="background: var(--bg-main); border-radius: 14px;">
-                                    <td style="padding: 16px; border-radius: 14px 0 0 14px;">
-                                        <div style="display: flex; align-items: center; gap: 12px;">
-                                            <div style="width: 38px; height: 38px; background: white; color: var(--primary); border: 2px solid var(--primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem;">
-                                                {{ substr($aprendiz->nombres, 0, 1) }}
-                                            </div>
+                                <tr class="rp-row" onclick="toggleRow(this)">
+                                    <td>
+                                        <div class="rp-user">
+                                            <div class="rp-avatar">{{ strtoupper(substr($aprendiz->nombres,0,1).substr($aprendiz->apellidos,0,1)) }}</div>
                                             <div>
-                                                <p style="font-weight: 700; color: var(--text-main); font-size: 0.9rem;">{{ $aprendiz->nombres }} {{ $aprendiz->apellidos }}</p>
-                                                <p style="font-size: 0.75rem; color: var(--text-muted);">{{ $correoAprendiz }}</p>
+                                                <div class="rp-name">{{ $aprendiz->nombres }} {{ $aprendiz->apellidos }}</div>
+                                                <div class="rp-sub">{{ $correo }}</div>
+                                                @if($aprendiz->programa_formacion)<div class="rp-sub" style="color:var(--primary);font-weight:600;">{{ $aprendiz->programa_formacion }}</div>@endif
                                             </div>
                                         </div>
                                     </td>
-                                    <td style="padding: 16px; text-align: center;">
-                                        <span style="padding: 6px 14px; background: white; border: 1px solid var(--border); border-radius: 20px; font-size: 0.8rem; font-weight: 700;">{{ $e_count }} / {{ $etapas->count() }}</span>
+                                    <td class="rp-tc">{{ $e_count }}</td>
+                                    <td class="rp-tc"><span class="rp-bdg rp-bdg-ok">{{ $a_count }}</span></td>
+                                    <td class="rp-tc"><span class="rp-bdg rp-bdg-warn">{{ $p_count }}</span></td>
+                                    <td class="rp-tc"><span class="rp-bdg rp-bdg-err">{{ $r_count }}</span></td>
+                                    <td>
+                                        <div class="rp-prog">
+                                            <div class="rp-prog-track"><div class="rp-prog-fill" style="width:{{ $progreso }}%;"></div></div>
+                                            <span class="rp-prog-pct">{{ $progreso }}%</span>
+                                        </div>
                                     </td>
-                                    <td style="padding: 16px; border-radius: 0 14px 14px 0;">
-                                        <div style="display: flex; align-items: center; gap: 12px;">
-                                            <div style="flex: 1; height: 8px; background: white; border-radius: 4px; overflow: hidden; border: 1px solid var(--border);">
-                                                <div style="width: {{ $progreso }}%; height: 100%; background: var(--primary); transition: width 0.5s ease;"></div>
-                                            </div>
-                                            <span style="font-size: 0.8rem; font-weight: 800; color: var(--primary); min-width: 40px;">{{ round($progreso) }}%</span>
+                                </tr>
+                                <tr class="rp-detail" style="display:none;">
+                                    <td colspan="6">
+                                        <div class="rp-detail-inner">
+                                            @foreach($etapas as $etapa)
+                                                @php $evStage = $evidencias->where('aprendiz_id', $aprendiz->id)->where('etapa_id', $etapa->id)->first(); @endphp
+                                                <div class="rp-etapa-mini">
+                                                    <div class="rp-em-header">
+                                                        <span class="rp-em-num">{{ $etapa->orden }}</span>
+                                                        <span>{{ $etapa->nombre }}</span>
+                                                    </div>
+                                                    @if($evStage)
+                                                        <div class="rp-em-status" style="color:{{ match($evStage->estado){'aceptada'=>'#22c55e','rechazada'=>'#ef4444','pendiente'=>'#f59e0b',default=>'#94a3b8'} }};">
+                                                            <i class="fas {{ match($evStage->estado){'aceptada'=>'fa-check-circle','rechazada'=>'fa-times-circle','pendiente'=>'fa-hourglass-half',default=>'fa-circle'} }}"></i>
+                                                            {{ Str::title($evStage->estado) }}
+                                                        </div>
+                                                        @if($evStage->fecha_envio)
+                                                            <div class="rp-em-date"><i class="far fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($evStage->fecha_envio)->format('d/m/Y') }}</div>
+                                                        @endif
+                                                    @else
+                                                        <div class="rp-em-empty"><i class="fas fa-minus-circle"></i> Sin entrega</div>
+                                                    @endif
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </td>
                                 </tr>
@@ -128,289 +218,453 @@
                         </tbody>
                     </table>
                 </div>
+                @else
+                    <div class="rp-empty">No hay aprendices asignados a este proyecto.</div>
+                @endif
             </div>
 
-            <!-- Detailed Stage Progress -->
-            <div class="glass-card" style="padding: 2.5rem; border-top: 5px solid #8b5cf6; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1); border-radius: 20px;">
-                <h3 style="font-size: 1.4rem; font-weight: 900; color: var(--text-main); margin-bottom: 2rem; display: flex; align-items: center; gap: 15px;">
-                     <span style="background: rgba(139, 92, 246, 0.1); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; color: #8b5cf6;">
-                        <i class="fas fa-layer-group" style="font-size: 1.2rem;"></i> 
-                    </span>
-                    Bitácora Detallada por Etapas
-                </h3>
-                <div style="display: grid; gap: 1.5rem;">
+            {{-- ─── BITÁCORA POR ETAPAS ─── --}}
+            <div class="rp-card">
+                <div class="rp-card-hd">
+                    <i class="fas fa-layer-group" style="color:#8b5cf6;"></i>
+                    <h3>Bitácora por Etapas</h3>
+                </div>
+
+                @if($etapas->count() > 0)
+                <div class="rp-accs">
                     @foreach($etapas as $etapa)
-                        <div class="stage-accordion-rep">
-                            <div class="accordion-header-rep" onclick="this.nextElementSibling.classList.toggle('active')">
-                                <div style="display: flex; align-items: center; gap: 15px;">
-                                    <div class="stage-num-rep">{{ $etapa->orden }}</div>
+                        @php
+                            $etapaEntregas = $entregas->where('etapa_id', $etapa->id);
+                            $etapaEvidencias = $evidencias->where('etapa_id', $etapa->id);
+                            $etapaAprobadas = $etapaEvidencias->where('estado', 'aceptada')->count();
+                        @endphp
+                        <div class="rp-acc">
+                            <div class="rp-acc-hd" onclick="toggleAcc(this)">
+                                <div class="rp-acc-hd-l">
+                                    <span class="rp-acc-num">{{ $etapa->orden }}</span>
                                     <div>
-                                        <h4 style="font-weight: 700; font-size: 1.05rem; color: var(--text-main);">{{ $etapa->nombre }}</h4>
-                                        <p style="font-size: 0.8rem; color: var(--text-muted);">{{ count($entregas->where('etapa_id', $etapa->id)) }} entregas totales</p>
+                                        <div class="rp-acc-title">{{ $etapa->nombre }}</div>
+                                        <div class="rp-acc-meta">{{ $etapaEntregas->count() }} entregas @if($etapaAprobadas > 0)&middot; {{ $etapaAprobadas }} aprobadas @endif</div>
                                     </div>
                                 </div>
-                                <i class="fas fa-chevron-down" style="color: var(--text-muted);"></i>
+                                <i class="fas fa-chevron-down rp-acc-chev"></i>
                             </div>
-                            <div class="accordion-content-rep">
-                                <div style="padding: 1.5rem; background: white; border-radius: 0 0 16px 16px; border: 1px solid var(--border); border-top: none;">
-                                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">{{ $etapa->descripcion }}</p>
-                                    
-                                    <div class="rep-stages-inner" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                                        <div>
-                                            <h5 class="sub-label-rep" style="--c: #3b82f6;">Entregas Formales</h5>
-                                            @forelse($entregas->where('etapa_id', $etapa->id) as $e)
-                                                <div class="mini-card-rep">
-                                                    <span style="font-weight: 700; color: var(--text-main);">{{ $e->aprendiz_nombres ?? '' }} {{ $e->aprendiz_apellidos ?? '' }}</span>
-                                                    <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: none; font-size: 0.65rem;">ENVIADO</span>
-                                                </div>
-                                            @empty
-                                                <p style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Sin envíos.</p>
-                                            @endforelse
+                            <div class="rp-acc-body">
+                                <div class="rp-acc-inner">
+                                    @if($etapa->descripcion)
+                                        <div class="rp-acc-desc">{{ $etapa->descripcion }}</div>
+                                    @endif
+
+                                    @if($etapa->documentos_requeridos && count($etapa->documentos_requeridos) > 0)
+                                        <div class="rp-docs">
+                                            <strong>Documentos requeridos:</strong>
+                                            @foreach($etapa->documentos_requeridos as $doc)
+                                                <span class="rp-doc">{{ $doc }}</span>
+                                            @endforeach
                                         </div>
-                                        <div>
-                                            <h5 class="sub-label-rep" style="--c: #10b981;">Calificaciones</h5>
-                                            @forelse($evidencias->where('etapa_id', $etapa->id) as $ev)
-                                                <div class="mini-card-rep">
-                                                    <span style="font-weight: 700; color: var(--text-main);">{{ $ev->aprendiz_nombres ?? '' }} {{ $ev->aprendiz_apellidos ?? '' }}</span>
-                                                    @php
-                                                        $evStatusStyles = match($ev->estado) {
-                                                            'aceptada' => ['bg' => 'rgba(16, 185, 129, 0.1)', 'text' => '#10b981', 'icon' => 'fa-check'],
-                                                            'rechazada' => ['bg' => 'rgba(239, 68, 68, 0.1)', 'text' => '#ef4444', 'icon' => 'fa-ban'],
-                                                            'pendiente' => ['bg' => 'rgba(245, 158, 11, 0.1)', 'text' => '#f59e0b', 'icon' => 'fa-clock'],
-                                                            'en_progreso' => ['bg' => 'rgba(59, 130, 246, 0.1)', 'text' => '#3b82f6', 'icon' => 'fa-spinner'],
-                                                            default => ['bg' => 'rgba(100, 116, 139, 0.1)', 'text' => '#64748b', 'icon' => 'fa-info-circle'],
-                                                        };
-                                                    @endphp
-                                                    <span class="badge" style="background: {{ $evStatusStyles['bg'] }}; color: {{ $evStatusStyles['text'] }}; border: none; font-size: 0.65rem; display: inline-flex; align-items: center; gap: 4px;">
-                                                        <i class="fas {{ $evStatusStyles['icon'] }}"></i>{{ Str::title(str_replace('_', ' ', $ev->estado)) }}
-                                                    </span>
-                                                </div>
-                                            @empty
-                                                <p style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Pendiente evaluar.</p>
-                                            @endforelse
+                                    @endif
+
+                                    @if($etapa->url_documento)
+                                        <div style="margin-bottom:16px;">
+                                            <a href="{{ asset('storage/'.$etapa->url_documento) }}" target="_blank" class="rp-link"><i class="fas fa-download"></i> Descargar guía de la etapa</a>
                                         </div>
-                                    </div>
+                                    @endif
+
+                                    @if($etapaEntregas->count() > 0)
+                                        <div class="rp-subs">
+                                            <div class="rp-subs-label">Entregas por aprendiz</div>
+                                            @foreach($etapaEntregas as $e)
+                                                @php
+                                                    $ev = $evidencias->where('etapa_id', $etapa->id)->where('aprendiz_id', $e->aprendiz_id)->first();
+                                                    $st = $ev ? match($ev->estado) {
+                                                        'aceptada' => ['c'=>'#22c55e','bg'=>'#f0fdf4','i'=>'fa-check-circle'],
+                                                        'rechazada' => ['c'=>'#ef4444','bg'=>'#fef2f2','i'=>'fa-times-circle'],
+                                                        'pendiente' => ['c'=>'#f59e0b','bg'=>'#fffbeb','i'=>'fa-hourglass-half'],
+                                                        default => ['c'=>'#94a3b8','bg'=>'#f8fafc','i'=>'fa-circle'],
+                                                    } : null;
+                                                @endphp
+                                                <div class="rp-sub">
+                                                    <div class="rp-sub-top">
+                                                        <div class="rp-sub-av">{{ strtoupper(substr($e->aprendiz_nombres ?? '?',0,1)) }}</div>
+                                                        <div class="rp-sub-info">
+                                                            <span class="rp-sub-name">{{ $e->aprendiz_nombres ?? '' }} {{ $e->aprendiz_apellidos ?? '' }}</span>
+                                                            @if($ev && $ev->fecha_envio)
+                                                                <span class="rp-sub-date"><i class="far fa-calendar-alt"></i> {{ \Carbon\Carbon::parse($ev->fecha_envio)->format('d/m/Y H:i') }}</span>
+                                                            @endif
+                                                        </div>
+                                                        @if($st)
+                                                            <span class="rp-sub-bdg" style="color:{{ $st['c'] }};background:{{ $st['bg'] }};"><i class="fas {{ $st['i'] }}"></i> {{ Str::title(str_replace('_',' ',$ev->estado)) }}</span>
+                                                        @else
+                                                            <span class="rp-sub-bdg" style="color:#94a3b8;background:#f8fafc;"><i class="fas fa-circle"></i> Sin evaluar</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="rp-sub-bot">
+                                                        @if($ev && $ev->ruta_archivo)
+                                                            <a href="{{ asset('storage/'.$ev->ruta_archivo) }}" target="_blank" class="rp-file"><i class="fas fa-paperclip"></i> Ver archivo</a>
+                                                        @endif
+                                                        @if($ev && $ev->comentario_instructor)
+                                                            <span class="rp-cmt"><i class="fas fa-comment"></i> {{ $ev->comentario_instructor }}</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="rp-empty" style="padding:20px;">Sin entregas en esta etapa.</div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
+                @else
+                    <div class="rp-empty">No se han definido etapas.</div>
+                @endif
             </div>
         </div>
 
-        <!-- Meta Info Sidebar -->
-        <div style="display: flex; flex-direction: column; gap: 1.5rem; position: sticky; top: 2rem;">
-            <div class="glass-card" style="padding: 2rem; border-radius: 20px; border-top: 4px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-                <h4 style="font-size: 1.1rem; font-weight: 900; color: var(--text-main); text-transform: uppercase; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-clipboard-list" style="color: var(--primary);"></i> Ficha Técnica
-                </h4>
-                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-                    <div>
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Estado Actual</p>
-                        @php
-                             $statusStyles = match($proyecto->estado) {
-                                 'completado' => ['bg' => '#065f46', 'icon' => 'fa-check'],
-                                 'aprobado' => ['bg' => '#10b981', 'icon' => 'fa-check'],
-                                 'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock'],
-                                 'rechazado' => ['bg' => '#ef4444', 'icon' => 'fa-ban'],
-                                 'cerrado' => ['bg' => '#64748b', 'icon' => 'fa-lock'],
-                                 'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner'],
-                                 default => ['bg' => '#64748b', 'icon' => 'fa-info-circle'],
-                             };
-                        @endphp
-                        <span style="display: inline-block; padding: 6px 14px; background: {{ $statusStyles['bg'] }}; color: #ffffff; border-radius: 10px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; border: 1px solid {{ $statusStyles['bg'] }};">
-                            <i class="fas {{ $statusStyles['icon'] }}" style="font-size: 0.5rem; margin-right: 6px; vertical-align: middle;"></i>{{ Str::title(str_replace('_', ' ', $proyecto->estado)) }}
-                        </span>
+        {{-- RIGHT --}}
+        <div class="rp-right">
+            <div class="rp-sticky">
+
+                <div class="rp-card">
+                    <div class="rp-card-hd">
+                        <i class="fas fa-clipboard-list" style="color:var(--primary);"></i>
+                        <h3>Ficha Técnica</h3>
                     </div>
-                    <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Empresa Patrocinadora</p>
-                        <p style="font-weight: 800; color: var(--text-main); font-size: 0.95rem;">
-                            <i class="fas fa-building" style="color: var(--primary); margin-right: 8px;"></i>{{ $proyecto->empresa->nombre ?? 'No asignada' }}
-                        </p>
-                    </div>
-                    <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 800; text-transform: uppercase;">Categoría del Proyecto</p>
-                        <p style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">
-                            {{ $proyecto->categoria ?? 'General' }}
-                        </p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 800; text-transform: uppercase;">Cronograma de Ejecución</p>
-                        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; background: var(--bg-main); padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: var(--text-muted); font-weight: 700;"><i class="fas fa-play-circle" style="margin-right: 6px;"></i>Inicio:</span>
-                                <span style="font-weight: 800; color: var(--text-main);">{{ $proyecto->fecha_publicacion ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->format('d/m/Y') : 'Por definir' }}</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: var(--text-muted); font-weight: 700;"><i class="fas fa-flag-checkered" style="margin-right: 6px;"></i>Cierre:</span>
-                                <span style="font-weight: 800; color: var(--primary);">{{ $proyecto->fecha_publicacion && $proyecto->duracion_estimada_dias ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias)->format('d/m/Y') : 'Por definir' }}</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: var(--text-muted); font-weight: 700;"><i class="far fa-clock" style="margin-right: 6px;"></i>Duración:</span>
-                                <span style="font-weight: 800; color: var(--text-main);">{{ $proyecto->duracion_estimada_dias ?? 0 }} Días</span>
+                    <div class="rp-sb-body">
+
+                        <div class="rp-sb-field">
+                            <div class="rp-sb-lbl">Estado</div>
+                            @php
+                                $sS = match($proyecto->estado) {
+                                    'completado' => ['bg'=>'#065f46','i'=>'fa-check-double'],
+                                    'aprobado' => ['bg'=>'#10b981','i'=>'fa-check'],
+                                    'pendiente' => ['bg'=>'#f59e0b','i'=>'fa-clock'],
+                                    'rechazado' => ['bg'=>'#ef4444','i'=>'fa-ban'],
+                                    'cerrado' => ['bg'=>'#64748b','i'=>'fa-lock'],
+                                    'en_progreso' => ['bg'=>'#3b82f6','i'=>'fa-spinner fa-spin'],
+                                    default => ['bg'=>'#64748b','i'=>'fa-info-circle'],
+                                };
+                            @endphp
+                            <span class="rp-bdg-status" style="background:{{ $sS['bg'] }};"><i class="fas {{ $sS['i'] }}"></i> {{ Str::title(str_replace('_',' ',$proyecto->estado)) }}</span>
+                        </div>
+
+                        <div class="rp-div"></div>
+
+                        @if($proyecto->empresa)
+                        <div class="rp-sb-field">
+                            <div class="rp-sb-lbl">Empresa</div>
+                            <div class="rp-sb-val"><i class="fas fa-building"></i> {{ $proyecto->empresa->nombre }}</div>
+                            @if($proyecto->empresa->correo_contacto)<div class="rp-sb-sub"><i class="fas fa-envelope"></i> {{ $proyecto->empresa->correo_contacto }}</div>@endif
+                        </div>
+                        <div class="rp-div"></div>
+                        @endif
+
+                        @if($proyecto->instructor)
+                        <div class="rp-sb-field">
+                            <div class="rp-sb-lbl">Instructor</div>
+                            <div class="rp-sb-val"><i class="fas fa-chalkboard-teacher"></i> {{ $proyecto->instructor->nombres }} {{ $proyecto->instructor->apellidos }}</div>
+                            @if($proyecto->instructor->especialidad)<div class="rp-sb-sub"><i class="fas fa-microchip"></i> {{ $proyecto->instructor->especialidad }}</div>@endif
+                        </div>
+                        <div class="rp-div"></div>
+                        @endif
+
+                        <div class="rp-sb-field">
+                            <div class="rp-sb-lbl">Categoría</div>
+                            <div class="rp-sb-val">{{ $proyecto->categoria ?? 'General' }}</div>
+                        </div>
+
+                        @if($proyecto->ubicacion)
+                        <div class="rp-div"></div>
+                        <div class="rp-sb-field">
+                            <div class="rp-sb-lbl">Ubicación</div>
+                            <div class="rp-sb-val"><i class="fas fa-map-marker-alt"></i> {{ $proyecto->ubicacion }}</div>
+                        </div>
+                        @endif
+
+                        @if($proyecto->oferta)
+                        <div class="rp-div"></div>
+                        <div class="rp-sb-field">
+                            <div class="rp-sb-lbl">Beneficio</div>
+                            <span class="rp-offer"><i class="fas fa-gift"></i>
+                                @switch($proyecto->oferta)
+                                    @case('pasantias') Pasantías @break
+                                    @case('contrato_aprendizaje') Contrato aprendizaje @break
+                                    @case('auxilio_transporte') Auxilio transporte @break
+                                    @case('otro') {{ $proyecto->oferta_otro }} @break
+                                @endswitch
+                            </span>
+                        </div>
+                        @endif
+
+                        <div class="rp-div"></div>
+                        <div class="rp-sb-field">
+                            <div class="rp-sb-lbl">Cronograma</div>
+                            <div class="rp-crono">
+                                <div class="rp-crono-row"><span>Inicio:</span><strong>{{ $proyecto->fecha_publicacion ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->format('d/m/Y') : 'Por definir' }}</strong></div>
+                                <div class="rp-crono-row"><span>Cierre:</span><strong>{{ $proyecto->fecha_publicacion && $proyecto->duracion_estimada_dias ? \Carbon\Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias)->format('d/m/Y') : 'Por definir' }}</strong></div>
+                                <div class="rp-crono-row"><span>Duración:</span><strong>{{ $proyecto->duracion_estimada_dias ?? 0 }} días</strong></div>
+                                @if($diasTranscurridos > 0)<div class="rp-crono-row"><span>Transcurrido:</span><strong>{{ $diasTranscurridos }} días ({{ $porcentajeTiempo }}%)</strong></div>@endif
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="glass-card" style="padding: 1.5rem; background: var(--primary); border: none;">
-                <h4 style="color: rgba(255,255,255,0.8); font-size: 0.85rem; font-weight: 700; margin-bottom: 1rem;">CALIDAD DE SEGUIMIENTO</h4>
-                <div style="text-align: center;">
-                    <p style="font-size: 2.5rem; font-weight: 900; color: white;">A+</p>
-                    <p style="font-size: 0.7rem; color: rgba(255,255,255,0.7); margin-top: 5px;">Métrica interna SENA</p>
+                <div class="rp-card">
+                    <div class="rp-card-hd">
+                        <i class="fas fa-chart-bar" style="color:var(--primary);"></i>
+                        <h3>Métricas</h3>
+                    </div>
+                    <div class="rp-sb-body">
+                        <div class="rp-mtr">
+                            <div class="rp-mtr-hd"><span>Aprobación</span><strong>{{ $tasaAprobacion }}%</strong></div>
+                            <div class="rp-mtr-bar"><div class="rp-mtr-fill" style="width:{{ $tasaAprobacion }}%;background:#22c55e;"></div></div>
+                        </div>
+                        <div class="rp-mtr">
+                            <div class="rp-mtr-hd"><span>Completitud</span><strong>{{ $tasaCompletitud }}%</strong></div>
+                            <div class="rp-mtr-bar"><div class="rp-mtr-fill" style="width:{{ $tasaCompletitud }}%;background:#3b82f6;"></div></div>
+                        </div>
+                        <div class="rp-mtr">
+                            <div class="rp-mtr-hd"><span>Tiempo</span><strong>{{ $porcentajeTiempo }}%</strong></div>
+                            <div class="rp-mtr-bar"><div class="rp-mtr-fill" style="width:{{ $porcentajeTiempo }}%;background:#8b5cf6;"></div></div>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="rp-card" style="border-left:4px solid {{ $puntajeCalidad >= 80 ? '#22c55e' : ($puntajeCalidad >= 60 ? '#f59e0b' : '#ef4444') }};">
+                    <div class="rp-card-hd">
+                        <i class="fas fa-medal" style="color:{{ $puntajeCalidad >= 80 ? '#22c55e' : ($puntajeCalidad >= 60 ? '#f59e0b' : '#ef4444') }};"></i>
+                        <h3>Calidad de Seguimiento</h3>
+                    </div>
+                    <div class="rp-sb-body" style="text-align:center;">
+                        <div style="font-size:2.2rem;font-weight:900;color:{{ $puntajeCalidad >= 80 ? '#22c55e' : ($puntajeCalidad >= 60 ? '#f59e0b' : '#ef4444') }};">{{ $letraCalidad }}</div>
+                        <div style="font-size:0.75rem;color:var(--text-light);margin-top:4px;">{{ round($puntajeCalidad) }}% &middot; Basado en entregas y aprobaciones</div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    .stat-card-rep {
-        padding: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 1.25rem;
-        border-left: 4px solid var(--c);
-    }
-    .stat-icon-rep {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        color: var(--c);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        background: white;
-        border: 1px solid var(--border);
-    }
-    .stat-value-rep { font-size: 1.6rem; font-weight: 800; color: var(--text-main); line-height: 1; }
-    .stat-label-rep { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
+/* ── REPORTE - PALETA SISTEMA ── */
+.rp-container { max-width: 1280px; margin: 0 auto; }
 
-    .stage-accordion-rep { border-radius: 16px; overflow: hidden; margin-bottom: 10px; }
-    .accordion-header-rep {
-        padding: 1.25rem 2rem;
-        background: white;
-        border: 2px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        border-radius: 16px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-    }
-    .accordion-header-rep:hover { 
-        border-color: #8b5cf6; 
-        box-shadow: 0 6px 16px rgba(139, 92, 246, 0.15); 
-        transform: translateY(-2px);
-    }
-    .stage-num-rep {
-        width: 32px;
-        height: 32px;
-        background: var(--primary);
-        color: white;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: 0.85rem;
-    }
-    .accordion-content-rep { display: none; }
-    .accordion-content-rep.active { display: block; animation: slideDownRep 0.3s ease-out; }
-    
-    @keyframes slideDownRep {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+/* Header */
+.rp-header { margin-bottom: 28px; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; }
+.rp-back { color: var(--primary); text-decoration: none; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.rp-back:hover { gap: 10px; }
+.rp-title { font-size: 26px; font-weight: 900; color: var(--text); }
+.rp-desc { font-size: 14px; color: var(--text-light); margin-top: 2px; }
+.rp-tag { display: inline-block; padding: 2px 10px; background: var(--primary-soft); color: var(--primary); border-radius: 12px; font-size: 0.7rem; font-weight: 700; margin-left: 8px; vertical-align: middle; }
 
-    .sub-label-rep {
-        font-size: 0.75rem;
-        font-weight: 800;
-        color: var(--c);
-        text-transform: uppercase;
-        border-bottom: 2px solid var(--border);
-        padding-bottom: 6px;
-        margin-bottom: 1rem;
-        display: block;
-    }
-    .mini-card-rep {
-        padding: 10px 14px;
-        background: var(--bg-main);
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
-        font-size: 0.85rem;
-    }
+/* Stats */
+.rp-stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 24px; }
+.rp-stat { background: white; border-radius: 14px; padding: 18px; display: flex; align-items: center; gap: 14px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s; }
+.rp-stat:hover { border-color: var(--primary-glow); box-shadow: 0 4px 16px var(--primary-soft); }
+.rp-stat-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--primary-soft); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; border: 1px solid var(--border); }
+.rp-stat-num { font-size: 1.4rem; font-weight: 900; color: var(--text); line-height: 1; }
+.rp-stat-lbl { font-size: 0.68rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; margin-top: 2px; }
 
-    @media (max-width: 1024px) {
-        .rep-header { flex-direction: column; align-items: flex-start !important; gap: 16px; }
-        .rep-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-        .rep-main-grid { grid-template-columns: 1fr !important; }
-        .rep-stages-inner { grid-template-columns: 1fr !important; }
-    }
-    @media (max-width: 640px) {
-        .rep-stats-grid { grid-template-columns: 1fr !important; }
-        .rep-header h2 { font-size: 22px !important; }
-        .rep-table-wrap { overflow-x: auto; }
-        table { font-size: 0.8rem; }
-        .accordion-header-rep { padding: 1rem !important; }
-        .accordion-header-rep h4 { font-size: 0.9rem !important; }
-    }
-    @media print {
-        .sidebar, .topbar, .btn-ver, .nav-item { display: none !important; }
-        .main { margin-left: 0 !important; }
-        .glass-card { 
-            box-shadow: none !important; 
-            border: 1px solid #ddd !important;
-            backdrop-filter: none !important;
-            background: white !important;
-        }
-        body { background: white !important; }
-        .accordion-content-rep { display: block !important; }
-        .accordion-header-rep { cursor: default !important; }
-        .stage-accordion-rep { page-break-inside: avoid; }
-        .stat-card-rep { border: 1px solid #ddd !important; }
-        .mini-card-rep { background: #f8fafc !important; }
-        :root {
-            --primary: hsl(158, 49%, 47%);
-            --primary-hover: hsl(158, 49%, 37%);
-            --primary-light: hsl(158, 49%, 57%);
-            --text-main: #1a2e1a;
-            --text-muted: #64748b;
-            --border: rgba(0, 0, 0, 0.1);
-            --bg-main: #f8fafc;
-        }
-    }
+/* Progress */
+.rp-progress { background: white; border-radius: 14px; padding: 16px 20px; margin-bottom: 24px; border: 1px solid var(--border); }
+.rp-progress-bar { height: 8px; background: #e8f0ec; border-radius: 4px; overflow: hidden; display: flex; margin-bottom: 8px; }
+.rp-progress-seg { height: 100%; transition: width 0.5s; }
+.rp-progress-lbl { display: flex; gap: 16px; font-size: 0.72rem; font-weight: 600; color: var(--text-light); flex-wrap: wrap; }
+
+/* Grid */
+.rp-grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+.rp-left { display: flex; flex-direction: column; gap: 24px; }
+.rp-right { display: flex; flex-direction: column; gap: 20px; }
+.rp-sticky { position: sticky; top: 110px; display: flex; flex-direction: column; gap: 20px; }
+
+/* Cards */
+.rp-card { background: white; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.03); overflow: hidden; transition: all 0.2s; }
+.rp-card:hover { border-color: var(--primary-glow); }
+.rp-card-hd { display: flex; align-items: center; gap: 10px; padding: 18px 22px 0; }
+.rp-card-hd i { font-size: 1.1rem; width: 22px; text-align: center; color: var(--primary); }
+.rp-card-hd h3 { font-size: 1rem; font-weight: 800; color: var(--text); }
+
+/* Table */
+.rp-tbl-wrap { overflow-x: auto; padding: 16px 22px 22px; }
+.rp-tbl { width: 100%; border-collapse: collapse; }
+.rp-tbl th { padding: 8px 10px; font-size: 0.68rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.3px; text-align: left; border-bottom: 2px solid var(--primary-soft); }
+.rp-tc { text-align: center !important; }
+.rp-tbl td { padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.04); font-size: 0.85rem; transition: background 0.15s; }
+.rp-row { cursor: pointer; }
+.rp-row:hover td { background: var(--primary-soft); }
+.rp-row:last-child td { border-bottom: none; }
+
+.rp-user { display: flex; align-items: center; gap: 10px; }
+.rp-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem; flex-shrink: 0; }
+.rp-name { font-weight: 700; color: var(--text); font-size: 0.85rem; }
+.rp-sub { font-size: 0.7rem; color: var(--text-light); }
+
+.rp-bdg { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; min-width: 28px; }
+.rp-bdg-ok { background: #f0fdf4; color: #22c55e; }
+.rp-bdg-warn { background: #fffbeb; color: #f59e0b; }
+.rp-bdg-err { background: #fef2f2; color: #ef4444; }
+
+.rp-prog { display: flex; align-items: center; gap: 8px; }
+.rp-prog-track { flex: 1; height: 6px; background: #e8f0ec; border-radius: 3px; overflow: hidden; max-width: 100px; }
+.rp-prog-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-hover)); border-radius: 3px; transition: width 0.4s; }
+.rp-prog-pct { font-size: 0.78rem; font-weight: 800; color: var(--primary); min-width: 32px; }
+
+/* Detail row */
+.rp-detail td { padding: 0 10px 16px; }
+.rp-detail-inner { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; padding: 12px; background: var(--primary-soft); border-radius: 12px; border: 1px solid var(--border); }
+.rp-etapa-mini { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.rp-em-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.78rem; font-weight: 700; color: var(--text); }
+.rp-em-num { width: 22px; height: 22px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 800; flex-shrink: 0; }
+.rp-em-status { font-size: 0.72rem; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+.rp-em-date { font-size: 0.65rem; color: var(--text-light); margin-top: 2px; }
+.rp-em-empty { font-size: 0.7rem; color: var(--text-light); font-style: italic; display: flex; align-items: center; gap: 4px; }
+
+/* Empty */
+.rp-empty { text-align: center; padding: 40px 20px; color: var(--text-light); font-size: 0.85rem; }
+
+/* Accordion */
+.rp-accs { padding: 16px 22px 22px; display: flex; flex-direction: column; gap: 10px; }
+.rp-acc { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: white; transition: all 0.2s; }
+.rp-acc:hover { border-color: var(--primary-glow); }
+.rp-acc-hd { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.15s; }
+.rp-acc-hd:hover { background: var(--primary-soft); }
+.rp-acc-hd-l { display: flex; align-items: center; gap: 12px; }
+.rp-acc-num { width: 26px; height: 26px; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem; flex-shrink: 0; }
+.rp-acc-title { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+.rp-acc-meta { font-size: 0.68rem; color: var(--text-light); }
+.rp-acc-chev { color: var(--text-light); font-size: 0.75rem; transition: transform 0.25s; }
+.rp-acc.open .rp-acc-chev { transform: rotate(180deg); }
+.rp-acc-body { display: none; }
+.rp-acc.open .rp-acc-body { display: block; }
+.rp-acc-inner { padding: 0 18px 18px; border-top: 1px solid var(--primary-soft); padding-top: 14px; }
+
+.rp-acc-desc { font-size: 0.82rem; color: var(--text-light); line-height: 1.5; margin-bottom: 14px; padding: 10px 14px; background: var(--primary-soft); border-radius: 8px; border-left: 3px solid var(--primary); }
+
+.rp-docs { margin-bottom: 14px; font-size: 0.78rem; }
+.rp-docs strong { display: block; margin-bottom: 4px; color: var(--text); }
+.rp-doc { display: inline-block; padding: 2px 10px; background: var(--primary-soft); color: var(--primary); border-radius: 6px; font-size: 0.7rem; font-weight: 700; margin: 2px; }
+.rp-link { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: var(--primary-soft); color: var(--primary); border-radius: 8px; font-size: 0.72rem; font-weight: 700; text-decoration: none; }
+.rp-link:hover { background: rgba(62,180,137,0.15); }
+
+/* Submissions */
+.rp-subs { margin-top: 4px; }
+.rp-subs-label { font-size: 0.72rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; }
+.rp-sub { background: var(--primary-soft); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 8px; transition: all 0.15s; }
+.rp-sub:hover { background: white; border-color: var(--primary-glow); }
+.rp-sub:last-child { margin-bottom: 0; }
+.rp-sub-top { display: flex; align-items: center; gap: 10px; }
+.rp-sub-av { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem; flex-shrink: 0; }
+.rp-sub-info { flex: 1; min-width: 0; }
+.rp-sub-name { display: block; font-size: 0.82rem; font-weight: 700; color: var(--text); }
+.rp-sub-date { display: block; font-size: 0.65rem; color: var(--text-light); }
+.rp-sub-bdg { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 8px; font-size: 0.62rem; font-weight: 800; white-space: nowrap; }
+.rp-sub-bot { display: flex; align-items: center; gap: 12px; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(0,0,0,0.04); flex-wrap: wrap; }
+.rp-file { display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+.rp-file:hover { text-decoration: underline; }
+.rp-cmt { font-size: 0.72rem; color: var(--text-light); display: inline-flex; align-items: flex-start; gap: 4px; }
+.rp-cmt i { color: var(--primary); font-size: 0.65rem; margin-top: 2px; }
+
+/* Sidebar */
+.rp-sb-body { padding: 14px 20px 18px; }
+.rp-sb-field { margin-bottom: 2px; }
+.rp-sb-lbl { font-size: 0.65rem; font-weight: 800; color: var(--text-light); text-transform: uppercase; margin-bottom: 4px; }
+.rp-sb-val { font-weight: 700; color: var(--text); font-size: 0.85rem; }
+.rp-sb-val i { color: var(--primary); margin-right: 6px; width: 14px; text-align: center; }
+.rp-sb-sub { font-size: 0.72rem; color: var(--text-light); margin-top: 1px; }
+.rp-sb-sub i { color: var(--primary); margin-right: 6px; width: 14px; text-align: center; }
+.rp-bdg-status { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 16px; color: white; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+.rp-offer { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; background: var(--primary-soft); color: var(--primary); border-radius: 12px; font-size: 0.75rem; font-weight: 800; }
+.rp-div { height: 1px; background: var(--primary-soft); margin: 12px 0; }
+
+.rp-crono { background: var(--primary-soft); padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+.rp-crono-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; font-size: 0.75rem; }
+.rp-crono-row span { color: var(--text-light); font-weight: 600; }
+.rp-crono-row span i { margin-right: 4px; }
+.rp-crono-row strong { font-weight: 800; color: var(--text); }
+
+/* Metrics */
+.rp-mtr { margin-bottom: 14px; }
+.rp-mtr:last-child { margin-bottom: 0; }
+.rp-mtr-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 0.75rem; }
+.rp-mtr-hd span { color: var(--text-light); font-weight: 600; }
+.rp-mtr-hd strong { color: var(--text); font-weight: 900; }
+.rp-mtr-bar { height: 5px; background: #e8f0ec; border-radius: 3px; overflow: hidden; }
+.rp-mtr-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .rp-stats { grid-template-columns: repeat(3, 1fr); }
+    .rp-grid { grid-template-columns: 1fr; }
+    .rp-sticky { position: static; }
+}
+@media (max-width: 1024px) {
+    .rp-header { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 768px) {
+    .rp-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .rp-stat { padding: 14px; }
+    .rp-stat-num { font-size: 1.1rem; }
+    .rp-detail-inner { grid-template-columns: repeat(2, 1fr); }
+    .rp-tbl-wrap { padding: 12px 14px 16px; }
+    .rp-accs { padding: 12px 14px 16px; }
+    .rp-card-hd { padding: 14px 14px 0; }
+    .rp-card-hd h3 { font-size: 0.9rem; }
+}
+@media (max-width: 640px) {
+    .rp-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .rp-stat { flex-direction: column; text-align: center; gap: 6px; padding: 10px; }
+    .rp-stat-icon { width: 32px; height: 32px; font-size: 0.8rem; }
+    .rp-stat-num { font-size: 0.95rem; }
+    .rp-stat-lbl { font-size: 0.6rem; }
+    .rp-title { font-size: 20px; }
+    .rp-progress { padding: 12px 14px; }
+    .rp-detail-inner { grid-template-columns: 1fr; }
+    .rp-tbl th, .rp-tbl td { padding: 8px 6px; font-size: 0.72rem; }
+    .rp-name { font-size: 0.78rem; }
+    .rp-sub-top { flex-wrap: wrap; }
+    .rp-sb-body { padding: 10px 14px 14px; }
+}
+@media (max-width: 480px) {
+    .rp-stats { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .rp-grid { gap: 16px; }
+    .rp-accs { gap: 8px; }
+}
+
+@media print {
+    .sidebar, .topbar, #btnExportarPDF, .nav-item, .sidebar-overlay, .sidebar-toggle, .notification-bell { display: none !important; }
+    .main { margin-left: 0 !important; }
+    body { background: white !important; }
+    .rp-card, .rp-stat, .rp-progress { box-shadow: none !important; border: 1px solid #ddd !important; background: white !important; }
+    .rp-acc-body { display: block !important; }
+    .rp-acc-hd { cursor: default !important; }
+    .rp-acc { page-break-inside: avoid; border: 1px solid #ddd !important; }
+    .rp-bdg-status, .rp-bdg-ok, .rp-bdg-warn, .rp-bdg-err, .rp-progress-seg, .rp-prog-fill, .rp-mtr-fill, .rp-sub-bdg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
 </style>
 @endsection
 
 @section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('btnExportarPDF');
-    if (btn) {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
-                el.classList.add('active');
-            });
-
-            requestAnimationFrame(function() {
-                window.print();
-            });
-
-            window.onafterprint = function () {
-                document.querySelectorAll('.accordion-content-rep').forEach(function(el) {
-                    el.classList.remove('active');
-                });
-            };
-        });
-    }
+    document.getElementById('btnExportarPDF').addEventListener('click', function() {
+        document.querySelectorAll('.rp-acc').forEach(function(el) { el.classList.add('open'); });
+        document.querySelectorAll('.rp-detail').forEach(function(el) { el.style.display = 'table-row'; });
+        requestAnimationFrame(function() { window.print(); });
+        window.onafterprint = function() {
+            document.querySelectorAll('.rp-acc').forEach(function(el) { el.classList.remove('open'); });
+            document.querySelectorAll('.rp-detail').forEach(function(el) { el.style.display = 'none'; });
+        };
+    });
 });
+function toggleAcc(el) { el.parentElement.classList.toggle('open'); }
+function toggleRow(row) {
+    var detail = row.nextElementSibling;
+    if (detail && detail.classList.contains('rp-detail')) {
+        detail.style.display = detail.style.display === 'table-row' ? 'none' : 'table-row';
+    }
+}
 </script>
 @endsection
