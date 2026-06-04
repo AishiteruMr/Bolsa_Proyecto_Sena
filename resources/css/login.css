@@ -55,7 +55,7 @@
     border-radius: 50%;
     z-index: 0;
     pointer-events: none;
-    animation: float 20s infinite alternate;
+    /* animation: float 20s infinite alternate; (Optimizado) */
 }
 .blob-1 { top: -150px; right: -100px; background: hsla(158, 49%, 47%, 0.12); width: 600px; height: 600px; }
 .blob-2 { bottom: -100px; left: -100px; background: hsla(158, 49%, 40%, 0.08); width: 500px; height: 500px; }
@@ -111,10 +111,10 @@
 }
 
 .brand-quote { 
-    margin: 40px 0; 
+    margin: 28px 0; 
     position: relative; 
     z-index: 1; 
-    padding: 30px;
+    padding: 24px;
     background: rgba(255,255,255,0.06);
     border-radius: 20px;
     border: 1px solid rgba(255,255,255,0.08);
@@ -143,8 +143,8 @@
 }
 
 .brand-features {
-  display: flex; flex-direction: column; gap: 14px;
-  margin: 28px 0; position: relative; z-index: 1;
+  display: flex; flex-direction: column; gap: 12px;
+  margin: 20px 0; position: relative; z-index: 1;
 }
 .brand-feature {
   display: flex; align-items: center; gap: 14px;
@@ -186,23 +186,23 @@
 }
 
 .login-content {
-    padding: 32px 40px;
+    padding: 28px 36px;
     background: #ffffff;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     color: #1a2e1a;
-    max-height: 90vh;
-    overflow-y: auto;
+    min-height: 100%;
 }
 
-.content-header { margin-bottom: 28px; }
+.content-header { margin-bottom: 20px; }
 .content-header h3 { 
     font-size: var(--text-xl); font-weight: var(--font-bold); color: #1a2e1a; 
-    margin-bottom: 8px; letter-spacing: -0.5px;
+    margin-bottom: 6px; letter-spacing: -0.5px;
 }
 .content-header p { font-size: var(--text-sm); color: #6b7c6b; font-weight: var(--font-medium); }
 
-.form-group { margin-bottom: 20px; }
+.form-group { margin-bottom: 16px; }
 .form-group label {
     display: block; font-size: var(--text-xs); font-weight: var(--font-bold);
     color: #4a5d4a; text-transform: uppercase;
@@ -251,14 +251,14 @@ label .hint-icon {
 }
 
 .forgot-link {
-    display: block; text-align: right; margin-top: -8px; margin-bottom: 24px;
+    display: block; text-align: right; margin-top: -2px; margin-bottom: 16px;
     font-size: var(--text-xs); font-weight: var(--font-bold); color: #3eb489;
     text-decoration: none;
 }
 .forgot-link:hover { color: #2d9d74; }
 
 .btn-submit {
-    width: 100%; padding: 16px; border-radius: 14px;
+    width: 100%; padding: 14px; border-radius: 14px;
     background: linear-gradient(135deg, #3eb489 0%, #2d9d74 100%);
     color: #fff; border: none; font-size: var(--text-sm); font-weight: var(--font-bold);
     cursor: pointer; transition: all 0.3s ease;
@@ -275,12 +275,12 @@ label .hint-icon {
 
 .divider {
     display: flex; align-items: center; gap: 14px;
-    margin: 24px 0; color: #a3b0a3;
+    margin: 18px 0; color: #a3b0a3;
     font-size: var(--text-xs); font-weight: var(--font-bold); text-transform: uppercase; letter-spacing: 2px;
 }
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e4e7e4; }
 
-.role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .role-card {
     padding: 16px 12px; background: linear-gradient(180deg, #f9faf9 0%, #f0f3f0 100%);
     border: 1px solid #e4e7e4;
@@ -311,12 +311,12 @@ label .hint-icon {
         grid-template-columns: 1fr 1fr;
         max-width: 900px;
     }
-    .brand-quote { margin: 24px 0; padding: 20px; }
+    .brand-quote { margin: 20px 0; padding: 18px; }
     .brand-quote h2 { font-size: var(--text-xl); }
-    .brand-features { gap: 12px; margin: 20px 0; }
-    .brand-feature { padding: 12px 16px; }
+    .brand-features { gap: 10px; margin: 16px 0; }
+    .brand-feature { padding: 10px 14px; }
     .login-brand { padding: 24px; }
-    .login-content { padding: 40px 32px; }
+    .login-content { padding: 24px 28px; }
     .btn-back { top: 16px; left: 16px; padding: 8px 16px; font-size: var(--text-xs); }
 }
 
@@ -330,13 +330,13 @@ label .hint-icon {
     .login-content { border-radius: 20px; }
     .login-brand-show {
         display: flex !important;
-        padding: 32px 24px 20px;
+        padding: 24px 24px 16px;
         border-radius: 20px 20px 0 0;
         order: -1;
         background: linear-gradient(160deg, #0d1a0d 0%, #145230 80%, #3eb489 100%);
     }
     .login-brand-show + .login-content {
-        padding: 32px 28px 36px !important;
+        padding: 24px 28px 28px !important;
         border-radius: 0 0 20px 20px;
     }
     .login-brand-show .brand-header { padding: 14px 18px; border-radius: 12px; }
@@ -352,37 +352,37 @@ label .hint-icon {
 }
 
 @media (max-width: 600px) {
-    .login-page-wrapper { padding: 16px 12px; }
+    .login-page-wrapper { padding: 12px 10px; }
     .login-container { max-width: 100%; border-radius: 16px; }
-    .login-content { padding: 24px 20px 28px; border-radius: 16px; }
-    .content-header { margin-bottom: 20px; }
+    .login-content { padding: 20px 18px 24px; border-radius: 16px; }
+    .content-header { margin-bottom: 16px; }
     .content-header h3 { font-size: var(--text-lg); }
     .content-header p { font-size: var(--text-xs); }
-    .form-group { margin-bottom: 16px; }
+    .form-group { margin-bottom: 14px; }
     .form-group label { font-size: 11px; letter-spacing: 0.8px; }
     .input-wrapper input { padding: 12px 14px 12px 42px; border-radius: 12px; font-size: 14px; }
     .input-wrapper i { left: 14px; font-size: var(--text-sm); }
-    .btn-submit { padding: 14px; border-radius: 12px; font-size: var(--text-sm); }
-    .forgot-link { font-size: 12px; margin-bottom: 16px; }
-    .divider { margin: 18px 0; font-size: 11px; letter-spacing: 1px; }
+    .btn-submit { padding: 12px; border-radius: 12px; font-size: var(--text-sm); }
+    .forgot-link { font-size: 12px; margin-bottom: 14px; }
+    .divider { margin: 14px 0; font-size: 11px; letter-spacing: 1px; }
     .role-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .role-card { padding: 14px 10px; border-radius: 14px; }
+    .role-card { padding: 12px 10px; border-radius: 14px; }
     .role-card i { font-size: var(--text-lg); margin-bottom: 6px; }
     .role-card span { font-size: 11px; }
-    .alert { padding: 12px 16px; font-size: 13px; border-radius: 12px; }
+    .alert { padding: 10px 14px; font-size: 13px; border-radius: 12px; }
     .btn-back { top: 10px; left: 10px; padding: 6px 12px; font-size: 11px; border-radius: 10px; }
 }
 
 @media (max-width: 400px) {
-    .login-page-wrapper { padding: 12px 8px; }
+    .login-page-wrapper { padding: 8px 6px; }
     .login-container { max-width: 100%; border-radius: 14px; }
-    .login-content { padding: 18px 14px 22px; border-radius: 14px; }
+    .login-content { padding: 16px 12px 18px; border-radius: 14px; }
     .content-header h3 { font-size: 18px; }
-    .input-wrapper input { padding: 11px 12px 11px 38px; }
-    .input-wrapper i { left: 12px; font-size: 14px; }
+    .input-wrapper input { padding: 10px 12px 10px 36px; }
+    .input-wrapper i { left: 12px; font-size: 13px; }
     .role-grid { gap: 6px; }
-    .role-card { padding: 12px 6px; }
+    .role-card { padding: 10px 6px; }
     .role-card span { display: none; }
-    .role-card i { margin-bottom: 0; font-size: 18px; }
-    .btn-back { top: 8px; left: 8px; padding: 5px 10px; font-size: 10px; }
+    .role-card i { margin-bottom: 0; font-size: 16px; }
+    .btn-back { top: 6px; left: 6px; padding: 5px 8px; font-size: 10px; }
 }
