@@ -97,10 +97,19 @@
                 <div class="form-step" data-step="2">
                     <h4 class="step-title">Paso 2: Información académica</h4>
                     <div class="form-group">
-                        <label>Programa de Formación <i class="fas fa-question-circle hint-icon" data-hint="Nombre oficial del programa"></i></label>
+                        <label>Programa de Formación <i class="fas fa-question-circle hint-icon" data-hint="Selecciona tu programa SENA"></i></label>
                         <div class="input-wrapper">
                             <i class="fas fa-graduation-cap"></i>
-                            <input type="text" name="programa" value="{{ old('programa') }}" placeholder="Programa técnico o tecnológico" required>
+                            <select name="programa" required>
+                                <option value="" disabled {{ old('programa') ? '' : 'selected' }}>Selecciona tu programa</option>
+                                @foreach(config('programas') as $categoria => $programas)
+                                    <optgroup label="{{ $categoria }}">
+                                        @foreach($programas as $programa)
+                                            <option value="{{ $programa }}" {{ old('programa') === $programa ? 'selected' : '' }}>{{ $programa }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 

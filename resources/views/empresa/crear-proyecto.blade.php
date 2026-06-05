@@ -170,17 +170,14 @@
                             </div>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Sector Económico</label>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Área de Formación</label>
                             <div style="position: relative;">
                                 <i class="fas fa-layer-group" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
                                 <select name="categoria" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; background: white; appearance: none;">
-                                    <option value="">Seleccionar Sector...</option>
-                                    <option value="Tecnología">Tecnología e Información</option>
-                                    <option value="Agrícola">Gestión Agrícola</option>
-                                    <option value="Industrial">Manufactura Industrial</option>
-                                    <option value="Salud">Salud y Bienestar</option>
-                                    <option value="Ambiental">Sostenibilidad Ambiental</option>
-                                    <option value="Otro">Otros Sectores</option>
+                                    <option value="">Seleccionar Área...</option>
+                                    @foreach(array_keys(config('programas')) as $cat)
+                                        <option value="{{ $cat }}" {{ old('categoria') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                                    @endforeach
                                 </select>
                                 <i class="fas fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
                             </div>

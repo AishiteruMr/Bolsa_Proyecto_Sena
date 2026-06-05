@@ -203,6 +203,7 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
 });
 
 Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats', [StatsController::class, 'dashboard'])->name('api.admin.stats');
+Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats/programas', [StatsController::class, 'programas'])->name('api.admin.stats.programas');
 
 //  SEGURIDAD: Rate limiting en APIs de infinite scroll (60/min)
 Route::middleware(['auth.custom', 'throttle:60,1'])->group(function () {

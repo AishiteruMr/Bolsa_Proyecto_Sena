@@ -284,13 +284,7 @@ class AdminController extends Controller
 
         $instructores = Instructor::with('usuario')->get();
 
-        $categorias = Proyecto::select('categoria')
-            ->whereNotNull('categoria')
-            ->distinct()
-            ->pluck('categoria')
-            ->filter()
-            ->sort()
-            ->values();
+        $categorias = collect(array_keys(config('programas')));
 
         return view('admin.proyectos', compact('proyectos', 'proyectosPaginados', 'instructores', 'categorias'));
     }

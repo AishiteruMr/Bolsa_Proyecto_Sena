@@ -60,16 +60,16 @@ class DatabaseSeeder extends Seeder
         }
 
         $apprentices = [
-            ['doc' => 1016555423, 'email' => 'liyen_sanjuan@soy.sena.edu.co', 'pass' => 'Liyen123@', 'name' => 'Liyen', 'last' => 'San Juan', 'prog' => 'Análisis y Desarrollo de Software'],
-            ['doc' => 1016555424, 'email' => 'juan_perez@soy.sena.edu.co', 'pass' => 'Juan123@', 'name' => 'Juan', 'last' => 'Pérez', 'prog' => 'Análisis y Desarrollo de Software'],
-            ['doc' => 1016555425, 'email' => 'maria_garcia@soy.sena.edu.co', 'pass' => 'Maria123@', 'name' => 'María', 'last' => 'García', 'prog' => 'Diseño Gráfico'],
-            ['doc' => 1016555426, 'email' => 'carlos_lopez@soy.sena.edu.co', 'pass' => 'Carlos123@', 'name' => 'Carlos', 'last' => 'López', 'prog' => 'Análisis y Desarrollo de Software'],
-            ['doc' => 1016555427, 'email' => 'ana_martinez@soy.sena.edu.co', 'pass' => 'Ana123@', 'name' => 'Ana', 'last' => 'Martínez', 'prog' => 'Gestión Empresarial'],
-            ['doc' => 1016555428, 'email' => 'pedro_ramirez@soy.sena.edu.co', 'pass' => 'Pedro123@', 'name' => 'Pedro', 'last' => 'Ramírez', 'prog' => 'Electricidad Industrial'],
-            ['doc' => 1016555429, 'email' => 'laura_torres@soy.sena.edu.co', 'pass' => 'Laura123@', 'name' => 'Laura', 'last' => 'Torres', 'prog' => 'Análisis y Desarrollo de Software'],
-            ['doc' => 1016555430, 'email' => 'diego_sanchez@soy.sena.edu.co', 'pass' => 'Diego123@', 'name' => 'Diego', 'last' => 'Sánchez', 'prog' => 'Marketing Digital'],
-            ['doc' => 1016555431, 'email' => 'valentina_ortiz@soy.sena.edu.co', 'pass' => 'Vale123@', 'name' => 'Valentina', 'last' => 'Ortiz', 'prog' => 'Diseño Gráfico'],
-            ['doc' => 1016555432, 'email' => 'santiago_morales@soy.sena.edu.co', 'pass' => 'Santiago123@', 'name' => 'Santiago', 'last' => 'Morales', 'prog' => 'Análisis y Desarrollo de Software'],
+            ['doc' => 1016555423, 'email' => 'liyen_sanjuan@soy.sena.edu.co', 'pass' => 'Liyen123@', 'name' => 'Liyen', 'last' => 'San Juan', 'prog' => 'Análisis y desarrollo de software (ADSO)'],
+            ['doc' => 1016555424, 'email' => 'juan_perez@soy.sena.edu.co', 'pass' => 'Juan123@', 'name' => 'Juan', 'last' => 'Pérez', 'prog' => 'Análisis y desarrollo de software (ADSO)'],
+            ['doc' => 1016555425, 'email' => 'maria_garcia@soy.sena.edu.co', 'pass' => 'Maria123@', 'name' => 'María', 'last' => 'García', 'prog' => 'Desarrollo web'],
+            ['doc' => 1016555426, 'email' => 'carlos_lopez@soy.sena.edu.co', 'pass' => 'Carlos123@', 'name' => 'Carlos', 'last' => 'López', 'prog' => 'Bases de datos'],
+            ['doc' => 1016555427, 'email' => 'ana_martinez@soy.sena.edu.co', 'pass' => 'Ana123@', 'name' => 'Ana', 'last' => 'Martínez', 'prog' => 'Programación de software'],
+            ['doc' => 1016555428, 'email' => 'pedro_ramirez@soy.sena.edu.co', 'pass' => 'Pedro123@', 'name' => 'Pedro', 'last' => 'Ramírez', 'prog' => 'Instalaciones eléctricas industriales'],
+            ['doc' => 1016555429, 'email' => 'laura_torres@soy.sena.edu.co', 'pass' => 'Laura123@', 'name' => 'Laura', 'last' => 'Torres', 'prog' => 'Análisis y desarrollo de software (ADSO)'],
+            ['doc' => 1016555430, 'email' => 'diego_sanchez@soy.sena.edu.co', 'pass' => 'Diego123@', 'name' => 'Diego', 'last' => 'Sánchez', 'prog' => 'Configuración de redes de datos'],
+            ['doc' => 1016555431, 'email' => 'valentina_ortiz@soy.sena.edu.co', 'pass' => 'Vale123@', 'name' => 'Valentina', 'last' => 'Ortiz', 'prog' => 'Electricidad residencial, comercial y de sistemas fotovoltaicos'],
+            ['doc' => 1016555432, 'email' => 'santiago_morales@soy.sena.edu.co', 'pass' => 'Santiago123@', 'name' => 'Santiago', 'last' => 'Morales', 'prog' => 'Análisis y desarrollo de software (ADSO)'],
         ];
         foreach ($apprentices as $ap) {
             $uid = $this->ensureUser($ap['doc'], $ap['email'], $ap['pass'], $apprenticeRoleId);

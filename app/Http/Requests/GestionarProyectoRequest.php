@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class GestionarProyectoRequest extends FormRequest
 {
@@ -16,7 +17,7 @@ class GestionarProyectoRequest extends FormRequest
         return match (true) {
             $this->routeIs('empresa.proyectos.store') => [
                 'titulo' => 'required|string|min:10|max:200',
-                'categoria' => 'required|string|max:100',
+                'categoria' => ['required', 'string', Rule::in(array_keys(config('programas')))],
                 'descripcion' => 'required|string|min:80|max:5000',
                 'requisitos' => 'required|string|min:20|max:400',
                 'habilidades' => 'required|string|min:15|max:200',
@@ -28,7 +29,7 @@ class GestionarProyectoRequest extends FormRequest
             ],
             $this->routeIs('empresa.proyectos.update') => [
                 'titulo' => 'required|string|max:200',
-                'categoria' => 'required|string|max:100',
+                'categoria' => ['required', 'string', Rule::in(array_keys(config('programas')))],
                 'descripcion' => 'required|string|min:80|max:5000',
                 'requisitos' => 'required|string|max:400',
                 'habilidades' => 'required|string|max:200',
@@ -51,8 +52,8 @@ class GestionarProyectoRequest extends FormRequest
             'titulo.required' => 'Escribe un título.',
             'titulo.min' => 'Mínimo 10 caracteres.',
             'titulo.max' => 'Máximo 200 caracteres.',
-            'categoria.required' => 'Elige una categoría.',
-            'categoria.max' => 'Máximo 100 caracteres.',
+            'categoria.required' => 'Selecciona el área de formación.',
+            'categoria.in' => 'El área de formación seleccionada no es válida.',
             'descripcion.required' => 'Escribe una descripción.',
             'descripcion.min' => 'Escribe al menos 80 caracteres.',
             'descripcion.max' => 'Máximo 5000 caracteres.',

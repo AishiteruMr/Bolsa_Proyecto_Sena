@@ -157,10 +157,15 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="empresa-form-label">Categoría / Sector *</label>
+                        <label class="empresa-form-label">Área de Formación *</label>
                         <div class="empresa-input-container">
                             <i class="fas fa-layer-group empresa-input-icon"></i>
-                            <input type="text" name="categoria" value="{{ old('categoria', $proyecto->categoria) }}" required class="empresa-form-control" placeholder="Ej: Tecnología, Salud...">
+                            <select name="categoria" required class="empresa-form-control" style="appearance:auto; cursor:pointer;">
+                                <option value="">Seleccionar Área...</option>
+                                @foreach(array_keys(config('programas')) as $cat)
+                                    <option value="{{ $cat }}" {{ old('categoria', $proyecto->categoria) === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>

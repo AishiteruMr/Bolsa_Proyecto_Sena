@@ -284,8 +284,9 @@
                     <label class="aprendiz-form-label">Programa de Formación</label>
                     <div class="aprendiz-input-wrapper">
                         <i class="fas fa-graduation-cap aprendiz-input-icon"></i>
-                        <input type="text" name="programa" value="{{ old('programa', $aprendiz->programa_formacion) }}" required class="aprendiz-input-control" placeholder="Tu programa SENA">
+                        <input type="text" value="{{ $aprendiz->programa_formacion }}" disabled class="aprendiz-input-control aprendiz-input-disabled">
                     </div>
+                    <p style="font-size:11px; color:#94a3b8; margin-top:6px; font-weight:500;"><i class="fas fa-info-circle"></i> El programa de formación no se puede modificar, está asociado a tu matrícula SENA.</p>
                 </div>
 
                 <div class="aprendiz-form-group" style="margin-bottom:28px;">
