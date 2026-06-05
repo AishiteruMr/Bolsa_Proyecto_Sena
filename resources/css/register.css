@@ -1,4 +1,19 @@
-/* REGISTER PAGES - ATTRACTIVE LIKE LOGIN */
+.input-wrapper input,
+.input-wrapper select {
+    width: 100%;
+    padding: 14px 48px 14px 46px;
+    background: linear-gradient(180deg, #f9faf9 0%, #f0f3f0 100%);
+    border: 1.5px solid #e4e7e4;
+    border-radius: 14px;
+    color: #1a2e1a;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    transition: all 0.25s ease;
+    outline: none;
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+    appearance: auto;
+}/* REGISTER PAGES - ATTRACTIVE LIKE LOGIN */
 /* Two-column layout for desktop, multi-step for mobile */
 
 .register-page-wrapper {
