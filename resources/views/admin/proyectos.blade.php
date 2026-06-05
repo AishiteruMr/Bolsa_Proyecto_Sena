@@ -326,6 +326,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <i class="fas fa-lock"></i> Cerrar
                             </button>
                         </form>
+                        @elseif($isCerrado)
+                        <form action="{{ route('admin.proyectos.estado', $p->id) }}" method="POST" onsubmit="return confirm('¿Reabrir este proyecto? Volverá a estado aprobado.');">
+                            @csrf
+                            <input type="hidden" name="estado" value="aprobado">
+                            <button type="submit" class="admin-action-btn primary">
+                                <i class="fas fa-play"></i> Reabrir
+                            </button>
+                        </form>
                         @endif
                     </div>
                 </div>

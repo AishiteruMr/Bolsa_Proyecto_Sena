@@ -30,9 +30,6 @@ class DatabaseSeeder extends Seeder
 
         $companies = [
             ['doc' => 12345475784, 'email' => 'camilopineda182@gmail.com', 'pass' => 'Camilo123@', 'name' => 'Cristian Padilla', 'rep' => 'Cristian Padilla', 'contact' => 'camilopineda182@gmail.com', 'loc' => 'Bogotá D.C., Colombia', 'lat' => 4.711, 'lng' => -74.0721],
-            ['doc' => 9012345678, 'email' => 'contacto@techsolutions.co', 'pass' => 'Tech123@', 'name' => 'TechSolutions Colombia SAS', 'rep' => 'Carlos Mendoza', 'contact' => 'contacto@techsolutions.co', 'loc' => 'Medellín, Colombia', 'lat' => 6.2476, 'lng' => -75.5658],
-            ['doc' => 9012345679, 'email' => 'info@disenastudio.co', 'pass' => 'Disena123@', 'name' => 'DiseñaStudio Creativo', 'rep' => 'María Fernández', 'contact' => 'info@disenastudio.co', 'loc' => 'Cali, Colombia', 'lat' => 3.4516, 'lng' => -76.5319],
-            ['doc' => 9012345680, 'email' => 'proyectos@ingepro.co', 'pass' => 'Inge123@', 'name' => 'IngeProyectos LTDA', 'rep' => 'Roberto Vega', 'contact' => 'proyectos@ingepro.co', 'loc' => 'Barranquilla, Colombia', 'lat' => 10.9685, 'lng' => -74.7813],
         ];
         foreach ($companies as $c) {
             $uid = $this->ensureUser($c['doc'], $c['email'], $c['pass'], $companyRoleId);
@@ -46,9 +43,6 @@ class DatabaseSeeder extends Seeder
 
         $instructors = [
             ['doc' => 20123, 'email' => 'sherelynrocha939@gmail.com', 'pass' => 'Sherelyn123@', 'name' => 'Sherelyn', 'last' => 'Rocha', 'spec' => 'Desarrollo de Software'],
-            ['doc' => 30123, 'email' => 'carlos.mendoza@sena.edu.co', 'pass' => 'Carlos123@', 'name' => 'Carlos', 'last' => 'Mendoza', 'spec' => 'Redes y Telecomunicaciones'],
-            ['doc' => 40123, 'email' => 'andrea.patino@sena.edu.co', 'pass' => 'Andrea123@', 'name' => 'Andrea', 'last' => 'Patiño', 'spec' => 'Diseño Gráfico y Multimedia'],
-            ['doc' => 50123, 'email' => 'roberto.vega@sena.edu.co', 'pass' => 'Roberto123@', 'name' => 'Roberto', 'last' => 'Vega', 'spec' => 'Electricidad Industrial'],
         ];
         foreach ($instructors as $i) {
             $uid = $this->ensureUser($i['doc'], $i['email'], $i['pass'], $instructorRoleId);
@@ -60,6 +54,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $apprentices = [
+<<<<<<< HEAD
             ['doc' => 1016555423, 'email' => 'liyen_sanjuan@soy.sena.edu.co', 'pass' => 'Liyen123@', 'name' => 'Liyen', 'last' => 'San Juan', 'prog' => 'Análisis y desarrollo de software (ADSO)'],
             ['doc' => 1016555424, 'email' => 'juan_perez@soy.sena.edu.co', 'pass' => 'Juan123@', 'name' => 'Juan', 'last' => 'Pérez', 'prog' => 'Análisis y desarrollo de software (ADSO)'],
             ['doc' => 1016555425, 'email' => 'maria_garcia@soy.sena.edu.co', 'pass' => 'Maria123@', 'name' => 'María', 'last' => 'García', 'prog' => 'Desarrollo web'],
@@ -70,6 +65,9 @@ class DatabaseSeeder extends Seeder
             ['doc' => 1016555430, 'email' => 'diego_sanchez@soy.sena.edu.co', 'pass' => 'Diego123@', 'name' => 'Diego', 'last' => 'Sánchez', 'prog' => 'Configuración de redes de datos'],
             ['doc' => 1016555431, 'email' => 'valentina_ortiz@soy.sena.edu.co', 'pass' => 'Vale123@', 'name' => 'Valentina', 'last' => 'Ortiz', 'prog' => 'Electricidad residencial, comercial y de sistemas fotovoltaicos'],
             ['doc' => 1016555432, 'email' => 'santiago_morales@soy.sena.edu.co', 'pass' => 'Santiago123@', 'name' => 'Santiago', 'last' => 'Morales', 'prog' => 'Análisis y desarrollo de software (ADSO)'],
+=======
+            ['doc' => 1016555423, 'email' => 'liyen_sanjuan@soy.sena.edu.co', 'pass' => 'Liyen123@', 'name' => 'Liyen', 'last' => 'San Juan', 'prog' => 'Análisis y Desarrollo de Software'],
+>>>>>>> b9a8d24711bfe5df046b2e0111a713b6193dc5ed
         ];
         foreach ($apprentices as $ap) {
             $uid = $this->ensureUser($ap['doc'], $ap['email'], $ap['pass'], $apprenticeRoleId);
