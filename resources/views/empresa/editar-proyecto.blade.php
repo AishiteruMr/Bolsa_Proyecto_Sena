@@ -141,94 +141,15 @@
         @method('PUT')
         
         <div class="glass-card" style="padding: 0; overflow: hidden;">
-            <!-- Header Banner -->
             <div style="background: linear-gradient(135deg, #0a1a15, #1a2e28); padding: 32px 48px; position: relative; overflow: hidden;">
                 <div style="position: absolute; right: -20px; top: -20px; font-size: 120px; color: rgba(62,180,137,0.08); transform: rotate(-10deg);">
                     <i class="fas fa-file-signature"></i>
                 </div>
-<<<<<<< HEAD
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                    <div class="form-group">
-                        <label class="empresa-form-label">Título del Proyecto *</label>
-                        <div class="empresa-input-container">
-                            <i class="fas fa-tag empresa-input-icon"></i>
-                            <input type="text" name="titulo" value="{{ old('titulo', $proyecto->titulo) }}" required class="empresa-form-control" placeholder="Título descriptivo de la convocatoria">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="empresa-form-label">Área de Formación *</label>
-                        <div class="empresa-input-container">
-                            <i class="fas fa-layer-group empresa-input-icon"></i>
-                            <select name="categoria" required class="empresa-form-control" style="appearance:auto; cursor:pointer;">
-                                <option value="">Seleccionar Área...</option>
-                                @foreach(array_keys(config('programas')) as $cat)
-                                    <option value="{{ $cat }}" {{ old('categoria', $proyecto->categoria) === $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {{-- SECCIÓN 2: DESCRIPCIÓN --}}
-            <section>
-                <div class="empresa-form-section">
-                    <span class="empresa-form-step-number">2</span>
-                    <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Alcance y Requisitos</h3>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label class="empresa-form-label">Descripción Detallada *</label>
-                    <textarea name="descripcion" required class="empresa-textarea" rows="5" placeholder="Objetivos, alcance e impacto del proyecto...">{{ old('descripcion', $proyecto->descripcion) }}</textarea>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="form-group">
-                        <label class="empresa-form-label">Perfil Técnico (Hardskills) *</label>
-                        <textarea name="requisitos" required class="empresa-textarea" rows="3" placeholder="Herramientas, lenguajes o conocimientos específicos...">{{ old('requisitos', $proyecto->requisitos_especificos) }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="empresa-form-label">Cualidades de Equipo (Softskills) *</label>
-                        <textarea name="habilidades" required class="empresa-textarea" rows="3" placeholder="Liderazgo, comunicación, resolución de problemas...">{{ old('habilidades', $proyecto->habilidades_requeridas) }}</textarea>
-                    </div>
-                </div>
-            </section>
-
-            {{-- SECCIÓN 3: MAPA --}}
-            <div style="margin-bottom: 32px;">
-                {{-- MAPA --}}
-                <section>
-                    <div class="empresa-form-section" style="justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span class="empresa-form-step-number">3</span>
-                            <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Localización</h3>
-                        </div>
-                        <button type="button" id="btn-detectar" class="btn-premium" style="background: white; color: var(--primary); border: 1px solid var(--primary-soft); font-size: 11px; padding: 6px 14px; box-shadow: none;">
-                            <i class="fas fa-location-arrow"></i> Sincronizar GPS
-                        </button>
-                    </div>
-
-                    <div class="empresa-map-wrapper" style="margin-top: 16px;">
-                        <div id="map-editar" style="width: 100%; height: 210px;"></div>
-                        <div id="location-overlay" class="empresa-location-overlay" style="display: none;">
-                            <i class="fas fa-circle-check"></i> Coordenadas establecidas
-                        </div>
-                    </div>
-
-                    <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud', $proyecto->latitud) }}">
-                    <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud', $proyecto->longitud) }}">
-
-                    <p style="font-size: 12px; color: var(--text-lighter); margin-top: 10px; font-weight: 600; text-align: center;">
-                        <i class="fas fa-hand-pointer"></i> Haz clic en el mapa o arrastra el PIN para ajustar la ubicación.
-                    </p>
-                </section>
-=======
                 <h3 style="font-size: 22px; font-weight: 800; color: white; display: flex; align-items: center; gap: 14px;">
                     <i class="fas fa-edit" style="color: #3eb489;"></i>
                     Editar Especificaciones
                 </h3>
                 <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px; font-weight: 500;">Actualiza los campos que necesites</p>
->>>>>>> b9a8d24711bfe5df046b2e0111a713b6193dc5ed
             </div>
 
             <div style="padding: 48px; display: grid; gap: 48px;">
@@ -249,17 +170,14 @@
                             </div>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Sector Económico</label>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Área de Formación</label>
                             <div style="position: relative;">
                                 <i class="fas fa-layer-group" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
                                 <select name="categoria" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; background: white; appearance: none;">
-                                    <option value="">Seleccionar Sector...</option>
-                                    <option value="Tecnología" {{ old('categoria', $proyecto->categoria) == 'Tecnología' ? 'selected' : '' }}>Tecnología e Información</option>
-                                    <option value="Agrícola" {{ old('categoria', $proyecto->categoria) == 'Agrícola' ? 'selected' : '' }}>Gestión Agrícola</option>
-                                    <option value="Industrial" {{ old('categoria', $proyecto->categoria) == 'Industrial' ? 'selected' : '' }}>Manufactura Industrial</option>
-                                    <option value="Salud" {{ old('categoria', $proyecto->categoria) == 'Salud' ? 'selected' : '' }}>Salud y Bienestar</option>
-                                    <option value="Ambiental" {{ old('categoria', $proyecto->categoria) == 'Ambiental' ? 'selected' : '' }}>Sostenibilidad Ambiental</option>
-                                    <option value="Otro" {{ old('categoria', $proyecto->categoria) == 'Otro' ? 'selected' : '' }}>Otros Sectores</option>
+                                    <option value="">Seleccionar Área...</option>
+                                    @foreach(array_keys(config('programas')) as $cat)
+                                        <option value="{{ $cat }}" {{ old('categoria', $proyecto->categoria) === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                                    @endforeach
                                 </select>
                                 <i class="fas fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
                             </div>
