@@ -346,6 +346,14 @@
                                 <i class="fas fa-lock" style="margin-right: 10px;"></i> Cerrar Proyecto
                             </button>
                         </form>
+                    @elseif($proyecto->estado == 'cerrado')
+                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Reabrir este proyecto? Volverá a estado aprobado.');">
+                            @csrf
+                            <input type="hidden" name="estado" value="aprobado">
+                            <button type="submit" class="btn-premium" style="width: 100%; background: #22c55e; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
+                                <i class="fas fa-play" style="margin-right: 10px;"></i> Reabrir Proyecto
+                            </button>
+                        </form>
                     @endif
                 </div>
 

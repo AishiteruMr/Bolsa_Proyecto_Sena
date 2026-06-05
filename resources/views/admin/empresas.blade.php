@@ -100,7 +100,7 @@
                                     {{ $e->correo_contacto }}
                                 </td>
                                 <td>
-                                    <span class="status-badge {{ $e->activo == 1 ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;">
+                                    <span class="status-badge {{ $e->activo == 1 ? 'active' : 'inactive' }}" style="padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; white-space: nowrap;">
                                         {{ $e->activo == 1 ? 'Activa' : 'Inactiva' }}
                                     </span>
                                 </td>

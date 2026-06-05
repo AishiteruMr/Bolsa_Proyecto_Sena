@@ -58,29 +58,29 @@
                 </div>
             </div>
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #bbf7d0;">
-                <div style="width: 52px; height: 52px; border-radius: 16px; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #34d399; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-flag-checkered"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #10b981; line-height: 1;">{{ $evidencias->where('estado', 'aceptada')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #065f46; line-height: 1;">{{ $evidencias->where('estado', 'aceptada')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Aprobadas</div>
                 </div>
             </div>
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #fde68a;">
-                <div style="width: 52px; height: 52px; border-radius: 16px; background: #f59e0b; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #fbbf24; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-clock"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #f59e0b; line-height: 1;">{{ $evidencias->where('estado', 'pendiente')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #b45309; line-height: 1;">{{ $evidencias->where('estado', 'pendiente')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Pendientes</div>
                 </div>
             </div>
             <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-color: #fecaca;">
-                <div style="width: 52px; height: 52px; border-radius: 16px; background: #ef4444; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                <div style="width: 52px; height: 52px; border-radius: 16px; background: #f87171; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px;">
                     <i class="fas fa-times-circle"></i>
                 </div>
                 <div>
-                    <div style="font-size: 32px; font-weight: 800; color: #ef4444; line-height: 1;">{{ $evidencias->where('estado', 'rechazada')->count() }}</div>
+                    <div style="font-size: 32px; font-weight: 800; color: #b91c1c; line-height: 1;">{{ $evidencias->where('estado', 'rechazada')->count() }}</div>
                     <div style="font-size: 12px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Rechazadas</div>
                 </div>
             </div>
@@ -116,11 +116,11 @@
                             @foreach($evidencias_proyecto as $evidencia)
                                 @php
                                     $stateColor = match($evidencia->estado) {
-                                        'aceptada'  => ['bg' => '#10b981', 'border' => '#bbf7d0', 'text' => '#ffffff', 'icon' => 'fa-check'],
-                                        'rechazada' => ['bg' => '#ef4444', 'border' => '#fecaca', 'text' => '#ffffff', 'icon' => 'fa-ban'],
-                                        'pendiente' => ['bg' => '#f59e0b', 'border' => '#fde68a', 'text' => '#ffffff', 'icon' => 'fa-clock'],
-                                        'en_progreso' => ['bg' => '#3b82f6', 'border' => '#bfdbfe', 'text' => '#ffffff', 'icon' => 'fa-spinner'],
-                                        default     => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-info-circle'],
+                                        'aceptada'  => ['bg' => '#d1fae5', 'border' => '#86efac', 'text' => '#065f46', 'icon' => 'fa-check'],
+                                        'rechazada' => ['bg' => '#fee2e2', 'border' => '#fca5a5', 'text' => '#991b1b', 'icon' => 'fa-ban'],
+                                        'pendiente' => ['bg' => '#fef3c7', 'border' => '#fcd34d', 'text' => '#92400e', 'icon' => 'fa-clock'],
+                                        'en_progreso' => ['bg' => '#dbeafe', 'border' => '#93c5fd', 'text' => '#1e40af', 'icon' => 'fa-spinner'],
+                                        default     => ['bg' => '#f1f5f9', 'border' => '#cbd5e1', 'text' => '#475569', 'icon' => 'fa-info-circle'],
                                     };
                                 @endphp
                                 <div style="background: {{ $stateColor['bg'] }}; border: 1.5px solid {{ $stateColor['border'] }}; border-radius: 16px; padding: 20px 24px; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(8px)'" onmouseout="this.style.transform='translateX(0)'">

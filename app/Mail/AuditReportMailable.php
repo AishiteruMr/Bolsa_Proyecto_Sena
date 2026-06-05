@@ -10,7 +10,6 @@ use Illuminate\Queue\SerializesModels;
 class AuditReportMailable extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
-
     public $reportArray;
     public $csvContent;
 
