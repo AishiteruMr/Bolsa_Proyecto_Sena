@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class Evidencia extends Model
 {
@@ -25,6 +26,15 @@ class Evidencia extends Model
     protected $casts = [
         'fecha_envio' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Evidencia $evidencia) {
+            if ($evidencia->hasFile()) {
+                Storage::disk('public')->delete($evidencia->ruta_archivo);
+            }
+        });
+    }
 
     // ── RELACIONES ──
     public function aprendiz(): BelongsTo
@@ -79,6 +89,9 @@ class Evidencia extends Model
      */
     public function getFileUrl(): string
     {
+        if (empty($this->ruta_archivo)) {
+            return '';
+        }
         return asset('storage/' . $this->ruta_archivo);
     }
 

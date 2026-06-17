@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Proyecto extends Model
 {
@@ -45,6 +46,15 @@ class Proyecto extends Model
         'deleted_at' => 'datetime',
         'calidad_aprobada' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        static::forceDeleting(function (Proyecto $proyecto) {
+            if ($proyecto->url_estructura) {
+                Storage::disk('public')->delete($proyecto->url_estructura);
+            }
+        });
+    }
 
     // ── RELACIONES ──
     public function empresa(): BelongsTo
@@ -272,17 +282,24 @@ class Proyecto extends Model
             return asset('assets/default-project.jpg');
         }
 
-        // Si ya es URL completa o empieza con /storage
-        if (str_starts_with($value, 'http') || str_starts_with($value, '/storage')) {
+        if (str_starts_with($value, 'http')) {
             return $value;
         }
 
-        // Si ya tiene 'storage/' sin slash inicial, no duplicar
-        if (str_starts_with($value, 'storage/')) {
-            return asset($value);
-        }
-
         return asset('storage/' . $value);
+    }
+
+    public function getEstructuraUrlAttribute(): string
+    {
+        if (empty($this->url_estructura)) {
+            return '';
+        }
+        return asset('storage/' . $this->url_estructura);
+    }
+
+    public function hasEstructura(): bool
+    {
+        return !empty($this->url_estructura);
     }
 
     public function calidadProyecto(): array

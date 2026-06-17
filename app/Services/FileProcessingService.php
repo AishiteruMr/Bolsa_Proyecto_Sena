@@ -4,12 +4,15 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
 class FileProcessingService
 {
     private ImageManager $imageManager;
+
+    private string $disk = 'public';
 
     public function __construct()
     {
@@ -26,11 +29,10 @@ class FileProcessingService
         $image->scaleDown(width: $maxWidth);
 
         $path = 'proyectos/optimized_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension();
-        $fullPath = storage_path('app/public/' . $path);
 
-        $image->save($fullPath);
+        Storage::disk($this->disk)->put($path, (string) $image->encode());
 
-        $this->compressImage($fullPath, $quality);
+        $this->compressImage(Storage::disk($this->disk)->path($path), $quality);
 
         return $path;
     }
@@ -86,8 +88,8 @@ class FileProcessingService
         });
 
         $path = 'evidencias/watermarked_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension();
-        
-        $image->save(storage_path('app/public/' . $path));
+
+        Storage::disk($this->disk)->put($path, (string) $image->encode());
 
         return $path;
     }
@@ -204,10 +206,10 @@ class FileProcessingService
                 $filename = $this->optimize($file, $maxWidth, $quality);
             } catch (\Exception $e) {
                 Log::error("Error optimizando imagen: " . $e->getMessage());
-                $filename = $file->storeAs($directory, 'imagen_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension(), 'public');
+                $filename = $file->storeAs($directory, 'imagen_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension(), $this->disk);
             }
         } else {
-            $filename = $file->storeAs($directory, 'archivo_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension(), 'public');
+            $filename = $file->storeAs($directory, 'archivo_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension(), $this->disk);
         }
 
         // Aplicar watermark si es imagen (después de optimizar)

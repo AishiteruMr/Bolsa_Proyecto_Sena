@@ -20,14 +20,21 @@ import Pusher from 'pusher-js';
 
 window.Pusher = Pusher;
 
+const key = import.meta.env.VITE_PUSHER_APP_KEY;
+const host = import.meta.env.VITE_PUSHER_HOST || 'localhost';
+const port = import.meta.env.VITE_PUSHER_PORT || '8080';
+const scheme = import.meta.env.VITE_PUSHER_SCHEME || 'http';
+const cluster = import.meta.env.VITE_PUSHER_APP_CLUSTER || 'mt1';
+
 window.Echo = new Echo({
     broadcaster: 'pusher',
-    key: import.meta.env.VITE_PUSHER_APP_KEY,
-    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
-    wsHost: import.meta.env.VITE_PUSHER_HOST ? import.meta.env.VITE_PUSHER_HOST : `ws-${import.meta.env.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
-    wsPort: import.meta.env.VITE_PUSHER_PORT ?? 80,
-    wssPort: import.meta.env.VITE_PUSHER_PORT ?? 443,
-    forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
+    key: key,
+    cluster: cluster,
+    wsHost: host,
+    wsPort: port,
+    wssPort: port,
+    forceTLS: scheme === 'https',
+    disableStats: true,
     enabledTransports: ['ws', 'wss'],
 });
 

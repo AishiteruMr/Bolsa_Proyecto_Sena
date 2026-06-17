@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class Etapa extends Model
 {
@@ -25,6 +26,15 @@ class Etapa extends Model
     protected $casts = [
         'documentos_requeridos' => 'array',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Etapa $etapa) {
+            if ($etapa->url_documento) {
+                Storage::disk('public')->delete($etapa->url_documento);
+            }
+        });
+    }
 
     // ── RELACIONES ──
     public function proyecto(): BelongsTo
@@ -118,6 +128,9 @@ class Etapa extends Model
 
     public function getFileUrl(): string
     {
+        if (empty($this->url_documento)) {
+            return '';
+        }
         return asset('storage/' . $this->url_documento);
     }
 }
