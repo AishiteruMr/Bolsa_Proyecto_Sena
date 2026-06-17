@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Entrega extends Model
 {
@@ -20,6 +21,15 @@ class Entrega extends Model
         'estado',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleting(function (Entrega $entrega) {
+            if ($entrega->hasFile()) {
+                Storage::disk('public')->delete($entrega->url_archivo);
+            }
+        });
+    }
+
     public function aprendiz(): BelongsTo
     {
         return $this->belongsTo(Aprendiz::class, 'aprendiz_id', 'id');
@@ -33,5 +43,18 @@ class Entrega extends Model
     public function proyecto(): BelongsTo
     {
         return $this->belongsTo(Proyecto::class, 'proyecto_id', 'id');
+    }
+
+    public function getFileUrl(): string
+    {
+        if (empty($this->url_archivo)) {
+            return '';
+        }
+        return asset('storage/' . $this->url_archivo);
+    }
+
+    public function hasFile(): bool
+    {
+        return !empty($this->url_archivo);
     }
 }

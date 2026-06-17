@@ -11,6 +11,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\InfiniteScrollController;
 use App\Http\Controllers\StatsController;
 use Illuminate\Support\Facades\Route;
@@ -73,6 +74,10 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'leerTodas'])->name('notificaciones.leer_todas');
     Route::post('/notificaciones/{id}/leer', [NotificacionController::class, 'leer'])->name('notificaciones.leer');
 
+    // Descarga de archivos
+    Route::get('/descargar/evidencia/{id}', [FileController::class, 'evidencia'])->name('file.evidencia');
+    Route::get('/descargar/etapa-documento/{id}', [FileController::class, 'etapaDocumento'])->name('file.etapa-documento');
+    Route::get('/descargar/proyecto-estructura/{id}', [FileController::class, 'proyectoEstructura'])->name('file.proyecto-estructura');
 });
 
 /*
