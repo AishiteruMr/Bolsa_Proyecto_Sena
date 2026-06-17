@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/js/admin-audit.js',
                 'resources/js/bootstrap.js',
                 'resources/js/dashboard.js',
+                'resources/js/realtime.js',
                 'resources/js/forms.js',
                 'resources/js/login.js',
                 'resources/js/maps.js',

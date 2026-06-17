@@ -135,6 +135,15 @@
     </style>
 
     <script>
+    window.Laravel = {
+        user: {
+            id: {{ session('usr_id') }},
+            rol: {{ session('rol') }},
+            nombre: "{{ session('nombre') }}"
+        }
+    };
+    </script>
+    <script>
     // ── TOAST ─────────────────────────────────────────────────────
     function showToast(type, message, title = null) {
         const icons   = { success:'fa-circle-check', error:'fa-circle-xmark', warning:'fa-triangle-exclamation' };
@@ -238,7 +247,7 @@
     });
     </script>
 
-    @vite(['resources/js/dashboard.js'])
+    @vite(['resources/js/bootstrap.js', 'resources/js/dashboard.js', 'resources/js/realtime.js'])
     @yield('scripts')
 </body>
 </html>

@@ -12,6 +12,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -93,6 +94,12 @@ class AuthController extends Controller
             $request->session()->regenerate();
             session(['mostrar_loader' => true]); // Flag para mostrar loader en la primera página del panel
 
+            // Autenticar con guard web para que Laravel Auth y Broadcasting funcionen
+            $userModel = User::find($usuario->id);
+            if ($userModel) {
+                Auth::login($userModel);
+            }
+
             // Registrar inicio de sesión en el historial
             AuditLog::registrar($usuario->id, 'login', 'autenticacion', "Inicio de sesión exitoso desde ".request()->ip());
 
@@ -106,6 +113,7 @@ class AuthController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         $request->session()->flush();
