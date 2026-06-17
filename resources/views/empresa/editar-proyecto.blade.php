@@ -117,7 +117,7 @@
 
 @php $breadcrumbs = [['label' => 'Inicio', 'url' => route('empresa.dashboard')], ['label' => 'Proyectos', 'url' => route('empresa.proyectos')], ['label' => 'Editar']]; @endphp
 @section('content')
-<div class="animate-fade-in" style="max-width: 900px; margin: 0 auto; padding-bottom: 40px;">
+<div class="animate-fade-in" style="max-width: 1200px; margin: 0 auto; padding-bottom: 40px;">
     
     <!-- Hero Header -->
     <div class="instructor-hero" style="margin-bottom: 32px;">
@@ -132,179 +132,208 @@
                 <span class="instructor-tag">Editar Proyecto</span>
             </div>
             <h1 class="instructor-title">Editar <span style="color: var(--primary);">Convocatoria</span></h1>
-            <p style="color: rgba(255,255,255,0.6); font-size: 15px; font-weight: 500;">Actualiza la información y requerimientos de tu proyecto.</p>
+            <p style="color: rgba(255,255,255,0.6); font-size: 16px; font-weight: 500;">Actualiza la información y requerimientos de tu proyecto.</p>
         </div>
     </div>
 
     <form action="{{ route('empresa.proyectos.update', $proyecto->id) }}" method="POST" enctype="multipart/form-data" id="editar-proyecto-form">
         @csrf
         @method('PUT')
-
-        <div class="glass-card" style="padding: 40px; display: grid; gap: 32px;">
-
-            {{-- SECCIÓN 1: IDENTIDAD --}}
-            <section>
-                <div class="empresa-form-section">
-                    <span class="empresa-form-step-number">1</span>
-                    <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Identidad y Clasificación</h3>
+        
+        <div class="glass-card" style="padding: 0; overflow: hidden;">
+            <!-- Header Banner -->
+            <div style="background: linear-gradient(135deg, #0a1a15, #1a2e28); padding: 32px 48px; position: relative; overflow: hidden;">
+                <div style="position: absolute; right: -20px; top: -20px; font-size: 120px; color: rgba(62,180,137,0.08); transform: rotate(-10deg);">
+                    <i class="fas fa-file-signature"></i>
                 </div>
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-                    <div class="form-group">
-                        <label class="empresa-form-label">Título del Proyecto *</label>
-                        <div class="empresa-input-container">
-                            <i class="fas fa-tag empresa-input-icon"></i>
-                            <input type="text" name="titulo" value="{{ old('titulo', $proyecto->titulo) }}" required class="empresa-form-control" placeholder="Título descriptivo de la convocatoria">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="empresa-form-label">Categoría / Sector *</label>
-                        <div class="empresa-input-container">
-                            <i class="fas fa-layer-group empresa-input-icon"></i>
-                            <input type="text" name="categoria" value="{{ old('categoria', $proyecto->categoria) }}" required class="empresa-form-control" placeholder="Ej: Tecnología, Salud...">
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {{-- SECCIÓN 2: DESCRIPCIÓN --}}
-            <section>
-                <div class="empresa-form-section">
-                    <span class="empresa-form-step-number">2</span>
-                    <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Alcance y Requisitos</h3>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label class="empresa-form-label">Descripción Detallada *</label>
-                    <textarea name="descripcion" required class="empresa-textarea" rows="5" placeholder="Objetivos, alcance e impacto del proyecto...">{{ old('descripcion', $proyecto->descripcion) }}</textarea>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="form-group">
-                        <label class="empresa-form-label">Perfil Técnico (Hardskills) *</label>
-                        <textarea name="requisitos" required class="empresa-textarea" rows="3" placeholder="Herramientas, lenguajes o conocimientos específicos...">{{ old('requisitos', $proyecto->requisitos_especificos) }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="empresa-form-label">Cualidades de Equipo (Softskills) *</label>
-                        <textarea name="habilidades" required class="empresa-textarea" rows="3" placeholder="Liderazgo, comunicación, resolución de problemas...">{{ old('habilidades', $proyecto->habilidades_requeridas) }}</textarea>
-                    </div>
-                </div>
-            </section>
-
-            {{-- SECCIÓN 3: MAPA --}}
-            <div style="margin-bottom: 32px;">
-                {{-- MAPA --}}
-                <section>
-                    <div class="empresa-form-section" style="justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span class="empresa-form-step-number">3</span>
-                            <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Localización</h3>
-                        </div>
-                        <button type="button" id="btn-detectar" class="btn-premium" style="background: white; color: var(--primary); border: 1px solid var(--primary-soft); font-size: 11px; padding: 6px 14px; box-shadow: none;">
-                            <i class="fas fa-location-arrow"></i> Sincronizar GPS
-                        </button>
-                    </div>
-
-                    <div class="empresa-map-wrapper" style="margin-top: 16px;">
-                        <div id="map-editar" style="width: 100%; height: 210px;"></div>
-                        <div id="location-overlay" class="empresa-location-overlay" style="display: none;">
-                            <i class="fas fa-circle-check"></i> Coordenadas establecidas
-                        </div>
-                    </div>
-
-                    <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud', $proyecto->latitud) }}">
-                    <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud', $proyecto->longitud) }}">
-
-                    <p style="font-size: 12px; color: var(--text-lighter); margin-top: 10px; font-weight: 600; text-align: center;">
-                        <i class="fas fa-hand-pointer"></i> Haz clic en el mapa o arrastra el PIN para ajustar la ubicación.
-                    </p>
-                </section>
+                <h3 style="font-size: 22px; font-weight: 800; color: white; display: flex; align-items: center; gap: 14px;">
+                    <i class="fas fa-file-signature" style="color: #3eb489;"></i>
+                    Especificaciones del Proyecto
+                </h3>
+                <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px; font-weight: 500;">Completa los campos</p>
             </div>
 
-            {{-- SECCIÓN 4: IMAGEN --}}
-            <section>
-                <div class="empresa-form-section">
-                    <span class="empresa-form-step-number">4</span>
-                    <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Material Visual</h3>
-                </div>
-
-                <div style="display: flex; gap: 1.5rem; align-items: center;">
-                    @if($proyecto->imagen_url)
-                        <img src="{{ $proyecto->imagen_url }}" loading="lazy" style="width: 120px; height: 120px; border-radius: 16px; object-fit: cover; border: 2px solid var(--border); flex-shrink: 0;">
-                    @endif
-                    <div class="empresa-upload-box" style="flex: 1; position: relative; padding: 28px;">
-                        <div class="empresa-upload-icon-wrapper">
-                            <i class="fas fa-cloud-upload-alt" style="font-size: 28px; color: var(--primary);"></i>
+            <div style="padding: 48px; display: grid; gap: 48px;">
+                
+                <!-- Step 1: Identidad -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
+                        <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">1</span>
+                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Identidad y Clasificación</h3>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Título Descriptivo</label>
+                            <div style="position: relative;">
+                                <i class="fas fa-tag" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                                <input type="text" name="titulo" value="{{ old('titulo', $proyecto->titulo) }}" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Ej: Rediseño de Plataforma Logística">
+                            </div>
                         </div>
-                        <p style="font-size: 14px; font-weight: 700; color: var(--text);">Cambiar imagen del proyecto</p>
-                        <input type="file" name="imagen" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5;">
-                    </div>
-                </div>
-            </section>
-
-            {{-- SECCIÓN 5: BENEFICIO / OFERTA --}}
-            <section>
-                <div class="empresa-form-section">
-                    <span class="empresa-form-step-number" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 10px rgba(139,92,246,0.3);">
-                        <i class="fas fa-gift" style="font-size: 15px;"></i>
-                    </span>
-                    <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Beneficio y Oferta del Proyecto</h3>
-                </div>
-
-                <div class="oferta-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
-                    <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'pasantias' ? 'selected' : '' }}">
-                        <input type="radio" name="oferta" value="pasantias" {{ old('oferta', $proyecto->oferta) === 'pasantias' ? 'checked' : '' }} required>
-                        <span class="oferta-check"><i class="fas fa-check"></i></span>
-                        <span class="oferta-icon"><i class="fas fa-briefcase"></i></span>
-                        <span class="oferta-title">Pasantías</span>
-                        <span class="oferta-desc">Experiencia laboral formativa en tu empresa</span>
-                    </label>
-                    <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'contrato_aprendizaje' ? 'selected' : '' }}">
-                        <input type="radio" name="oferta" value="contrato_aprendizaje" {{ old('oferta', $proyecto->oferta) === 'contrato_aprendizaje' ? 'checked' : '' }} required>
-                        <span class="oferta-check"><i class="fas fa-check"></i></span>
-                        <span class="oferta-icon"><i class="fas fa-file-contract"></i></span>
-                        <span class="oferta-title">Contrato de aprendizaje</span>
-                        <span class="oferta-desc">Vinculación formal con contrato de aprendizaje</span>
-                    </label>
-                    <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'auxilio_transporte' ? 'selected' : '' }}">
-                        <input type="radio" name="oferta" value="auxilio_transporte" {{ old('oferta', $proyecto->oferta) === 'auxilio_transporte' ? 'checked' : '' }} required>
-                        <span class="oferta-check"><i class="fas fa-check"></i></span>
-                        <span class="oferta-icon"><i class="fas fa-bus"></i></span>
-                        <span class="oferta-title">Auxilio de transporte</span>
-                        <span class="oferta-desc">Apoyo económico para movilidad</span>
-                    </label>
-                    <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'otro' ? 'selected' : '' }}">
-                        <input type="radio" name="oferta" value="otro" {{ old('oferta', $proyecto->oferta) === 'otro' ? 'checked' : '' }} required>
-                        <span class="oferta-check"><i class="fas fa-check"></i></span>
-                        <span class="oferta-icon"><i class="fas fa-gift"></i></span>
-                        <span class="oferta-title">Otro</span>
-                        <span class="oferta-desc">Otro tipo de beneficio u oferta</span>
-                    </label>
-                </div>
-
-                <div id="otro-oferta-container" style="display: {{ old('oferta', $proyecto->oferta) === 'otro' ? 'block' : 'none' }}; margin-bottom: 20px;">
-                    <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">¿Cuál oferta? *</label>
-                    <div style="position: relative;">
-                        <i class="fas fa-pen" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b5cf6;"></i>
-                        <input type="text" name="oferta_otro" id="oferta_otro" value="{{ old('oferta_otro', $proyecto->oferta_otro) }}" style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Ej: Bolsa de estudio, Bonificación...">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Sector Económico</label>
+                            <div style="position: relative;">
+                                <i class="fas fa-layer-group" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                                <select name="categoria" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; background: white; appearance: none;">
+                                    <option value="">Seleccionar Sector...</option>
+                                    <option value="Tecnología" {{ old('categoria', $proyecto->categoria) == 'Tecnología' ? 'selected' : '' }}>Tecnología e Información</option>
+                                    <option value="Agrícola" {{ old('categoria', $proyecto->categoria) == 'Agrícola' ? 'selected' : '' }}>Gestión Agrícola</option>
+                                    <option value="Industrial" {{ old('categoria', $proyecto->categoria) == 'Industrial' ? 'selected' : '' }}>Manufactura Industrial</option>
+                                    <option value="Salud" {{ old('categoria', $proyecto->categoria) == 'Salud' ? 'selected' : '' }}>Salud y Bienestar</option>
+                                    <option value="Ambiental" {{ old('categoria', $proyecto->categoria) == 'Ambiental' ? 'selected' : '' }}>Sostenibilidad Ambiental</option>
+                                    <option value="Otro" {{ old('categoria', $proyecto->categoria) == 'Otro' ? 'selected' : '' }}>Otros Sectores</option>
+                                </select>
+                                <i class="fas fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div style="padding: 16px 20px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(124,58,237,0.04)); border: 1.5px solid rgba(139,92,246,0.15); border-radius: 12px; font-size: 13px; color: #6d28d9; font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(139,92,246,0.06);">
-                    <div style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <i class="fas fa-star" style="font-size: 11px;"></i>
+                <!-- Step 2: Definición -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
+                        <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">2</span>
+                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Alcance y Requisitos</h3>
                     </div>
-                    <span>La oferta seleccionada se otorgará únicamente al aprendiz que logre el mejor desempeño en el proyecto.</span>
-                </div>
-            </section>
 
-            {{-- ACTIONS --}}
-            <div style="display: flex; gap: 16px; justify-content: flex-end; padding-top: 24px; border-top: 2px solid #f1f5f9;">
-                <a href="{{ route('empresa.proyectos') }}" class="btn-premium" style="background: white; color: var(--text-light); border: 1px solid #e2e8f0; box-shadow: none; padding: 14px 28px;">
-                    Cancelar
-                </a>
-                <button type="submit" class="btn-premium" style="padding: 14px 40px;">
-                    <i class="fas fa-save"></i> Guardar Cambios
-                </button>
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Memoria Descriptiva</label>
+                        <textarea name="descripcion" required rows="5" style="width: 100%; padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 500; outline: none; resize: vertical;" placeholder="Describe los objetivos, alcance y el impacto esperado...">{{ old('descripcion', $proyecto->descripcion) }}</textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Perfil Técnico (Hardskills)</label>
+                            <textarea name="requisitos" required rows="3" style="width: 100%; padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 500; outline: none; resize: vertical;" placeholder="Herramientas, lenguajes o conocimientos específicos...">{{ old('requisitos', $proyecto->requisitos_especificos) }}</textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Cualidades de Equipo (Softskills)</label>
+                            <textarea name="habilidades" required rows="3" style="width: 100%; padding: 14px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 500; outline: none; resize: vertical;" placeholder="Liderazgo, comunicación, resolución de problemas...">{{ old('habilidades', $proyecto->habilidades_requeridas) }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Localización -->
+                <div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">3</span>
+                            <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Localización</h3>
+                        </div>
+                        <button type="button" id="btn-detectar" style="display: inline-flex; align-items: center; gap: 8px; background: white; color: #3eb489; border: 1px solid rgba(62,180,137,0.2); padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;">
+                            <i class="fas fa-location-arrow"></i> GPS
+                        </button>
+                    </div>
+                    
+                    <div style="border: 2px dashed #e2e8f0; border-radius: 16px; overflow: hidden; margin-bottom: 12px;">
+                        <div id="map-editar" style="width: 100%; height: 180px;"></div>
+                    </div>
+                    <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud', $proyecto->latitud) }}">
+                    <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud', $proyecto->longitud) }}">
+                    <p style="font-size: 12px; color: var(--text-lighter); font-weight: 600; text-align: center;">
+                        <i class="fas fa-hand-pointer"></i> Haz clic o arrastra el PIN para precisar la sede.
+                    </p>
+                </div>
+
+                <!-- Step 4: Material Visual -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
+                        <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">4</span>
+                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Material de Referencia</h3>
+                    </div>
+
+                    @if($proyecto->imagen_url)
+                    <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 20px;">
+                        <img src="{{ $proyecto->imagen_url }}" loading="lazy" style="width: 120px; height: 120px; border-radius: 16px; object-fit: cover; border: 2px solid var(--border); flex-shrink: 0;">
+                        <div style="font-size: 13px; color: var(--text-light); font-weight: 600;">
+                            <i class="fas fa-image" style="color: var(--primary); margin-right: 6px;"></i>
+                            Imagen actual del proyecto
+                        </div>
+                    </div>
+                    @endif
+
+                    <div id="image-upload-container" style="border: 2px dashed #cbd5e1; border-radius: 20px; padding: 60px 40px; text-align: center; background: #f8fafc; transition: all 0.3s; position: relative; overflow: hidden;" onmouseover="this.style.borderColor='#3eb489'; this.style.background='rgba(62,180,137,0.02)'" onmouseout="this.style.borderColor='#cbd5e1'; this.style.background='#f8fafc'">
+                        <div id="upload-placeholder">
+                            <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+                                <i class="fas fa-cloud-arrow-up" style="font-size: 32px; color: #3eb489;"></i>
+                            </div>
+                            <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 8px;">Cambiar imagen del proyecto</h4>
+                            <p style="font-size: 14px; color: var(--text-light); font-weight: 500;">Sube una nueva imagen para actualizar la convocatoria.</p>
+                            <div style="margin-top: 20px; display: flex; justify-content: center; gap: 12px;">
+                                <span style="background: white; padding: 6px 14px; border-radius: 30px; border: 1px solid #e2e8f0; font-size: 11px; font-weight: 800; color: #64748b;">PNG, JPG</span>
+                                <span style="background: white; padding: 6px 14px; border-radius: 30px; border: 1px solid #e2e8f0; font-size: 11px; font-weight: 800; color: #64748b;">MÁX 3MB</span>
+                            </div>
+                        </div>
+                        <img id="image-preview" style="display: none; max-width: 100%; max-height: 350px; border-radius: 16px; margin: 0 auto; box-shadow: 0 20px 50px -12px rgba(62,180,137,0.3);">
+                        <input type="file" name="imagen" id="imagen-input" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5;">
+                    </div>
+                </div>
+
+                <!-- Step 5: Oferta o Beneficio del Proyecto -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(139,92,246,0.1);">
+                        <span style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 4px 10px rgba(139,92,246,0.3);">
+                            <i class="fas fa-gift" style="font-size: 15px;"></i>
+                        </span>
+                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Beneficio y Oferta del Proyecto</h3>
+                    </div>
+
+                    <div class="oferta-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+                        <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'pasantias' ? 'selected' : '' }}">
+                            <input type="radio" name="oferta" value="pasantias" {{ old('oferta', $proyecto->oferta) === 'pasantias' ? 'checked' : '' }} required>
+                            <span class="oferta-check"><i class="fas fa-check"></i></span>
+                            <span class="oferta-icon"><i class="fas fa-briefcase"></i></span>
+                            <span class="oferta-title">Pasantías</span>
+                            <span class="oferta-desc">Experiencia laboral formativa en tu empresa</span>
+                        </label>
+                        <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'contrato_aprendizaje' ? 'selected' : '' }}">
+                            <input type="radio" name="oferta" value="contrato_aprendizaje" {{ old('oferta', $proyecto->oferta) === 'contrato_aprendizaje' ? 'checked' : '' }} required>
+                            <span class="oferta-check"><i class="fas fa-check"></i></span>
+                            <span class="oferta-icon"><i class="fas fa-file-contract"></i></span>
+                            <span class="oferta-title">Contrato de aprendizaje</span>
+                            <span class="oferta-desc">Vinculación formal con contrato de aprendizaje</span>
+                        </label>
+                        <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'auxilio_transporte' ? 'selected' : '' }}">
+                            <input type="radio" name="oferta" value="auxilio_transporte" {{ old('oferta', $proyecto->oferta) === 'auxilio_transporte' ? 'checked' : '' }} required>
+                            <span class="oferta-check"><i class="fas fa-check"></i></span>
+                            <span class="oferta-icon"><i class="fas fa-bus"></i></span>
+                            <span class="oferta-title">Auxilio de transporte</span>
+                            <span class="oferta-desc">Apoyo económico para movilidad</span>
+                        </label>
+                        <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'otro' ? 'selected' : '' }}">
+                            <input type="radio" name="oferta" value="otro" {{ old('oferta', $proyecto->oferta) === 'otro' ? 'checked' : '' }} required>
+                            <span class="oferta-check"><i class="fas fa-check"></i></span>
+                            <span class="oferta-icon"><i class="fas fa-gift"></i></span>
+                            <span class="oferta-title">Otro</span>
+                            <span class="oferta-desc">Otro tipo de beneficio u oferta</span>
+                        </label>
+                    </div>
+
+                    <div id="otro-oferta-container" style="display: {{ old('oferta', $proyecto->oferta) === 'otro' ? 'block' : 'none' }}; margin-bottom: 20px;">
+                        <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">¿Cuál oferta? *</label>
+                        <div style="position: relative;">
+                            <i class="fas fa-pen" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b5cf6;"></i>
+                            <input type="text" name="oferta_otro" id="oferta_otro" value="{{ old('oferta_otro', $proyecto->oferta_otro) }}" style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Ej: Bolsa de estudio, Bonificación...">
+                        </div>
+                    </div>
+
+                    <div style="padding: 16px 20px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(124,58,237,0.04)); border: 1.5px solid rgba(139,92,246,0.15); border-radius: 12px; font-size: 13px; color: #6d28d9; font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(139,92,246,0.06);">
+                        <div style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas fa-star" style="font-size: 11px;"></i>
+                        </div>
+                        <span>La oferta seleccionada se otorgará únicamente al aprendiz que logre el mejor desempeño en el proyecto.</span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div style="display: flex; gap: 20px; justify-content: flex-end; padding-top: 32px; border-top: 2px solid #f1f5f9;">
+                    <a href="{{ route('empresa.proyectos') }}" class="btn-premium" style="background: white; color: var(--text-light); border: 1px solid #e2e8f0; box-shadow: none; padding: 14px 28px;">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn-premium" style="padding: 14px 40px;">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
             </div>
         </div>
     </form>
@@ -313,7 +342,7 @@
 
 @section('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-@vite(['resources/js/maps.js'])
+@vite(['resources/js/maps.js', 'resources/js/forms.js'])
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Oferta cards
@@ -344,7 +373,6 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Si el HTML5 reportValidity falla, no hacer nada
             if (!form.checkValidity()) {
                 form.reportValidity();
                 return;
@@ -373,25 +401,35 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ── MAP ──────────────────────────────────────────────────────
-    const instancia = initEditorMap('map-editar', {
+    // Map
+    const config = {
         lat: {{ old('latitud', $proyecto->latitud ?? 10.8642) }},
         lng: {{ old('longitud', $proyecto->longitud ?? -74.7777) }},
         canEdit: true,
         latInput: 'latitud',
         lngInput: 'longitud',
-        onUpdate: function() {
-            const ov = document.getElementById('location-overlay');
-            if (ov) {
-                ov.style.display = 'block';
-                ov.style.opacity = '1';
-                setTimeout(() => { ov.style.opacity = '0'; setTimeout(() => ov.style.display = 'none', 400); }, 2500);
+        onUpdate: function() {}
+    };
+    initEditorMap('map-editar', config);
+
+    // Image preview
+    const input = document.getElementById('imagen-input');
+    const preview = document.getElementById('image-preview');
+    const placeholder = document.getElementById('upload-placeholder');
+    if (input) {
+        input.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
             }
-        }
-    });
-    window._editorMapInstance = instancia;
-    
-    document.getElementById('btn-detectar')
-        ?.addEventListener('click', () => detectarUbicacion('btn-detectar'));
+        });
+    }
 });
+</script>
 @endsection
