@@ -211,9 +211,9 @@ body {
 
 /* ── PREMIUM COMPONENTS ── */
 .glass-card {
-    background: var(--surface);
-    backdrop-filter: var(--glass);
-    -webkit-backdrop-filter: blur(14px) saturate(190%);
+    background: rgba(255, 255, 255, 0.98);
+    /* backdrop-filter: var(--glass); */
+    /* -webkit-backdrop-filter: blur(14px) saturate(190%); */
     border-radius: var(--radius);
     padding: 28px;
     border: 1px solid var(--border-glass);
@@ -395,7 +395,7 @@ body {
     border-radius: 20px;
     padding: 2px 6px;
     border: 2px solid #fff;
-    animation: pulse 2s infinite;
+    /* animation: pulse 2s infinite; (Optimizado por rendimiento) */
 }
 
 /* Estilo similar a los elementos del menu para consistencia */
@@ -417,9 +417,9 @@ body {
 
 /* Estilo mejorado para tarjetas de notificación */
 .instructor-notification-card {
-    background: var(--surface);
-    backdrop-filter: var(--glass);
-    -webkit-backdrop-filter: blur(14px) saturate(190%);
+    background: rgba(255, 255, 255, 0.98);
+    /* backdrop-filter: var(--glass); */
+    /* -webkit-backdrop-filter: blur(14px) saturate(190%); */
     border-radius: var(--radius);
     padding: 24px;
     border: 1px solid var(--border-glass);
@@ -784,9 +784,9 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background: rgba(255, 255, 255, 0.98);
+    /* backdrop-filter: blur(12px) saturate(180%); */
+    /* -webkit-backdrop-filter: blur(12px) saturate(180%); */
     padding: 6px 8px;
     border-radius: 16px;
     border: 1px solid var(--border-glass);

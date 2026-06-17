@@ -284,13 +284,7 @@ class AdminController extends Controller
 
         $instructores = Instructor::with('usuario')->get();
 
-        $categorias = Proyecto::select('categoria')
-            ->whereNotNull('categoria')
-            ->distinct()
-            ->pluck('categoria')
-            ->filter()
-            ->sort()
-            ->values();
+        $categorias = collect(array_keys(config('programas')));
 
         return view('admin.proyectos', compact('proyectos', 'proyectosPaginados', 'instructores', 'categorias'));
     }
@@ -298,7 +292,7 @@ class AdminController extends Controller
     public function cambiarEstadoProyecto(Request $request, int $id): RedirectResponse
     {
         $request->validate([
-            'estado' => 'required|in:aprobado,rechazado,pendiente,cerrado,en_progreso',
+            'estado' => 'required|in:aprobado,rechazado,pendiente,cerrado,en_progreso,completado',
         ], [
             'estado.required' => 'El estado es obligatorio.',
             'estado.in' => 'El estado debe ser uno de los valores permitidos.',
@@ -422,11 +416,7 @@ class AdminController extends Controller
             return back()->with('error', 'No se puede asignar instructor a un proyecto en estado '.$proyecto->estado.'.');
         }
 
-        $updateData = ['instructor_usuario_id' => $request->instructor_usuario_id];
-        if ($proyecto->estado === 'aprobado') {
-            $updateData['estado'] = 'en_progreso';
-        }
-        $proyecto->update($updateData);
+        $proyecto->update(['instructor_usuario_id' => $request->instructor_usuario_id]);
         Cache::forget('admin_stats');
 
         AuditLog::registrarCambio(

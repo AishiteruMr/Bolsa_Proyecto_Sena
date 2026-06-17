@@ -28,7 +28,8 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive();
 
         Blade::if('vitebuilt', function () {
-            return file_exists(public_path('build/manifest.json'));
+            return file_exists(public_path('build/manifest.json'))
+                || file_exists(public_path('hot'));
         });
     }
 }

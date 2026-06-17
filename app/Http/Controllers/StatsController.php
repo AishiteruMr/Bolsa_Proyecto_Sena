@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Aprendiz;
 use App\Models\Empresa;
 use App\Models\Instructor;
+use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 
@@ -98,6 +99,24 @@ class StatsController extends Controller
                     'total_usuarios' => 0,
                 ],
             ], 200);
+        }
+    }
+
+    public function programas()
+    {
+        try {
+            $programas = Aprendiz::select('aprendices.programa_formacion')
+                ->selectRaw('COUNT(*) as total_aprendices')
+                ->selectRaw('COUNT(DISTINCT postulaciones.aprendiz_id) as postulados')
+                ->selectRaw('COUNT(DISTINCT CASE WHEN postulaciones.estado = "aceptada" THEN postulaciones.aprendiz_id END) as aceptados')
+                ->leftJoin('postulaciones', 'postulaciones.aprendiz_id', '=', 'aprendices.id')
+                ->groupBy('aprendices.programa_formacion')
+                ->orderByDesc('total_aprendices')
+                ->get();
+
+            return response()->json($programas);
+        } catch (\Exception $e) {
+            return response()->json([]);
         }
     }
 

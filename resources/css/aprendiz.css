@@ -506,8 +506,11 @@
 .apr-stat-chip {
     background: rgba(255,255,255,0.12);
     border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 16px; padding: 16px 22px;
-    text-align: center; backdrop-filter: blur(10px);
+    text-align: center;
+    backdrop-filter: blur(8px);
+    padding: 18px 24px;
+    border-radius: 16px;
+    min-width: 100px;
 }
 
 /* ── HERO UNIFICADO (mismo estilo que instructor/admin) ── */

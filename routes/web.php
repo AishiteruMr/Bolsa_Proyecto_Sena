@@ -153,6 +153,10 @@ Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instruc
     Route::post('/proyectos/{id}/estructura', [InstructorController::class, 'subirEstructura'])->name('proyectos.estructura')->middleware('ownership:proyecto,id');
     Route::delete('/proyectos/{id}/estructura', [InstructorController::class, 'eliminarEstructura'])->name('proyectos.estructura.eliminar')->middleware('ownership:proyecto,id');
 
+    //  SEGURIDAD: Rate limiting en cambios de estado (máx 10/minuto)
+    Route::post('/proyectos/{id}/iniciar', [InstructorController::class, 'iniciarProyecto'])->name('proyectos.iniciar')->middleware('throttle:10,1')->middleware('ownership:proyecto,id');
+    Route::post('/proyectos/{id}/completar', [InstructorController::class, 'marcarCompletado'])->name('proyectos.completar')->middleware('throttle:10,1')->middleware('ownership:proyecto,id');
+
     // RUTAS PARA EVIDENCIAS
     Route::get('/proyectos/{id}/evidencias', [InstructorController::class, 'verEvidencias'])->name('evidencias.ver')->middleware('ownership:proyecto,id');
     //  SEGURIDAD: Rate limiting en calificación (máx 20/minuto)
@@ -204,6 +208,7 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
 });
 
 Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats', [StatsController::class, 'dashboard'])->name('api.admin.stats');
+Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats/programas', [StatsController::class, 'programas'])->name('api.admin.stats.programas');
 
 //  SEGURIDAD: Rate limiting en APIs de infinite scroll (60/min)
 Route::middleware(['auth.custom', 'throttle:60,1'])->group(function () {

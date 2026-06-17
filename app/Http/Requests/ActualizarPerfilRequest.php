@@ -19,7 +19,6 @@ class ActualizarPerfilRequest extends FormRequest
             1 => [
                 'nombre' => 'required|string|max:50',
                 'apellido' => 'required|string|max:50',
-                'programa' => 'nullable|string|max:100',
                 'password' => 'nullable|string|min:'.$minPassword.'|confirmed',
             ],
             2 => [
@@ -39,8 +38,7 @@ class ActualizarPerfilRequest extends FormRequest
             'nombre.max' => 'Máximo 50 caracteres.',
             'apellido.required' => 'Escribe tu apellido.',
             'apellido.max' => 'Máximo 50 caracteres.',
-            'programa.required' => 'Escribe tu programa de formación.',
-            'programa.max' => 'Máximo 100 caracteres.',
+
             'password.min' => 'Mínimo '.config('app_config.password.min_length', 8).' caracteres.',
             'password.confirmed' => 'Las contraseñas no son iguales.',
         ];

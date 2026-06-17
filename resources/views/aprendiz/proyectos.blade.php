@@ -71,8 +71,8 @@
                 <div style="width: 36px; height: 36px; background: rgba(62,180,137,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-filter" style="color: #3eb489; font-size: 14px;"></i>
                 </div>
-                <h4 style="font-size: 14px; font-weight: 800; color: var(--text); margin: 0;">Filtrar por Especialidad</h4>
-                <span style="font-size: 12px; color: var(--text-light); font-weight: 500;">({{ count($categorias) }} categorías)</span>
+                <h4 style="font-size: 14px; font-weight: 800; color: var(--text); margin: 0;">Filtrar por Área de Formación</h4>
+                <span style="font-size: 12px; color: var(--text-light); font-weight: 500;">({{ count($categorias) }} áreas)</span>
             </div>
             @if(request()->anyFilled(['buscar', 'categoria']))
                 <a href="{{ route('aprendiz.proyectos') }}" style="font-size: 12px; font-weight: 700; color: #ef4444; text-decoration: none; display: flex; align-items: center; gap: 6px; background: #fef2f2; padding: 8px 14px; border-radius: 20px;">
@@ -81,15 +81,28 @@
             @endif
         </div>
         
-        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        @php
+            $iconosCategoria = [
+                'Electricidad y Energías' => 'fa-bolt',
+                'Telecomunicaciones y Redes' => 'fa-wifi',
+                'Mecánica y Mantenimiento Industrial' => 'fa-cogs',
+                'Aviación y Sector Aeronáutico' => 'fa-plane',
+                'Sistemas y Desarrollo de Software' => 'fa-laptop-code',
+                'Automatización e Industria 4.0' => 'fa-robot',
+                'Metalmecánica y Producción' => 'fa-industry',
+                'Automotriz' => 'fa-car',
+            ];
+        @endphp
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
             <a href="{{ route('aprendiz.proyectos', array_merge(request()->all(), ['categoria' => ''])) }}" 
-               style="padding: 12px 20px; background: {{ !request('categoria') ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : 'white' }}; color: {{ !request('categoria') ? 'white' : '#64748b' }}; border: {{ !request('categoria') ? 'none' : '1.5px solid #e2e8f0' }}; border-radius: 12px; font-size: 13px; font-weight: 700; text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 8px; box-shadow: {{ !request('categoria') ? '0 4px 12px rgba(62,180,137,0.3)' : 'none' }};">
+               style="padding: 10px 18px; background: {{ !request('categoria') ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : 'white' }}; color: {{ !request('categoria') ? 'white' : '#64748b' }}; border: {{ !request('categoria') ? 'none' : '1.5px solid #e2e8f0' }}; border-radius: 30px; font-size: 12px; font-weight: 700; text-decoration: none; transition: all 0.3s; display: flex; align-items: center; gap: 6px; box-shadow: {{ !request('categoria') ? '0 4px 12px rgba(62,180,137,0.3)' : 'none' }};">
                 <i class="fas fa-border-all"></i> Todos
             </a>
             @foreach($categorias as $cat)
+                @php $icono = $iconosCategoria[$cat] ?? 'fa-folder'; @endphp
                 <a href="{{ route('aprendiz.proyectos', array_merge(request()->all(), ['categoria' => $cat])) }}" 
-                   style="padding: 12px 20px; background: {{ request('categoria') == $cat ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : 'white' }}; color: {{ request('categoria') == $cat ? 'white' : '#64748b' }}; border: {{ request('categoria') == $cat ? 'none' : '1.5px solid #e2e8f0' }}; border-radius: 12px; font-size: 13px; font-weight: 700; text-decoration: none; transition: all 0.3s; box-shadow: {{ request('categoria') == $cat ? '0 4px 12px rgba(62,180,137,0.3)' : 'none' }};">
-                    {{ $cat }}
+                   style="padding: 10px 18px; background: {{ request('categoria') == $cat ? 'linear-gradient(135deg, #3eb489, #2d9d74)' : 'white' }}; color: {{ request('categoria') == $cat ? 'white' : '#1e293b' }}; border: {{ request('categoria') == $cat ? 'none' : '1.5px solid #e2e8f0' }}; border-radius: 30px; font-size: 12px; font-weight: 600; text-decoration: none; transition: all 0.3s; box-shadow: {{ request('categoria') == $cat ? '0 4px 12px rgba(62,180,137,0.3)' : 'none' }};">
+                    <i class="fas {{ $icono }}"></i> {{ $cat }}
                 </a>
             @endforeach
         </div>

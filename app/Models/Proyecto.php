@@ -85,7 +85,7 @@ class Proyecto extends Model
     // ── SCOPES ──
     public function scopeActivos(Builder $query): Builder
     {
-        return $query->where('estado', 'aprobado');
+        return $query->whereIn('estado', ['aprobado', 'en_progreso']);
     }
 
     public function scopePendientes(Builder $query): Builder
@@ -334,13 +334,8 @@ class Proyecto extends Model
 
         $categoriaValida = ! empty(trim($this->categoria ?? ''));
 
-        $categoriasValidas = [
-            'tecnologia', 'ingenieria', 'salud', 'educacion', 'medioambiente',
-            'comercio', 'agricultura', 'construccion', 'energia', 'alimentacion',
-            'transporte', 'turismo', 'finanzas', 'marketing', 'administracion',
-            'diseño', 'comunicacion', 'investigacion', 'otro',
-        ];
-        $categoriaEnLista = in_array(strtolower($this->categoria ?? ''), $categoriasValidas);
+        $categoriasValidas = array_keys(config('programas'));
+        $categoriaEnLista = in_array($this->categoria ?? '', $categoriasValidas);
 
         $detalles = [
             'empresa_activa' => [

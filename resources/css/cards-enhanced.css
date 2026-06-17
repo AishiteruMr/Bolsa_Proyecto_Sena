@@ -44,9 +44,9 @@
    GLASS CARD - Efecto vidrio mejorado
    ═══════════════════════════════════════════════════ */
 .glass-card-enhanced {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background: rgba(255, 255, 255, 0.98);
+    /* backdrop-filter: blur(16px) saturate(180%); */
+    /* -webkit-backdrop-filter: blur(16px) saturate(180%); */
     border-radius: var(--card-radius-lg);
     padding: 28px;
     border: 1px solid rgba(255, 255, 255, 0.5);
@@ -223,7 +223,8 @@
     font-weight: var(--font-bold);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.95);
+    /* backdrop-filter: blur(8px); */
 }
 
 .project-card-badge.active {

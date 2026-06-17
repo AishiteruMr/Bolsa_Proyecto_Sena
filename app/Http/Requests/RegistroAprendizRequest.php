@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class RegistroAprendizRequest extends FormRequest
@@ -64,8 +65,7 @@ class RegistroAprendizRequest extends FormRequest
             'programa' => [
                 'required',
                 'string',
-                'min:5',
-                'max:150',
+                Rule::in(collect(config('programas'))->flatten()->all()),
             ],
             'correo' => 'required|email|max:255|unique:usuarios,correo',
             'password' => [

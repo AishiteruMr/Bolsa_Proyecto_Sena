@@ -23,7 +23,7 @@
     filter: blur(100px);
     border-radius: 50%;
     opacity: 0.08;
-    animation: floatSoporte 20s infinite alternate;
+    /* animation: floatSoporte 20s infinite alternate; (Optimizado) */
 }
 
 .soporte-blob:nth-child(2) {

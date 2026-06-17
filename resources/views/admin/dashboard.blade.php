@@ -123,6 +123,20 @@
             </div>
         </div>
 
+        <div style="margin-top: 24px;">
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-graduation-cap" style="color: #db2777; margin-right: 8px;"></i>
+                        Aprendices por Programa de Formación
+                    </h3>
+                </div>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="chartProgramas"></canvas>
+                </div>
+            </div>
+        </div>
+
         <div class="admin-main-grid" style="margin-top: 24px;">
             <div class="glass-card admin-table-card" style="background: white; display: flex; flex-direction: column;">
                 <div class="admin-table-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px;">
@@ -416,6 +430,87 @@
                             }
                         }
                     });
+
+                    // Aprendices por Programa de Formación - Grouped Bar
+                    fetch('/api/admin/stats/programas')
+                        .then(r => r.json())
+                        .then(programas => {
+                            if (!programas.length) {
+                                document.getElementById('chartProgramas').parentElement.innerHTML = '<div style="text-align: center; padding: 40px; color: #94a3b8; font-size: 13px; font-weight: 600;"><i class="fas fa-inbox" style="font-size: 24px; display: block; margin-bottom: 8px;"></i>Sin datos disponibles</div>';
+                                return;
+                            }
+                            new Chart(document.getElementById('chartProgramas'), {
+                                type: 'bar',
+                                data: {
+                                    labels: programas.map(p => p.programa_formacion),
+                                    datasets: [
+                                        {
+                                            label: 'Total Aprendices',
+                                            data: programas.map(p => p.total_aprendices),
+                                            backgroundColor: 'rgba(219, 39, 119, 0.75)',
+                                            borderColor: '#db2777',
+                                            borderWidth: 1,
+                                            borderRadius: 4,
+                                        },
+                                        {
+                                            label: 'Postulados',
+                                            data: programas.map(p => p.postulados),
+                                            backgroundColor: 'rgba(59, 130, 246, 0.75)',
+                                            borderColor: '#3b82f6',
+                                            borderWidth: 1,
+                                            borderRadius: 4,
+                                        },
+                                        {
+                                            label: 'Aceptados',
+                                            data: programas.map(p => p.aceptados),
+                                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                                            borderColor: '#10b981',
+                                            borderWidth: 1,
+                                            borderRadius: 4,
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'bottom',
+                                            labels: {
+                                                usePointStyle: true,
+                                                padding: 20,
+                                                font: { family: 'Open Sans', size: 11, weight: '600' }
+                                            }
+                                        },
+                                        tooltip: {
+                                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                            titleColor: '#1e293b',
+                                            bodyColor: '#1e293b',
+                                            padding: 12,
+                                            borderColor: '#e2e8f0',
+                                            borderWidth: 1,
+                                            cornerRadius: 12
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            grid: { color: '#f1f5f9', drawBorder: false },
+                                            ticks: { color: '#94a3b8', font: { family: 'Open Sans', size: 10 }, stepSize: 1 }
+                                        },
+                                        x: {
+                                            grid: { display: false },
+                                            ticks: {
+                                                color: '#64748b',
+                                                font: { family: 'Open Sans', size: 10, weight: '600' },
+                                                maxRotation: 30
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        })
+                        .catch(err => console.error('Error cargando programas:', err));
                 })
                 .catch(err => console.error('Error cargando stats:', err));
         });

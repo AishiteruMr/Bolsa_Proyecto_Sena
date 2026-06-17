@@ -31,7 +31,7 @@
     filter: blur(100px);
     border-radius: 50%;
     opacity: 0.1;
-    animation: floatHero 20s infinite alternate;
+    /* animation: floatHero 20s infinite alternate; (Optimizado) */
 }
 @keyframes floatHero {
     from { transform: translate(0,0) rotate(0deg); }

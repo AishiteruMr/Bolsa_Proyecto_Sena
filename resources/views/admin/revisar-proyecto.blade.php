@@ -312,7 +312,7 @@
                             <div style="background: rgba(59,130,246,0.2); border: 1px solid rgba(59,130,246,0.4); border-radius: 12px; padding: 16px; margin-bottom: 8px; text-align: center;">
                                 <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #60a5fa; margin-bottom: 6px;"></i>
                                 <div style="font-weight: 800; font-size: 13px; color: #60a5fa;">Instructor Asignado</div>
-                                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px;">El proyecto pasará a <strong>En Progreso</strong> al iniciarse.</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px;">El instructor decidirá cuándo <strong>iniciar</strong> el proyecto manualmente.</div>
                             </div>
                         @else
                             <form action="{{ route('admin.proyectos.asignar', $proyecto->id) }}" method="POST">
@@ -332,11 +332,26 @@
                             </form>
                         @endif
                     @elseif($proyecto->estado == 'en_progreso')
-                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Cerrar este proyecto? No se podrán recibir más postulaciones.');">
+                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Marcar como completado? Esto indica que el proyecto ha finalizado exitosamente.');">
+                            @csrf
+                            <input type="hidden" name="estado" value="completado">
+                            <button type="submit" class="btn-premium" style="width: 100%; background: #065f46; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(6,95,70,0.4);">
+                                <i class="fas fa-check-double" style="margin-right: 10px;"></i> Marcar como Completado
+                            </button>
+                        </form>
+                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" style="margin-top:8px;" onsubmit="return confirm('¿Cerrar este proyecto? No se podrán recibir más postulaciones.');">
                             @csrf
                             <input type="hidden" name="estado" value="cerrado">
                             <button type="submit" class="btn-premium" style="width: 100%; background: #64748b; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
                                 <i class="fas fa-lock" style="margin-right: 10px;"></i> Cerrar Proyecto
+                            </button>
+                        </form>
+                    @elseif($proyecto->estado == 'cerrado')
+                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Reabrir este proyecto? Volverá a estado aprobado.');">
+                            @csrf
+                            <input type="hidden" name="estado" value="aprobado">
+                            <button type="submit" class="btn-premium" style="width: 100%; background: #22c55e; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
+                                <i class="fas fa-play" style="margin-right: 10px;"></i> Reabrir Proyecto
                             </button>
                         </form>
                     @endif
@@ -346,9 +361,9 @@
                     @if($proyecto->estado == 'pendiente')
                         La aprobación activará la visibilidad pública y notificará a la empresa proponente.
                     @elseif($proyecto->estado == 'aprobado')
-                        Asigne un instructor para iniciar el proyecto. El estado cambiará a En Progreso automáticamente.
+                        Asigne un instructor. Él podrá iniciar el proyecto manualmente cuando tenga los aprendices necesarios.
                     @elseif($proyecto->estado == 'en_progreso')
-                        Cierre el proyecto cuando todas las etapas hayan sido completadas.
+                        Marque como completado cuando el proyecto haya finalizado exitosamente, o ciérrelo si no continuará.
                     @endif
                 </p>
             </div>

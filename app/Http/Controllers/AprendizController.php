@@ -98,11 +98,7 @@ class AprendizController extends Controller
                 ->toArray();
         }
 
-        $categorias = Proyecto::whereNotNull('categoria')
-            ->distinct()
-            ->orderBy('categoria')
-            ->pluck('categoria')
-            ->toArray();
+        $categorias = array_keys(config('programas'));
 
         return view('aprendiz.proyectos', compact('proyectos', 'postulados', 'categorias'));
     }
@@ -375,7 +371,6 @@ class AprendizController extends Controller
         $aprendiz->update([
             'nombres' => $request->nombre,
             'apellidos' => $request->apellido,
-            'programa_formacion' => $request->programa,
         ]);
 
         if ($request->filled('password')) {

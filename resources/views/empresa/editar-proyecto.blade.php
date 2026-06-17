@@ -129,9 +129,9 @@
                 </a>
             </div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                <span class="instructor-tag">Editar Proyecto</span>
+                <span class="instructor-tag">Editar Convocatoria</span>
             </div>
-            <h1 class="instructor-title">Editar <span style="color: var(--primary);">Convocatoria</span></h1>
+            <h1 class="instructor-title">Editar <span style="color: var(--primary);">Proyecto</span></h1>
             <p style="color: rgba(255,255,255,0.6); font-size: 16px; font-weight: 500;">Actualiza la información y requerimientos de tu proyecto.</p>
         </div>
     </div>
@@ -141,16 +141,15 @@
         @method('PUT')
         
         <div class="glass-card" style="padding: 0; overflow: hidden;">
-            <!-- Header Banner -->
             <div style="background: linear-gradient(135deg, #0a1a15, #1a2e28); padding: 32px 48px; position: relative; overflow: hidden;">
                 <div style="position: absolute; right: -20px; top: -20px; font-size: 120px; color: rgba(62,180,137,0.08); transform: rotate(-10deg);">
                     <i class="fas fa-file-signature"></i>
                 </div>
                 <h3 style="font-size: 22px; font-weight: 800; color: white; display: flex; align-items: center; gap: 14px;">
-                    <i class="fas fa-file-signature" style="color: #3eb489;"></i>
-                    Especificaciones del Proyecto
+                    <i class="fas fa-edit" style="color: #3eb489;"></i>
+                    Editar Especificaciones
                 </h3>
-                <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px; font-weight: 500;">Completa los campos</p>
+                <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 4px; font-weight: 500;">Actualiza los campos que necesites</p>
             </div>
 
             <div style="padding: 48px; display: grid; gap: 48px;">
@@ -171,17 +170,14 @@
                             </div>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Sector Económico</label>
+                            <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Área de Formación</label>
                             <div style="position: relative;">
                                 <i class="fas fa-layer-group" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
                                 <select name="categoria" required style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; background: white; appearance: none;">
-                                    <option value="">Seleccionar Sector...</option>
-                                    <option value="Tecnología" {{ old('categoria', $proyecto->categoria) == 'Tecnología' ? 'selected' : '' }}>Tecnología e Información</option>
-                                    <option value="Agrícola" {{ old('categoria', $proyecto->categoria) == 'Agrícola' ? 'selected' : '' }}>Gestión Agrícola</option>
-                                    <option value="Industrial" {{ old('categoria', $proyecto->categoria) == 'Industrial' ? 'selected' : '' }}>Manufactura Industrial</option>
-                                    <option value="Salud" {{ old('categoria', $proyecto->categoria) == 'Salud' ? 'selected' : '' }}>Salud y Bienestar</option>
-                                    <option value="Ambiental" {{ old('categoria', $proyecto->categoria) == 'Ambiental' ? 'selected' : '' }}>Sostenibilidad Ambiental</option>
-                                    <option value="Otro" {{ old('categoria', $proyecto->categoria) == 'Otro' ? 'selected' : '' }}>Otros Sectores</option>
+                                    <option value="">Seleccionar Área...</option>
+                                    @foreach(array_keys(config('programas')) as $cat)
+                                        <option value="{{ $cat }}" {{ old('categoria', $proyecto->categoria) === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                                    @endforeach
                                 </select>
                                 <i class="fas fa-chevron-down" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none;"></i>
                             </div>
@@ -193,7 +189,7 @@
                 <div>
                     <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
                         <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">2</span>
-                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Alcance y Requisitos</h3>
+                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Definición y Requisitos</h3>
                     </div>
 
                     <div style="margin-bottom: 24px;">
@@ -242,34 +238,25 @@
                         <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Material de Referencia</h3>
                     </div>
 
-                    @if($proyecto->imagen_url)
-                    <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 20px;">
-                        <img src="{{ $proyecto->imagen_url }}" loading="lazy" style="width: 120px; height: 120px; border-radius: 16px; object-fit: cover; border: 2px solid var(--border); flex-shrink: 0;">
-                        <div style="font-size: 13px; color: var(--text-light); font-weight: 600;">
-                            <i class="fas fa-image" style="color: var(--primary); margin-right: 6px;"></i>
-                            Imagen actual del proyecto
-                        </div>
-                    </div>
-                    @endif
-
-                    <div id="image-upload-container" style="border: 2px dashed #cbd5e1; border-radius: 20px; padding: 60px 40px; text-align: center; background: #f8fafc; transition: all 0.3s; position: relative; overflow: hidden;" onmouseover="this.style.borderColor='#3eb489'; this.style.background='rgba(62,180,137,0.02)'" onmouseout="this.style.borderColor='#cbd5e1'; this.style.background='#f8fafc'">
-                        <div id="upload-placeholder">
-                            <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
-                                <i class="fas fa-cloud-arrow-up" style="font-size: 32px; color: #3eb489;"></i>
+                    <div style="display: flex; gap: 1.5rem; align-items: center;">
+                        @if($proyecto->imagen_url)
+                            <img src="{{ $proyecto->imagen_url }}" loading="lazy" style="width: 120px; height: 120px; border-radius: 16px; object-fit: cover; border: 2px solid var(--border); flex-shrink: 0;">
+                        @endif
+                        <div id="image-upload-container" style="flex: 1; border: 2px dashed #cbd5e1; border-radius: 20px; padding: 40px 30px; text-align: center; background: #f8fafc; transition: all 0.3s; position: relative; overflow: hidden;" onmouseover="this.style.borderColor='#3eb489'; this.style.background='rgba(62,180,137,0.02)'" onmouseout="this.style.borderColor='#cbd5e1'; this.style.background='#f8fafc'">
+                            <div id="upload-placeholder">
+                                <div style="width: 64px; height: 64px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+                                    <i class="fas fa-cloud-arrow-up" style="font-size: 26px; color: #3eb489;"></i>
+                                </div>
+                                <h4 style="font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Cambiar imagen del proyecto</h4>
+                                <p style="font-size: 12px; color: var(--text-light); font-weight: 500;">PNG, JPG — Máx 3MB</p>
                             </div>
-                            <h4 style="font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 8px;">Cambiar imagen del proyecto</h4>
-                            <p style="font-size: 14px; color: var(--text-light); font-weight: 500;">Sube una nueva imagen para actualizar la convocatoria.</p>
-                            <div style="margin-top: 20px; display: flex; justify-content: center; gap: 12px;">
-                                <span style="background: white; padding: 6px 14px; border-radius: 30px; border: 1px solid #e2e8f0; font-size: 11px; font-weight: 800; color: #64748b;">PNG, JPG</span>
-                                <span style="background: white; padding: 6px 14px; border-radius: 30px; border: 1px solid #e2e8f0; font-size: 11px; font-weight: 800; color: #64748b;">MÁX 3MB</span>
-                            </div>
+                            <img id="image-preview" style="display: none; max-width: 100%; max-height: 250px; border-radius: 12px; margin: 0 auto; box-shadow: 0 20px 50px -12px rgba(62,180,137,0.3);">
+                            <input type="file" name="imagen" id="imagen-input" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5;">
                         </div>
-                        <img id="image-preview" style="display: none; max-width: 100%; max-height: 350px; border-radius: 16px; margin: 0 auto; box-shadow: 0 20px 50px -12px rgba(62,180,137,0.3);">
-                        <input type="file" name="imagen" id="imagen-input" accept="image/*" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5;">
                     </div>
                 </div>
 
-                <!-- Step 5: Oferta o Beneficio del Proyecto -->
+                <!-- Step 5: Oferta -->
                 <div>
                     <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(139,92,246,0.1);">
                         <span style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 4px 10px rgba(139,92,246,0.3);">

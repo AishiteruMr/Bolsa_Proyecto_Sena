@@ -18,6 +18,7 @@ use App\Services\PerfilService;
 use App\Jobs\SendEmailJob;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -226,7 +227,7 @@ class EmpresaController extends Controller
     {
         $request->validate([
             'titulo' => 'required|string|max:200',
-            'categoria' => 'required|string|max:100',
+            'categoria' => ['required', 'string', Rule::in(array_keys(config('programas')))],
             'descripcion' => 'required|string|min:80|max:5000',
             'requisitos' => 'required|string|max:400',
             'habilidades' => 'required|string|max:200',

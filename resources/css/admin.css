@@ -722,8 +722,8 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(4px);
+    background: rgba(0,0,0,0.8);
+    /* backdrop-filter: blur(4px); */
     z-index: 10000;
     align-items: center;
     justify-content: center;

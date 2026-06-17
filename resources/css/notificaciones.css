@@ -33,7 +33,7 @@
     border-radius: 50%;
     filter: blur(100px);
     opacity: 0.3;
-    animation: blob-float 25s infinite alternate;
+    /* animation: blob-float 25s infinite alternate; (Optimizado) */
 }
 
 .blob-1 {
@@ -143,7 +143,7 @@
     background: var(--primary);
     box-shadow: 0 0 12px var(--primary-glow);
     display: inline-block;
-    animation: pulse-dot 2s infinite;
+    /* animation: pulse-dot 2s infinite; (Optimizado) */
 }
 
 @keyframes pulse-dot {
@@ -522,7 +522,7 @@
     display: inline-block;
     margin-right: 8px;
     box-shadow: 0 0 10px var(--primary-glow);
-    animation: pulse-dot 2s infinite;
+    /* animation: pulse-dot 2s infinite; (Optimizado) */
 }
 
 /* === EMPTY STATE === */
