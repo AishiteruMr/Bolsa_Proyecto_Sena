@@ -84,6 +84,65 @@
         </div>
     </div>
 
+    <!-- MÉTRICAS DE SEGUIMIENTO -->
+    <div class="instructor-metrics-row">
+        <div class="instructor-metric-card">
+            <div class="instructor-metric-icon" style="color:#065f46;background:#ecfdf5;">
+                <i class="fas fa-check-double"></i>
+            </div>
+            <div>
+                <div class="instructor-metric-num">{{ $proyectosCompletados }}</div>
+                <div class="instructor-metric-lbl">Completados</div>
+            </div>
+        </div>
+        <div class="instructor-metric-card">
+            <div class="instructor-metric-icon" style="color:#3b82f6;background:#eff6ff;">
+                <i class="fas fa-users"></i>
+            </div>
+            <div>
+                <div class="instructor-metric-num">{{ $totalPostulaciones }}</div>
+                <div class="instructor-metric-lbl">Postulaciones</div>
+            </div>
+        </div>
+        <div class="instructor-metric-card">
+            <div class="instructor-metric-icon" style="color:#10b981;background:#f0fdf4;">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div>
+                <div class="instructor-metric-num">{{ $postulacionesAceptadas }}</div>
+                <div class="instructor-metric-lbl">Aceptadas</div>
+            </div>
+        </div>
+        <div class="instructor-metric-card">
+            <div class="instructor-metric-icon" style="color:#8b5cf6;background:#f5f3ff;">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div>
+                <div class="instructor-metric-num">{{ $tasaAprobacionGlobal }}%</div>
+                <div class="instructor-metric-lbl">Aprobación Global</div>
+            </div>
+        </div>
+        <div class="instructor-metric-card">
+            <div class="instructor-metric-icon" style="color:#f59e0b;background:#fffbeb;">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <div style="flex:1;">
+                @php
+                    $estadosColores = ['pendiente'=>'#f59e0b','aprobado'=>'#10b981','en_progreso'=>'#3b82f6','completado'=>'#065f46','rechazado'=>'#ef4444','cerrado'=>'#64748b'];
+                    $estadosLabels = ['pendiente'=>'Pend.','aprobado'=>'Aprob.','en_progreso'=>'Prog.','completado'=>'Comp.','rechazado'=>'Rech.','cerrado'=>'Cerrado'];
+                @endphp
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    @foreach(['pendiente','aprobado','en_progreso','completado','rechazado','cerrado'] as $est)
+                        @if(isset($proyectosPorEstado[$est]) && $proyectosPorEstado[$est] > 0)
+                            <span class="rp-bdg-status" style="background:{{ $estadosColores[$est] }};font-size:0.55rem;padding:2px 8px;">{{ $proyectosPorEstado[$est] }} {{ $estadosLabels[$est] }}</span>
+                        @endif
+                    @endforeach
+                </div>
+                <div class="instructor-metric-lbl" style="margin-top:4px;">Distribución</div>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN GRID: PROJECTS + QUICK ACTIONS -->
     <div class="instructor-main-grid">
         
@@ -145,28 +204,31 @@
             </div>
         </div>
 
-        <!-- Right: Activity & Quick Actions -->
+        <!-- Right: Activity, Notifications & Quick Actions -->
         <div>
-            <h3 class="mb-6">Notificaciones</h3>
-             
+            <h3 class="mb-6" style="font-size:18px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px;">
+                <span style="width:6px;height:20px;background:var(--primary);border-radius:3px;display:inline-block;"></span>
+                Centro de Monitoreo
+            </h3>
+
             <div class="instructor-notification-card">
-                <div class="space-y-6">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <i class="fas fa-bolt text-primary"></i>
+                <div style="display:flex;flex-direction:column;gap:16px;">
+                    <div style="display:flex;align-items:center;gap:14px;">
+                        <div style="width:42px;height:42px;border-radius:12px;background:rgba(62,180,137,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="fas fa-bolt" style="color:#3eb489;"></i>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-sm font-medium text-text-light">Postulaciones (48h)</div>
-                            <div class="text-base font-bold text-text">{{ $nuevasPostulaciones }} Recientes</div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-size:0.75rem;font-weight:700;color:var(--text-light);text-transform:uppercase;">Postulaciones (48h)</div>
+                            <div style="font-size:1.1rem;font-weight:900;color:var(--text);">{{ $nuevasPostulaciones }} Recientes</div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
-                            <i class="fas fa-calendar-alt text-warning"></i>
+                    <div style="display:flex;align-items:center;gap:14px;">
+                        <div style="width:42px;height:42px;border-radius:12px;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="fas fa-calendar-alt" style="color:#f59e0b;"></i>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-sm font-medium text-text-light">Próximo Hito</div>
-                            <div class="text-base font-bold text-text">
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-size:0.75rem;font-weight:700;color:var(--text-light);text-transform:uppercase;">Próximo Hito</div>
+                            <div style="font-size:1.1rem;font-weight:900;color:var(--text);">
                                 {{ ($proximoCierre && $proximoCierre->fecha_publicacion) ? \Carbon\Carbon::parse($proximoCierre->fecha_publicacion)->addDays($proximoCierre->duracion_estimada_dias ?? 0)->diffForHumans() : 'Sin eventos' }}
                             </div>
                         </div>
@@ -174,16 +236,61 @@
                 </div>
             </div>
 
+            @if($actividadReciente->count() > 0)
+            <div class="instructor-activity-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                    <h4 style="font-size:0.9rem;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;">
+                        <i class="fas fa-history" style="color:var(--primary);font-size:0.85rem;"></i>
+                        Actividad Reciente (7d)
+                    </h4>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    @foreach($actividadReciente as $act)
+                        @php
+                            $actIcon = match($act->estado) {
+                                'aceptada' => ['i'=>'fa-check-circle','c'=>'#22c55e'],
+                                'rechazada' => ['i'=>'fa-times-circle','c'=>'#ef4444'],
+                                'pendiente' => ['i'=>'fa-hourglass-half','c'=>'#f59e0b'],
+                                default => ['i'=>'fa-circle','c'=>'#94a3b8'],
+                            };
+                        @endphp
+                        <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--primary-soft);border-radius:10px;border:1px solid var(--border);">
+                            <div style="width:8px;height:8px;border-radius:50%;background:{{ $actIcon['c'] }};flex-shrink:0;"></div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:0.75rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                    {{ $act->aprendiz_nombres }} {{ $act->aprendiz_apellidos }}
+                                </div>
+                                <div style="font-size:0.65rem;color:var(--text-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                    {{ Str::limit($act->proyecto_titulo, 35) }}
+                                </div>
+                            </div>
+                            <span style="font-size:0.6rem;color:{{ $actIcon['c'] }};font-weight:700;white-space:nowrap;">{{ Str::title($act->estado) }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
             <div class="instructor-quick-actions">
-                <h4 style="font-size: 18px; font-weight: 900; margin-bottom: 16px;">Acceso Rápido</h4>
-                <div style="display: grid; gap: 12px;">
+                <h4 style="font-size:16px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                    <i class="fas fa-rocket" style="font-size:14px;"></i> Acceso Rápido
+                </h4>
+                <div style="display:grid;gap:10px;">
+                    <a href="{{ route('instructor.proyectos') }}" class="instructor-action-link">
+                        <i class="fas fa-project-diagram" style="color:var(--primary);"></i>
+                        <span style="font-size:13px;font-weight:600;">Mis Proyectos</span>
+                    </a>
+                    <a href="{{ route('instructor.historial') }}" class="instructor-action-link">
+                        <i class="fas fa-history" style="color:var(--primary);"></i>
+                        <span style="font-size:13px;font-weight:600;">Historial</span>
+                    </a>
                     <a href="{{ route('instructor.aprendices') }}" class="instructor-action-link">
-                        <i class="fas fa-users" style="color: var(--primary);"></i>
-                        <span style="font-size: 14px; font-weight: 600;">Base de Aprendices</span>
+                        <i class="fas fa-users" style="color:var(--primary);"></i>
+                        <span style="font-size:13px;font-weight:600;">Base de Aprendices</span>
                     </a>
                     <a href="{{ route('instructor.perfil') }}" class="instructor-action-link">
-                        <i class="fas fa-cog" style="color: var(--primary);"></i>
-                        <span style="font-size: 14px; font-weight: 600;">Ajustes de Perfil</span>
+                        <i class="fas fa-cog" style="color:var(--primary);"></i>
+                        <span style="font-size:13px;font-weight:600;">Ajustes de Perfil</span>
                     </a>
                 </div>
             </div>

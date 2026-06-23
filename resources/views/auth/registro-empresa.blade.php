@@ -127,7 +127,16 @@
                     <div class="form-group">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <input type="checkbox" id="terminos" name="terminos" required style="width: 16px; height: 16px; accent-color: var(--primary);">
-                            <label for="terminos" style="margin:0; font-size: 13px; color: var(--text-light);">Acepto los Términos y Condiciones</label>
+                            <label for="terminos" style="margin:0; font-size: 13px; color: var(--text-light);">Acepto los <a href="{{ route('terminos.condiciones') }}" target="_blank" style="color: var(--primary); text-decoration: underline;">Términos y Condiciones</a></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="consentimiento_datos" name="consentimiento_datos" required style="width: 16px; height: 16px; accent-color: var(--primary);">
+                            <label for="consentimiento_datos" style="margin:0; font-size: 13px; color: var(--text-light);">
+                                Autorizo el tratamiento de los datos personales de mi empresa conforme a la <a href="{{ route('politica.datos') }}" target="_blank" style="color: var(--primary); text-decoration: underline;">Política de Tratamiento de Datos</a> (Ley 1581 de 2012)
+                            </label>
                         </div>
                     </div>
                 </div>

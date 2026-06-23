@@ -398,8 +398,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const terminos = registroForm.querySelector('[name="terminos"]');
         if (terminos && !terminos.checked) {
             hasErrors = true;
-            // Flash the checkbox label
             const label = terminos.parentElement;
+            if (label) {
+                label.style.color = '#ef4444';
+                label.style.transition = 'color 0.3s';
+                setTimeout(() => { label.style.color = ''; }, 2500);
+            }
+        }
+
+        // Check data treatment consent
+        const consentimiento = registroForm.querySelector('[name="consentimiento_datos"]');
+        if (consentimiento && !consentimiento.checked) {
+            hasErrors = true;
+            const label = consentimiento.parentElement;
             if (label) {
                 label.style.color = '#ef4444';
                 label.style.transition = 'color 0.3s';

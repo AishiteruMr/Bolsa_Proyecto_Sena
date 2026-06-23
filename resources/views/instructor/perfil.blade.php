@@ -200,6 +200,42 @@
                     <i class="fas fa-check-circle" style="color:#86efac; margin-right:6px;"></i> Cuenta Verificada
                 </div>
             </div>
+
+            {{-- Consentimiento de Datos --}}
+            <div class="glass-card" style="padding:24px;">
+                <h4 style="font-size:12px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">
+                    <i class="fas fa-shield-alt" style="color:#3eb489;"></i> Privacidad y Datos
+                </h4>
+                <div style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:{{ $usuario->consentimiento_datos ? 'rgba(62,180,137,0.1)' : '#fef2f2' }}; border-radius:12px; border:1px solid {{ $usuario->consentimiento_datos ? 'rgba(62,180,137,0.2)' : '#fecaca' }}; margin-bottom:12px;">
+                    <i class="fas {{ $usuario->consentimiento_datos ? 'fa-check-circle' : 'fa-times-circle' }}" style="color:{{ $usuario->consentimiento_datos ? '#22c55e' : '#ef4444' }}; font-size:18px;"></i>
+                    <div>
+                        <span style="font-size:13px; font-weight:700; color:{{ $usuario->consentimiento_datos ? '#166534' : '#991b1b' }};">
+                            {{ $usuario->consentimiento_datos ? 'Consentimiento otorgado' : 'Consentimiento retirado' }}
+                        </span>
+                        @if($usuario->fecha_consentimiento)
+                            <span style="font-size:11px; color:#64748b; display:block; margin-top:2px;">
+                                {{ $usuario->consentimiento_datos ? 'Otorgado' : 'Actualizado' }}: {{ \Carbon\Carbon::parse($usuario->fecha_consentimiento)->format('d/m/Y H:i') }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+                <p style="font-size:11px; color:#94a3b8; line-height:1.5; margin-bottom:12px;">
+                    Tus datos personales son tratados conforme a la Ley 1581 de 2012.
+                </p>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <a href="{{ route('politica.datos') }}" target="_blank" style="font-size:12px; font-weight:700; color:#3eb489; text-decoration:underline;">
+                        <i class="fas fa-external-link-alt"></i> Ver política
+                    </a>
+                    @if($usuario->consentimiento_datos)
+                        <form action="{{ route('consentimiento.retirar') }}" method="POST" onsubmit="return confirm('¿Estás seguro de retirar tu consentimiento? Esto puede limitar algunas funcionalidades de la plataforma.')" style="display:inline;">
+                            @csrf
+                            <button type="submit" style="font-size:12px; font-weight:700; color:#ef4444; background:none; border:none; cursor:pointer; text-decoration:underline; padding:0;">
+                                <i class="fas fa-user-slash"></i> Retirar consentimiento
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </div>

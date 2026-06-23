@@ -137,6 +137,131 @@
             </div>
         </div>
 
+        {{-- ── NEW ANALYTICS SECTION: POSTULATIONS ── --}}
+        <div class="admin-stats-grid" id="postulacionesStatsGrid" style="margin-top: 24px;">
+            <div class="stat-card-premium" style="padding: 28px; background: white; border-color: #fef3c7;">
+                <div class="admin-stat-icon" style="background: #fef3c7; color: #f59e0b; margin-bottom: 24px;">
+                    <i class="fas fa-file-pen"></i>
+                </div>
+                <div class="admin-stat-value" style="font-size: 38px; color: #f59e0b;">0</div>
+                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Postulaciones Totales</div>
+                <div class="inline-pill inline-pill--warning" style="margin-top:16px; width:fit-content;">
+                    <i class="fas fa-spinner"></i> <span id="postPendientes">0</span> Pendientes
+                </div>
+            </div>
+            <div class="stat-card-premium" style="padding: 28px; background: white;">
+                <div class="admin-stat-icon" style="background: #eff6ff; color: #3b82f6; margin-bottom: 24px;">
+                    <i class="fas fa-pen-to-square"></i>
+                </div>
+                <div class="admin-stat-value" style="font-size: 38px; color: #3b82f6;">0</div>
+                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">En Revisión</div>
+            </div>
+            <div class="stat-card-premium" style="padding: 28px; background: white;">
+                <div class="admin-stat-icon" style="background: #f0fdf4; color: #10b981; margin-bottom: 24px;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="admin-stat-value" style="font-size: 38px; color: #10b981;">0</div>
+                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Aceptadas</div>
+                <div class="inline-pill inline-pill--success" style="margin-top:16px; width:fit-content;">
+                    <i class="fas fa-percentage"></i> <span id="tasaConversion">0%</span> Conversión
+                </div>
+            </div>
+            <div class="stat-card-premium" style="padding: 28px; background: white;">
+                <div class="admin-stat-icon" style="background: #fef2f2; color: #ef4444; margin-bottom: 24px;">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="admin-stat-value" style="font-size: 38px; color: #ef4444;">0</div>
+                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Rechazadas</div>
+            </div>
+        </div>
+
+        {{-- ── NEW CHARTS: POSTULATION FUNNEL + OFFERS + INSTRUCTORS + COMPANY ── --}}
+        <div class="admin-chart-grid" style="margin-top: 24px;">
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-filter" style="color: var(--primary); margin-right: 8px;"></i>
+                        Embudo de Postulaciones
+                    </h3>
+                </div>
+                <div style="height: 250px; position: relative;">
+                    <canvas id="chartPostulacionesFunnel"></canvas>
+                </div>
+            </div>
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-gift" style="color: #8b5cf6; margin-right: 8px;"></i>
+                        Tipo de Ofertas
+                    </h3>
+                </div>
+                <div style="height: 250px; position: relative;">
+                    <canvas id="chartOfertas"></canvas>
+                </div>
+            </div>
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-chalkboard-user" style="color: #6366f1; margin-right: 8px;"></i>
+                        Carga de Instructores
+                    </h3>
+                </div>
+                <div style="height: 250px; position: relative;">
+                    <canvas id="chartInstructoresCarga"></canvas>
+                </div>
+            </div>
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-building" style="color: #2563eb; margin-right: 8px;"></i>
+                        Compromiso Empresarial
+                    </h3>
+                </div>
+                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                    <div style="flex:1; background:#f0fdf4; border-radius:12px; padding:12px; text-align:center;">
+                        <div style="font-size:20px; font-weight:800; color:#10b981;"><span id="empConProyectos">0</span></div>
+                        <div style="font-size:10px; color:#64748b; font-weight:600;">Con proyectos</div>
+                    </div>
+                    <div style="flex:1; background:#fff7ed; border-radius:12px; padding:12px; text-align:center;">
+                        <div style="font-size:20px; font-weight:800; color:#f59e0b;"><span id="empSinProyectos">0</span></div>
+                        <div style="font-size:10px; color:#64748b; font-weight:600;">Sin proyectos</div>
+                    </div>
+                </div>
+                <div style="height: 180px; position: relative;">
+                    <canvas id="chartEmpresasCompromiso"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {{-- ── NEW CHARTS: POSTULATION TREND + USER REGISTRATION TREND ── --}}
+        <div style="margin-top: 24px;">
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-chart-line" style="color: #3b82f6; margin-right: 8px;"></i>
+                        Postulaciones Recibidas (Últimos 6 Meses)
+                    </h3>
+                </div>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="chartPostulacionesMensual"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 24px;">
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+                        <i class="fas fa-user-plus" style="color: #10b981; margin-right: 8px;"></i>
+                        Registro de Usuarios (Últimos 6 Meses)
+                    </h3>
+                </div>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="chartRegistroUsuarios"></canvas>
+                </div>
+            </div>
+        </div>
+
         <div class="admin-main-grid" style="margin-top: 24px;">
             <div class="glass-card admin-table-card" style="background: white; display: flex; flex-direction: column;">
                 <div class="admin-table-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px;">
@@ -511,6 +636,270 @@
                             });
                         })
                         .catch(err => console.error('Error cargando programas:', err));
+                // ── POSTULATION FUNNEL CARD UPDATES ──
+                    const funnel = data.postulaciones_funnel || {labels:[], data:[], total:0, tasa_conversion:0};
+                    const postStatsGrid = document.getElementById('postulacionesStatsGrid');
+                    const funnelCards = postStatsGrid ? postStatsGrid.querySelectorAll('.stat-card-premium') : [];
+                    if (funnelCards.length >= 4) {
+                        funnelCards[0].querySelector('.admin-stat-value').textContent = funnel.total;
+                        funnelCards[0].querySelector('.inline-pill span').textContent = (funnel.data[0] || 0) + ' Pendientes';
+                        funnelCards[1].querySelector('.admin-stat-value').textContent = funnel.data[1] || 0;
+                        funnelCards[2].querySelector('.admin-stat-value').textContent = funnel.data[2] || 0;
+                        funnelCards[2].querySelector('.inline-pill span').textContent = funnel.tasa_conversion + '% Conversión';
+                        funnelCards[3].querySelector('.admin-stat-value').textContent = funnel.data[3] || 0;
+                    }
+
+                    // ── POSTULATION FUNNEL CHART ──
+                    new Chart(document.getElementById('chartPostulacionesFunnel'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: funnel.labels,
+                            datasets: [{
+                                data: funnel.data,
+                                backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ef4444'],
+                                hoverOffset: 15,
+                                borderWidth: 0,
+                                borderRadius: 6,
+                                spacing: 4
+                            }]
+                        },
+                        options: {
+                            cutout: '72%',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 10, weight: '600' } } },
+                                tooltip: {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                    titleColor: '#1e293b',
+                                    bodyColor: '#1e293b',
+                                    padding: 12,
+                                    borderColor: '#e2e8f0',
+                                    borderWidth: 1,
+                                    cornerRadius: 12,
+                                    callbacks: {
+                                        label: function(ctx) {
+                                            const total = funnel.total || 1;
+                                            const pct = ((ctx.parsed / total) * 100).toFixed(1);
+                                            return ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // ── OFFER TYPE DISTRIBUTION ──
+                    const ofertas = data.ofertas_distribucion || {labels:[], data:[]};
+                    if (ofertas.data.length) {
+                        new Chart(document.getElementById('chartOfertas'), {
+                            type: 'doughnut',
+                            data: {
+                                labels: ofertas.labels,
+                                datasets: [{
+                                    data: ofertas.data,
+                                    backgroundColor: ['#8b5cf6', '#f59e0b', '#06b6d4', '#10b981'],
+                                    hoverOffset: 15,
+                                    borderWidth: 0,
+                                    borderRadius: 6,
+                                    spacing: 4
+                                }]
+                            },
+                            options: {
+                                cutout: '72%',
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 10, weight: '600' } } },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                        titleColor: '#1e293b',
+                                        bodyColor: '#1e293b',
+                                        padding: 12,
+                                        borderColor: '#e2e8f0',
+                                        borderWidth: 1,
+                                        cornerRadius: 12
+                                    }
+                                }
+                            }
+                        });
+                    } else {
+                        document.getElementById('chartOfertas').parentElement.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#94a3b8;font-size:13px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin ofertas registradas</div>';
+                    }
+
+                    // ── INSTRUCTOR WORKLOAD ──
+                    const instructores = data.instructores_carga || [];
+                    const ctxIns = document.getElementById('chartInstructoresCarga').getContext('2d');
+                    if (instructores.length) {
+                        new Chart(ctxIns, {
+                            type: 'bar',
+                            data: {
+                                labels: instructores.map(i => i.nombre.length > 18 ? i.nombre.substring(0,16)+'..' : i.nombre),
+                                datasets: [{
+                                    label: 'Proyectos activos',
+                                    data: instructores.map(i => i.total),
+                                    backgroundColor: instructores.map((_, idx) => {
+                                        const colors = ['rgba(99,102,241,0.7)','rgba(59,130,246,0.7)','rgba(16,185,129,0.7)','rgba(245,158,11,0.7)','rgba(244,63,94,0.7)','rgba(139,92,246,0.7)','rgba(6,182,212,0.7)'];
+                                        return colors[idx % colors.length];
+                                    }),
+                                    borderColor: instructores.map((_, idx) => {
+                                        const colors = ['#6366f1','#3b82f6','#10b981','#f59e0b','#f43f5e','#8b5cf6','#06b6d4'];
+                                        return colors[idx % colors.length];
+                                    }),
+                                    borderWidth: 1,
+                                    borderRadius: 4
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y',
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                        titleColor: '#1e293b',
+                                        bodyColor: '#1e293b',
+                                        padding: 12,
+                                        borderColor: '#e2e8f0',
+                                        borderWidth: 1,
+                                        cornerRadius: 12
+                                    }
+                                },
+                                scales: {
+                                    x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } },
+                                    y: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10, weight: '600' } } }
+                                }
+                            }
+                        });
+                    } else {
+                        ctxIns.canvas.parentElement.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#94a3b8;font-size:13px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin instructores con proyectos</div>';
+                    }
+
+                    // ── COMPANY ENGAGEMENT ──
+                    const empCompromiso = data.empresas_compromiso || {activas:0, inactivas:0, con_proyectos:0, sin_proyectos:0};
+                    document.getElementById('empConProyectos').textContent = empCompromiso.con_proyectos;
+                    document.getElementById('empSinProyectos').textContent = empCompromiso.sin_proyectos;
+                    new Chart(document.getElementById('chartEmpresasCompromiso'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Activas', 'Inactivas'],
+                            datasets: [{
+                                data: [empCompromiso.activas, empCompromiso.inactivas],
+                                backgroundColor: ['#10b981', '#e2e8f0'],
+                                hoverOffset: 10,
+                                borderWidth: 0,
+                                borderRadius: 4,
+                                spacing: 3
+                            }]
+                        },
+                        options: {
+                            cutout: '75%',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 10, weight: '600' } } },
+                                tooltip: {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                    titleColor: '#1e293b',
+                                    bodyColor: '#1e293b',
+                                    padding: 12,
+                                    borderColor: '#e2e8f0',
+                                    borderWidth: 1,
+                                    cornerRadius: 12
+                                }
+                            }
+                        }
+                    });
+
+                    // ── MONTHLY POSTULATIONS TREND ──
+                    const postMensual = data.postulaciones_mensuales || {labels:[], data:[]};
+                    if (postMensual.data.length) {
+                        const ctxPost = document.getElementById('chartPostulacionesMensual').getContext('2d');
+                        const gradPost = ctxPost.createLinearGradient(0, 0, 0, 300);
+                        gradPost.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+                        gradPost.addColorStop(1, 'rgba(59, 130, 246, 0)');
+                        new Chart(ctxPost, {
+                            type: 'line',
+                            data: {
+                                labels: postMensual.labels,
+                                datasets: [{
+                                    label: 'Postulaciones',
+                                    data: postMensual.data,
+                                    borderColor: '#3b82f6',
+                                    borderWidth: 3,
+                                    fill: true,
+                                    backgroundColor: gradPost,
+                                    tension: 0.45,
+                                    pointBackgroundColor: '#fff',
+                                    pointBorderColor: '#3b82f6',
+                                    pointBorderWidth: 2,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 6,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                        titleColor: '#1e293b',
+                                        bodyColor: '#3b82f6',
+                                        padding: 12,
+                                        borderColor: '#e2e8f0',
+                                        borderWidth: 1,
+                                        cornerRadius: 12
+                                    }
+                                },
+                                scales: {
+                                    y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } },
+                                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+                                }
+                            }
+                        });
+                    } else {
+                        document.getElementById('chartPostulacionesMensual').parentElement.innerHTML = '<div style="text-align:center;padding:60px;color:#94a3b8;font-size:13px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin postulaciones aún</div>';
+                    }
+
+                    // ── USER REGISTRATION TREND ──
+                    const regUsuarios = data.registro_usuarios_mensual || {labels:[], aprendices:[], instructores:[], empresas:[]};
+                    if (regUsuarios.labels.length) {
+                        new Chart(document.getElementById('chartRegistroUsuarios'), {
+                            type: 'bar',
+                            data: {
+                                labels: regUsuarios.labels,
+                                datasets: [
+                                    { label: 'Aprendices', data: regUsuarios.aprendices, backgroundColor: 'rgba(219, 39, 119, 0.7)', borderColor: '#db2777', borderWidth: 1, borderRadius: 3 },
+                                    { label: 'Instructores', data: regUsuarios.instructores, backgroundColor: 'rgba(99, 102, 241, 0.7)', borderColor: '#6366f1', borderWidth: 1, borderRadius: 3 },
+                                    { label: 'Empresas', data: regUsuarios.empresas, backgroundColor: 'rgba(245, 158, 11, 0.7)', borderColor: '#f59e0b', borderWidth: 1, borderRadius: 3 }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { family: 'Open Sans', size: 11, weight: '600' } } },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                        titleColor: '#1e293b',
+                                        bodyColor: '#1e293b',
+                                        padding: 12,
+                                        borderColor: '#e2e8f0',
+                                        borderWidth: 1,
+                                        cornerRadius: 12
+                                    }
+                                },
+                                scales: {
+                                    y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } },
+                                    x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10, weight: '600' } } }
+                                }
+                            }
+                        });
+                    } else {
+                        document.getElementById('chartRegistroUsuarios').parentElement.innerHTML = '<div style="text-align:center;padding:60px;color:#94a3b8;font-size:13px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin registros nuevos</div>';
+                    }
                 })
                 .catch(err => console.error('Error cargando stats:', err));
         });
