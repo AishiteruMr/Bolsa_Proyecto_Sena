@@ -27,11 +27,12 @@
 @section('content')
 @php
     $camposCompletos = 0;
-    if(!empty($empresa->nombre))         $camposCompletos++;
-    if(!empty($empresa->representante))  $camposCompletos++;
-    if(!empty($empresa->nit))            $camposCompletos++;
-    if(!empty($empresa->correo_contacto))         $camposCompletos++;
-    $progresoPerfil = ($camposCompletos / 4) * 100;
+    if(!empty($empresa->nombre))           $camposCompletos++;
+    if(!empty($empresa->representante))    $camposCompletos++;
+    if(!empty($empresa->nit))              $camposCompletos++;
+    if(!empty($empresa->correo_contacto))  $camposCompletos++;
+    if(!empty($empresa->metodologia_url))  $camposCompletos++;
+    $progresoPerfil = ($camposCompletos / 5) * 100;
     $totalProyectos = $empresa->proyectos()->count();
     $proyectosActivos = $empresa->proyectos()->where('estado','aprobado')->count();
 @endphp
@@ -96,7 +97,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('empresa.perfil.update') }}" method="POST">
+            <form action="{{ route('empresa.perfil.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -132,6 +133,36 @@
                                 <input type="email" value="{{ $empresa->correo_contacto }}" disabled style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px dashed #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; background: #f8fafc; color: #94a3b8; outline: none;">
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Metodología -->
+                <div style="background:#f8fafc; border:2px dashed rgba(62,180,137,0.2); border-radius:20px; padding:24px; margin-bottom:28px;">
+                    <h4 style="font-size:15px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+                        <i class="fas fa-file-alt" style="color:#3eb489;"></i> Metodología de Trabajo
+                    </h4>
+                    <p style="font-size:12px; color:#94a3b8; margin-bottom:16px; font-weight:500;">
+                        Sube un documento PDF o Word describiendo la metodología de trabajo de tu empresa (máx. 5MB).
+                    </p>
+
+                    @if($empresa->metodologia_url)
+                        <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:rgba(62,180,137,0.1); border-radius:12px; margin-bottom:16px;">
+                            <i class="fas fa-file-pdf" style="color:#3eb489; font-size:20px;"></i>
+                            <div style="flex:1;">
+                                <span style="font-size:13px; font-weight:700; color:var(--text);">Documento actual:</span>
+                                <a href="{{ route('file.empresa-metodologia', $empresa->id) }}" target="_blank" style="font-size:12px; font-weight:600; color:#3eb489; margin-left:8px; text-decoration:underline;">
+                                    <i class="fas fa-download"></i> Ver archivo
+                                </a>
+                            </div>
+                            <label style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#ef4444; cursor:pointer;">
+                                <input type="checkbox" name="eliminar_metodologia" value="1" style="accent-color:#ef4444;">
+                                Eliminar
+                            </label>
+                        </div>
+                    @endif
+
+                    <div style="position:relative;">
+                        <input type="file" name="metodologia" accept=".pdf,.doc,.docx" style="width:100%; padding:14px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:14px; font-weight:500; background:white; outline:none;">
                     </div>
                 </div>
 

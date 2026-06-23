@@ -156,6 +156,7 @@
                 </div>
                 <div class="admin-stat-value" style="font-size: 38px; color: var(--primary);">{{ $stats['proyectos'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Banco de Proyectos</div>
+                <span class="trend-badge" data-trend="proyectos" style="display:none;margin-top:10px;"></span>
                 <div class="inline-pill inline-pill--warning" style="margin-top:16px; width:fit-content;">
                     <i class="fas fa-clock-rotate-left"></i> {{ $stats['pendientes'] }} Pendientes
                 </div>
@@ -166,6 +167,7 @@
                 </div>
                 <div class="admin-stat-value" style="font-size: 38px; color: var(--text);">{{ $stats['usuarios'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Cuentas Totales</div>
+                <span class="trend-badge" data-trend="usuarios" style="display:none;margin-top:10px;"></span>
             </div>
             <div class="stat-card-premium" style="padding: 28px; background: white;">
                 <div class="admin-stat-icon" style="background: #eff6ff; color: #3b82f6; margin-bottom: 24px;">
@@ -173,6 +175,7 @@
                 </div>
                 <div class="admin-stat-value" style="font-size: 38px; color: #2563eb;">{{ $stats['empresas'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Empresas Aliadas</div>
+                <span class="trend-badge" data-trend="empresas" style="display:none;margin-top:10px;"></span>
             </div>
             <div class="stat-card-premium" style="padding: 28px; background: white;">
                 <div class="admin-stat-icon" style="background: #fdf2f8; color: #db2777; margin-bottom: 24px;">
@@ -180,6 +183,7 @@
                 </div>
                 <div class="admin-stat-value" style="font-size: 38px; color: #db2777;">{{ $stats['aprendices'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Aprendices</div>
+                <span class="trend-badge" data-trend="aprendices" style="display:none;margin-top:10px;"></span>
             </div>
             <div class="stat-card-premium" style="padding: 28px; background: white;">
                 <div class="admin-stat-icon" style="background: #fef3c7; color: #d97706; margin-bottom: 24px;">
@@ -187,6 +191,7 @@
                 </div>
                 <div class="admin-stat-value" style="font-size: 38px; color: #d97706;">{{ $stats['instructores'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Instructores</div>
+                <span class="trend-badge" data-trend="instructores" style="display:none;margin-top:10px;"></span>
             </div>
         </div>
 
@@ -376,6 +381,63 @@
                 </div>
                 <div style="height: 260px; position: relative;">
                     <canvas id="chartRegistroUsuarios"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        {{-- SECTION: RENDIMIENTO Y PROYECCIÓN                     --}}
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        <div class="dashboard-section-header">
+            <div class="section-icon" style="background:#f0fdf4;color:#059669;">
+                <i class="fas fa-chart-simple"></i>
+            </div>
+            <h2>Rendimiento y Proyección</h2>
+            <span class="section-badge">Analítica predictiva</span>
+        </div>
+
+        <div class="dashboard-2col">
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
+                        <i class="fas fa-bullseye" style="color: #059669; margin-right: 8px;"></i>
+                        Tasa de Éxito de Proyectos
+                    </h3>
+                </div>
+                <div id="successRateContent">
+                    <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+                        <div style="flex:1; text-align:center; padding:16px; background:#f0fdf4; border-radius:12px;">
+                            <div class="skeleton-pulse" style="height:32px; width:50%; margin:0 auto 6px; border-radius:6px;"></div>
+                            <div class="skeleton-pulse skeleton-badge" style="margin:0 auto;"></div>
+                        </div>
+                        <div style="flex:1; text-align:center; padding:16px; background:#fef2f2; border-radius:12px;">
+                            <div class="skeleton-pulse" style="height:32px; width:50%; margin:0 auto 6px; border-radius:6px;"></div>
+                            <div class="skeleton-pulse skeleton-badge" style="margin:0 auto;"></div>
+                        </div>
+                        <div style="flex:1; text-align:center; padding:16px; background:#eff6ff; border-radius:12px;">
+                            <div class="skeleton-pulse" style="height:32px; width:50%; margin:0 auto 6px; border-radius:6px;"></div>
+                            <div class="skeleton-pulse skeleton-badge" style="margin:0 auto;"></div>
+                        </div>
+                    </div>
+                    <div style="height: 200px; position: relative;">
+                        <canvas id="chartSuccessRate"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
+                        <i class="fas fa-chart-line" style="color: #6366f1; margin-right: 8px;"></i>
+                        Proyección de Proyectos
+                    </h3>
+                    <span id="trendLabel" class="skeleton-pulse" style="padding:4px 12px; border-radius:20px; font-size:10px; font-weight:700;">&nbsp;</span>
+                </div>
+                <div style="height: 260px; position: relative;">
+                    <canvas id="chartPredicciones"></canvas>
+                </div>
+                <div id="predictionMeta" style="margin-top:12px; display:flex; gap:12px;">
+                    <div class="skeleton-pulse" style="flex:1; height:20px; border-radius:6px;"></div>
+                    <div class="skeleton-pulse" style="flex:1; height:20px; border-radius:6px;"></div>
                 </div>
             </div>
         </div>
@@ -776,7 +838,7 @@
                         funnelCards[3].querySelector('.admin-stat-value').textContent = funnel.data[3] || 0;
                         // Remove skeleton from postulaciones cards
                         funnelCards.forEach(function(c) {
-                            c.querySelectorAll('.skeleton-pulse').forEach(function(s) { s.classList.remove('skeleton-pulse'); });
+                            c.querySelectorAll('.skeleton-pulse, .skeleton-stat').forEach(function(s) { s.classList.remove('skeleton-pulse', 'skeleton-stat'); });
                         });
                     }
 
@@ -863,6 +925,203 @@
                     ['empConProyectos','empSinProyectos','empActivas','empInactivas'].forEach(function(id) {
                         document.getElementById(id).classList.remove('skeleton-pulse');
                     });
+
+                    // ── TREND BADGES ──
+                    const trends = data.tendencias || {};
+                    document.querySelectorAll('.trend-badge').forEach(function(el) {
+                        const key = el.getAttribute('data-trend');
+                        const t = trends[key];
+                        if (t) {
+                            el.style.display = 'inline-flex';
+                            el.style.alignItems = 'center';
+                            el.style.gap = '4px';
+                            el.style.padding = '3px 10px';
+                            el.style.borderRadius = '20px';
+                            el.style.fontSize = '10px';
+                            el.style.fontWeight = '800';
+                            if (t.direction === 'up') {
+                                el.style.background = '#f0fdf4';
+                                el.style.color = '#16a34a';
+                                el.innerHTML = '<i class="fas fa-arrow-up" style="font-size:8px;"></i> +' + t.change + '% vs mes ant.';
+                            } else if (t.direction === 'down') {
+                                el.style.background = '#fef2f2';
+                                el.style.color = '#dc2626';
+                                el.innerHTML = '<i class="fas fa-arrow-down" style="font-size:8px;"></i> ' + t.change + '% vs mes ant.';
+                            } else {
+                                el.style.background = '#f8fafc';
+                                el.style.color = '#64748b';
+                                el.innerHTML = '<i class="fas fa-minus" style="font-size:8px;"></i> Sin cambios';
+                            }
+                        }
+                    });
+
+                    // ── SUCCESS RATE ──
+                    const tasa = data.tasa_exito || {};
+                    const estados = data.proyectos_por_estado || {labels:[], data:[]};
+                    const successContainer = document.getElementById('successRateContent');
+                    if (successContainer && tasa.total > 0) {
+                        var idxCompletado = estados.labels.findIndex(function(l) { return l.toLowerCase().includes('completado'); });
+                        var idxAprobado = estados.labels.findIndex(function(l) { return l.toLowerCase().includes('aprobado'); });
+                        var idxProgreso = estados.labels.findIndex(function(l) { return l.toLowerCase().includes('en progreso'); });
+                        var idxRechazado = estados.labels.findIndex(function(l) { return l.toLowerCase().includes('rechazado'); });
+                        var idxPendiente = estados.labels.findIndex(function(l) { return l.toLowerCase().includes('pendiente'); });
+                        var completados = idxCompletado >= 0 ? estados.data[idxCompletado] : 0;
+                        var aprobados = idxAprobado >= 0 ? estados.data[idxAprobado] : 0;
+                        var enProgreso = idxProgreso >= 0 ? estados.data[idxProgreso] : 0;
+                        var rechazados = idxRechazado >= 0 ? estados.data[idxRechazado] : 0;
+                        var pendientes = idxPendiente >= 0 ? estados.data[idxPendiente] : 0;
+                        var enCurso = aprobados + enProgreso;
+                        var totalActivos = completados + enCurso + pendientes;
+                        successContainer.innerHTML = '\
+                            <div style="display:flex;gap:12px;margin-bottom:20px;">\
+                                <div style="flex:1;text-align:center;padding:16px 8px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;">\
+                                    <div style="font-size:28px;font-weight:900;color:#16a34a;line-height:1.2;">' + tasa.tasa_exito + '%</div>\
+                                    <div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:6px;">Tasa de éxito</div>\
+                                    <div style="font-size:11px;font-weight:700;color:#16a34a;margin-top:6px;background:#fff;padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;"><i class="fas fa-check-circle" style="font-size:9px;"></i> ' + completados + ' completados</div>\
+                                </div>\
+                                <div style="flex:1;text-align:center;padding:16px 8px;background:#eff6ff;border-radius:12px;border:1px solid #bfdbfe;">\
+                                    <div style="font-size:28px;font-weight:900;color:#2563eb;line-height:1.2;">' + tasa.tasa_activos + '%</div>\
+                                    <div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:6px;">En curso</div>\
+                                    <div style="font-size:11px;font-weight:700;color:#2563eb;margin-top:6px;background:#fff;padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;"><i class="fas fa-spinner" style="font-size:9px;"></i> ' + enCurso + ' activos (' + enProgreso + ' prog.)</div>\
+                                </div>\
+                                <div style="flex:1;text-align:center;padding:16px 8px;background:#fef2f2;border-radius:12px;border:1px solid #fecaca;">\
+                                    <div style="font-size:28px;font-weight:900;color:#dc2626;line-height:1.2;">' + tasa.tasa_rechazo + '%</div>\
+                                    <div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:6px;">Tasa de rechazo</div>\
+                                    <div style="font-size:11px;font-weight:700;color:#dc2626;margin-top:6px;background:#fff;padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;"><i class="fas fa-times-circle" style="font-size:9px;"></i> ' + rechazados + ' rechazados</div>\
+                                </div>\
+                            </div>\
+                            <div style="height:180px;position:relative;">\
+                                <canvas id="chartSuccessRate"></canvas>\
+                            </div>';
+                        new Chart(document.getElementById('chartSuccessRate'), {
+                            type: 'bar',
+                            data: {
+                                labels: ['Completados', 'En curso', 'Pendientes', 'Rechazados'],
+                                datasets: [{
+                                    label: 'Proyectos',
+                                    data: [completados, enCurso, pendientes, rechazados],
+                                    backgroundColor: ['rgba(22,163,74,0.8)', 'rgba(37,99,235,0.8)', 'rgba(245,158,11,0.8)', 'rgba(220,38,38,0.8)'],
+                                    borderColor: ['#16a34a', '#2563eb', '#f59e0b', '#dc2626'],
+                                    borderWidth: 2, borderRadius: 6, borderSkipped: false
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(255,255,255,0.95)', titleColor: '#1e293b',
+                                        bodyColor: '#1e293b', padding: 12, borderColor: '#e2e8f0',
+                                        borderWidth: 1, cornerRadius: 12,
+                                        callbacks: {
+                                            label: function(ctx) { return ctx.parsed.x + ' (' + ((ctx.parsed.x / tasa.total) * 100).toFixed(1) + '%)'; }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1, callback: function(v) { return Number.isInteger(v) ? v : ''; } } },
+                                    y: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 11, weight: '700' } } }
+                                }
+                            }
+                        });
+                    } else if (successContainer) {
+                        successContainer.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-size:13px;font-weight:600;"><i class="fas fa-inbox" style="font-size:32px;display:block;margin-bottom:12px;"></i>Sin proyectos para evaluar</div>';
+                    }
+
+                    // ── PREDICTIONS ──
+                    const pred = data.predicciones || {};
+                    const predCanvas = document.getElementById('chartPredicciones');
+                    if (pred.historico && pred.historico.length && predCanvas) {
+                        var allLabels = (pred.labels_meses || []).concat(pred.labels_pred || []);
+                        var allData = (pred.historico || []).concat(pred.predicciones || []);
+                        var split = (pred.historico || []).length;
+                        var trendLabel = document.getElementById('trendLabel');
+                        if (trendLabel) {
+                            trendLabel.className = '';
+                            trendLabel.style.padding = '4px 12px';
+                            trendLabel.style.borderRadius = '20px';
+                            trendLabel.style.fontSize = '10px';
+                            trendLabel.style.fontWeight = '800';
+                            if (pred.tendencia === 'creciente') {
+                                trendLabel.style.background = '#f0fdf4';
+                                trendLabel.style.color = '#16a34a';
+                                trendLabel.innerHTML = '<i class="fas fa-arrow-trend-up"></i> +' + pred.pendiente + '/mes';
+                            } else if (pred.tendencia === 'decreciente') {
+                                trendLabel.style.background = '#fef2f2';
+                                trendLabel.style.color = '#dc2626';
+                                trendLabel.innerHTML = '<i class="fas fa-arrow-trend-down"></i> ' + pred.pendiente + '/mes';
+                            } else {
+                                trendLabel.style.background = '#f8fafc';
+                                trendLabel.style.color = '#64748b';
+                                trendLabel.innerHTML = '<i class="fas fa-minus"></i> Estable';
+                            }
+                        }
+                        var meta = document.getElementById('predictionMeta');
+                        if (meta) {
+                            meta.innerHTML = '\
+                                <div style="flex:1;padding:12px 8px;background:#f8fafc;border-radius:10px;text-align:center;border:1px solid #e2e8f0;">\
+                                    <div style="font-size:18px;font-weight:900;color:var(--text);">' + pred.promedio_mensual + '</div>\
+                                    <div style="font-size:9px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px;">Prom. mensual</div>\
+                                </div>\
+                                <div style="flex:1;padding:12px 8px;background:#f0fdf4;border-radius:10px;text-align:center;border:1px solid #bbf7d0;">\
+                                    <div style="font-size:18px;font-weight:900;color:#16a34a;">' + pred.proyectado_anual + '</div>\
+                                    <div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px;">Proy. anual</div>\
+                                </div>\
+                                <div style="flex:1;padding:12px 8px;background:' + (pred.pendiente >= 0 ? '#f0fdf4' : '#fef2f2') + ';border-radius:10px;text-align:center;border:1px solid ' + (pred.pendiente >= 0 ? '#bbf7d0' : '#fecaca') + ';">\
+                                    <div style="font-size:18px;font-weight:900;color:' + (pred.pendiente >= 0 ? '#16a34a' : '#dc2626') + ';">' + (pred.pendiente >= 0 ? '+' : '') + pred.pendiente + '</div>\
+                                    <div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px;">Pendiente</div>\
+                                </div>';
+                        }
+                        var ctxPred = predCanvas.getContext('2d');
+                        var gradPred = ctxPred.createLinearGradient(0, 0, 0, 260);
+                        gradPred.addColorStop(0, 'rgba(16,185,129,0.35)');
+                        gradPred.addColorStop(1, 'rgba(16,185,129,0)');
+                        new Chart(predCanvas, {
+                            type: 'line',
+                            data: {
+                                labels: allLabels,
+                                datasets: [{
+                                    label: 'Proyectos',
+                                    data: allData,
+                                    borderColor: '#10b981',
+                                    backgroundColor: gradPred,
+                                    borderWidth: 3, fill: true,
+                                    tension: 0.4,
+                                    pointBackgroundColor: allData.map(function(_, i) { return i >= split ? '#6366f1' : '#fff'; }),
+                                    pointBorderColor: allData.map(function(_, i) { return i >= split ? '#6366f1' : '#10b981'; }),
+                                    pointBorderWidth: 2, pointRadius: allData.map(function(_, i) { return i >= split ? 5 : 4; }),
+                                    pointHoverRadius: 6,
+                                    borderDash: allData.map(function(_, i) { return i >= split ? [6,4] : []; }),
+                                    segment: {
+                                        borderDash: function(ctx) { return ctx.p1DataIndex >= split ? [6,4] : []; }
+                                    }
+                                }]
+                            },
+                            options: {
+                                responsive: true, maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(255,255,255,0.95)', titleColor: '#1e293b',
+                                        bodyColor: '#1e293b', padding: 12, borderColor: '#e2e8f0',
+                                        borderWidth: 1, cornerRadius: 12,
+                                        callbacks: {
+                                            label: function(ctx) {
+                                                var isPred = ctx.dataIndex >= split;
+                                                return (isPred ? '🔮 Proyectado: ' : '📊 ') + ctx.parsed.y;
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } },
+                                    x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 9, weight: '600' } } }
+                                }
+                            }
+                        });
+                    } else if (predCanvas) {
+                        predCanvas.parentElement.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-size:13px;font-weight:600;"><i class="fas fa-inbox" style="font-size:32px;display:block;margin-bottom:12px;"></i>Datos insuficientes para proyección</div>';
+                    }
 
                     // ── USER REGISTRATION TREND ──
                     const regUsuarios = data.registro_usuarios_mensual || {labels:[], aprendices:[], instructores:[], empresas:[]};

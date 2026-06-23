@@ -24,6 +24,7 @@ class Empresa extends Model
         'latitud',
         'longitud',
         'activo',
+        'metodologia_url',
     ];
 
     protected $casts = [

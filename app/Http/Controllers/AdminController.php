@@ -30,6 +30,11 @@ use Illuminate\View\View;
 
 class AdminController extends Controller
 {
+    public function analytics(): View
+    {
+        return view('admin.analytics');
+    }
+
     public function dashboard(): View
     {
         $stats = Cache::remember('admin_stats', now()->addMinutes(5), function () {

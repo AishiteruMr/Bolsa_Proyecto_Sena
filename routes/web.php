@@ -86,6 +86,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/descargar/evidencia/{id}', [FileController::class, 'evidencia'])->name('file.evidencia');
     Route::get('/descargar/etapa-documento/{id}', [FileController::class, 'etapaDocumento'])->name('file.etapa-documento');
     Route::get('/descargar/proyecto-estructura/{id}', [FileController::class, 'proyectoEstructura'])->name('file.proyecto-estructura');
+    Route::get('/descargar/empresa-metodologia/{id}', [FileController::class, 'empresaMetodologia'])->name('file.empresa-metodologia');
 
     // Retiro de consentimiento de datos personales
     Route::post('/consentimiento/retirar', [AuthController::class, 'retirarConsentimiento'])->name('consentimiento.retirar');
@@ -186,6 +187,7 @@ Route::middleware(['auth.custom', 'rol:2'])->prefix('instructor')->name('instruc
 
 Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/analytics', [AdminController::class, 'analytics'])->name('analytics');
     Route::get('/usuarios', [AdminController::class, 'usuarios'])->name('usuarios');
     //  SEGURIDAD: Rate limiting en cambio de estado (máx 30/minuto)
     Route::post('/usuarios/{id}/estado', [AdminController::class, 'cambiarEstadoUsuario'])->name('usuarios.estado')->middleware('throttle:30,1');
@@ -220,6 +222,7 @@ Route::middleware(['auth.custom', 'rol:4'])->prefix('admin')->name('admin.')->gr
 
 Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats', [StatsController::class, 'dashboard'])->name('api.admin.stats');
 Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/stats/programas', [StatsController::class, 'programas'])->name('api.admin.stats.programas');
+Route::middleware(['auth.custom', 'rol:4'])->get('/api/admin/analytics', [StatsController::class, 'analytics'])->name('api.admin.analytics');
 
 //  SEGURIDAD: Rate limiting en APIs de infinite scroll (60/min)
 Route::middleware(['auth.custom', 'throttle:60,1'])->group(function () {
