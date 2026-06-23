@@ -71,7 +71,24 @@ class AuditLogController extends Controller
             $grouped[$entidad][$nombre][] = $log;
         }
 
-        return view('admin.audit-logs', compact('logs', 'grouped'));
+        $accionesCount = AuditLog::select('accion')
+            ->selectRaw('COUNT(*) as total')
+            ->groupBy('accion')
+            ->orderByDesc('total')
+            ->get();
+
+        $actividadMensual = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $fecha = now()->subMonths($i);
+            $actividadMensual['labels'][] = $fecha->format('M Y');
+            $actividadMensual['data'][] = AuditLog::whereYear('created_at', $fecha->year)
+                ->whereMonth('created_at', $fecha->month)
+                ->count();
+        }
+
+        $totalLogs = AuditLog::count();
+
+        return view('admin.audit-logs', compact('logs', 'grouped', 'accionesCount', 'actividadMensual', 'totalLogs'));
     }
 
     private function exportCsv($query)

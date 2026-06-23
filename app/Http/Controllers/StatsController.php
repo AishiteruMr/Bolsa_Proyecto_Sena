@@ -92,7 +92,7 @@ class StatsController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'proyectos_por_estado' => ['labels' => ['Pendiente', 'Aprobado', 'Rechazado', 'En Progreso', 'Cerrado', 'Completado'], 'data' => [0, 0, 0, 0, 0, 0]],
-                'usuarios_por_tipo' => ['labels' => ['Aprendices', 'Instructores', 'Empresas', 'Admins'], 'data' => [0, 0, 0, 0, 0]],
+                'usuarios_por_tipo' => ['labels' => ['Aprendices', 'Instructores', 'Empresas', 'Admins'], 'data' => [0, 0, 0, 0]],
                 'proyectos_por_categoria' => [],
                 'ranking_empresas' => [],
                 'metricas_mensuales' => ['labels' => [], 'data' => []],

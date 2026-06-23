@@ -5,6 +5,116 @@
 
 @section('styles')
     @vite(['resources/css/admin.css'])
+    <style>
+        .dashboard-section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 36px 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .dashboard-section-header:first-of-type { margin-top: 0; }
+        .dashboard-section-header .section-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .dashboard-section-header h2 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+            flex: 1;
+        }
+        .dashboard-section-header .section-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #64748b;
+            background: #f1f5f9;
+        }
+        .dashboard-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .dashboard-3col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .dashboard-2-1col {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 1024px) {
+            .dashboard-2col, .dashboard-3col, .dashboard-2-1col {
+                grid-template-columns: 1fr;
+            }
+        }
+        .stat-card-compact {
+            padding: 20px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        .stat-card-compact:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        .stat-card-compact .stat-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center; justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .stat-card-compact .stat-number {
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .stat-card-compact .stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .skeleton-pulse {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .skeleton-stat {
+            height: 32px; width: 60%; margin-bottom: 8px;
+        }
+        .skeleton-stat-sm {
+            height: 14px; width: 40%; margin-bottom: 4px;
+        }
+        .skeleton-badge {
+            height: 20px; width: 80px; border-radius: 20px;
+        }
+        .skeleton-chart {
+            height: 220px; width: 100%;
+        }
+    </style>
 @endsection
 
 @section('sidebar-nav')
@@ -28,6 +138,17 @@
             </div>
         </div>
 
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        {{-- SECTION: VISIÓN GENERAL                               --}}
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        <div class="dashboard-section-header">
+            <div class="section-icon" style="background:var(--primary-soft);color:var(--primary);">
+                <i class="fas fa-th-large"></i>
+            </div>
+            <h2>Visión General</h2>
+            <span class="section-badge">Resumen Ejecutivo</span>
+        </div>
+
         <div class="admin-stats-grid">
             <div class="stat-card-premium" style="padding: 28px; background: white; border-color: var(--primary-soft);">
                 <div class="admin-stat-icon" style="background: var(--primary-soft); color: var(--primary); margin-bottom: 24px;">
@@ -39,7 +160,6 @@
                     <i class="fas fa-clock-rotate-left"></i> {{ $stats['pendientes'] }} Pendientes
                 </div>
             </div>
-
             <div class="stat-card-premium" style="padding: 28px; background: white;">
                 <div class="admin-stat-icon" style="background: #f8fafc; color: #64748b; margin-bottom: 24px;">
                     <i class="fas fa-users"></i>
@@ -47,7 +167,6 @@
                 <div class="admin-stat-value" style="font-size: 38px; color: var(--text);">{{ $stats['usuarios'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Cuentas Totales</div>
             </div>
-
             <div class="stat-card-premium" style="padding: 28px; background: white;">
                 <div class="admin-stat-icon" style="background: #eff6ff; color: #3b82f6; margin-bottom: 24px;">
                     <i class="fas fa-building"></i>
@@ -55,7 +174,6 @@
                 <div class="admin-stat-value" style="font-size: 38px; color: #2563eb;">{{ $stats['empresas'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Empresas Aliadas</div>
             </div>
-
             <div class="stat-card-premium" style="padding: 28px; background: white;">
                 <div class="admin-stat-icon" style="background: #fdf2f8; color: #db2777; margin-bottom: 24px;">
                     <i class="fas fa-graduation-cap"></i>
@@ -63,7 +181,6 @@
                 <div class="admin-stat-value" style="font-size: 38px; color: #db2777;">{{ $stats['aprendices'] }}</div>
                 <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Aprendices</div>
             </div>
-
             <div class="stat-card-premium" style="padding: 28px; background: white;">
                 <div class="admin-stat-icon" style="background: #fef3c7; color: #d97706; margin-bottom: 24px;">
                     <i class="fas fa-chalkboard-teacher"></i>
@@ -73,196 +190,270 @@
             </div>
         </div>
 
-        <div class="admin-chart-grid" style="margin-top: 24px;">
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
-                        <i class="fas fa-chart-line" style="color: var(--primary); margin-right: 8px;"></i>
-                        Proyectos por Estado
+        {{-- Active counts bar (populated via JS) --}}
+        <div id="activeCountsBar" style="display: flex; flex-wrap: wrap; gap: 12px; margin: -24px 0 36px; padding: 0 4px;">
+            <div class="skeleton-pulse skeleton-badge" style="height:28px;"></div>
+            <div class="skeleton-pulse skeleton-badge"></div>
+            <div class="skeleton-pulse skeleton-badge"></div>
+        </div>
+
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        {{-- SECTION: PROYECTOS                                    --}}
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        <div class="dashboard-section-header">
+            <div class="section-icon" style="background:#f0fdf4;color:#10b981;">
+                <i class="fas fa-project-diagram"></i>
+            </div>
+            <h2>Proyectos</h2>
+            <span class="section-badge">Estado y tendencias</span>
+        </div>
+
+        <div class="dashboard-2col">
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
+                        <i class="fas fa-chart-pie" style="color: var(--primary); margin-right: 8px;"></i>
+                        Por Estado
                     </h3>
                 </div>
-                <div style="height: 250px; position: relative;">
+                <div style="height: 260px; position: relative;">
                     <canvas id="chartProyectosEstado"></canvas>
                 </div>
             </div>
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
+                        <i class="fas fa-chart-line" style="color: #10b981; margin-right: 8px;"></i>
+                        Creados (Últimos 6 Meses)
+                    </h3>
+                </div>
+                <div style="height: 260px; position: relative;">
+                    <canvas id="chartProyectosMensual"></canvas>
+                </div>
+            </div>
+        </div>
 
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+        {{-- Proyectos: categorías --}}
+        <div class="glass-card" style="padding: 24px; background: white; margin-top: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
+                    <i class="fas fa-tags" style="color: #8b5cf6; margin-right: 8px;"></i>
+                    Por Categoría
+                </h3>
+            </div>
+            <div style="height: 260px; position: relative;">
+                <canvas id="chartProyectosCategoria"></canvas>
+            </div>
+        </div>
+
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        {{-- SECTION: POSTULACIONES                                 --}}
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        <div class="dashboard-section-header">
+            <div class="section-icon" style="background:#fef3c7;color:#f59e0b;">
+                <i class="fas fa-file-pen"></i>
+            </div>
+            <h2>Postulaciones</h2>
+            <span class="section-badge">Embudo y métricas</span>
+        </div>
+
+        <div class="admin-stats-grid" id="postulacionesStatsGrid" style="margin-bottom:24px;">
+            <div class="stat-card-premium" style="padding: 24px; background: white; border-color: #fef3c7;">
+                <div class="admin-stat-icon" style="background: #fef3c7; color: #f59e0b; margin-bottom: 16px;">
+                    <i class="fas fa-file-pen"></i>
+                </div>
+                <div class="admin-stat-value skeleton-pulse skeleton-stat" style="font-size: 32px; color: #f59e0b;">&nbsp;</div>
+                <div class="admin-stat-label" style="font-size: 10px; margin-top: 4px;">Postulaciones Totales</div>
+                <div class="inline-pill inline-pill--warning" style="margin-top:12px; width:fit-content;">
+                    <i class="fas fa-spinner"></i> <span class="skeleton-pulse" style="display:inline-block;width:40px;">&nbsp;</span>
+                </div>
+            </div>
+            <div class="stat-card-premium" style="padding: 24px; background: white;">
+                <div class="admin-stat-icon" style="background: #eff6ff; color: #3b82f6; margin-bottom: 16px;">
+                    <i class="fas fa-pen-to-square"></i>
+                </div>
+                <div class="admin-stat-value skeleton-pulse skeleton-stat" style="font-size: 32px; color: #3b82f6;">&nbsp;</div>
+                <div class="admin-stat-label" style="font-size: 10px; margin-top: 4px;">En Revisión</div>
+            </div>
+            <div class="stat-card-premium" style="padding: 24px; background: white;">
+                <div class="admin-stat-icon" style="background: #f0fdf4; color: #10b981; margin-bottom: 16px;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="admin-stat-value skeleton-pulse skeleton-stat" style="font-size: 32px; color: #10b981;">&nbsp;</div>
+                <div class="admin-stat-label" style="font-size: 10px; margin-top: 4px;">Aceptadas</div>
+                <div class="inline-pill inline-pill--success" style="margin-top:12px; width:fit-content;">
+                    <i class="fas fa-percentage"></i> <span class="skeleton-pulse" style="display:inline-block;width:50px;">&nbsp;</span>
+                </div>
+            </div>
+            <div class="stat-card-premium" style="padding: 24px; background: white;">
+                <div class="admin-stat-icon" style="background: #fef2f2; color: #ef4444; margin-bottom: 16px;">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="admin-stat-value skeleton-pulse skeleton-stat" style="font-size: 32px; color: #ef4444;">&nbsp;</div>
+                <div class="admin-stat-label" style="font-size: 10px; margin-top: 4px;">Rechazadas</div>
+            </div>
+        </div>
+
+        <div class="dashboard-2col">
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
+                        <i class="fas fa-filter" style="color: var(--primary); margin-right: 8px;"></i>
+                        Embudo de Postulaciones
+                    </h3>
+                </div>
+                <div style="height: 260px; position: relative;">
+                    <canvas id="chartPostulacionesFunnel"></canvas>
+                </div>
+            </div>
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
+                        <i class="fas fa-chart-line" style="color: #3b82f6; margin-right: 8px;"></i>
+                        Recibidas (Últimos 6 Meses)
+                    </h3>
+                </div>
+                <div style="height: 260px; position: relative;">
+                    <canvas id="chartPostulacionesMensual"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        {{-- SECTION: TALENTO HUMANO                               --}}
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        <div class="dashboard-section-header">
+            <div class="section-icon" style="background:#fdf2f8;color:#db2777;">
+                <i class="fas fa-users"></i>
+            </div>
+            <h2>Talento Humano</h2>
+            <span class="section-badge">Usuarios y formación</span>
+        </div>
+
+        <div class="dashboard-2col">
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
                         <i class="fas fa-chart-pie" style="color: #3b82f6; margin-right: 8px;"></i>
                         Usuarios por Tipo
                     </h3>
                 </div>
-                <div style="height: 250px; position: relative;">
+                <div style="height: 260px; position: relative;">
                     <canvas id="chartUsuariosTipo"></canvas>
                 </div>
             </div>
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
+                        <i class="fas fa-graduation-cap" style="color: #db2777; margin-right: 8px;"></i>
+                        Aprendices por Programa
+                    </h3>
+                </div>
+                <div style="height: 260px; position: relative;">
+                    <canvas id="chartProgramas"></canvas>
+                </div>
+            </div>
+        </div>
 
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+        <div class="dashboard-2col" style="margin-top: 24px;">
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
+                        <i class="fas fa-chalkboard-user" style="color: #6366f1; margin-right: 8px;"></i>
+                        Carga de Instructores
+                    </h3>
+                </div>
+                <div style="height: 260px; position: relative;">
+                    <canvas id="chartInstructoresCarga"></canvas>
+                </div>
+            </div>
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
+                        <i class="fas fa-user-plus" style="color: #10b981; margin-right: 8px;"></i>
+                        Registro de Usuarios (6 Meses)
+                    </h3>
+                </div>
+                <div style="height: 260px; position: relative;">
+                    <canvas id="chartRegistroUsuarios"></canvas>
+                </div>
+            </div>
+        </div>
+
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        {{-- SECTION: ECOSISTEMA EMPRESARIAL                       --}}
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        <div class="dashboard-section-header">
+            <div class="section-icon" style="background:#eff6ff;color:#2563eb;">
+                <i class="fas fa-building"></i>
+            </div>
+            <h2>Ecosistema Empresarial</h2>
+            <span class="section-badge">Empresas y ofertas</span>
+        </div>
+
+        <div class="dashboard-3col">
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
                         <i class="fas fa-trophy" style="color: #f59e0b; margin-right: 8px;"></i>
                         Top Empresas
                     </h3>
                 </div>
                 <div id="rankingEmpresas"></div>
             </div>
-        </div>
-
-        <div style="margin-top: 24px;">
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
-                        <i class="fas fa-chart-bar" style="color: #10b981; margin-right: 8px;"></i>
-                        Proyectos Creados (Últimos 6 Meses)
-                    </h3>
-                </div>
-                <div style="height: 300px; position: relative;">
-                    <canvas id="chartProyectosMensual"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div style="margin-top: 24px;">
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
-                        <i class="fas fa-graduation-cap" style="color: #db2777; margin-right: 8px;"></i>
-                        Aprendices por Programa de Formación
-                    </h3>
-                </div>
-                <div style="height: 300px; position: relative;">
-                    <canvas id="chartProgramas"></canvas>
-                </div>
-            </div>
-        </div>
-
-        {{-- ── NEW ANALYTICS SECTION: POSTULATIONS ── --}}
-        <div class="admin-stats-grid" id="postulacionesStatsGrid" style="margin-top: 24px;">
-            <div class="stat-card-premium" style="padding: 28px; background: white; border-color: #fef3c7;">
-                <div class="admin-stat-icon" style="background: #fef3c7; color: #f59e0b; margin-bottom: 24px;">
-                    <i class="fas fa-file-pen"></i>
-                </div>
-                <div class="admin-stat-value" style="font-size: 38px; color: #f59e0b;">0</div>
-                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Postulaciones Totales</div>
-                <div class="inline-pill inline-pill--warning" style="margin-top:16px; width:fit-content;">
-                    <i class="fas fa-spinner"></i> <span id="postPendientes">0</span> Pendientes
-                </div>
-            </div>
-            <div class="stat-card-premium" style="padding: 28px; background: white;">
-                <div class="admin-stat-icon" style="background: #eff6ff; color: #3b82f6; margin-bottom: 24px;">
-                    <i class="fas fa-pen-to-square"></i>
-                </div>
-                <div class="admin-stat-value" style="font-size: 38px; color: #3b82f6;">0</div>
-                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">En Revisión</div>
-            </div>
-            <div class="stat-card-premium" style="padding: 28px; background: white;">
-                <div class="admin-stat-icon" style="background: #f0fdf4; color: #10b981; margin-bottom: 24px;">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="admin-stat-value" style="font-size: 38px; color: #10b981;">0</div>
-                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Aceptadas</div>
-                <div class="inline-pill inline-pill--success" style="margin-top:16px; width:fit-content;">
-                    <i class="fas fa-percentage"></i> <span id="tasaConversion">0%</span> Conversión
-                </div>
-            </div>
-            <div class="stat-card-premium" style="padding: 28px; background: white;">
-                <div class="admin-stat-icon" style="background: #fef2f2; color: #ef4444; margin-bottom: 24px;">
-                    <i class="fas fa-times-circle"></i>
-                </div>
-                <div class="admin-stat-value" style="font-size: 38px; color: #ef4444;">0</div>
-                <div class="admin-stat-label" style="font-size: 11px; margin-top: 8px;">Rechazadas</div>
-            </div>
-        </div>
-
-        {{-- ── NEW CHARTS: POSTULATION FUNNEL + OFFERS + INSTRUCTORS + COMPANY ── --}}
-        <div class="admin-chart-grid" style="margin-top: 24px;">
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
-                        <i class="fas fa-filter" style="color: var(--primary); margin-right: 8px;"></i>
-                        Embudo de Postulaciones
-                    </h3>
-                </div>
-                <div style="height: 250px; position: relative;">
-                    <canvas id="chartPostulacionesFunnel"></canvas>
-                </div>
-            </div>
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
                         <i class="fas fa-gift" style="color: #8b5cf6; margin-right: 8px;"></i>
                         Tipo de Ofertas
                     </h3>
                 </div>
-                <div style="height: 250px; position: relative;">
+                <div style="height: 260px; position: relative;">
                     <canvas id="chartOfertas"></canvas>
                 </div>
             </div>
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
-                        <i class="fas fa-chalkboard-user" style="color: #6366f1; margin-right: 8px;"></i>
-                        Carga de Instructores
-                    </h3>
-                </div>
-                <div style="height: 250px; position: relative;">
-                    <canvas id="chartInstructoresCarga"></canvas>
-                </div>
-            </div>
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
+            <div class="glass-card" style="padding: 24px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text); margin:0;">
                         <i class="fas fa-building" style="color: #2563eb; margin-right: 8px;"></i>
                         Compromiso Empresarial
                     </h3>
                 </div>
-                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <div style="display: flex; gap: 12px;">
+                    <div style="flex:1; background:#f0fdf4; border-radius:12px; padding:16px 12px; text-align:center;">
+                        <div style="font-size:22px; font-weight:800; color:#10b981;"><span id="empConProyectos" class="skeleton-pulse" style="display:inline-block; width:30px;">&nbsp;</span></div>
+                        <div style="font-size:10px; color:#64748b; font-weight:600; margin-top:4px;">Con proyectos</div>
+                    </div>
+                    <div style="flex:1; background:#fff7ed; border-radius:12px; padding:16px 12px; text-align:center;">
+                        <div style="font-size:22px; font-weight:800; color:#f59e0b;"><span id="empSinProyectos" class="skeleton-pulse" style="display:inline-block; width:30px;">&nbsp;</span></div>
+                        <div style="font-size:10px; color:#64748b; font-weight:600; margin-top:4px;">Sin proyectos</div>
+                    </div>
+                </div>
+                <div style="margin-top:16px; display: flex; gap: 12px;">
                     <div style="flex:1; background:#f0fdf4; border-radius:12px; padding:12px; text-align:center;">
-                        <div style="font-size:20px; font-weight:800; color:#10b981;"><span id="empConProyectos">0</span></div>
-                        <div style="font-size:10px; color:#64748b; font-weight:600;">Con proyectos</div>
+                        <div style="font-size:20px; font-weight:800; color:#065f46;"><span id="empActivas">-</span></div>
+                        <div style="font-size:10px; color:#64748b; font-weight:600;">Activas</div>
                     </div>
-                    <div style="flex:1; background:#fff7ed; border-radius:12px; padding:12px; text-align:center;">
-                        <div style="font-size:20px; font-weight:800; color:#f59e0b;"><span id="empSinProyectos">0</span></div>
-                        <div style="font-size:10px; color:#64748b; font-weight:600;">Sin proyectos</div>
+                    <div style="flex:1; background:#fef2f2; border-radius:12px; padding:12px; text-align:center;">
+                        <div style="font-size:20px; font-weight:800; color:#dc2626;"><span id="empInactivas">-</span></div>
+                        <div style="font-size:10px; color:#64748b; font-weight:600;">Inactivas</div>
                     </div>
                 </div>
-                <div style="height: 180px; position: relative;">
-                    <canvas id="chartEmpresasCompromiso"></canvas>
-                </div>
             </div>
         </div>
 
-        {{-- ── NEW CHARTS: POSTULATION TREND + USER REGISTRATION TREND ── --}}
-        <div style="margin-top: 24px;">
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
-                        <i class="fas fa-chart-line" style="color: #3b82f6; margin-right: 8px;"></i>
-                        Postulaciones Recibidas (Últimos 6 Meses)
-                    </h3>
-                </div>
-                <div style="height: 300px; position: relative;">
-                    <canvas id="chartPostulacionesMensual"></canvas>
-                </div>
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        {{-- SECTION: ACTIVIDAD RECIENTE                           --}}
+        {{-- ═══════════════════════════════════════════════════════ --}}
+        <div class="dashboard-section-header">
+            <div class="section-icon" style="background:#f8fafc;color:#64748b;">
+                <i class="fas fa-clock"></i>
             </div>
+            <h2>Actividad Reciente</h2>
+            <span class="section-badge">Pendientes</span>
         </div>
 
-        <div style="margin-top: 24px;">
-            <div class="glass-card" style="padding: 28px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text);">
-                        <i class="fas fa-user-plus" style="color: #10b981; margin-right: 8px;"></i>
-                        Registro de Usuarios (Últimos 6 Meses)
-                    </h3>
-                </div>
-                <div style="height: 300px; position: relative;">
-                    <canvas id="chartRegistroUsuarios"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="admin-main-grid" style="margin-top: 24px;">
+        <div class="dashboard-2-1col">
             <div class="glass-card admin-table-card" style="background: white; display: flex; flex-direction: column;">
                 <div class="admin-table-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px;">
                     <div style="display: flex; align-items: center; gap: 14px;">
@@ -362,8 +553,11 @@
                 </div>
             </div>
 
-            <div class="glass-card" style="padding: 32px; background: white;">
-                <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 28px;">Incorporaciones</h3>
+            <div class="glass-card" style="padding: 28px; background: white;">
+                <h3 style="font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 24px;">
+                    <i class="fas fa-user-plus" style="color: #3b82f6; margin-right: 8px;"></i>
+                    Últimas Incorporaciones
+                </h3>
                 <div class="user-incorporation-list">
                     @foreach($usuariosRecientes as $u)
                         <div class="user-incorporation-item">
@@ -381,7 +575,7 @@
                         </div>
                     @endforeach
                 </div>
-                <a href="{{ route('admin.usuarios') }}" class="btn-premium" style="margin-top: 32px; width: 100%; text-align: center; justify-content: center; background: #0f172a; border: none; font-size: 13px; padding: 14px;">
+                <a href="{{ route('admin.usuarios') }}" class="btn-premium" style="margin-top: 28px; width: 100%; text-align: center; justify-content: center; background: #0f172a; border: none; font-size: 13px; padding: 14px;">
                     Gestionar Usuarios <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
                 </a>
             </div>
@@ -394,7 +588,6 @@
             fetch('/api/admin/stats')
                 .then(r => r.json())
                 .then(data => {
-                // Modern Palette - Unified with CSS variables
                     const colors = {
                         emerald: '#10b981',
                         amber: '#f59e0b',
@@ -402,14 +595,13 @@
                         blue: '#3b82f6',
                         indigo: '#6366f1',
                         gray: '#64748b',
-                        // Status colors
                         statusApproved: '#10b981',
                         statusRejected: '#ef4444',
                         statusPending: '#f59e0b',
                         statusCompleted: '#065f46'
                     };
-                    
-                    // Proyectos por Estado - Ultra Modern Doughnut
+
+                    // ── PROYECTOS POR ESTADO ──
                     new Chart(document.getElementById('chartProyectosEstado'), {
                         type: 'doughnut',
                         data: {
@@ -417,96 +609,82 @@
                             datasets: [{
                                 data: data.proyectos_por_estado.data,
                                 backgroundColor: data.proyectos_por_estado.labels.map(label => {
-                                    const lowerLabel = label.toLowerCase();
-                                    if (lowerLabel.includes('completado')) return '#065f46'; // Verde oscuro sólido (Chart.js no soporta gradientes CSS)
-                                    if (lowerLabel.includes('cerrado')) return colors.gray; // Gris
-                                    if (lowerLabel.includes('aprobado')) return colors.statusApproved; // Verde
-                                    if (lowerLabel.includes('pendiente')) return colors.statusPending; // Ambar
-                                    if (lowerLabel.includes('rechazado')) return colors.statusRejected; // Rojo
-                                    if (lowerLabel.includes('en progreso')) return colors.blue; // Azul (no verde)
+                                    const l = label.toLowerCase();
+                                    if (l.includes('completado')) return '#065f46';
+                                    if (l.includes('cerrado')) return colors.gray;
+                                    if (l.includes('aprobado')) return colors.statusApproved;
+                                    if (l.includes('pendiente')) return colors.statusPending;
+                                    if (l.includes('rechazado')) return colors.statusRejected;
+                                    if (l.includes('en progreso')) return colors.blue;
                                     return colors.gray;
                                 }),
-                                hoverOffset: 15,
-                                weight: 2,
-                                borderWidth: 0,
-                                borderRadius: 6,
-                                spacing: 4
+                                hoverOffset: 15, weight: 2, borderWidth: 0, borderRadius: 6, spacing: 4
                             }]
                         },
                         options: {
-                            cutout: '78%',
-                            responsive: true,
-                            maintainAspectRatio: false,
+                            cutout: '78%', responsive: true, maintainAspectRatio: false,
                             plugins: {
-                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 25, font: { family: 'Open Sans', size: 11, weight: '600' } } },
-                                tooltip: {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                    titleColor: '#1e293b',
-                                    bodyColor: '#1e293b',
-                                    padding: 12,
-                                    borderColor: '#e2e8f0',
-                                    borderWidth: 1,
-                                    displayColors: true,
-                                    usePointStyle: true,
-                                    boxPadding: 6,
-                                    cornerRadius: 12
-                                }
+                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { family: 'Open Sans', size: 10, weight: '600' } } },
+                                tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.95)', titleColor: '#1e293b', bodyColor: '#1e293b', padding: 12, borderColor: '#e2e8f0', borderWidth: 1, usePointStyle: true, boxPadding: 6, cornerRadius: 12 }
                             }
                         }
                     });
 
-                    // Usuarios por Tipo - Polar Area
+                    // ── USUARIOS POR TIPO ──
                     new Chart(document.getElementById('chartUsuariosTipo'), {
                         type: 'polarArea',
                         data: {
                             labels: data.usuarios_por_tipo.labels,
                             datasets: [{
                                 data: data.usuarios_por_tipo.data,
-                                backgroundColor: [
-                                    'rgba(244, 114, 182, 0.65)', 
-                                    'rgba(167, 139, 250, 0.65)', 
-                                    'rgba(251, 191, 36, 0.65)', 
-                                    'rgba(52, 211, 153, 0.65)'
-                                ],
-                                borderWidth: 2,
-                                borderColor: '#fff'
+                                backgroundColor: ['rgba(244, 114, 182, 0.65)', 'rgba(167, 139, 250, 0.65)', 'rgba(251, 191, 36, 0.65)', 'rgba(52, 211, 153, 0.65)'],
+                                borderWidth: 2, borderColor: '#fff'
                             }]
                         },
                         options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
+                            responsive: true, maintainAspectRatio: false,
                             scales: { r: { grid: { color: '#f1f5f9' }, ticks: { display: false } } },
-                            plugins: {
-                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 11, weight: '600' } } }
-                            }
+                            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 10, weight: '600' } } } }
                         }
                     });
 
-                    // Top Empresas
+                    // ── TOP EMPRESAS ──
                     const rankingContainer = document.getElementById('rankingEmpresas');
                     if (data.ranking_empresas.length > 0) {
                         rankingContainer.innerHTML = data.ranking_empresas.map((emp, i) => `
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px; background: ${i === 0 ? 'hsla(45, 100%, 96%, 1)' : '#f8fafc'}; border-radius: 16px; border: 1px solid ${i === 0 ? 'hsla(45, 100%, 90%, 1)' : '#e2e8f0'}; transition: all 0.3s ease; transform: scale(1);" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.05)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
-                                <div style="width: 36px; height: 36px; border-radius: 10px; background: ${i === 0 ? colors.amber : '#94a3b8'}; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 4px 10px ${i === 0 ? 'rgba(245, 158, 11, 0.3)' : 'transparent'};">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 10px 12px; background: ${i === 0 ? 'hsla(45, 100%, 96%, 1)' : '#f8fafc'}; border-radius: 12px; border: 1px solid ${i === 0 ? 'hsla(45, 100%, 90%, 1)' : '#e2e8f0'};">
+                                <div style="width: 32px; height: 32px; border-radius: 8px; background: ${i === 0 ? colors.amber : '#94a3b8'}; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; flex-shrink:0;">
                                     ${i + 1}
                                 </div>
                                 <div style="flex: 1; overflow: hidden;">
-                                    <div style="font-weight: 800; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${emp.nombre}</div>
-                                    <div style="font-size: 11px; color: var(--text-light); font-weight: 500;">${emp.total} proyecto${emp.total !== 1 ? 's' : ''}</div>
+                                    <div style="font-weight: 700; font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${emp.nombre}</div>
+                                    <div style="font-size: 10px; color: var(--text-light); font-weight: 500;">${emp.total} proyecto${emp.total !== 1 ? 's' : ''}</div>
                                 </div>
-                                ${i === 0 ? '<i class="fas fa-crown" style="color: #f59e0b; font-size: 14px;"></i>' : ''}
+                                ${i === 0 ? '<i class="fas fa-crown" style="color: #f59e0b; font-size: 12px;"></i>' : ''}
                             </div>
                         `).join('');
                     } else {
-                        rankingContainer.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-inbox" style="font-size: 24px; color: #cbd5e1; margin-bottom: 10px; display: block;"></i><p style="color: #94a3b8; font-size: 13px; font-weight: 600;">Sin datos aún</p></div>';
+                        rankingContainer.innerHTML = '<div style="text-align: center; padding: 30px;"><i class="fas fa-inbox" style="font-size: 24px; color: #cbd5e1; margin-bottom: 10px; display: block;"></i><p style="color: #94a3b8; font-size: 12px; font-weight: 600;">Sin datos aún</p></div>';
                     }
 
-                    // Proyectos Creados - Gradient Area Chart
+                    // ── ACTIVE COUNTS BAR ──
+                    const tot = data.totales || {};
+                    const activeBar = document.getElementById('activeCountsBar');
+                    if (activeBar) {
+                        activeBar.innerHTML = [
+                            {label: 'Aprendices activos', count: tot.aprendices_activos, bg: '#fdf2f8', color: '#db2777', icon: 'fa-graduation-cap'},
+                            {label: 'Instructores activos', count: tot.instructores_activos, bg: '#fef3c7', color: '#d97706', icon: 'fa-chalkboard-teacher'},
+                            {label: 'Empresas activas', count: tot.empresas_activas, bg: '#eff6ff', color: '#2563eb', icon: 'fa-building'},
+                        ].map(function(item) {
+                            return '<span style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;background:'+item.bg+';color:'+item.color+';border:1px solid '+item.color+'20;"><i class="fas '+item.icon+'" style="font-size:10px;"></i> '+item.count+' <span style="opacity:0.6;font-weight:600;">'+item.label+'</span></span>';
+                        }).join('');
+                    }
+
+                    // ── PROYECTOS CREADOS - LINE CHART ──
                     const ctx = document.getElementById('chartProyectosMensual').getContext('2d');
-                    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 260);
                     gradient.addColorStop(0, 'rgba(16, 185, 129, 0.4)');
                     gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
-
                     new Chart(ctx, {
                         type: 'line',
                         data: {
@@ -514,129 +692,78 @@
                             datasets: [{
                                 label: 'Proyectos',
                                 data: data.metricas_mensuales.data,
-                                borderColor: colors.emerald,
-                                borderWidth: 3,
-                                fill: true,
-                                backgroundColor: gradient,
-                                tension: 0.45,
-                                pointBackgroundColor: '#fff',
-                                pointBorderColor: colors.emerald,
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
+                                borderColor: colors.emerald, borderWidth: 3, fill: true, backgroundColor: gradient,
+                                tension: 0.45, pointBackgroundColor: '#fff', pointBorderColor: colors.emerald,
+                                pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 6,
                             }]
                         },
                         options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: { 
-                                legend: { display: false },
-                                tooltip: {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                    titleColor: '#1e293b',
-                                    bodyColor: colors.emerald,
-                                    padding: 12,
-                                    borderColor: '#e2e8f0',
-                                    borderWidth: 1,
-                                    displayColors: false,
-                                    cornerRadius: 12
-                                }
-                            },
-                            scales: { 
-                                y: { 
-                                    beginAtZero: true, 
-                                    grid: { color: '#f1f5f9', drawBorder: false },
-                                    ticks: { color: '#94a3b8', font: { family: 'Open Sans', size: 10 }, stepSize: 1 } 
-                                },
-                                x: {
-                                    grid: { display: false },
-                                    ticks: { color: '#94a3b8', font: { family: 'Open Sans', size: 10 } }
-                                }
-                            }
+                            responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.95)', titleColor: '#1e293b', bodyColor: colors.emerald, padding: 12, borderColor: '#e2e8f0', borderWidth: 1, displayColors: false, cornerRadius: 12 } },
+                            scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } }, x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } } }
                         }
                     });
 
-                    // Aprendices por Programa de Formación - Grouped Bar
+                    // ── PROYECTOS POR CATEGORÍA ──
+                    const cats = data.proyectos_por_categoria || [];
+                    const catCanvas = document.getElementById('chartProyectosCategoria');
+                    if (cats.length && catCanvas) {
+                        new Chart(catCanvas, {
+                            type: 'bar',
+                            data: {
+                                labels: cats.map(function(c) { return c.categoria; }),
+                                datasets: [{
+                                    label: 'Proyectos',
+                                    data: cats.map(function(c) { return c.total; }),
+                                    backgroundColor: cats.map(function(_, idx) {
+                                        var pal = ['rgba(139,92,246,0.7)','rgba(59,130,246,0.7)','rgba(16,185,129,0.7)','rgba(245,158,11,0.7)','rgba(244,63,94,0.7)','rgba(6,182,212,0.7)','rgba(168,85,247,0.7)','rgba(236,72,153,0.7)'];
+                                        return pal[idx % pal.length];
+                                    }),
+                                    borderColor: cats.map(function(_, idx) {
+                                        var pal = ['#8b5cf6','#3b82f6','#10b981','#f59e0b','#f43f5e','#06b6d4','#a855f7','#ec4899'];
+                                        return pal[idx % pal.length];
+                                    }),
+                                    borderWidth: 1, borderRadius: 4
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                                plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.95)', titleColor: '#1e293b', bodyColor: '#1e293b', padding: 12, borderColor: '#e2e8f0', borderWidth: 1, cornerRadius: 12 } },
+                                scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } }, y: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10, weight: '600' }, maxRotation: 0 } } }
+                            }
+                        });
+                    } else if (catCanvas) {
+                        catCanvas.parentElement.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-size:12px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin categorías registradas</div>';
+                    }
+
+                    // ── APRENDICES POR PROGRAMA ──
                     fetch('/api/admin/stats/programas')
                         .then(r => r.json())
                         .then(programas => {
                             if (!programas.length) {
-                                document.getElementById('chartProgramas').parentElement.innerHTML = '<div style="text-align: center; padding: 40px; color: #94a3b8; font-size: 13px; font-weight: 600;"><i class="fas fa-inbox" style="font-size: 24px; display: block; margin-bottom: 8px;"></i>Sin datos disponibles</div>';
+                                document.getElementById('chartProgramas').parentElement.innerHTML = '<div style="text-align: center; padding: 40px; color: #94a3b8; font-size: 12px; font-weight: 600;"><i class="fas fa-inbox" style="font-size: 24px; display: block; margin-bottom: 8px;"></i>Sin datos disponibles</div>';
                                 return;
                             }
                             new Chart(document.getElementById('chartProgramas'), {
                                 type: 'bar',
                                 data: {
-                                    labels: programas.map(p => p.programa_formacion),
+                                    labels: programas.map(p => p.programa_formacion.length > 18 ? p.programa_formacion.substring(0,16)+'..' : p.programa_formacion),
                                     datasets: [
-                                        {
-                                            label: 'Total Aprendices',
-                                            data: programas.map(p => p.total_aprendices),
-                                            backgroundColor: 'rgba(219, 39, 119, 0.75)',
-                                            borderColor: '#db2777',
-                                            borderWidth: 1,
-                                            borderRadius: 4,
-                                        },
-                                        {
-                                            label: 'Postulados',
-                                            data: programas.map(p => p.postulados),
-                                            backgroundColor: 'rgba(59, 130, 246, 0.75)',
-                                            borderColor: '#3b82f6',
-                                            borderWidth: 1,
-                                            borderRadius: 4,
-                                        },
-                                        {
-                                            label: 'Aceptados',
-                                            data: programas.map(p => p.aceptados),
-                                            backgroundColor: 'rgba(16, 185, 129, 0.75)',
-                                            borderColor: '#10b981',
-                                            borderWidth: 1,
-                                            borderRadius: 4,
-                                        }
+                                        { label: 'Total', data: programas.map(p => p.total_aprendices), backgroundColor: 'rgba(219, 39, 119, 0.7)', borderColor: '#db2777', borderWidth: 1, borderRadius: 3 },
+                                        { label: 'Postulados', data: programas.map(p => p.postulados), backgroundColor: 'rgba(59, 130, 246, 0.7)', borderColor: '#3b82f6', borderWidth: 1, borderRadius: 3 },
+                                        { label: 'Aceptados', data: programas.map(p => p.aceptados), backgroundColor: 'rgba(16, 185, 129, 0.7)', borderColor: '#10b981', borderWidth: 1, borderRadius: 3 }
                                     ]
                                 },
                                 options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            position: 'bottom',
-                                            labels: {
-                                                usePointStyle: true,
-                                                padding: 20,
-                                                font: { family: 'Open Sans', size: 11, weight: '600' }
-                                            }
-                                        },
-                                        tooltip: {
-                                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                            titleColor: '#1e293b',
-                                            bodyColor: '#1e293b',
-                                            padding: 12,
-                                            borderColor: '#e2e8f0',
-                                            borderWidth: 1,
-                                            cornerRadius: 12
-                                        }
-                                    },
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true,
-                                            grid: { color: '#f1f5f9', drawBorder: false },
-                                            ticks: { color: '#94a3b8', font: { family: 'Open Sans', size: 10 }, stepSize: 1 }
-                                        },
-                                        x: {
-                                            grid: { display: false },
-                                            ticks: {
-                                                color: '#64748b',
-                                                font: { family: 'Open Sans', size: 10, weight: '600' },
-                                                maxRotation: 30
-                                            }
-                                        }
-                                    }
+                                    responsive: true, maintainAspectRatio: false,
+                                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 10, weight: '600' } } }, tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.95)', titleColor: '#1e293b', bodyColor: '#1e293b', padding: 12, borderColor: '#e2e8f0', borderWidth: 1, cornerRadius: 12 } },
+                                    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } }, x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 9, weight: '600' }, maxRotation: 0 } } }
                                 }
                             });
                         })
                         .catch(err => console.error('Error cargando programas:', err));
-                // ── POSTULATION FUNNEL CARD UPDATES ──
+
+                    // ── POSTULATION FUNNEL CARDS ──
                     const funnel = data.postulaciones_funnel || {labels:[], data:[], total:0, tasa_conversion:0};
                     const postStatsGrid = document.getElementById('postulacionesStatsGrid');
                     const funnelCards = postStatsGrid ? postStatsGrid.querySelectorAll('.stat-card-premium') : [];
@@ -647,6 +774,10 @@
                         funnelCards[2].querySelector('.admin-stat-value').textContent = funnel.data[2] || 0;
                         funnelCards[2].querySelector('.inline-pill span').textContent = funnel.tasa_conversion + '% Conversión';
                         funnelCards[3].querySelector('.admin-stat-value').textContent = funnel.data[3] || 0;
+                        // Remove skeleton from postulaciones cards
+                        funnelCards.forEach(function(c) {
+                            c.querySelectorAll('.skeleton-pulse').forEach(function(s) { s.classList.remove('skeleton-pulse'); });
+                        });
                     }
 
                     // ── POSTULATION FUNNEL CHART ──
@@ -654,74 +785,44 @@
                         type: 'doughnut',
                         data: {
                             labels: funnel.labels,
-                            datasets: [{
-                                data: funnel.data,
-                                backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ef4444'],
-                                hoverOffset: 15,
-                                borderWidth: 0,
-                                borderRadius: 6,
-                                spacing: 4
-                            }]
+                            datasets: [{ data: funnel.data, backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#ef4444'], hoverOffset: 15, borderWidth: 0, borderRadius: 6, spacing: 4 }]
                         },
                         options: {
-                            cutout: '72%',
-                            responsive: true,
-                            maintainAspectRatio: false,
+                            cutout: '72%', responsive: true, maintainAspectRatio: false,
                             plugins: {
                                 legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 10, weight: '600' } } },
-                                tooltip: {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                    titleColor: '#1e293b',
-                                    bodyColor: '#1e293b',
-                                    padding: 12,
-                                    borderColor: '#e2e8f0',
-                                    borderWidth: 1,
-                                    cornerRadius: 12,
-                                    callbacks: {
-                                        label: function(ctx) {
-                                            const total = funnel.total || 1;
-                                            const pct = ((ctx.parsed / total) * 100).toFixed(1);
-                                            return ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
-                                        }
-                                    }
-                                }
+                                tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.95)', titleColor: '#1e293b', bodyColor: '#1e293b', padding: 12, borderColor: '#e2e8f0', borderWidth: 1, cornerRadius: 12, callbacks: { label: function(ctx) { const t = funnel.total || 1; return ctx.label + ': ' + ctx.parsed + ' (' + ((ctx.parsed/t)*100).toFixed(1) + '%)'; } } }
                             }
                         }
                     });
+
+                    // ── MONTHLY POSTULATIONS TREND ──
+                    const postMensual = data.postulaciones_mensuales || {labels:[], data:[]};
+                    if (postMensual.data.length) {
+                        const ctxPost = document.getElementById('chartPostulacionesMensual').getContext('2d');
+                        const gradPost = ctxPost.createLinearGradient(0, 0, 0, 260);
+                        gradPost.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+                        gradPost.addColorStop(1, 'rgba(59, 130, 246, 0)');
+                        new Chart(ctxPost, {
+                            type: 'line',
+                            data: { labels: postMensual.labels, datasets: [{ label: 'Postulaciones', data: postMensual.data, borderColor: '#3b82f6', borderWidth: 3, fill: true, backgroundColor: gradPost, tension: 0.45, pointBackgroundColor: '#fff', pointBorderColor: '#3b82f6', pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 6 }] },
+                            options: {
+                                responsive: true, maintainAspectRatio: false,
+                                plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.95)', titleColor: '#1e293b', bodyColor: '#3b82f6', padding: 12, borderColor: '#e2e8f0', borderWidth: 1, cornerRadius: 12 } },
+                                scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } }, x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } } }
+                            }
+                        });
+                    } else {
+                        document.getElementById('chartPostulacionesMensual').parentElement.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-size:12px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin postulaciones aún</div>';
+                    }
 
                     // ── OFFER TYPE DISTRIBUTION ──
                     const ofertas = data.ofertas_distribucion || {labels:[], data:[]};
                     if (ofertas.data.length) {
                         new Chart(document.getElementById('chartOfertas'), {
                             type: 'doughnut',
-                            data: {
-                                labels: ofertas.labels,
-                                datasets: [{
-                                    data: ofertas.data,
-                                    backgroundColor: ['#8b5cf6', '#f59e0b', '#06b6d4', '#10b981'],
-                                    hoverOffset: 15,
-                                    borderWidth: 0,
-                                    borderRadius: 6,
-                                    spacing: 4
-                                }]
-                            },
-                            options: {
-                                cutout: '72%',
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 10, weight: '600' } } },
-                                    tooltip: {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                        titleColor: '#1e293b',
-                                        bodyColor: '#1e293b',
-                                        padding: 12,
-                                        borderColor: '#e2e8f0',
-                                        borderWidth: 1,
-                                        cornerRadius: 12
-                                    }
-                                }
-                            }
+                            data: { labels: ofertas.labels, datasets: [{ data: ofertas.data, backgroundColor: ['#8b5cf6', '#f59e0b', '#06b6d4', '#10b981'], hoverOffset: 15, borderWidth: 0, borderRadius: 6, spacing: 4 }] },
+                            options: { cutout: '72%', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 10, weight: '600' } } }, tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.95)', titleColor: '#1e293b', bodyColor: '#1e293b', padding: 12, borderColor: '#e2e8f0', borderWidth: 1, cornerRadius: 12 } } }
                         });
                     } else {
                         document.getElementById('chartOfertas').parentElement.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#94a3b8;font-size:13px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin ofertas registradas</div>';
@@ -738,130 +839,30 @@
                                 datasets: [{
                                     label: 'Proyectos activos',
                                     data: instructores.map(i => i.total),
-                                    backgroundColor: instructores.map((_, idx) => {
-                                        const colors = ['rgba(99,102,241,0.7)','rgba(59,130,246,0.7)','rgba(16,185,129,0.7)','rgba(245,158,11,0.7)','rgba(244,63,94,0.7)','rgba(139,92,246,0.7)','rgba(6,182,212,0.7)'];
-                                        return colors[idx % colors.length];
-                                    }),
-                                    borderColor: instructores.map((_, idx) => {
-                                        const colors = ['#6366f1','#3b82f6','#10b981','#f59e0b','#f43f5e','#8b5cf6','#06b6d4'];
-                                        return colors[idx % colors.length];
-                                    }),
-                                    borderWidth: 1,
-                                    borderRadius: 4
+                                    backgroundColor: instructores.map((_, idx) => { const c = ['rgba(99,102,241,0.7)','rgba(59,130,246,0.7)','rgba(16,185,129,0.7)','rgba(245,158,11,0.7)','rgba(244,63,94,0.7)','rgba(139,92,246,0.7)','rgba(6,182,212,0.7)']; return c[idx % c.length]; }),
+                                    borderColor: instructores.map((_, idx) => { const c = ['#6366f1','#3b82f6','#10b981','#f59e0b','#f43f5e','#8b5cf6','#06b6d4']; return c[idx % c.length]; }),
+                                    borderWidth: 1, borderRadius: 4
                                 }]
                             },
                             options: {
-                                indexAxis: 'y',
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: { display: false },
-                                    tooltip: {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                        titleColor: '#1e293b',
-                                        bodyColor: '#1e293b',
-                                        padding: 12,
-                                        borderColor: '#e2e8f0',
-                                        borderWidth: 1,
-                                        cornerRadius: 12
-                                    }
-                                },
-                                scales: {
-                                    x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } },
-                                    y: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10, weight: '600' } } }
-                                }
+                                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                                plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.95)', titleColor: '#1e293b', bodyColor: '#1e293b', padding: 12, borderColor: '#e2e8f0', borderWidth: 1, cornerRadius: 12 } },
+                                scales: { x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } }, y: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10, weight: '600' } } } }
                             }
                         });
                     } else {
-                        ctxIns.canvas.parentElement.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#94a3b8;font-size:13px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin instructores con proyectos</div>';
+                        ctxIns.canvas.parentElement.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-size:12px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin instructores con proyectos</div>';
                     }
 
                     // ── COMPANY ENGAGEMENT ──
                     const empCompromiso = data.empresas_compromiso || {activas:0, inactivas:0, con_proyectos:0, sin_proyectos:0};
                     document.getElementById('empConProyectos').textContent = empCompromiso.con_proyectos;
                     document.getElementById('empSinProyectos').textContent = empCompromiso.sin_proyectos;
-                    new Chart(document.getElementById('chartEmpresasCompromiso'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Activas', 'Inactivas'],
-                            datasets: [{
-                                data: [empCompromiso.activas, empCompromiso.inactivas],
-                                backgroundColor: ['#10b981', '#e2e8f0'],
-                                hoverOffset: 10,
-                                borderWidth: 0,
-                                borderRadius: 4,
-                                spacing: 3
-                            }]
-                        },
-                        options: {
-                            cutout: '75%',
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 10, weight: '600' } } },
-                                tooltip: {
-                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                    titleColor: '#1e293b',
-                                    bodyColor: '#1e293b',
-                                    padding: 12,
-                                    borderColor: '#e2e8f0',
-                                    borderWidth: 1,
-                                    cornerRadius: 12
-                                }
-                            }
-                        }
+                    document.getElementById('empActivas').textContent = empCompromiso.activas;
+                    document.getElementById('empInactivas').textContent = empCompromiso.inactivas;
+                    ['empConProyectos','empSinProyectos','empActivas','empInactivas'].forEach(function(id) {
+                        document.getElementById(id).classList.remove('skeleton-pulse');
                     });
-
-                    // ── MONTHLY POSTULATIONS TREND ──
-                    const postMensual = data.postulaciones_mensuales || {labels:[], data:[]};
-                    if (postMensual.data.length) {
-                        const ctxPost = document.getElementById('chartPostulacionesMensual').getContext('2d');
-                        const gradPost = ctxPost.createLinearGradient(0, 0, 0, 300);
-                        gradPost.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
-                        gradPost.addColorStop(1, 'rgba(59, 130, 246, 0)');
-                        new Chart(ctxPost, {
-                            type: 'line',
-                            data: {
-                                labels: postMensual.labels,
-                                datasets: [{
-                                    label: 'Postulaciones',
-                                    data: postMensual.data,
-                                    borderColor: '#3b82f6',
-                                    borderWidth: 3,
-                                    fill: true,
-                                    backgroundColor: gradPost,
-                                    tension: 0.45,
-                                    pointBackgroundColor: '#fff',
-                                    pointBorderColor: '#3b82f6',
-                                    pointBorderWidth: 2,
-                                    pointRadius: 4,
-                                    pointHoverRadius: 6,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: { display: false },
-                                    tooltip: {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                        titleColor: '#1e293b',
-                                        bodyColor: '#3b82f6',
-                                        padding: 12,
-                                        borderColor: '#e2e8f0',
-                                        borderWidth: 1,
-                                        cornerRadius: 12
-                                    }
-                                },
-                                scales: {
-                                    y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } },
-                                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
-                                }
-                            }
-                        });
-                    } else {
-                        document.getElementById('chartPostulacionesMensual').parentElement.innerHTML = '<div style="text-align:center;padding:60px;color:#94a3b8;font-size:13px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin postulaciones aún</div>';
-                    }
 
                     // ── USER REGISTRATION TREND ──
                     const regUsuarios = data.registro_usuarios_mensual || {labels:[], aprendices:[], instructores:[], empresas:[]};
@@ -877,28 +878,13 @@
                                 ]
                             },
                             options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, font: { family: 'Open Sans', size: 11, weight: '600' } } },
-                                    tooltip: {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                        titleColor: '#1e293b',
-                                        bodyColor: '#1e293b',
-                                        padding: 12,
-                                        borderColor: '#e2e8f0',
-                                        borderWidth: 1,
-                                        cornerRadius: 12
-                                    }
-                                },
-                                scales: {
-                                    y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } },
-                                    x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10, weight: '600' } } }
-                                }
+                                responsive: true, maintainAspectRatio: false,
+                                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { family: 'Open Sans', size: 10, weight: '600' } } }, tooltip: { backgroundColor: 'rgba(255, 255, 255, 0.95)', titleColor: '#1e293b', bodyColor: '#1e293b', padding: 12, borderColor: '#e2e8f0', borderWidth: 1, cornerRadius: 12 } },
+                                scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 } }, x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 9, weight: '600' } } } }
                             }
                         });
                     } else {
-                        document.getElementById('chartRegistroUsuarios').parentElement.innerHTML = '<div style="text-align:center;padding:60px;color:#94a3b8;font-size:13px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin registros nuevos</div>';
+                        document.getElementById('chartRegistroUsuarios').parentElement.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-size:12px;font-weight:600;"><i class="fas fa-inbox" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin registros nuevos</div>';
                     }
                 })
                 .catch(err => console.error('Error cargando stats:', err));

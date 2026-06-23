@@ -91,6 +91,10 @@
 </section>
 
 <div class="pd-container">
+    <a href="{{ route('home') }}" style="display:inline-flex; align-items:center; gap:8px; margin-bottom:24px; font-size:14px; font-weight:700; color:#3eb489; text-decoration:none;">
+        <i class="fas fa-arrow-left"></i> Volver al inicio
+    </a>
+
     <div class="pd-section">
         <span class="pd-badge">Ley 1581 de 2012</span>
         <h2>Responsable del Tratamiento</h2>

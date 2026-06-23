@@ -12,11 +12,13 @@ use App\Mail\ProyectoConOfertaAprobado;
 use App\Models\Aprendiz;
 use App\Models\AuditLog;
 use App\Models\Empresa;
+use App\Models\Evidencia;
 use App\Models\Instructor;
 use App\Models\MensajeSoporte;
 use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
+use Carbon\Carbon;
 use App\Notifications\AppNotification;
 use App\Jobs\SendEmailJob;
 use Illuminate\Http\RedirectResponse;
@@ -70,7 +72,23 @@ class AdminController extends Controller
         $empresas = Empresa::orderByDesc('id')
             ->paginate($this->getPerPage($request, 15, 5, 50), ['*'], 'empresas');
 
-        return view('admin.usuarios', compact('aprendices', 'instructores', 'empresas'));
+        $totalAprendices = Aprendiz::count();
+        $totalInstructores = Instructor::count();
+        $aprendicesActivos = Aprendiz::where('activo', 1)->count();
+        $instructoresActivos = Instructor::where('activo', 1)->count();
+        $aprendicesProgramas = Aprendiz::select('programa_formacion')
+            ->selectRaw('COUNT(*) as total')
+            ->groupBy('programa_formacion')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        return view('admin.usuarios', compact(
+            'aprendices', 'instructores', 'empresas',
+            'totalAprendices', 'totalInstructores',
+            'aprendicesActivos', 'instructoresActivos',
+            'aprendicesProgramas'
+        ));
     }
 
     public function cambiarEstadoUsuario(CambiarEstadoUsuarioRequest $request, int $id): RedirectResponse
@@ -174,7 +192,20 @@ class AdminController extends Controller
         $empresas = Empresa::orderByDesc('id')
             ->paginate($this->getPerPage($request, 15, 5, 50));
 
-        return view('admin.empresas', compact('empresas'));
+        $totalEmpresas = Empresa::count();
+        $empresasActivas = Empresa::where('activo', 1)->count();
+        $empresasConProyectos = Empresa::where('activo', 1)->whereHas('proyectos')->count();
+        $empresasSinProyectos = Empresa::where('activo', 1)->whereDoesntHave('proyectos')->count();
+        $topEmpresas = Empresa::withCount('proyectos')
+            ->having('proyectos_count', '>', 0)
+            ->orderByDesc('proyectos_count')
+            ->limit(5)
+            ->get();
+
+        return view('admin.empresas', compact(
+            'empresas', 'totalEmpresas', 'empresasActivas',
+            'empresasConProyectos', 'empresasSinProyectos', 'topEmpresas'
+        ));
     }
 
     public function cambiarEstadoEmpresa(Request $request, int $id): RedirectResponse
@@ -282,11 +313,25 @@ class AdminController extends Controller
             ];
         });
 
+        $proyectosCount = Proyecto::count();
+        $proyectosPendientes = Proyecto::where('estado', 'pendiente')->count();
+        $proyectosAprobados = Proyecto::where('estado', 'aprobado')->count();
+        $proyectosEnProgreso = Proyecto::where('estado', 'en_progreso')->count();
+        $proyectosCompletados = Proyecto::where('estado', 'completado')->count();
+        $proyectosRechazados = Proyecto::where('estado', 'rechazado')->count();
+        $proyectosCerrados = Proyecto::where('estado', 'cerrado')->count();
+        $totalPostulaciones = Postulacion::count();
+
         $instructores = Instructor::with('usuario')->get();
 
         $categorias = collect(array_keys(config('programas')));
 
-        return view('admin.proyectos', compact('proyectos', 'proyectosPaginados', 'instructores', 'categorias'));
+        return view('admin.proyectos', compact(
+            'proyectos', 'proyectosPaginados', 'instructores', 'categorias',
+            'proyectosCount', 'proyectosPendientes', 'proyectosAprobados',
+            'proyectosEnProgreso', 'proyectosCompletados', 'proyectosRechazados',
+            'proyectosCerrados', 'totalPostulaciones'
+        ));
     }
 
     public function cambiarEstadoProyecto(Request $request, int $id): RedirectResponse
@@ -464,7 +509,18 @@ class AdminController extends Controller
     public function mensajesSoporte(): View
     {
         $mensajes = MensajeSoporte::orderByDesc('created_at')->paginate(15);
-        return view('admin.mensajes-soporte', compact('mensajes'));
+        $totalMensajes = MensajeSoporte::count();
+        $pendientes = MensajeSoporte::where('estado', 'pendiente')->count();
+        $respondidos = MensajeSoporte::where('estado', 'respondido')->count();
+        $mensajesPorMotivo = MensajeSoporte::select('motivo')
+            ->selectRaw('COUNT(*) as total')
+            ->groupBy('motivo')
+            ->orderByDesc('total')
+            ->get();
+
+        return view('admin.mensajes-soporte', compact(
+            'mensajes', 'totalMensajes', 'pendientes', 'respondidos', 'mensajesPorMotivo'
+        ));
     }
 
     public function responderMensajeSoporte(Request $request, int $id): RedirectResponse

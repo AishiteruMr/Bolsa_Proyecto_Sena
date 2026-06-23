@@ -32,6 +32,48 @@
             </div>
         </div>
 
+        {{-- KPI STAT CARDS --}}
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0;">
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid var(--primary);">
+                <div class="admin-stat-icon" style="background: var(--primary-soft); color: var(--primary); width: 44px; height: 44px;"><i class="fas fa-envelope"></i></div>
+                <div><div class="admin-stat-label">Total Mensajes</div><div class="admin-stat-value">{{ $totalMensajes }}</div></div>
+            </div>
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid #f59e0b;">
+                <div class="admin-stat-icon" style="background: #fef3c7; color: #f59e0b; width: 44px; height: 44px;"><i class="fas fa-clock"></i></div>
+                <div><div class="admin-stat-label">Pendientes</div><div class="admin-stat-value" style="color: #f59e0b;">{{ $pendientes }}</div></div>
+            </div>
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid #10b981;">
+                <div class="admin-stat-icon" style="background: #f0fdf4; color: #10b981; width: 44px; height: 44px;"><i class="fas fa-check-double"></i></div>
+                <div><div class="admin-stat-label">Respondidos</div><div class="admin-stat-value" style="color: #10b981;">{{ $respondidos }}</div></div>
+            </div>
+        </div>
+
+        {{-- MOTIVOS BAR CHART --}}
+        @if($mensajesPorMotivo->count() > 0)
+        <div class="glass-card" style="padding: 20px; background: white; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text);">
+                    <i class="fas fa-chart-pie" style="color: var(--primary); margin-right: 8px;"></i>
+                    Motivos de Contacto
+                </h3>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                @php $maxMotivo = $mensajesPorMotivo->max('total'); @endphp
+                @foreach($mensajesPorMotivo as $mot)
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 4px;">
+                        <span style="color: var(--text);">{{ ucfirst($mot->motivo) }}</span>
+                        <span style="color: var(--primary);">{{ $mot->total }}</span>
+                    </div>
+                    <div style="height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
+                        <div style="height: 100%; width: {{ $maxMotivo > 0 ? ($mot->total / $maxMotivo) * 100 : 0 }}%; background: linear-gradient(90deg, var(--primary), #34d399); border-radius: 4px;"></div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <div style="display: flex; flex-direction: column; gap: 20px;">
             @forelse($mensajes as $m)
                 <div class="card-base" style="padding: 24px;">
