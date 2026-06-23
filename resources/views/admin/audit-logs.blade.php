@@ -34,6 +34,42 @@
     </div>
 </div>
 
+{{-- ACTIVITY SUMMARY --}}
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 20px 0;">
+    <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid var(--primary);">
+        <div style="font-size: 24px; font-weight: 800; color: var(--primary);">{{ $totalLogs }}</div>
+        <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Total Eventos</div>
+    </div>
+    @foreach($accionesCount->take(3) as $acc)
+    <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid #6366f1;">
+        <div style="font-size: 24px; font-weight: 800; color: #6366f1;">{{ $acc->total }}</div>
+        <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">{{ ucfirst($acc->accion) }}</div>
+    </div>
+    @endforeach
+</div>
+
+{{-- MONTHLY ACTIVITY CHART (inline bar) --}}
+@if(!empty($actividadMensual['labels']))
+<div class="glass-card" style="padding: 20px; background: white; margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 0.9rem; font-weight: 800; color: var(--text);">
+            <i class="fas fa-chart-line" style="color: #6366f1; margin-right: 8px;"></i>
+            Actividad Mensual
+        </h3>
+    </div>
+    <div style="display: flex; align-items: end; gap: 8px; height: 100px;">
+        @php $maxAct = max($actividadMensual['data']) ?: 1; @endphp
+        @foreach($actividadMensual['labels'] as $idx => $label)
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: end;">
+            <span style="font-size: 9px; font-weight: 700; color: #6366f1;">{{ $actividadMensual['data'][$idx] }}</span>
+            <div style="width: 100%; height: {{ ($actividadMensual['data'][$idx] / $maxAct) * 80 }}px; background: linear-gradient(180deg, #6366f1, #a5b4fc); border-radius: 4px 4px 0 0; transition: height 0.6s; min-height: 4px;"></div>
+            <span style="font-size: 8px; color: #94a3b8; font-weight: 600; white-space: nowrap;">{{ $label }}</span>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
 <form method="GET" action="{{ route('admin.historial') }}" class="filter-bar">
     <div class="filter-bar-group">
         <span class="filter-bar-label">Entidad</span>

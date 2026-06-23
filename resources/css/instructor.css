@@ -554,6 +554,79 @@
     margin-bottom: 8px;
 }
 
+/* ── MÉTRICAS DE SEGUIMIENTO ── */
+.instructor-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+}
+.instructor-metric-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    transition: all 0.25s;
+}
+.instructor-metric-card:hover {
+    border-color: var(--primary-glow);
+    box-shadow: 0 8px 24px rgba(62,180,137,0.08);
+    transform: translateY(-2px);
+}
+.instructor-metric-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+.instructor-metric-num {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.1;
+}
+.instructor-metric-lbl {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.instructor-activity-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    margin-bottom: 24px;
+    transition: all 0.25s;
+}
+.instructor-activity-card:hover {
+    border-color: var(--primary-glow);
+    box-shadow: 0 8px 24px rgba(62,180,137,0.08);
+}
+
+@media (max-width: 1200px) {
+    .instructor-metrics-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+    .instructor-metrics-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .instructor-metric-card { padding: 14px; gap: 10px; }
+    .instructor-metric-icon { width: 36px; height: 36px; font-size: 0.9rem; }
+    .instructor-metric-num { font-size: 1.2rem; }
+}
+@media (max-width: 480px) {
+    .instructor-metrics-row { grid-template-columns: 1fr; gap: 10px; }
+}
+
 /* Small shared utilities scoped to instructor pages */
 .glass-card {
     background: rgba(255,255,255,0.85);

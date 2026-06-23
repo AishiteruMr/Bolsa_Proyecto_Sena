@@ -80,6 +80,7 @@ class RegistroAprendizRequest extends FormRequest
                     ->symbols(),
             ],
             'terminos' => 'accepted',
+            'consentimiento_datos' => 'accepted',
         ];
     }
 
@@ -93,7 +94,7 @@ class RegistroAprendizRequest extends FormRequest
             'max' => 'Máximo :max caracteres.',
             'numeric' => 'Solo números.',
             'digits_between' => 'Entre :min y :max dígitos.',
-            'accepted' => 'Acepta los términos para continuar.',
+            'accepted' => 'Debes aceptar este campo para continuar.',
             'regex' => 'Solo letras y espacios.',
             'password.confirmed' => 'Las contraseñas no son iguales.',
             'password.letters' => 'Debe tener al menos una letra.',

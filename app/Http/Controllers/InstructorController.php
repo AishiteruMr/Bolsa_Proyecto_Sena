@@ -77,10 +77,49 @@ class InstructorController extends Controller
             })
             ->first();
 
+        // ── MÉTRICAS AVANZADAS DE SEGUIMIENTO ──
+        $todosProyectos = Proyecto::where('instructor_usuario_id', $usrId);
+
+        $proyectosCompletados = (clone $todosProyectos)->where('estado', 'completado')->count();
+
+        $proyectosPorEstado = (clone $todosProyectos)
+            ->selectRaw('estado, count(*) as total')
+            ->groupBy('estado')
+            ->pluck('total', 'estado');
+
+        $totalPostulaciones = Postulacion::whereIn('proyecto_id', $proyectoIds)->count();
+
+        $postulacionesAceptadas = Postulacion::whereIn('proyecto_id', $proyectoIds)
+            ->where('estado', 'aceptada')
+            ->count();
+
+        $totalEvidencias = Evidencia::whereIn('proyecto_id', $proyectoIds)->count();
+        $evidenciasAprobadas = Evidencia::whereIn('proyecto_id', $proyectoIds)
+            ->where('estado', 'aceptada')
+            ->count();
+        $tasaAprobacionGlobal = $totalEvidencias > 0 ? round(($evidenciasAprobadas / $totalEvidencias) * 100) : 0;
+
+        $actividadReciente = Evidencia::whereIn('evidencias.proyecto_id', $proyectoIds)
+            ->where('evidencias.fecha_envio', '>=', now()->subDays(7))
+            ->join('aprendices', 'evidencias.aprendiz_id', '=', 'aprendices.id')
+            ->join('proyectos', 'evidencias.proyecto_id', '=', 'proyectos.id')
+            ->orderByDesc('evidencias.fecha_envio')
+            ->limit(10)
+            ->select(
+                'evidencias.*',
+                'aprendices.nombres as aprendiz_nombres',
+                'aprendices.apellidos as aprendiz_apellidos',
+                'proyectos.titulo as proyecto_titulo'
+            )
+            ->get();
+
         return view('instructor.dashboard', compact(
             'instructor', 'proyectosAsignados',
             'proyectos', 'totalAprendices', 'evidenciasPendientes',
-            'nuevasPostulaciones', 'proximoCierre'
+            'nuevasPostulaciones', 'proximoCierre',
+            'proyectosCompletados', 'proyectosPorEstado',
+            'totalPostulaciones', 'postulacionesAceptadas',
+            'tasaAprobacionGlobal', 'actividadReciente'
         ));
     }
 

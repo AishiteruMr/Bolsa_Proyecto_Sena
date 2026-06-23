@@ -46,6 +46,7 @@ class RegistroEmpresaRequest extends FormRequest
                     ->symbols(),
             ],
             'terminos' => 'accepted',
+            'consentimiento_datos' => 'accepted',
         ];
     }
 
@@ -59,7 +60,7 @@ class RegistroEmpresaRequest extends FormRequest
             'max' => 'Máximo :max caracteres.',
             'numeric' => 'Solo números.',
             'digits_between' => 'Entre :min y :max dígitos.',
-            'accepted' => 'Acepta los términos para continuar.',
+            'accepted' => 'Debes aceptar este campo para continuar.',
             'password.confirmed' => 'Las contraseñas no son iguales.',
             'password.letters' => 'Debe tener al menos una letra.',
             'password.mixedCase' => 'Usa mayúsculas y minúsculas.',

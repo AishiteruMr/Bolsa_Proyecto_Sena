@@ -12,6 +12,8 @@
             <p><i class="fas fa-external-link-alt"></i> <a href="https://www.sena.edu.co" target="_blank" rel="noopener noreferrer">SENA Oficial</a></p>
             <p><i class="fas fa-external-link-alt"></i> <a href="https://sena.sofiaplus.com" target="_blank" rel="noopener noreferrer">Sofia Plus</a></p>
             <p><i class="fas fa-external-link-alt"></i> <a href="https://www.mintrabajo.gov.co" target="_blank" rel="noopener noreferrer">Ministerio del Trabajo</a></p>
+            <p><i class="fas fa-file-contract"></i> <a href="{{ route('terminos.condiciones') }}">Términos y Condiciones</a></p>
+            <p><i class="fas fa-shield-alt"></i> <a href="{{ route('politica.datos') }}">Política de Tratamiento de Datos</a></p>
         </div>
         <div class="footer-col">
             <h3>Síguenos</h3>

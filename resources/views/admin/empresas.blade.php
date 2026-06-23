@@ -25,38 +25,51 @@
             </div>
         </div>
 
-        <!-- BENTO STATS -->
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px;">
-            <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-left: 4px solid var(--primary);">
-                <div class="admin-stat-icon" style="background: var(--primary-soft); color: var(--primary);">
-                    <i class="fas fa-building"></i>
-                </div>
-                <div>
-                    <div class="admin-stat-label">Total Aliados</div>
-                    <div class="admin-stat-value">{{ $empresas->count() }}</div>
-                </div>
+        {{-- KPI STAT CARDS --}}
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 24px;">
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid var(--primary);">
+                <div class="admin-stat-icon" style="background: var(--primary-soft); color: var(--primary); width: 44px; height: 44px;"><i class="fas fa-building"></i></div>
+                <div><div class="admin-stat-label">Total Aliados</div><div class="admin-stat-value">{{ $totalEmpresas }}</div></div>
             </div>
-            
-            <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-left: 4px solid var(--primary-hover);">
-                <div class="admin-stat-icon" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); color: #fff;">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div>
-                    <div class="admin-stat-label">Empresas Activas</div>
-                    <div class="admin-stat-value" style="color: var(--primary-hover);">{{ $empresas->where('activo', 1)->count() }}</div>
-                </div>
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid #10b981;">
+                <div class="admin-stat-icon" style="background: #f0fdf4; color: #10b981; width: 44px; height: 44px;"><i class="fas fa-check-circle"></i></div>
+                <div><div class="admin-stat-label">Empresas Activas</div><div class="admin-stat-value" style="color: #10b981;">{{ $empresasActivas }}</div></div>
             </div>
-
-            <div class="glass-card" style="padding: 24px; display: flex; align-items: center; gap: 20px; border-left: 4px solid #f97316;">
-                <div class="admin-stat-icon" style="background: #fff7ed; color: #f97316;">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div>
-                    <div class="admin-stat-label">En Espera</div>
-                    <div class="admin-stat-value" style="color: #f97316;">{{ $empresas->where('activo', 0)->count() }}</div>
-                </div>
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid #3b82f6;">
+                <div class="admin-stat-icon" style="background: #eff6ff; color: #3b82f6; width: 44px; height: 44px;"><i class="fas fa-file-invoice"></i></div>
+                <div><div class="admin-stat-label">Con Proyectos</div><div class="admin-stat-value" style="color: #3b82f6;">{{ $empresasConProyectos }}</div></div>
+            </div>
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid #f59e0b;">
+                <div class="admin-stat-icon" style="background: #fef3c7; color: #f59e0b; width: 44px; height: 44px;"><i class="fas fa-clock"></i></div>
+                <div><div class="admin-stat-label">Sin Proyectos</div><div class="admin-stat-value" style="color: #f59e0b;">{{ $empresasSinProyectos }}</div></div>
             </div>
         </div>
+
+        {{-- TOP EMPRESAS BAR CHART --}}
+        @if($topEmpresas->count() > 0)
+        <div class="glass-card" style="padding: 20px; background: white; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text);">
+                    <i class="fas fa-trophy" style="color: #f59e0b; margin-right: 8px;"></i>
+                    Top Empresas con Más Proyectos
+                </h3>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                @php $maxEmp = $topEmpresas->max('proyectos_count'); @endphp
+                @foreach($topEmpresas as $i => $emp)
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 4px;">
+                        <span style="color: var(--text);"><span style="color: #94a3b8; margin-right: 6px;">#{{ $i + 1 }}</span>{{ $emp->nombre }}</span>
+                        <span style="color: #3b82f6;">{{ $emp->proyectos_count }} proyectos</span>
+                    </div>
+                    <div style="height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
+                        <div style="height: 100%; width: {{ $maxEmp > 0 ? ($emp->proyectos_count / $maxEmp) * 100 : 0 }}%; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 4px; transition: width 0.6s ease;"></div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
 
         <div class="glass-card admin-table-card">
             <div class="admin-table-header">

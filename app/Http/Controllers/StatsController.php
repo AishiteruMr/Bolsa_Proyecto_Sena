@@ -82,12 +82,17 @@ class StatsController extends Controller
                     'total_proyectos' => Proyecto::count(),
                     'total_usuarios' => User::count(),
                 ],
+                'postulaciones_funnel' => $this->getPostulacionesFunnel(),
+                'postulaciones_mensuales' => $this->getPostulacionesMensuales(),
+                'instructores_carga' => $this->getInstructoresCarga(),
+                'ofertas_distribucion' => $this->getOfertasDistribucion(),
+                'empresas_compromiso' => $this->getEmpresasCompromiso(),
+                'registro_usuarios_mensual' => $this->getRegistroUsuariosMensual(),
             ], 200);
         } catch (\Exception $e) {
-            // Fallback: retornar valores por defecto para evitar dashboard en blanco
             return response()->json([
                 'proyectos_por_estado' => ['labels' => ['Pendiente', 'Aprobado', 'Rechazado', 'En Progreso', 'Cerrado', 'Completado'], 'data' => [0, 0, 0, 0, 0, 0]],
-                'usuarios_por_tipo' => ['labels' => ['Aprendices', 'Instructores', 'Empresas', 'Admins'], 'data' => [0, 0, 0, 0, 0]],
+                'usuarios_por_tipo' => ['labels' => ['Aprendices', 'Instructores', 'Empresas', 'Admins'], 'data' => [0, 0, 0, 0]],
                 'proyectos_por_categoria' => [],
                 'ranking_empresas' => [],
                 'metricas_mensuales' => ['labels' => [], 'data' => []],
@@ -98,6 +103,12 @@ class StatsController extends Controller
                     'total_proyectos' => 0,
                     'total_usuarios' => 0,
                 ],
+                'postulaciones_funnel' => ['labels' => [], 'data' => [], 'total' => 0, 'tasa_conversion' => 0],
+                'postulaciones_mensuales' => ['labels' => [], 'data' => []],
+                'instructores_carga' => [],
+                'ofertas_distribucion' => ['labels' => [], 'data' => []],
+                'empresas_compromiso' => ['activas' => 0, 'inactivas' => 0, 'con_proyectos' => 0, 'sin_proyectos' => 0],
+                'registro_usuarios_mensual' => ['labels' => [], 'aprendices' => [], 'instructores' => [], 'empresas' => []],
             ], 200);
         }
     }
@@ -141,6 +152,127 @@ class StatsController extends Controller
         return [
             'labels' => $meses,
             'data' => $data,
+        ];
+    }
+
+    private function getPostulacionesFunnel(): array
+    {
+        $pendiente = Postulacion::where('estado', 'pendiente')->count();
+        $enRevision = Postulacion::where('estado', 'en_revision')->count();
+        $aceptada = Postulacion::where('estado', 'aceptada')->count();
+        $rechazada = Postulacion::where('estado', 'rechazada')->count();
+        $total = $pendiente + $enRevision + $aceptada + $rechazada;
+        $tasaConversion = $total > 0 ? round(($aceptada / $total) * 100, 1) : 0;
+
+        return [
+            'labels' => ['Pendientes', 'En Revisión', 'Aceptadas', 'Rechazadas'],
+            'data' => [$pendiente, $enRevision, $aceptada, $rechazada],
+            'total' => $total,
+            'tasa_conversion' => $tasaConversion,
+        ];
+    }
+
+    private function getPostulacionesMensuales(): array
+    {
+        $meses = [];
+        $data = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $fecha = now()->subMonths($i);
+            $meses[] = $fecha->format('M Y');
+            $data[] = Postulacion::whereYear('created_at', $fecha->year)
+                ->whereMonth('created_at', $fecha->month)
+                ->count();
+        }
+
+        return [
+            'labels' => $meses,
+            'data' => $data,
+        ];
+    }
+
+    private function getInstructoresCarga(): array
+    {
+        return Instructor::select('instructores.id', 'instructores.nombres', 'instructores.apellidos')
+            ->selectRaw('(SELECT COUNT(*) FROM proyectos WHERE proyectos.instructor_usuario_id = instructores.usuario_id AND proyectos.deleted_at IS NULL AND proyectos.estado IN ("pendiente","aprobado","en_progreso")) as proyectos_count')
+            ->where('activo', 1)
+            ->orderByDesc('proyectos_count')
+            ->limit(10)
+            ->get()
+            ->map(function ($inst) {
+                return [
+                    'nombre' => $inst->nombres . ' ' . $inst->apellidos,
+                    'total' => (int) $inst->proyectos_count,
+                ];
+            })
+            ->toArray();
+    }
+
+    private function getOfertasDistribucion(): array
+    {
+        $data = Proyecto::select('oferta')
+            ->whereNotNull('oferta')
+            ->where('oferta', '!=', '')
+            ->groupBy('oferta')
+            ->selectRaw('oferta, COUNT(*) as total')
+            ->orderByDesc('total')
+            ->get();
+
+        $labels = $data->map(function ($item) {
+            return match ($item->oferta) {
+                'pasantias' => 'Pasantías',
+                'contrato_aprendizaje' => 'Contrato Aprendizaje',
+                'auxilio_transporte' => 'Auxilio Transporte',
+                'otro' => 'Otro',
+                default => ucfirst($item->oferta),
+            };
+        });
+
+        return [
+            'labels' => $labels,
+            'data' => $data->pluck('total'),
+        ];
+    }
+
+    private function getEmpresasCompromiso(): array
+    {
+        $activas = Empresa::where('activo', 1)->count();
+        $inactivas = Empresa::where('activo', 0)->count();
+        $conProyectos = Empresa::where('activo', 1)->whereHas('proyectos')->count();
+        $sinProyectos = Empresa::where('activo', 1)->whereDoesntHave('proyectos')->count();
+
+        return [
+            'activas' => $activas,
+            'inactivas' => $inactivas,
+            'con_proyectos' => $conProyectos,
+            'sin_proyectos' => $sinProyectos,
+        ];
+    }
+
+    private function getRegistroUsuariosMensual(): array
+    {
+        $meses = [];
+        $aprendices = [];
+        $instructores = [];
+        $empresas = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $fecha = now()->subMonths($i);
+            $meses[] = $fecha->format('M Y');
+
+            $usersInMonth = User::whereYear('created_at', $fecha->year)
+                ->whereMonth('created_at', $fecha->month);
+
+            $aprendices[] = (clone $usersInMonth)->whereHas('aprendiz')->count();
+            $instructores[] = (clone $usersInMonth)->whereHas('instructor')->count();
+            $empresas[] = (clone $usersInMonth)->whereHas('empresa')->count();
+        }
+
+        return [
+            'labels' => $meses,
+            'aprendices' => $aprendices,
+            'instructores' => $instructores,
+            'empresas' => $empresas,
         ];
     }
 }

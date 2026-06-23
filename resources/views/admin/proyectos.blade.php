@@ -51,6 +51,42 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         </div>
 
+        {{-- KPI STAT CARDS --}}
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; margin-bottom: 24px;">
+            <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid #f59e0b;">
+                <div style="font-size: 24px; font-weight: 800; color: #f59e0b;">{{ $proyectosPendientes }}</div>
+                <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Pendientes</div>
+            </div>
+            <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid #10b981;">
+                <div style="font-size: 24px; font-weight: 800; color: #10b981;">{{ $proyectosAprobados }}</div>
+                <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Aprobados</div>
+            </div>
+            <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid #3b82f6;">
+                <div style="font-size: 24px; font-weight: 800; color: #3b82f6;">{{ $proyectosEnProgreso }}</div>
+                <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">En Progreso</div>
+            </div>
+            <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid #64748b;">
+                <div style="font-size: 24px; font-weight: 800; color: #64748b;">{{ $proyectosCompletados }}</div>
+                <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Completados</div>
+            </div>
+            <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid #ef4444;">
+                <div style="font-size: 24px; font-weight: 800; color: #ef4444;">{{ $proyectosRechazados }}</div>
+                <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Rechazados</div>
+            </div>
+            <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid #8b5cf6;">
+                <div style="font-size: 24px; font-weight: 800; color: #8b5cf6;">{{ $proyectosCerrados }}</div>
+                <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Cerrados</div>
+            </div>
+            <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid #db2777;">
+                <div style="font-size: 24px; font-weight: 800; color: #db2777;">{{ $proyectosCount }}</div>
+                <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Total Proyectos</div>
+            </div>
+            <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid #06b6d4;">
+                <div style="font-size: 24px; font-weight: 800; color: #06b6d4;">{{ $totalPostulaciones }}</div>
+                <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Postulaciones</div>
+            </div>
+        </div>
+
         <!-- FILTROS DE BÚSQUEDA -->
         <div class="admin-filter-section" id="adminFilterSection">
             <form method="GET" action="{{ route('admin.proyectos') }}">

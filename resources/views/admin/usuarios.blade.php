@@ -26,6 +26,52 @@
             </div>
         </div>
 
+        {{-- KPI STAT CARDS --}}
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px;">
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid #db2777;">
+                <div class="admin-stat-icon" style="background: #fdf2f8; color: #db2777; width: 44px; height: 44px;"><i class="fas fa-graduation-cap"></i></div>
+                <div><div class="admin-stat-label">Total Aprendices</div><div class="admin-stat-value" style="color: #db2777;">{{ $totalAprendices }}</div></div>
+            </div>
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid #6366f1;">
+                <div class="admin-stat-icon" style="background: #eef2ff; color: #6366f1; width: 44px; height: 44px;"><i class="fas fa-chalkboard-teacher"></i></div>
+                <div><div class="admin-stat-label">Total Instructores</div><div class="admin-stat-value" style="color: #6366f1;">{{ $totalInstructores }}</div></div>
+            </div>
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid #10b981;">
+                <div class="admin-stat-icon" style="background: #f0fdf4; color: #10b981; width: 44px; height: 44px;"><i class="fas fa-user-check"></i></div>
+                <div><div class="admin-stat-label">Aprendices Activos</div><div class="admin-stat-value" style="color: #10b981;">{{ $aprendicesActivos }}</div></div>
+            </div>
+            <div class="glass-card" style="padding: 20px; display: flex; align-items: center; gap: 16px; border-left: 4px solid #f59e0b;">
+                <div class="admin-stat-icon" style="background: #fef3c7; color: #f59e0b; width: 44px; height: 44px;"><i class="fas fa-user-cog"></i></div>
+                <div><div class="admin-stat-label">Instructores Activos</div><div class="admin-stat-value" style="color: #f59e0b;">{{ $instructoresActivos }}</div></div>
+            </div>
+        </div>
+
+        {{-- PROGRAMS BAR CHART --}}
+        @if($aprendicesProgramas->count() > 0)
+        <div class="glass-card" style="padding: 20px; background: white; margin-top: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 0.95rem; font-weight: 800; color: var(--text);">
+                    <i class="fas fa-chart-bar" style="color: #db2777; margin-right: 8px;"></i>
+                    Top Programas de Formación
+                </h3>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                @php $maxProg = $aprendicesProgramas->max('total'); @endphp
+                @foreach($aprendicesProgramas as $prog)
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 4px;">
+                        <span style="color: var(--text);">{{ $prog->programa_formacion }}</span>
+                        <span style="color: #db2777;">{{ $prog->total }}</span>
+                    </div>
+                    <div style="height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
+                        <div style="height: 100%; width: {{ $maxProg > 0 ? ($prog->total / $maxProg) * 100 : 0 }}%; background: linear-gradient(90deg, #db2777, #f472b6); border-radius: 4px; transition: width 0.6s ease;"></div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <div class="users-tab-container" style="display:flex; flex-wrap: wrap; gap:12px; margin:24px 0; position: relative; z-index: 10;">
             <button id="btn-aprendices" onclick="mostrarTabla('aprendices')" class="user-tab-btn active-tab" style="display:flex;align-items:center;justify-content:center;flex:1;min-width:200px;gap:10px;padding:14px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#2e7d46,#1a5c30);color:white;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(46,125,70,0.4);transition:all 0.3s; z-index: 11;">
                 <i class="fas fa-user-graduate"></i> Aprendices

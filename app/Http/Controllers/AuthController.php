@@ -187,6 +187,8 @@ class AuthController extends Controller
                     'correo' => strip_tags(trim($request->correo)),
                     'contrasena' => Hash::make($request->password),
                     'rol_id' => 1,
+                    'consentimiento_datos' => true,
+                    'fecha_consentimiento' => now(),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -229,6 +231,8 @@ class AuthController extends Controller
                     'correo' => strip_tags(trim($request->correo)),
                     'contrasena' => Hash::make($request->password),
                     'rol_id' => 2,
+                    'consentimiento_datos' => true,
+                    'fecha_consentimiento' => now(),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -272,6 +276,8 @@ class AuthController extends Controller
                     'correo' => strip_tags(trim($request->correo)),
                     'contrasena' => Hash::make($request->password),
                     'rol_id' => 3,
+                    'consentimiento_datos' => true,
+                    'fecha_consentimiento' => now(),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
@@ -464,5 +470,26 @@ class AuthController extends Controller
         DB::table('password_reset_tokens')->where('email', $correo)->delete();
 
         return redirect()->route('login')->with('success', 'Contraseña actualizada. Ya puedes iniciar sesión.');
+    }
+
+    // ─── RETIRO DE CONSENTIMIENTO DE DATOS ─────────────────────────────────
+
+    public function retirarConsentimiento(Request $request): RedirectResponse
+    {
+        $usuarioId = session('usr_id');
+        if (! $usuarioId) {
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión.');
+        }
+
+        DB::table('usuarios')
+            ->where('id', $usuarioId)
+            ->update([
+                'consentimiento_datos' => false,
+                'fecha_consentimiento' => now(),
+            ]);
+
+        AuditLog::registrar($usuarioId, 'editar', 'privacidad', 'El usuario retiró su consentimiento para el tratamiento de datos personales.');
+
+        return back()->with('info', 'Has retirado tu consentimiento para el tratamiento de datos personales. Algunas funcionalidades pueden verse limitadas.');
     }
 }

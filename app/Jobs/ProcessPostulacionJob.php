@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -11,9 +12,11 @@ use App\Models\Postulacione;
 use App\Notifications\AppNotification;
 use App\Notifications\PostulacionActualizada;
 
-class ProcessPostulacionJob implements ShouldQueue
+class ProcessPostulacionJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public int $uniqueFor = 120;
 
     public function __construct(
         private Postulacione $postulacion,
@@ -21,6 +24,11 @@ class ProcessPostulacionJob implements ShouldQueue
         private ?array $data = null
     ) {
         $this->onQueue('default');
+    }
+
+    public function uniqueId(): string
+    {
+        return 'postulacion:' . $this->postulacion->id . ':' . $this->accion;
     }
 
     public function handle(): void

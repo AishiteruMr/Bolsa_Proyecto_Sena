@@ -33,6 +33,14 @@ Route::get('/soporte', function () {
     return view('soporte');
 })->name('soporte');
 
+Route::get('/politica-de-datos', function () {
+    return view('politica-datos');
+})->name('politica.datos');
+
+Route::get('/terminos-y-condiciones', function () {
+    return view('terminos-condiciones');
+})->name('terminos.condiciones');
+
 
 
 Route::post('/soporte/enviar', [App\Http\Controllers\SoporteController::class, 'enviar'])->name('soporte.enviar');
@@ -78,6 +86,9 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::get('/descargar/evidencia/{id}', [FileController::class, 'evidencia'])->name('file.evidencia');
     Route::get('/descargar/etapa-documento/{id}', [FileController::class, 'etapaDocumento'])->name('file.etapa-documento');
     Route::get('/descargar/proyecto-estructura/{id}', [FileController::class, 'proyectoEstructura'])->name('file.proyecto-estructura');
+
+    // Retiro de consentimiento de datos personales
+    Route::post('/consentimiento/retirar', [AuthController::class, 'retirarConsentimiento'])->name('consentimiento.retirar');
 });
 
 /*
