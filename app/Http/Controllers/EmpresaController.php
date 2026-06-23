@@ -23,6 +23,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class EmpresaController extends Controller
@@ -505,6 +506,7 @@ class EmpresaController extends Controller
                 },
             ],
             'password' => 'nullable|string|min:'.config('app_config.password.min_length', 8),
+            'metodologia' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         ]);
 
         $datos = [
@@ -512,6 +514,18 @@ class EmpresaController extends Controller
             'representante' => $request->representante,
             'password' => $request->password,
         ];
+
+        if ($request->hasFile('metodologia')) {
+            $file = $request->file('metodologia');
+            $extension = $file->getClientOriginalExtension();
+            $safeFilename = 'metodologia_'.session('nit').'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
+            $path = $file->storeAs('metodologias', $safeFilename, 'public');
+            $datos['metodologia_url'] = $path;
+        }
+
+        if ($request->boolean('eliminar_metodologia')) {
+            $datos['eliminar_metodologia'] = true;
+        }
 
         [$exito, $mensaje] = $this->perfilService->actualizarPerfilEmpresa($empId, $datos);
 

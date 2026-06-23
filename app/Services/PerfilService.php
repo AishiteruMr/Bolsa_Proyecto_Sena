@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Empresa;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class PerfilService
 {
@@ -17,6 +18,16 @@ class PerfilService
                 'nombre' => $datos['nombre_empresa'],
                 'representante' => $datos['representante'],
             ];
+
+            if (array_key_exists('metodologia_url', $datos)) {
+                if ($empresa->metodologia_url) {
+                    Storage::disk('public')->delete($empresa->metodologia_url);
+                }
+                $actualizaciones['metodologia_url'] = $datos['metodologia_url'];
+            } elseif (($datos['eliminar_metodologia'] ?? false) && $empresa->metodologia_url) {
+                Storage::disk('public')->delete($empresa->metodologia_url);
+                $actualizaciones['metodologia_url'] = null;
+            }
 
             $empresa->update($actualizaciones);
 

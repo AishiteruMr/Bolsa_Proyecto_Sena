@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Empresa;
 use App\Models\Etapa;
 use App\Models\Evidencia;
 use App\Models\Proyecto;
@@ -38,5 +39,15 @@ class FileController extends Controller
         abort_unless(Storage::disk('public')->exists($proyecto->url_estructura), 404);
 
         return Storage::disk('public')->download($proyecto->url_estructura);
+    }
+
+    public function empresaMetodologia(int $id): StreamedResponse
+    {
+        $empresa = Empresa::findOrFail($id);
+
+        abort_unless($empresa->metodologia_url, 404);
+        abort_unless(Storage::disk('public')->exists($empresa->metodologia_url), 404);
+
+        return Storage::disk('public')->download($empresa->metodologia_url);
     }
 }

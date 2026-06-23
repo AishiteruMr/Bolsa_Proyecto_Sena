@@ -11,6 +11,9 @@
 <a href="{{ route('admin.proyectos') }}" class="nav-item {{ request()->routeIs('admin.proyectos*') ? 'active' : '' }}">
     <i class="fas fa-project-diagram"></i> Banco Proyectos
 </a>
+<a href="{{ route('admin.analytics') }}" class="nav-item {{ request()->routeIs('admin.analytics*') ? 'active' : '' }}">
+    <i class="fas fa-chart-line"></i> Analítica
+</a>
 <span class="nav-label" style="margin-top: 16px;">Herramientas</span>
 <a href="{{ route('admin.backup') }}" class="nav-item {{ request()->routeIs('admin.backup*') ? 'active' : '' }}">
     <i class="fas fa-database"></i> Backup
