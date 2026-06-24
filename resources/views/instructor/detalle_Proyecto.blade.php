@@ -371,6 +371,70 @@
             </div>
         </div>
 
+        <!-- Documentos de la Empresa -->
+        @if($proyecto->empresa && $proyecto->empresa->metodologia_url)
+        <div class="instructor-sidebar-card">
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 1.25rem;">
+                <i class="fas fa-building" style="color: #3eb489; margin-right: 8px;"></i>
+                Documentos de la Empresa
+            </h4>
+            <div style="padding: 14px 16px; background: rgba(62,180,137,0.08); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                <i class="fas fa-file-alt" style="color: #3eb489; font-size: 1.2rem;"></i>
+                <div style="flex: 1; min-width: 0;">
+                    <p style="font-size: 0.8rem; font-weight: 700; color: var(--text);">Metodología de Trabajo</p>
+                    <a href="{{ route('file.empresa-metodologia', $proyecto->empresa->id) }}" target="_blank" style="font-size: 0.75rem; font-weight: 600; color: #3eb489; text-decoration: underline; word-break: break-all;">
+                        <i class="fas fa-download"></i> Ver documento
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Historial de Cambios -->
+        @if($historialCambios->isNotEmpty())
+        <div class="instructor-sidebar-card">
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 1.25rem;">
+                <i class="fas fa-history" style="color: #f59e0b; margin-right: 8px;"></i>
+                Historial de Cambios
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                @foreach($historialCambios as $log)
+                @php
+                    $iconMap = ['editar' => 'fa-pen', 'publicar' => 'fa-upload', 'cambiar_estado' => 'fa-toggle-on', 'asignar' => 'fa-user-plus', 'desasignar' => 'fa-user-minus', 'iniciar' => 'fa-play', 'aprobar' => 'fa-check', 'rechazar' => 'fa-ban'];
+                    $colorMap = ['editar' => '#d97706', 'publicar' => '#10b981', 'cambiar_estado' => '#3b82f6', 'asignar' => '#8b5cf6', 'desasignar' => '#ef4444', 'iniciar' => '#3b82f6', 'aprobar' => '#059669', 'rechazar' => '#dc2626'];
+                    $labelMap = ['editar' => 'Actualización', 'publicar' => 'Publicación', 'cambiar_estado' => 'Estado', 'asignar' => 'Asignación', 'desasignar' => 'Destitución', 'iniciar' => 'Inicio', 'aprobar' => 'Aprobación', 'rechazar' => 'Rechazo'];
+                    $icon = $iconMap[$log->accion] ?? 'fa-circle';
+                    $color = $colorMap[$log->accion] ?? '#64748b';
+                    $label = $labelMap[$log->accion] ?? ucfirst($log->accion);
+                @endphp
+                <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $color }}15; color: {{ $color }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas {{ $icon }}" style="font-size: 10px;"></i>
+                        </div>
+                        @if(!$loop->last)
+                        <div style="width: 1px; flex: 1; background: #e2e8f0;"></div>
+                        @endif
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                            <span style="font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: {{ $color }}; background: {{ $color }}10; padding: 1px 8px; border-radius: 4px;">{{ $label }}</span>
+                            <span style="font-size: 0.65rem; color: var(--text-light);">{{ $log->created_at->format('d/m/Y H:i') }}</span>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text); font-weight: 500; margin-top: 2px; line-height: 1.4;">{{ $log->descripcion }}</p>
+                        @if($log->usuario)
+                        <p style="font-size: 0.65rem; color: var(--text-light); font-weight: 600;">
+                            <i class="fas fa-user" style="font-size: 8px; margin-right: 4px;"></i>
+                            {{ $log->usuario->name ?? $log->usuario->correo ?? 'Sistema' }}
+                        </p>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <!-- Suite de Seguimiento -->
         <div class="instructor-sidebar-card">
             <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 1.25rem;">Suite de Seguimiento</h4>

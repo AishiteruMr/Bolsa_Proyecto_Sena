@@ -363,6 +363,7 @@
                         <option value="otro">Otro</option>
                     </select>
                 </div>
+
             </div>
             
             <div class="step-content" data-step="2">

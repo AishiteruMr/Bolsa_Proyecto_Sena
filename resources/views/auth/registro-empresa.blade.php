@@ -90,6 +90,7 @@
                             <input type="text" name="representante" value="{{ old('representante') }}" placeholder="Nombre completo" required>
                         </div>
                     </div>
+
                 </div>
 
                 <!-- Paso 2: Información de contacto -->

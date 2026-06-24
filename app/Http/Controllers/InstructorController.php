@@ -316,7 +316,13 @@ class InstructorController extends Controller
             ->with(['aprendiz.usuario'])
             ->get();
 
-        return view('instructor.detalle_proyecto', compact('proyecto', 'etapas', 'postulaciones', 'integrantes'));
+        // Obtener historial de cambios del proyecto
+        $historialCambios = AuditLog::where('tabla_afectada', 'proyectos')
+            ->where('registro_id', $id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('instructor.detalle_proyecto', compact('proyecto', 'etapas', 'postulaciones', 'integrantes', 'historialCambios'));
     }
 
     // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN (SOLO EL INSTRUCTOR)

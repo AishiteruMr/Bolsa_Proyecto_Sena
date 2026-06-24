@@ -90,7 +90,8 @@ class EmpresaController extends Controller
 
     public function crearProyecto(): View
     {
-        return view('empresa.crear-proyecto');
+        $empresa = Empresa::where('nit', session('nit'))->first();
+        return view('empresa.crear-proyecto', compact('empresa'));
     }
 
     public function guardarProyecto(GestionarProyectoRequest $request): RedirectResponse
@@ -141,6 +142,22 @@ class EmpresaController extends Controller
             $safeFilename = 'proyecto_'.$nit.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
             $path = $file->storeAs('proyectos', $safeFilename, 'public');
             $imagenUrl = $path;
+        }
+
+        if ($request->hasFile('metodologia')) {
+            if ($empresa->metodologia_url) {
+                Storage::disk('public')->delete($empresa->metodologia_url);
+            }
+            $file = $request->file('metodologia');
+            $extension = $file->getClientOriginalExtension();
+            $safeFilename = 'metodologia_'.$nit.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
+            $path = $file->storeAs('metodologias', $safeFilename, 'public');
+            $empresa->metodologia_url = $path;
+            $empresa->save();
+        } elseif ($request->boolean('eliminar_metodologia') && $empresa->metodologia_url) {
+            Storage::disk('public')->delete($empresa->metodologia_url);
+            $empresa->metodologia_url = null;
+            $empresa->save();
         }
 
         // Calcular fecha de publicación automática y duración (183 días = 6 meses)
@@ -221,7 +238,9 @@ class EmpresaController extends Controller
             ->where('empresa_nit', $nit)
             ->firstOrFail();
 
-        return view('empresa.editar-proyecto', compact('proyecto'));
+        $empresa = Empresa::where('nit', $nit)->first();
+
+        return view('empresa.editar-proyecto', compact('proyecto', 'empresa'));
     }
 
     public function actualizarProyecto(Request $request, int $id): RedirectResponse
@@ -233,6 +252,7 @@ class EmpresaController extends Controller
             'requisitos' => 'required|string|max:400',
             'habilidades' => 'required|string|max:200',
             'imagen' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'metodologia' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
             'latitud' => 'nullable|numeric',
             'longitud' => 'nullable|numeric',
             'oferta' => 'required|string|in:pasantias,contrato_aprendizaje,auxilio_transporte,otro',
@@ -249,7 +269,10 @@ class EmpresaController extends Controller
             ->where('empresa_nit', $nit)
             ->firstOrFail();
 
-        // Mantener las fechas originales del proyecto
+        // Capturar datos anteriores para auditoría
+        $datosAnteriores = $proyecto->only(['titulo', 'categoria', 'descripcion', 'requisitos_especificos', 'habilidades_requeridas', 'latitud', 'longitud']);
+
+        // Mantener las fechas y oferta originales del proyecto
         $datos = [
             'titulo' => $request->titulo,
             'categoria' => $request->categoria,
@@ -258,8 +281,6 @@ class EmpresaController extends Controller
             'habilidades_requeridas' => $request->habilidades,
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
-            'oferta' => $request->oferta,
-            'oferta_otro' => $request->oferta === 'otro' ? $request->oferta_otro : null,
         ];
 
         if ($request->hasFile('imagen')) {
@@ -284,7 +305,41 @@ class EmpresaController extends Controller
             $datos['imagen_url'] = $path;
         }
 
+        if ($request->hasFile('metodologia')) {
+            $empresa = Empresa::where('nit', $nit)->first();
+            if ($empresa && $empresa->metodologia_url) {
+                Storage::disk('public')->delete($empresa->metodologia_url);
+            }
+            $file = $request->file('metodologia');
+            $extension = $file->getClientOriginalExtension();
+            $safeFilename = 'metodologia_'.$nit.'_'.time().'_'.bin2hex(random_bytes(4)).'.'.$extension;
+            $path = $file->storeAs('metodologias', $safeFilename, 'public');
+            if ($empresa) {
+                $empresa->metodologia_url = $path;
+                $empresa->save();
+            }
+        } elseif ($request->boolean('eliminar_metodologia')) {
+            $empresa = Empresa::where('nit', $nit)->first();
+            if ($empresa && $empresa->metodologia_url) {
+                Storage::disk('public')->delete($empresa->metodologia_url);
+                $empresa->metodologia_url = null;
+                $empresa->save();
+            }
+        }
+
         $proyecto->update($datos);
+
+        $empresa = Empresa::where('nit', $nit)->first();
+        AuditLog::registrarCambio(
+            session('usr_id'),
+            'editar',
+            'proyectos',
+            'proyectos',
+            $proyecto->id,
+            array_merge($datosAnteriores, ['nombre_objetivo' => $proyecto->titulo, 'empresa' => $empresa?->nombre]),
+            array_merge($datos, ['nombre_objetivo' => $proyecto->titulo, 'empresa' => $empresa?->nombre]),
+            "La empresa {$empresa?->nombre} ha actualizado la información del proyecto «{$proyecto->titulo}»."
+        );
 
         return redirect()->route('empresa.proyectos')->with('success', 'Proyecto actualizado.');
     }

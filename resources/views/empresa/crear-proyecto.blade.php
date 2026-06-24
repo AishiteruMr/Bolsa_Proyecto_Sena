@@ -255,7 +255,45 @@
                     </div>
                 </div>
 
-                <!-- Step 5: Oferta o Beneficio del Proyecto -->
+                <!-- Step 5: Documentos de la Empresa -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
+                        <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">5</span>
+                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Documentos de la Empresa</h3>
+                    </div>
+
+                    <div style="background:#f8fafc; border:2px dashed rgba(62,180,137,0.2); border-radius:20px; padding:24px;">
+                        <h4 style="font-size:15px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+                            <i class="fas fa-file-alt" style="color:#3eb489;"></i> Metodología de Trabajo
+                        </h4>
+                        <p style="font-size:12px; color:#94a3b8; margin-bottom:16px; font-weight:500;">
+                            Sube un documento PDF o Word describiendo la metodología de trabajo de tu empresa (máx. 5MB).
+                        </p>
+
+                        @if($empresa && $empresa->metodologia_url)
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:rgba(62,180,137,0.1); border-radius:12px; margin-bottom:16px;">
+                                <i class="fas fa-file-pdf" style="color:#3eb489; font-size:20px;"></i>
+                                <div style="flex:1;">
+                                    <span style="font-size:13px; font-weight:700; color:var(--text);">Documento actual:</span>
+                                    <a href="{{ route('file.empresa-metodologia', $empresa->id) }}" target="_blank" style="font-size:12px; font-weight:600; color:#3eb489; margin-left:8px; text-decoration:underline;">
+                                        <i class="fas fa-download"></i> Ver archivo
+                                    </a>
+                                </div>
+                                <label style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#ef4444; cursor:pointer;">
+                                    <input type="checkbox" name="eliminar_metodologia" value="1" style="accent-color:#ef4444;">
+                                    Eliminar
+                                </label>
+                            </div>
+                        @endif
+
+                        <div style="position:relative;">
+                            <input type="file" name="metodologia" accept=".pdf,.doc,.docx" style="width:100%; padding:14px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:14px; font-weight:500; background:white; outline:none;">
+                            <p style="font-size:11px; color:#94a3b8; margin-top:6px; font-weight:500;">Se reemplazará el documento actual si seleccionas uno nuevo.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Oferta o Beneficio del Proyecto -->
                 <div>
                     <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(139,92,246,0.1);">
                         <span style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 4px 10px rgba(139,92,246,0.3);">
