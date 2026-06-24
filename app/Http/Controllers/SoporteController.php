@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SoporteEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\MensajeSoporte;
@@ -20,6 +21,13 @@ class SoporteController extends Controller
         ]);
 
         MensajeSoporte::create($validated);
+
+        event(new SoporteEvent('nuevo', [
+            'message' => "Nuevo mensaje de soporte de {$validated['nombre']}",
+            'nombre' => $validated['nombre'],
+            'email' => $validated['email'],
+            'motivo' => $validated['motivo'],
+        ]));
 
         SendEmailJob::dispatch(
             config('mail.from.address'),

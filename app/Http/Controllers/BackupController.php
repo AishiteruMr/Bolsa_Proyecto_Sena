@@ -3,36 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
+use App\Services\BackupService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class BackupController extends Controller
 {
-    // ─────────────────────────────────────────────
-    // ÍNDICE
-    // ─────────────────────────────────────────────
+    public function __construct(
+        private BackupService $backupService
+    ) {}
+
     public function index()
     {
-        $backups = $this->obtenerListaBackups();
-        $proximoBackup = $this->calcularProximoBackup();
+        $backups = $this->backupService->getBackupList();
+        $proximoBackup = $this->backupService->getNextBackupTime();
 
         return view('admin.backup', compact('backups', 'proximoBackup'));
     }
 
-    // ─────────────────────────────────────────────
-    // CREAR (manual desde la interfaz)
-    // ─────────────────────────────────────────────
     public function crear(Request $request)
     {
         try {
-            $nombre    = 'backup_' . date('Y-m-d_H-i-s');
-            $zipPath   = $this->generarZipBackup($nombre);
+            $nombre = 'backup_' . date('Y-m-d_H-i-s');
+            $this->backupService->generateBackup($nombre);
 
             Log::info("Backup manual creado: {$nombre}");
-            
+
             AuditLog::registrar(session('usr_id'), 'crear', 'backups', "Se creó un backup manual de la base de datos: {$nombre}");
 
             return back()->with('success', "Backup '{$nombre}' creado.");
@@ -42,14 +39,11 @@ class BackupController extends Controller
         }
     }
 
-    // ─────────────────────────────────────────────
-    // EXPORTAR — genera el backup y lo descarga directamente
-    // ─────────────────────────────────────────────
     public function exportar()
     {
         try {
             $nombre  = 'exportacion_' . date('Y-m-d_H-i-s');
-            $zipPath = $this->generarZipBackup($nombre);
+            $zipPath = $this->backupService->generateBackup($nombre);
 
             Log::info("Backup exportado manualmente: {$nombre}");
 
@@ -62,13 +56,10 @@ class BackupController extends Controller
         }
     }
 
-    // ─────────────────────────────────────────────
-    // IMPORTAR — restaura la DB desde un archivo SQL o ZIP subido
-    // ─────────────────────────────────────────────
     public function importar(Request $request)
     {
         $request->validate([
-            'archivo_backup' => 'required|file|extensions:sql,zip,txt|max:51200', // máx 50 MB
+            'archivo_backup' => 'required|file|extensions:sql,zip,txt|max:51200',
         ], [
             'archivo_backup.required' => 'Selecciona un archivo.',
             'archivo_backup.extensions' => 'Solo archivos .sql o .zip.',
@@ -83,7 +74,6 @@ class BackupController extends Controller
             File::makeDirectory($tmpDir, 0755, true);
 
             if ($extension === 'zip') {
-                // Extraer ZIP y buscar el database.sql dentro
                 $zipTmp = $tmpDir . '/upload.zip';
                 $archivo->move($tmpDir, 'upload.zip');
 
@@ -100,22 +90,19 @@ class BackupController extends Controller
                 $zip->extractTo($tmpDir . '/extracted');
                 $zip->close();
 
-                // Buscar database.sql dentro del ZIP (puede estar en subdirectorio)
-                $sqlFile = $this->buscarArchivoSql($tmpDir . '/extracted');
+                $sqlFile = $this->backupService->findSqlFile($tmpDir . '/extracted');
 
                 if (!$sqlFile) {
                     File::deleteDirectory($tmpDir);
                     return back()->with('error', 'No se encontró database.sql en el ZIP.');
                 }
             } else {
-                // Es un .sql directo
                 $archivo->move($tmpDir, 'database.sql');
                 $sqlFile = $tmpDir . '/database.sql';
             }
 
-            // Ejecutar el SQL
             $sql = File::get($sqlFile);
-            $this->ejecutarSql($sql);
+            $this->backupService->executeSql($sql);
 
             File::deleteDirectory($tmpDir);
 
@@ -133,66 +120,26 @@ class BackupController extends Controller
         }
     }
 
-    // ─────────────────────────────────────────────
-    // DESCARGAR (backup ya existente en lista)
-    // ─────────────────────────────────────────────
     public function descargar(string $nombre)
     {
-        // Sanitizar para prevenir path traversal
-        $nombre = basename($nombre);
-        $nombre = preg_replace('/[^a-zA-Z0-9_\-]/', '', $nombre);
-        
-        if (empty($nombre)) {
-            return back()->with('error', 'Nombre de archivo inválido.');
+        $path = $this->backupService->getBackupPath($nombre);
+
+        if (!$path) {
+            return back()->with('error', 'Archivo de backup no encontrado.');
         }
 
-        $rutaZip    = storage_path("app/backups/{$nombre}.zip");
-        $rutaFolder = storage_path("app/backups/{$nombre}_folder");
-
-        if (file_exists($rutaZip)) {
-            return response()->download($rutaZip);
+        if (str_ends_with($path, '.sql')) {
+            return response()->download($path, "{$nombre}_database.sql", [
+                'Content-Type' => 'application/sql',
+            ]);
         }
 
-        if (is_dir($rutaFolder)) {
-            $sqlFile = "{$rutaFolder}/database.sql";
-            if (file_exists($sqlFile)) {
-                return response()->download($sqlFile, "{$nombre}_database.sql", [
-                    'Content-Type' => 'application/sql',
-                ]);
-            }
-        }
-
-        return back()->with('error', 'Archivo de backup no encontrado.');
+        return response()->download($path);
     }
 
-    // ─────────────────────────────────────────────
-    // ELIMINAR
-    // ─────────────────────────────────────────────
     public function eliminar(string $nombre)
     {
-        // Sanitizar para prevenir path traversal
-        $nombre = basename($nombre);
-        $nombre = preg_replace('/[^a-zA-Z0-9_\-]/', '', $nombre);
-        
-        if (empty($nombre)) {
-            return back()->with('error', 'Nombre de archivo inválido.');
-        }
-
-        $rutaZip    = storage_path("app/backups/{$nombre}.zip");
-        $rutaFolder = storage_path("app/backups/{$nombre}_folder");
-        $eliminado  = false;
-
-        if (file_exists($rutaZip)) {
-            unlink($rutaZip);
-            $eliminado = true;
-        }
-
-        if (is_dir($rutaFolder)) {
-            File::deleteDirectory($rutaFolder);
-            $eliminado = true;
-        }
-
-        if (!$eliminado) {
+        if (!$this->backupService->deleteBackup($nombre)) {
             return back()->with('error', 'Archivo de backup no encontrado.');
         }
 
@@ -201,291 +148,5 @@ class BackupController extends Controller
         AuditLog::registrar(session('usr_id'), 'eliminar', 'backups', "Se eliminó permanentemente el archivo de backup: {$nombre}");
 
         return back()->with('success', "Backup '{$nombre}' eliminado.");
-    }
-
-    // ─────────────────────────────────────────────
-    // HELPERS PRIVADOS
-    // ─────────────────────────────────────────────
-
-    /**
-     * Genera el SQL completo y lo empaqueta en un ZIP.
-     * Devuelve la ruta absoluta del ZIP creado.
-     */
-    private function generarZipBackup(string $nombre): string
-    {
-        $backupsDir = storage_path("app/backups");
-        $directorio = "{$backupsDir}/{$nombre}";
-
-        if (!File::exists($backupsDir)) {
-            File::makeDirectory($backupsDir, 0755, true);
-        }
-        File::makeDirectory($directorio, 0755, true);
-
-        $dbName  = DB::getDatabaseName();
-        $tablas  = DB::select('SHOW TABLES');
-
-        $sql  = "-- Backup: {$nombre}\n";
-        $sql .= "-- Base de datos: {$dbName}\n";
-        $sql .= "-- Fecha: " . now()->toDateTimeString() . "\n\n";
-        $sql .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
-
-        foreach ($tablas as $tabla) {
-            $tableName   = $tabla->{array_keys((array) $tabla)[0]};
-            // Sanitizar nombre de tabla para prevenir SQL injection
-            $tableName   = preg_replace('/[^a-zA-Z0-9_]/', '', $tableName);
-            $createTable = DB::select("SHOW CREATE TABLE `{$tableName}`")[0]->{"Create Table"};
-
-            $sql .= "DROP TABLE IF EXISTS `{$tableName}`;\n";
-            $sql .= $createTable . ";\n\n";
-
-            $registros = DB::table($tableName)->get();
-            if ($registros->isNotEmpty()) {
-                $campos  = array_map(
-                    fn($campo) => preg_replace('/[^a-zA-Z0-9_]/', '', $campo),
-                    array_keys((array) $registros->first())
-                );
-                $valores = [];
-
-                foreach ($registros as $registro) {
-                    $valores[] = '(' . $this->formatearValores((array) $registro, $campos) . ')';
-                }
-
-                $sql .= "INSERT INTO `{$tableName}` (`" . implode('`, `', $campos) . "`) VALUES\n";
-                $sql .= implode(",\n", $valores) . ";\n\n";
-            }
-        }
-
-        $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
-
-        File::put("{$directorio}/database.sql", $sql);
-
-        File::put("{$directorio}/metadata.json", json_encode([
-            'nombre' => $nombre,
-            'fecha'  => now()->toIso8601String(),
-            'db'     => $dbName,
-            'tablas' => count($tablas),
-        ], JSON_PRETTY_PRINT));
-
-        $zipPath = "{$backupsDir}/{$nombre}.zip";
-
-        if (class_exists('ZipArchive')) {
-            $zip = new \ZipArchive();
-            if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
-                foreach (File::files($directorio) as $archivo) {
-                    $zip->addFile($archivo->getPathname(), "{$nombre}/" . $archivo->getFilename());
-                }
-                $zip->close();
-            } else {
-                // Si no se pudo crear el ZIP, lanzar excepción
-                File::deleteDirectory($directorio);
-                throw new \Exception('No se pudo crear el archivo ZIP. Verifica los permisos del directorio.');
-            }
-        } else {
-            File::deleteDirectory($directorio);
-            throw new \Exception('La extensión ZipArchive no está disponible en el servidor.');
-        }
-
-        // Verificar que el archivo ZIP se haya creado correctamente
-        if (!file_exists($zipPath)) {
-            throw new \Exception('El archivo ZIP no se creó correctamente.');
-        }
-
-        File::deleteDirectory($directorio);
-
-        return $zipPath;
-    }
-
-    /**
-     * Ejecuta un string SQL en la base de datos, sentencia por sentencia.
-     * Solo permite sentencias seguras para restauración de backups.
-     */
-    private function ejecutarSql(string $sql): void
-    {
-        $sentencias = array_filter(
-            array_map('trim', $this->dividirSql($sql)),
-            fn($s) => !empty($s) && !str_starts_with($s, '--')
-        );
-
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        foreach ($sentencias as $sentencia) {
-            if (!$this->esSentenciaSegura($sentencia)) {
-                throw new \Exception('Sentencia SQL no permitida detectada: ' . substr($sentencia, 0, 100));
-            }
-            DB::unprepared($sentencia);
-        }
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
-    }
-
-    /**
-     * Valida que la sentencia SQL sea segura para ejecutar.
-     * Solo permite sentencias generadas por el sistema de backup.
-     */
-    private function esSentenciaSegura(string $sentencia): bool
-    {
-        $sentenciaUpper = strtoupper(trim($sentencia));
-        
-        $patronesPermitidos = [
-            '/^SET\s+FOREIGN_KEY_CHECKS\s*=/i',
-            '/^DROP\s+TABLE\s+(IF\s+EXISTS\s+)?`?[a-zA-Z0-9_]+`?\s*/i',
-            '/^CREATE\s+TABLE\s+`?[a-zA-Z0-9_]+`?\s*\(/i',
-            '/^INSERT\s+INTO\s+`?[a-zA-Z0-9_]+`?\s*\(/i',
-            '/^LOCK\s+TABLES\s+/i',
-            '/^UNLOCK\s+TABLES/i',
-            '/^--\s/i',
-        ];
-        
-        foreach ($patronesPermitidos as $patron) {
-            if (preg_match($patron, $sentenciaUpper)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-
-    /**
-     * Divide un string SQL en sentencias individuales, respetando strings.
-     */
-    private function dividirSql(string $sql): array
-    {
-        $sentencias  = [];
-        $actual      = '';
-        $inString    = false;
-        $charString  = '';
-        $len         = strlen($sql);
-
-        for ($i = 0; $i < $len; $i++) {
-            $char = $sql[$i];
-
-            if ($inString) {
-                $actual .= $char;
-                if ($char === $charString && ($i === 0 || $sql[$i - 1] !== '\\')) {
-                    $inString = false;
-                }
-            } else {
-                if ($char === "'" || $char === '"') {
-                    $inString   = true;
-                    $charString = $char;
-                    $actual    .= $char;
-                } elseif ($char === ';') {
-                    $sentencias[] = trim($actual);
-                    $actual = '';
-                } else {
-                    $actual .= $char;
-                }
-            }
-        }
-
-        if (!empty(trim($actual))) {
-            $sentencias[] = trim($actual);
-        }
-
-        return $sentencias;
-    }
-
-    /**
-     * Busca recursivamente el primer archivo database.sql en un directorio.
-     */
-    private function buscarArchivoSql(string $directorio): ?string
-    {
-        foreach (File::allFiles($directorio) as $archivo) {
-            if ($archivo->getFilename() === 'database.sql') {
-                return $archivo->getPathname();
-            }
-        }
-        // Si no hay database.sql, aceptar cualquier .sql
-        foreach (File::allFiles($directorio) as $archivo) {
-            if ($archivo->getExtension() === 'sql') {
-                return $archivo->getPathname();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Calcula la fecha estimada del próximo backup automático.
-     */
-    private function calcularProximoBackup(): ?string
-    {
-        // El cron es "0 2 */10 * *" (cada 10 días a las 2:00 AM)
-        $hoy     = now();
-        $diaHoy  = (int) $hoy->format('j');
-        $diasMes = (int) $hoy->format('t');
-
-        // Próximo múltiplo de 10 en el mes
-        $proximoDia = (int) (ceil($diaHoy / 10) * 10);
-        if ($proximoDia > $diasMes || $proximoDia === $diaHoy) {
-            $proximoDia = 10; // Primero del siguiente ciclo
-            $fecha = $hoy->copy()->addMonthNoOverflow()->startOfMonth()->addDays($proximoDia - 1)->setTime(2, 0);
-        } else {
-            $fecha = $hoy->copy()->setDay($proximoDia)->setTime(2, 0);
-        }
-
-        return $fecha->format('d/m/Y \a \l\a\s H:i');
-    }
-
-    private function obtenerListaBackups(): array
-    {
-        $directorio = storage_path("app/backups");
-        $backups    = [];
-
-        if (!File::exists($directorio)) {
-            return $backups;
-        }
-
-        foreach (File::files($directorio) as $archivo) {
-            if ($archivo->getExtension() === 'zip') {
-                $nombre = $archivo->getFilenameWithoutExtension();
-                $backups[] = [
-                    'nombre'      => $nombre,
-                    'ruta'        => $archivo->getPathname(),
-                    'tamano'      => $archivo->getSize(),
-                    'fecha'       => \Carbon\Carbon::createFromTimestamp($archivo->getMTime()),
-                    'tipo'        => 'zip',
-                    'automatico'  => str_starts_with($nombre, 'auto_backup_'),
-                ];
-            }
-        }
-
-        // Carpetas legacy (sin ZIP)
-        foreach (File::directories($directorio) as $dir) {
-            $backups[] = [
-                'nombre'     => basename($dir),
-                'ruta'       => $dir,
-                'tamano'     => $this->calcularTamanoDirectorio($dir),
-                'fecha'      => \Carbon\Carbon::createFromTimestamp(File::lastModified($dir)),
-                'tipo'       => 'folder',
-                'automatico' => str_starts_with(basename($dir), 'auto_backup_'),
-            ];
-        }
-
-        usort($backups, fn($a, $b) => $b['fecha'] <=> $a['fecha']);
-
-        return $backups;
-    }
-
-    private function calcularTamanoDirectorio(string $directorio): int
-    {
-        $tamano = 0;
-        foreach (File::allFiles($directorio) as $archivo) {
-            $tamano += $archivo->getSize();
-        }
-        return $tamano;
-    }
-
-    private function formatearValores(array $registro, array $campos): string
-    {
-        $valores = [];
-        foreach ($campos as $campo) {
-            $valor = $registro[$campo];
-            if (is_null($valor)) {
-                $valores[] = 'NULL';
-            } elseif (is_numeric($valor) && !is_string($valor)) {
-                $valores[] = $valor;
-            } else {
-                $valores[] = "'" . str_replace("'", "''", (string) $valor) . "'";
-            }
-        }
-        return implode(', ', $valores);
     }
 }

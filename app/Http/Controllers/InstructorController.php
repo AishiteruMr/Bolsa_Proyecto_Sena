@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\EtapaEvent;
+use App\Events\EvidenciaEvent;
+use App\Events\PostulacionEvent;
+use App\Events\ProyectoEvent;
 use App\Http\Requests\ActualizarPerfilRequest;
 use App\Http\Requests\CalificarEvidenciaRequest;
 use App\Http\Requests\GestionarEtapaRequest;
@@ -479,6 +483,20 @@ class InstructorController extends Controller
             }
         }
 
+        $aprendiz = $postulacion->aprendiz()->with('usuario')->first();
+        if ($aprendiz?->usuario) {
+            event(new PostulacionEvent(
+                $aprendiz->usuario,
+                $estadoInput,
+                [
+                    'message' => "Postulación {$estadoInput}: {$postulacion->proyecto->titulo}",
+                    'proyecto' => $postulacion->proyecto->titulo,
+                    'usuario' => $aprendiz->nombres.' '.$aprendiz->apellidos,
+                    'url' => route('instructor.proyecto.detalle', $postulacion->proyecto_id),
+                ]
+            ));
+        }
+
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
@@ -526,6 +544,12 @@ class InstructorController extends Controller
             }
         }
 
+        event(new EtapaEvent('creada', [
+            'message' => "Nueva etapa creada: {$etapa->nombre}",
+            'proyecto' => $proyecto->titulo,
+            'etapa' => $etapa->nombre,
+        ]));
+
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
@@ -558,6 +582,13 @@ class InstructorController extends Controller
             'descripcion' => $request->descripcion,
         ]);
 
+        $etapa->load('proyecto');
+        event(new EtapaEvent('editada', [
+            'message' => "Etapa editada: {$etapa->nombre}",
+            'proyecto' => $etapa->proyecto->titulo ?? '',
+            'etapa' => $etapa->nombre,
+        ]));
+
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
@@ -584,7 +615,15 @@ class InstructorController extends Controller
                 $query->where('instructor_usuario_id', $usrId);
             })->firstOrFail();
 
+        $nombreEtapa = $etapa->nombre;
+        $nombreProyecto = $etapa->proyecto?->titulo ?? '';
         $etapa->delete();
+
+        event(new EtapaEvent('eliminada', [
+            'message' => "Etapa eliminada: {$nombreEtapa}",
+            'proyecto' => $nombreProyecto,
+            'etapa' => $nombreEtapa,
+        ]));
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
@@ -805,6 +844,22 @@ class InstructorController extends Controller
             Log::error('Error al notificar calificación de evidencia: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
         }
 
+        $evidencia->load(['aprendiz.usuario']);
+        $aprendizUsr = $evidencia->aprendiz->usuario ?? null;
+        if ($aprendizUsr) {
+            event(new EvidenciaEvent(
+                $aprendizUsr,
+                $estadoInput,
+                [
+                    'message' => "Evidencia {$estadoInput}: {$evidencia->proyecto->titulo}",
+                    'proyecto' => $evidencia->proyecto->titulo ?? '',
+                    'etapa' => $evidencia->etapa->nombre ?? '',
+                    'estado' => $estadoInput,
+                    'url' => route('instructor.evidencias.ver', $evidencia->proyecto_id),
+                ]
+            ));
+        }
+
         if ($request->ajax() || $request->wantsJson()) {
             $statusStyles = match($estadoInput) {
                 'aceptada' => ['bg' => '#f0fdf4', 'border' => '#10b981', 'color' => '#059669'],
@@ -867,6 +922,13 @@ class InstructorController extends Controller
             ['estado' => 'en_progreso']
         );
 
+        event(new ProyectoEvent('en_progreso', [
+            'message' => "Proyecto en progreso: {$proyecto->titulo}",
+            'proyecto' => $proyecto->titulo,
+            'empresa' => $proyecto->empresa?->nombre ?? '',
+            'url' => route('instructor.proyecto.detalle', $id),
+        ]));
+
         return redirect()->route('instructor.proyecto.detalle', $id)
             ->with('success', 'Proyecto iniciado exitosamente. Ahora los aprendices pueden ver las etapas y entregar evidencias.');
     }
@@ -898,6 +960,13 @@ class InstructorController extends Controller
                 ));
             }
         }
+
+        event(new ProyectoEvent('completado', [
+            'message' => "Proyecto completado: {$proyecto->titulo}",
+            'proyecto' => $proyecto->titulo,
+            'empresa' => $proyecto->empresa?->nombre ?? '',
+            'url' => route('admin.proyectos'),
+        ]));
 
         return redirect()->route('instructor.proyectos')
             ->with('success', 'Proyecto marcado como completado exitosamente.');

@@ -20,6 +20,10 @@
     <a href="{{ route('aprendiz.entregas') }}" class="nav-item {{ request()->routeIs('aprendiz.entregas') ? 'active' : '' }}">
         <i class="fas fa-tasks"></i> Mis Entregas
     </a>
+    <span class="nav-label">Comunicación</span>
+    <a href="{{ route('chat.index') }}" class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }}">
+        <i class="fas fa-comment-dots"></i> Mensajes
+    </a>
     <span class="nav-label">Cuenta</span>
     <a href="{{ route('aprendiz.perfil') }}" class="nav-item {{ request()->routeIs('aprendiz.perfil') ? 'active' : '' }}">
         <i class="fas fa-user"></i> Mi Perfil
@@ -363,6 +367,30 @@
                         <i class="fas fa-download" style="color: #64748b; font-size: 12px;"></i>
                     </a>
                 </div>
+            </div>
+
+            <!-- Comunicación -->
+            <div class="glass-card" style="padding: 20px;">
+                <h4 style="font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(139,92,246,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas fa-comment-dots" style="color: #8b5cf6; font-size: 13px;"></i>
+                    </div>
+                    Comunicación
+                </h4>
+                @if($proyecto->instructor)
+                <form action="{{ route('chat.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="proyecto_id" value="{{ $proyecto->id }}">
+                    <button type="submit" class="btn-premium" style="width:100%;justify-content:center;background:#8b5cf6;color:#fff;border:none;">
+                        <i class="fas fa-comment-dots"></i> Chat con Instructor
+                    </button>
+                </form>
+                @else
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; font-size: 12px; color: var(--text-light);">
+                        <i class="fas fa-user-clock" style="font-size: 14px;"></i>
+                        <span style="font-weight: 600;">Instructor no asignado aún</span>
+                    </div>
+                @endif
             </div>
 
             <!-- Cronograma -->

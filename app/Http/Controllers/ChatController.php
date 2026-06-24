@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\MessageSent;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -94,33 +95,63 @@ class ChatController extends Controller
 
         $proyecto = Proyecto::findOrFail($validated['proyecto_id']);
 
-        $existing = Conversation::where('proyecto_id', $proyecto->id)
-            ->whereHas('users', function ($q) use ($usrId) {
-                $q->where('user_id', $usrId);
-            })
-            ->first();
+        // Security: verify user is authorized for this project
+        if ($user->rol_id === User::ROL_APRENDIZ) {
+            $aprendiz = \App\Models\Aprendiz::where('usuario_id', $usrId)->first();
+            $accepted = $aprendiz && Postulacion::where('aprendiz_id', $aprendiz->id)
+                ->where('proyecto_id', $proyecto->id)
+                ->where('estado', 'aceptada')
+                ->exists();
+            if (!$accepted) {
+                abort(403);
+            }
+        } elseif ($user->rol_id === User::ROL_INSTRUCTOR) {
+            if ((int) $proyecto->instructor_usuario_id !== $usrId) {
+                abort(403);
+            }
+        } elseif ($user->rol_id === User::ROL_EMPRESA) {
+            if ($proyecto->empresa?->usuario_id !== $usrId) {
+                abort(403);
+            }
+        }
+
+        $existing = Conversation::where('proyecto_id', $proyecto->id)->first();
 
         if ($existing) {
+            if (!$existing->users()->where('user_id', $usrId)->exists()) {
+                $existing->users()->syncWithoutDetaching([$usrId]);
+            }
             return redirect()->route('chat.show', $existing->id);
         }
 
         $conversation = Conversation::create(['proyecto_id' => $proyecto->id]);
 
-        $empresaUser = $proyecto->empresa?->usuario;
+        $participantIds = [];
+
         $instructorUser = $proyecto->instructor?->usuario;
 
-        if ($empresaUser) {
-            $conversation->users()->attach($empresaUser->id);
-        }
         if ($instructorUser) {
-            $conversation->users()->attach($instructorUser->id);
+            $participantIds[] = $instructorUser->id;
         }
 
-        if ($user->rol_id === User::ROL_EMPRESA && $instructorUser) {
-            $conversation->users()->syncWithoutDetaching([$usrId]);
-        } elseif ($user->rol_id === User::ROL_INSTRUCTOR && $empresaUser) {
-            $conversation->users()->syncWithoutDetaching([$usrId]);
+        $acceptedApprentices = Postulacion::where('proyecto_id', $proyecto->id)
+            ->where('estado', 'aceptada')
+            ->with('aprendiz.usuario')
+            ->get();
+
+        foreach ($acceptedApprentices as $postulacion) {
+            if ($postulacion->aprendiz?->usuario) {
+                $participantIds[] = $postulacion->aprendiz->usuario->id;
+            }
         }
+
+        $participantIds = array_unique($participantIds);
+
+        if (!in_array($usrId, $participantIds)) {
+            $participantIds[] = $usrId;
+        }
+
+        $conversation->users()->attach($participantIds);
 
         return redirect()->route('chat.show', $conversation->id);
     }

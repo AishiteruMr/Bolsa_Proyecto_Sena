@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostulacionEvent;
+use App\Events\ProyectoEvent;
 use App\Http\Requests\ActualizarPerfilRequest;
 use App\Http\Requests\GestionarPostulacionRequest;
 use App\Http\Requests\GestionarProyectoRequest;
@@ -185,6 +187,13 @@ class EmpresaController extends Controller
 
         AuditLog::registrar(session('usr_id'), 'publicar', 'proyectos', 'proyectos', $proyecto->id, null, ['nombre_objetivo' => $proyecto->titulo, 'empresa' => $empresa->nombre], "La empresa {$empresa->nombre} ha publicado un nuevo proyecto: {$proyecto->titulo}. Está pendiente de revisión administrativa.");
 
+        event(new ProyectoEvent('creado', [
+            'message' => "Nuevo proyecto creado: {$proyecto->titulo}",
+            'proyecto' => $proyecto->titulo,
+            'empresa' => $empresa->nombre,
+            'url' => route('admin.proyectos.revisar', $proyecto->id),
+        ]));
+
         return redirect()->route('empresa.proyectos')->with('success', 'Proyecto enviado para revisión.');
     }
 
@@ -341,6 +350,13 @@ class EmpresaController extends Controller
             array_merge($datos, ['nombre_objetivo' => $proyecto->titulo, 'empresa' => $empresa?->nombre]),
             "La empresa {$empresa?->nombre} ha actualizado la información del proyecto «{$proyecto->titulo}»."
         );
+
+        event(new ProyectoEvent('editado', [
+            'message' => "Proyecto actualizado: {$proyecto->titulo}",
+            'proyecto' => $proyecto->titulo,
+            'empresa' => $empresa?->nombre ?? 'Empresa',
+            'url' => route('proyectos.show', $proyecto->id),
+        ]));
 
         return redirect()->route('empresa.proyectos')->with('success', 'Proyecto actualizado.');
     }
@@ -530,6 +546,19 @@ class EmpresaController extends Controller
             }
         } catch (\Exception $e) {
             Log::error('Error enviando email de estado postulación: '.$e->getMessage());
+        }
+
+        if ($aprendiz?->usuario) {
+            event(new PostulacionEvent(
+                $aprendiz->usuario,
+                $estadoInput,
+                [
+                    'message' => "Postulación {$estadoInput}: {$postulacion->proyecto->titulo}",
+                    'proyecto' => $postulacion->proyecto->titulo,
+                    'usuario' => trim(($aprendiz->nombres ?? '').' '.($aprendiz->apellidos ?? '')),
+                    'url' => route('empresa.proyectos.postulantes', $postulacion->proyecto_id),
+                ]
+            ));
         }
 
         if ($request->ajax() || $request->wantsJson()) {

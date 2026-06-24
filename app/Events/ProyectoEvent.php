@@ -36,6 +36,20 @@ class ProyectoEvent implements ShouldBroadcast
                 $channels[] = new PrivateChannel('role.admin');
                 $channels[] = new PrivateChannel('role.aprendiz');
                 $channels[] = new PrivateChannel('role.instructor');
+                $channels[] = new PrivateChannel('role.empresa');
+                break;
+            case 'rechazado':
+                $channels[] = new PrivateChannel('role.admin');
+                $channels[] = new PrivateChannel('role.empresa');
+                break;
+            case 'asignado':
+                $channels[] = new PrivateChannel('role.admin');
+                $channels[] = new PrivateChannel('role.instructor');
+                $channels[] = new PrivateChannel('role.empresa');
+                break;
+            case 'editado':
+                $channels[] = new PrivateChannel('role.admin');
+                $channels[] = new PrivateChannel('role.empresa');
                 break;
             case 'en_progreso':
                 $channels[] = new PrivateChannel('role.instructor');
@@ -67,6 +81,7 @@ class ProyectoEvent implements ShouldBroadcast
             'message' => $this->data['message'] ?? '',
             'proyecto' => $this->data['proyecto'] ?? '',
             'empresa' => $this->data['empresa'] ?? '',
+            'instructor' => $this->data['instructor'] ?? '',
             'url' => $this->data['url'] ?? null,
             'timestamp' => now()->toIso8601String(),
         ];

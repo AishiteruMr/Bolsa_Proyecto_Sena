@@ -44,7 +44,7 @@ window.addNotificationToast = function(data) {
     const toast = document.createElement('div');
     toast.className = 'notification-toast';
     toast.innerHTML = `
-        <div class="toast-icon"><i class="fas ${data.icon || 'fa-bell'}"></i></div>
+        <div class="toast-icon"><i class="fas ${data.icono || 'fa-bell'}"></i></div>
         <div class="toast-content">
             <div class="toast-title">${data.titulo}</div>
             <div class="toast-message">${data.mensaje}</div>

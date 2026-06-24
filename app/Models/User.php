@@ -83,7 +83,7 @@ class User extends Authenticatable implements MustVerifyEmail
             self::ROL_APRENDIZ => $this->aprendiz?->nombres ?? '',
             self::ROL_INSTRUCTOR => $this->instructor?->nombres ?? '',
             self::ROL_ADMIN => $this->administrador?->nombres ?? '',
-            self::ROL_EMPRESA => $this->empresa?->nombre ?? '',
+            self::ROL_EMPRESA => ($this->empresa ?? $this->empresa()->withTrashed()->first())?->nombre ?? '',
             default => '',
         };
     }
@@ -106,6 +106,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function empresa(): HasOne
     {
         return $this->hasOne(Empresa::class, 'usuario_id', 'id');
+    }
+
+    public function receivesBroadcastNotificationsOn(): string
+    {
+        return 'user.'.$this->id;
     }
 
     public function isActivo(): bool

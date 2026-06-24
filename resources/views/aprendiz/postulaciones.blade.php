@@ -20,6 +20,10 @@
     <a href="{{ route('aprendiz.entregas') }}" class="nav-item {{ request()->routeIs('aprendiz.entregas') ? 'active' : '' }}">
         <i class="fas fa-tasks"></i> <span>Mis Entregas</span>
     </a>
+    <span class="nav-label">Comunicación</span>
+    <a href="{{ route('chat.index') }}" class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }}">
+        <i class="fas fa-comment-dots"></i> <span>Mensajes</span>
+    </a>
     <span class="nav-label">Cuenta</span>
     <a href="{{ route('aprendiz.perfil') }}" class="nav-item {{ request()->routeIs('aprendiz.perfil') ? 'active' : '' }}">
         <i class="fas fa-user"></i> <span>Mi Perfil</span>

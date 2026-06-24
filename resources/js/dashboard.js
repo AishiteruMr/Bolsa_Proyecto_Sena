@@ -1,3 +1,5 @@
+import './ajax';
+
 /**
  * Dashboard & Global UI Utilities
  */

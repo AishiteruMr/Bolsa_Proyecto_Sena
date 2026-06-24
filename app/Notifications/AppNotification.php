@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Events\NotificacionEnviada;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
 class AppNotification extends Notification
@@ -28,12 +28,12 @@ class AppNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
     public function toDatabase(object $notifiable): array
     {
-        $data = [
+        return [
             'titulo' => $this->titulo,
             'mensaje' => $this->mensaje,
             'icono' => $this->icono,
@@ -41,11 +41,17 @@ class AppNotification extends Notification
             'notificacion_id' => uniqid(),
             'created_at' => now()->toIso8601String(),
         ];
+    }
 
-        if (config('broadcasting.default') === 'pusher') {
-            event(new NotificacionEnviada($notifiable, $data));
-        }
-
-        return $data;
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'titulo' => $this->titulo,
+            'mensaje' => $this->mensaje,
+            'icono' => $this->icono,
+            'url' => $this->url,
+            'notificacion_id' => uniqid(),
+            'created_at' => now()->toIso8601String(),
+        ]);
     }
 }

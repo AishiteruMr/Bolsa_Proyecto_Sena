@@ -158,6 +158,44 @@ document.addEventListener('DOMContentLoaded', () => {
         // Remove empty state
         const emptyState = msgContainer.querySelector('.chat-empty-state');
         if (emptyState) emptyState.remove();
+
+        // ── POLLING: fetch new messages every 5s as fallback ──────
+        let lastMessageId = 0;
+        const existingMsgs = msgContainer.querySelectorAll('.chat-msg');
+        if (existingMsgs.length > 0) {
+            lastMessageId = parseInt(existingMsgs[existingMsgs.length - 1].dataset.id) || 0;
+        }
+
+        setInterval(async () => {
+            if (!convId) return;
+            try {
+                const res = await fetch(`/chat/${convId}/poll?after_id=${lastMessageId}`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!res.ok) return;
+                const messages = await res.json();
+                if (!messages || messages.length === 0) return;
+
+                let hasNew = false;
+                messages.forEach(data => {
+                    if (document.querySelector(`.chat-msg[data-id="${data.id}"]`)) return;
+                    if (data.sender.id === usrId) {
+                        appendOwnMessage(data, usrId);
+                    } else {
+                        appendReceivedMessage(data);
+                        markConversationRead(convId);
+                    }
+                    lastMessageId = Math.max(lastMessageId, data.id);
+                    hasNew = true;
+                });
+
+                if (hasNew) {
+                    msgContainer.scrollTop = msgContainer.scrollHeight;
+                    updateSidebarConv(convId, messages[messages.length - 1].message, messages[messages.length - 1].created_at);
+                    updateGlobalBadge();
+                }
+            } catch (e) {}
+        }, 5000);
     }
 
     // ── SIDEBAR BADGE & GLOBAL ECHO LISTENER ────────────────
@@ -228,8 +266,10 @@ document.addEventListener('DOMContentLoaded', () => {
         div.dataset.id = data.id;
         div.dataset.convId = data.conversation_id;
         const time = data.created_at || (data.created_at_iso ? new Date(data.created_at_iso).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '');
+        const senderName = data.sender.name || data.sender.rol || 'Usuario';
+        const senderRole = data.sender.rol ? `<span style="font-weight:600;font-size:10px;color:var(--text-lighter);margin-left:4px;">(${escapeHtml(data.sender.rol)})</span>` : '';
         div.innerHTML = `
-            <div style="font-size:11px;font-weight:700;color:#3eb489;margin-bottom:4px;">${escapeHtml(data.sender.name)}</div>
+            <div style="font-size:11px;font-weight:700;color:#3eb489;margin-bottom:4px;">${escapeHtml(senderName)} ${senderRole}</div>
             <div>${escapeHtml(data.message).replace(/\n/g, '<br>')}</div>
             <span class="chat-msg-time">${time}</span>
         `;

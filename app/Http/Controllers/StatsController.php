@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Aprendiz;
 use App\Models\Empresa;
+use App\Models\Evidencia;
 use App\Models\Instructor;
 use App\Models\Postulacion;
 use App\Models\Proyecto;
@@ -107,12 +108,17 @@ class StatsController extends Controller
         $proyectosData = [];
         $postulacionesData = [];
         $usuariosData = [];
+        $aprendicesData = [];
+        $empresasData = [];
         $periodo = $fechaInicio->copy();
         while ($periodo <= $fechaFin) {
             $meses[] = $periodo->format('M Y');
             $proyectosData[] = Proyecto::whereYear('created_at', $periodo->year)->whereMonth('created_at', $periodo->month)->count();
             $postulacionesData[] = Postulacion::whereYear('created_at', $periodo->year)->whereMonth('created_at', $periodo->month)->count();
-            $usuariosData[] = User::whereYear('created_at', $periodo->year)->whereMonth('created_at', $periodo->month)->count();
+            $usersInMonth = User::whereYear('created_at', $periodo->year)->whereMonth('created_at', $periodo->month);
+            $usuariosData[] = (clone $usersInMonth)->count();
+            $aprendicesData[] = (clone $usersInMonth)->whereHas('aprendiz')->count();
+            $empresasData[] = (clone $usersInMonth)->whereHas('empresa')->count();
             $periodo->addMonth();
         }
 
@@ -121,12 +127,28 @@ class StatsController extends Controller
             'proyectos_mensuales' => ['labels' => $meses, 'data' => $proyectosData],
             'postulaciones_mensuales' => ['labels' => $meses, 'data' => $postulacionesData],
             'usuarios_mensuales' => ['labels' => $meses, 'data' => $usuariosData],
+            'registro_mensual_detalle' => [
+                'labels' => $meses,
+                'aprendices' => $aprendicesData,
+                'empresas' => $empresasData,
+            ],
             'proyectos_por_estado' => $this->getProyectosPorEstado(),
             'postulaciones_funnel' => $this->getPostulacionesFunnel(),
             'tasa_exito' => $this->getTasaExitoProyectos(),
-            'predicciones' => $this->getPredicciones(),
+            'predicciones' => $this->getPredicciones('proyectos'),
+            'predicciones_postulaciones' => $this->getPredicciones('postulaciones'),
+            'predicciones_usuarios' => $this->getPredicciones('usuarios'),
             'top_empresas' => $this->getRankingEmpresas(),
             'instructores_carga' => $this->getInstructoresCarga(),
+            'empresas_compromiso' => $this->getEmpresasCompromiso(),
+            'ofertas_distribucion' => $this->getOfertasDistribucion(),
+            'tendencias' => $this->getTendencias(),
+            'programas_distribucion' => $this->getProgramasDistribucion(),
+            'calidad_proyectos' => $this->getCalidadProyectos(),
+            'categorias_rendimiento' => $this->getCategoriasRendimiento(),
+            'duracion_promedio' => $this->getDuracionPromedio(),
+            'evidencias_stats' => $this->getEvidenciasStats(),
+            'metricas_globales' => $this->getMetricasGlobales(),
         ], 200);
     }
 
@@ -377,21 +399,29 @@ class StatsController extends Controller
         ];
     }
 
-    private function getPredicciones(): array
+    private function getPredicciones(string $modelo = 'proyectos'): array
     {
         $meses = [];
         $data = [];
+
+        $query = match ($modelo) {
+            'proyectos' => Proyecto::class,
+            'postulaciones' => Postulacion::class,
+            'usuarios' => User::class,
+            default => Proyecto::class,
+        };
+
         for ($i = 5; $i >= 0; $i--) {
             $fecha = now()->subMonths($i);
             $meses[] = $fecha->format('M Y');
-            $data[] = Proyecto::whereYear('created_at', $fecha->year)
+            $data[] = $query::whereYear('created_at', $fecha->year)
                 ->whereMonth('created_at', $fecha->month)
                 ->count();
         }
 
         $n = count($data);
         if ($n < 2) {
-            return ['historico' => $data, 'predicciones' => [], 'labels_meses' => $meses, 'labels_pred' => [], 'tendencia' => 'estable', 'pendiente' => 0];
+            return ['historico' => $data, 'predicciones' => [], 'labels_meses' => $meses, 'labels_pred' => [], 'tendencia' => 'estable', 'pendiente' => 0, 'promedio_mensual' => 0, 'proyectado_anual' => 0];
         }
 
         $x = range(0, $n - 1);
@@ -417,6 +447,7 @@ class StatsController extends Controller
         $proyectado12 = (int) round($avgMonthly * 12);
 
         return [
+            'modelo' => $modelo,
             'historico' => $data,
             'predicciones' => $predicciones,
             'labels_meses' => $meses,
@@ -425,6 +456,142 @@ class StatsController extends Controller
             'pendiente' => round($slope, 2),
             'promedio_mensual' => round($avgMonthly, 1),
             'proyectado_anual' => $proyectado12,
+        ];
+    }
+
+    private function getProgramasDistribucion(): array
+    {
+        return Aprendiz::select('programa_formacion')
+            ->whereNotNull('programa_formacion')
+            ->groupBy('programa_formacion')
+            ->selectRaw('programa_formacion, COUNT(*) as total')
+            ->orderByDesc('total')
+            ->limit(10)
+            ->get()
+            ->map(function ($item) {
+                $label = strlen($item->programa_formacion) > 30
+                    ? substr($item->programa_formacion, 0, 28) . '..'
+                    : $item->programa_formacion;
+                return ['label' => $label, 'total' => (int) $item->total];
+            })->toArray();
+    }
+
+    private function getCalidadProyectos(): array
+    {
+        $rangos = ['0-25' => 0, '26-50' => 0, '51-75' => 0, '76-90' => 0, '91-100' => 0];
+        $proyectos = Proyecto::whereNotNull('titulo')->get();
+
+        foreach ($proyectos as $p) {
+            try {
+                $calidad = $p->calidadProyecto();
+                $pct = $calidad['porcentaje'] ?? 0;
+                if ($pct <= 25) $rangos['0-25']++;
+                elseif ($pct <= 50) $rangos['26-50']++;
+                elseif ($pct <= 75) $rangos['51-75']++;
+                elseif ($pct <= 90) $rangos['76-90']++;
+                else $rangos['91-100']++;
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        return [
+            'labels' => array_keys($rangos),
+            'data' => array_values($rangos),
+        ];
+    }
+
+    private function getCategoriasRendimiento(): array
+    {
+        $categorias = Proyecto::select('categoria')
+            ->whereNotNull('categoria')
+            ->groupBy('categoria')
+            ->selectRaw('categoria, COUNT(*) as total')
+            ->selectRaw('SUM(CASE WHEN estado = "completado" THEN 1 ELSE 0 END) as completados')
+            ->selectRaw('SUM(CASE WHEN estado = "rechazado" THEN 1 ELSE 0 END) as rechazados')
+            ->selectRaw('SUM(CASE WHEN estado IN ("aprobado","en_progreso") THEN 1 ELSE 0 END) as activos')
+            ->orderByDesc('total')
+            ->limit(8)
+            ->get()
+            ->map(function ($item) {
+                $total = max((int) $item->total, 1);
+                return [
+                    'categoria' => ucfirst($item->categoria),
+                    'total' => (int) $item->total,
+                    'completados' => (int) $item->completados,
+                    'rechazados' => (int) $item->rechazados,
+                    'activos' => (int) $item->activos,
+                    'tasa_exito' => round(((int) $item->completados / $total) * 100, 1),
+                ];
+            })->toArray();
+
+        return $categorias;
+    }
+
+    private function getDuracionPromedio(): array
+    {
+        $promedio = Proyecto::whereNotNull('duracion_estimada_dias')
+            ->where('duracion_estimada_dias', '>', 0)
+            ->avg('duracion_estimada_dias');
+
+        $minimo = Proyecto::whereNotNull('duracion_estimada_dias')
+            ->where('duracion_estimada_dias', '>', 0)
+            ->min('duracion_estimada_dias');
+
+        $maximo = Proyecto::whereNotNull('duracion_estimada_dias')
+            ->where('duracion_estimada_dias', '>', 0)
+            ->max('duracion_estimada_dias');
+
+        $conDuracion = Proyecto::whereNotNull('duracion_estimada_dias')
+            ->where('duracion_estimada_dias', '>', 0)
+            ->count();
+
+        $sinDuracion = Proyecto::count() - $conDuracion;
+
+        return [
+            'promedio_dias' => round((float) $promedio),
+            'minimo_dias' => (int) $minimo,
+            'maximo_dias' => (int) $maximo,
+            'con_duracion' => $conDuracion,
+            'sin_duracion' => $sinDuracion,
+        ];
+    }
+
+    private function getEvidenciasStats(): array
+    {
+        return [
+            'pendientes' => Evidencia::where('estado', 'pendiente')->count(),
+            'aceptadas' => Evidencia::where('estado', 'aceptada')->count(),
+            'rechazadas' => Evidencia::where('estado', 'rechazada')->count(),
+            'total' => Evidencia::count(),
+        ];
+    }
+
+    private function getMetricasGlobales(): array
+    {
+        $totalProyectos = max(Proyecto::count(), 1);
+        $completados = Proyecto::where('estado', 'completado')->count();
+        $activos = Proyecto::whereIn('estado', ['aprobado', 'en_progreso'])->count();
+
+        $postulacionesTotal = max(Postulacion::count(), 1);
+        $postulacionesAceptadas = Postulacion::where('estado', 'aceptada')->count();
+
+        $puntaje = 0;
+        $puntaje += ($completados / $totalProyectos) * 30;
+        $puntaje += ($activos / $totalProyectos) * 25;
+        $puntaje += ($postulacionesAceptadas / $postulacionesTotal) * 25;
+        $puntaje += (Empresa::where('activo', 1)->count() / max(Empresa::count(), 1)) * 20;
+
+        $nivel = $puntaje >= 80 ? 'excelente' : ($puntaje >= 60 ? 'bueno' : ($puntaje >= 40 ? 'regular' : 'critico'));
+
+        return [
+            'puntaje' => round($puntaje),
+            'nivel' => $nivel,
+            'completados' => $completados,
+            'activos' => $activos,
+            'total_proyectos' => $totalProyectos,
+            'tasa_completados' => round(($completados / $totalProyectos) * 100, 1),
+            'tasa_actividad' => round(($activos / $totalProyectos) * 100, 1),
         ];
     }
 }

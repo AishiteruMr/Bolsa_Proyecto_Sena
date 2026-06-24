@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NuevoUsuarioEvent;
 use App\Http\Requests\RegistroAprendizRequest;
 use App\Http\Requests\RegistroEmpresaRequest;
 use App\Http\Requests\RegistroInstructorRequest;
@@ -209,6 +210,12 @@ class AuthController extends Controller
             if ($resultado) {
                 $nombreCompleto = strip_tags(trim($request->nombre)).' '.strip_tags(trim($request->apellido));
                 AuditLog::registrar($resultado, 'crear', 'usuarios', 'aprendices', $resultado, null, ['nombre_objetivo' => $nombreCompleto, 'tipo' => 'aprendiz'], "Se ha registrado un nuevo aprendiz en el sistema: {$nombreCompleto}. Su cuenta está pendiente de activación por un administrador.");
+                event(new NuevoUsuarioEvent('registrado', [
+                    'message' => "Nuevo aprendiz registrado: {$nombreCompleto}",
+                    'usuario' => $nombreCompleto,
+                    'rol' => 'aprendiz',
+                    'url' => route('admin.usuarios'),
+                ]));
                 return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta.');
             }
 
@@ -254,6 +261,12 @@ class AuthController extends Controller
             if ($resultado) {
                 $nombreCompleto = strip_tags(trim($request->nombre)).' '.strip_tags(trim($request->apellido));
                 AuditLog::registrar($resultado, 'crear', 'usuarios', 'instructores', $resultado, null, ['nombre_objetivo' => $nombreCompleto, 'tipo' => 'instructor'], "Se ha registrado un nuevo instructor en el sistema: {$nombreCompleto}. Su cuenta está pendiente de activación por un administrador.");
+                event(new NuevoUsuarioEvent('registrado', [
+                    'message' => "Nuevo instructor registrado: {$nombreCompleto}",
+                    'usuario' => $nombreCompleto,
+                    'rol' => 'instructor',
+                    'url' => route('admin.usuarios'),
+                ]));
                 return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta.');
             }
 
@@ -299,6 +312,12 @@ class AuthController extends Controller
             if ($resultado) {
                 $nombreEmpresa = strip_tags(trim($request->nombre_empresa));
                 AuditLog::registrar($resultado, 'crear', 'usuarios', 'empresas', $resultado, null, ['nombre_objetivo' => $nombreEmpresa, 'tipo' => 'empresa'], "Se ha registrado una nueva empresa en el sistema: {$nombreEmpresa}. Su cuenta está pendiente de activación por un administrador.");
+                event(new NuevoUsuarioEvent('registrado', [
+                    'message' => "Nueva empresa registrada: {$nombreEmpresa}",
+                    'usuario' => $nombreEmpresa,
+                    'rol' => 'empresa',
+                    'url' => route('admin.usuarios'),
+                ]));
                 return redirect()->route('login')->with('success', 'Registro exitoso. Un administrador activará tu cuenta.');
             }
 
