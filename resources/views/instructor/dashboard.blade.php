@@ -17,6 +17,10 @@
     <a href="{{ route('instructor.aprendices') }}" class="nav-item {{ request()->routeIs('instructor.aprendices') ? 'active' : '' }}">
         <i class="fas fa-users"></i> Aprendices
     </a>
+    <span class="nav-label">Comunicación</span>
+    <a href="{{ route('chat.index') }}" class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }}">
+        <i class="fas fa-comment-dots"></i> Mensajes
+    </a>
     <span class="nav-label">Cuenta</span>
     <a href="{{ route('instructor.perfil') }}" class="nav-item {{ request()->routeIs('instructor.perfil') ? 'active' : '' }}">
         <i class="fas fa-user-circle"></i> Perfil

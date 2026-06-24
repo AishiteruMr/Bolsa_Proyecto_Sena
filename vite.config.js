@@ -17,6 +17,7 @@ export default defineConfig({
                 'resources/js/forms.js',
                 'resources/js/login.js',
                 'resources/js/maps.js',
+                'resources/js/chat.js',
                 'resources/css/app.css',
                 'resources/css/admin.css',
                 'resources/css/aprendiz.css',
@@ -30,7 +31,8 @@ export default defineConfig({
                 'resources/css/nosotros.css',
                 'resources/css/register.css',
                 'resources/css/notificaciones.css',
-                'resources/css/soporte.css'
+                'resources/css/soporte.css',
+                'resources/css/chat.css'
             ],
             refresh: true,
         }),

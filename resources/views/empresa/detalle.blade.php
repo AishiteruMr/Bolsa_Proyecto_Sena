@@ -223,6 +223,15 @@
 
         <!-- Actions -->
         <div style="display: flex; flex-direction: column; gap: 12px;">
+            @if($proyecto->instructor)
+            <form action="{{ route('chat.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="proyecto_id" value="{{ $proyecto->id }}">
+                <button type="submit" class="btn-premium" style="width:100%;justify-content:center;background:#8b5cf6;padding:14px 20px;">
+                    <i class="fas fa-comment-dots"></i> Chat con Instructor
+                </button>
+            </form>
+            @endif
             <a href="{{ route('empresa.proyectos.edit', $proyecto->id) }}" class="btn-premium" style="justify-content: center; background: #3b82f6; padding: 14px 20px;">
                 <i class="fas fa-edit"></i> Editar Proyecto
             </a>

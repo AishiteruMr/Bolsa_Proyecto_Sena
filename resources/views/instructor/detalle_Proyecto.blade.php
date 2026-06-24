@@ -439,6 +439,15 @@
         <div class="instructor-sidebar-card">
             <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 1.25rem;">Suite de Seguimiento</h4>
             <div style="display: flex; flex-direction: column; gap: 12px;">
+                @if($proyecto->empresa)
+                <form action="{{ route('chat.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="proyecto_id" value="{{ $proyecto->id }}">
+                    <button type="submit" class="btn-premium" style="width:100%;justify-content:center;background:#8b5cf6;color:#fff;border:none;">
+                        <i class="fas fa-comment-dots"></i> Chat con Empresa
+                    </button>
+                </form>
+                @endif
                 <a href="{{ route('instructor.reporte', $proyecto->id) }}" class="btn-premium" style="justify-content: center;">
                     <i class="fas fa-chart-bar"></i> Dashboard de Métricas
                 </a>
