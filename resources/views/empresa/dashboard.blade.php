@@ -14,6 +14,10 @@
     <a href="{{ route('empresa.proyectos.crear') }}" class="nav-item {{ request()->routeIs('empresa.proyectos.crear') ? 'active' : '' }}">
         <i class="fas fa-plus-circle"></i> Publicar Proyecto
     </a>
+    <span class="nav-label">Comunicación</span>
+    <a href="{{ route('chat.index') }}" class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }}">
+        <i class="fas fa-comment-dots"></i> Mensajes
+    </a>
     <span class="nav-label">Configuración</span>
     <a href="{{ route('empresa.perfil') }}" class="nav-item {{ request()->routeIs('empresa.perfil') ? 'active' : '' }}">
         <i class="fas fa-building"></i> Perfil Empresa

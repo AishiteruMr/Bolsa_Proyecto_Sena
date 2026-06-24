@@ -214,7 +214,7 @@
         <div class="form-container">
             <h2>Envía tu consulta</h2>
             <p class="form-subtitle">Estaremos encantados de ayudarte, respetamos tu tiempo.</p>
-            <form action="{{ route('soporte.enviar') }}" method="POST">
+            <form id="form-soporte-ajax" action="{{ route('soporte.enviar') }}" method="POST">
                 @csrf
                 <div class="form-group">
                     <label for="nombre">Nombre completo</label>
@@ -250,7 +250,7 @@
                         <textarea id="mensaje" name="mensaje" class="form-control" placeholder="Describe detalladamente tu situación. Incluye toda la información relevante para que podamos ayudarte mejor." rows="6" required></textarea>
                     </div>
                 </div>
-                <button type="submit" class="form-submit">
+                <button type="submit" class="form-submit" id="btn-soporte-enviar">
                     Enviar solicitud <i class="fas fa-paper-plane"></i>
                 </button>
             </form>
@@ -300,5 +300,19 @@
             icon.className = 'fas fa-chevron-up';
         }
     }
+
+    document.getElementById('form-soporte-ajax').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-soporte-enviar');
+        ajax.disableButton(btn, 'Enviando...');
+        ajax.post(this.action, new FormData(this)).then(res => {
+            ajax.showToast('success', res.data.message);
+            this.reset();
+            ajax.enableButton(btn);
+        }).catch(err => {
+            ajax.enableButton(btn);
+            ajax.showToast('error', err.response?.data?.message || 'Error al enviar mensaje.');
+        });
+    });
 </script>
 @endsection

@@ -25,7 +25,7 @@
             </div>
         </div>
         <div style="display: flex; gap: 12px; align-items: center;">
-            <div style="background: {{ $calidad['puede_publicarse'] ? '#f0fdf4' : '#fef2f2' }}; border: 2px solid {{ $calidad['puede_publicarse'] ? '#22c55e' : '#ef4444' }}; border-radius: 12px; padding: 8px 16px;">
+            <div id="apto-badge" style="background: {{ $calidad['puede_publicarse'] ? '#f0fdf4' : '#fef2f2' }}; border: 2px solid {{ $calidad['puede_publicarse'] ? '#22c55e' : '#ef4444' }}; border-radius: 12px; padding: 8px 16px;">
                 <span style="font-weight: 800; font-size: 13px; color: {{ $calidad['puede_publicarse'] ? '#16a34a' : '#dc2626' }};">
                     <i class="fas {{ $calidad['puede_publicarse'] ? 'fa-check-circle' : 'fa-exclamation-triangle' }}"></i>
                     {{ $calidad['puede_publicarse'] ? 'APTO PARA PUBLICAR' : 'NO APTO' }}
@@ -42,7 +42,7 @@
                     default => ['bg' => '#64748b', 'border' => '#e2e8f0', 'icon' => 'fa-info-circle'],
                 };
             @endphp
-            <span style="background: {{ $statusStyles['bg'] }}; border: 2px solid {{ $statusStyles['border'] }}; color: #ffffff; padding: 8px 16px; font-weight: 800; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px;">
+            <span id="estado-badge-header" style="background: {{ $statusStyles['bg'] }}; border: 2px solid {{ $statusStyles['border'] }}; color: #ffffff; padding: 8px 16px; font-weight: 800; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px;">
                 <i class="fas {{ $statusStyles['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $proyecto->estado)) }}
             </span>
         </div>
@@ -149,7 +149,7 @@
             </div>
         </div>
 
-        <div class="admin-review-sidebar">
+        <div id="admin-sidebar-veredicto" class="admin-review-sidebar">
             <div class="glass-card" style="padding: 24px; background: #fff;">
                 <h3 style="font-size: 14px; font-weight: 800; color: var(--text); text-transform: uppercase; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-shield-halved" style="color: var(--primary);"></i> Evaluación de Viabilidad
@@ -289,24 +289,16 @@
                     </div>
                 @endif
                 
-                <div style="display: grid; gap: 12px;">
+                <div id="veredicto-acciones" style="display: grid; gap: 12px;">
                     @if($proyecto->estado == 'pendiente')
                         @if($calidad['puede_publicarse'])
-                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="estado" value="aprobado">
-                            <button type="submit" class="btn-premium" style="width: 100%; background: #22c55e; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);">
-                                <i class="fas fa-flag-checkered" style="margin-right: 10px;"></i> Publicar Proyecto
-                            </button>
-                        </form>
+                        <button type="button" class="btn-premium btn-veredicto-ajax" data-estado="aprobado" data-url="{{ route('admin.proyectos.estado', $proyecto->id) }}" data-confirm-text="" style="width: 100%; background: #22c55e; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);">
+                            <i class="fas fa-flag-checkered" style="margin-right: 10px;"></i> Publicar Proyecto
+                        </button>
                         @endif
-                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de rechazar este proyecto? Esta acción no se puede deshacer.');">
-                            @csrf
-                            <input type="hidden" name="estado" value="rechazado">
-                            <button type="submit" class="btn-premium" style="width: 100%; background: #ef4444; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
-                                <i class="fas fa-ban" style="margin-right: 10px;"></i> Rechazar Proyecto
-                            </button>
-                        </form>
+                        <button type="button" class="btn-premium btn-veredicto-ajax" data-estado="rechazado" data-url="{{ route('admin.proyectos.estado', $proyecto->id) }}" data-confirm-text="¿Estás seguro de rechazar este proyecto? Esta acción no se puede deshacer." style="width: 100%; background: #ef4444; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
+                            <i class="fas fa-ban" style="margin-right: 10px;"></i> Rechazar Proyecto
+                        </button>
                     @elseif($proyecto->estado == 'aprobado')
                         @if($proyecto->instructor_usuario_id)
                             <div style="background: rgba(59,130,246,0.2); border: 1px solid rgba(59,130,246,0.4); border-radius: 12px; padding: 16px; margin-bottom: 8px; text-align: center;">
@@ -315,45 +307,32 @@
                                 <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px;">El instructor decidirá cuándo <strong>iniciar</strong> el proyecto manualmente.</div>
                             </div>
                         @else
-                            <form action="{{ route('admin.proyectos.asignar', $proyecto->id) }}" method="POST">
-                                @csrf
+                            <div id="form-asignar-instructor">
                                 <div style="margin-bottom: 12px;">
                                     <label style="display: block; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Asignar Instructor</label>
-                                    <select name="instructor_usuario_id" required style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 14px; font-weight: 600; outline: none;">
+                                    <select id="select-instructor" required style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 14px; font-weight: 600; outline: none;">
                                         <option value="" disabled selected>Seleccione un instructor...</option>
                                         @foreach($instructores as $instructor)
                                             <option value="{{ $instructor->id }}" style="color: #000;">{{ $instructor->instructor->nombres }} {{ $instructor->instructor->apellidos }} - {{ $instructor->instructor->especialidad }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <button type="submit" class="btn-premium" style="width: 100%; background: #3b82f6; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(59,130,246,0.4);">
+                                <button type="button" class="btn-premium btn-asignar-instructor" data-url="{{ route('admin.proyectos.asignar', $proyecto->id) }}" style="width: 100%; background: #3b82f6; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(59,130,246,0.4);">
                                     <i class="fas fa-user-plus" style="margin-right: 10px;"></i> Asignar e Iniciar Proyecto
                                 </button>
-                            </form>
+                            </div>
                         @endif
                     @elseif($proyecto->estado == 'en_progreso')
-                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Marcar como completado? Esto indica que el proyecto ha finalizado exitosamente.');">
-                            @csrf
-                            <input type="hidden" name="estado" value="completado">
-                            <button type="submit" class="btn-premium" style="width: 100%; background: #065f46; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(6,95,70,0.4);">
-                                <i class="fas fa-check-double" style="margin-right: 10px;"></i> Marcar como Completado
-                            </button>
-                        </form>
-                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" style="margin-top:8px;" onsubmit="return confirm('¿Cerrar este proyecto? No se podrán recibir más postulaciones.');">
-                            @csrf
-                            <input type="hidden" name="estado" value="cerrado">
-                            <button type="submit" class="btn-premium" style="width: 100%; background: #64748b; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
-                                <i class="fas fa-lock" style="margin-right: 10px;"></i> Cerrar Proyecto
-                            </button>
-                        </form>
+                        <button type="button" class="btn-premium btn-veredicto-ajax" data-estado="completado" data-url="{{ route('admin.proyectos.estado', $proyecto->id) }}" data-confirm-text="¿Marcar como completado? Esto indica que el proyecto ha finalizado exitosamente." style="width: 100%; background: #065f46; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(6,95,70,0.4);">
+                            <i class="fas fa-check-double" style="margin-right: 10px;"></i> Marcar como Completado
+                        </button>
+                        <button type="button" class="btn-premium btn-veredicto-ajax" data-estado="cerrado" data-url="{{ route('admin.proyectos.estado', $proyecto->id) }}" data-confirm-text="¿Cerrar este proyecto? No se podrán recibir más postulaciones." style="width: 100%; background: #64748b; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none;">
+                            <i class="fas fa-lock" style="margin-right: 10px;"></i> Cerrar Proyecto
+                        </button>
                     @elseif($proyecto->estado == 'cerrado')
-                        <form action="{{ route('admin.proyectos.estado', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Reabrir este proyecto? Volverá a estado aprobado.');">
-                            @csrf
-                            <input type="hidden" name="estado" value="aprobado">
-                            <button type="submit" class="btn-premium" style="width: 100%; background: #22c55e; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
-                                <i class="fas fa-play" style="margin-right: 10px;"></i> Reabrir Proyecto
-                            </button>
-                        </form>
+                        <button type="button" class="btn-premium btn-veredicto-ajax" data-estado="aprobado" data-url="{{ route('admin.proyectos.estado', $proyecto->id) }}" data-confirm-text="¿Reabrir este proyecto? Volverá a estado aprobado." style="width: 100%; background: #22c55e; color: #fff; font-weight: 800; padding: 16px; font-size: 15px; justify-content: center; border: none; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
+                            <i class="fas fa-play" style="margin-right: 10px;"></i> Reabrir Proyecto
+                        </button>
                     @endif
                 </div>
 
@@ -381,4 +360,87 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endif
+@endsection
+
+@section('scripts')
+<script>
+async function refrescarSidebar() {
+    const sidebar = document.getElementById('admin-sidebar-veredicto');
+    if (!sidebar) return;
+    const html = document.documentElement.innerHTML;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const oldSidebar = doc.getElementById('admin-sidebar-veredicto');
+    const oldBadge = doc.getElementById('estado-badge-header');
+    const oldApto = doc.getElementById('apto-badge');
+
+    try {
+        const res = await axios.get(window.location.href);
+        const parser2 = new DOMParser();
+        const doc2 = parser2.parseFromString(res.data, 'text/html');
+        const newSidebar = doc2.getElementById('admin-sidebar-veredicto');
+        const newBadge = doc2.getElementById('estado-badge-header');
+        const newApto = doc2.getElementById('apto-badge');
+
+        if (newSidebar) sidebar.innerHTML = newSidebar.innerHTML;
+        if (newBadge) {
+            const currBadge = document.getElementById('estado-badge-header');
+            if (currBadge) currBadge.outerHTML = newBadge.outerHTML;
+        }
+        if (newApto) {
+            const currApto = document.getElementById('apto-badge');
+            if (currApto) currApto.outerHTML = newApto.outerHTML;
+        }
+
+        bindVeredictoButtons();
+    } catch (e) {
+        location.reload();
+    }
+}
+
+function bindVeredictoButtons() {
+    document.querySelectorAll('.btn-veredicto-ajax').forEach(btn => {
+        btn.onclick = async function() {
+            const confirmText = this.dataset.confirmText;
+            if (confirmText) {
+                const ok = await ajax.confirm(confirmText);
+                if (!ok) return;
+            }
+            const estado = this.dataset.estado;
+            const url = this.dataset.url;
+            ajax.disableButton(this, 'Procesando...');
+            try {
+                const res = await ajax.post(url, { estado: estado });
+                ajax.showToast('success', res.data.message);
+                await refrescarSidebar();
+            } catch (err) {
+                ajax.enableButton(this);
+                ajax.showToast('error', err.response?.data?.message || 'Error al cambiar estado.');
+            }
+        };
+    });
+
+    const btnAsignar = document.querySelector('.btn-asignar-instructor');
+    if (btnAsignar) {
+        btnAsignar.onclick = async function() {
+            const select = document.getElementById('select-instructor');
+            if (!select.value) {
+                ajax.showToast('error', 'Debes seleccionar un instructor.');
+                return;
+            }
+            ajax.disableButton(this, 'Asignando...');
+            try {
+                const res = await ajax.post(this.dataset.url, { instructor_usuario_id: select.value });
+                ajax.showToast('success', res.data.message);
+                await refrescarSidebar();
+            } catch (err) {
+                ajax.enableButton(this);
+                ajax.showToast('error', err.response?.data?.message || 'Error al asignar instructor.');
+            }
+        };
+    }
+}
+
+document.addEventListener('DOMContentLoaded', bindVeredictoButtons);
+</script>
 @endsection

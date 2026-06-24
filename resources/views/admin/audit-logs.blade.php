@@ -82,6 +82,35 @@
         </select>
     </div>
     <div class="filter-bar-group">
+        <span class="filter-bar-label">Acción</span>
+        <select name="accion" class="filter-bar-select">
+            <option value="">Todas</option>
+            <option value="crear" {{ request('accion') == 'crear' ? 'selected' : '' }}>Crear</option>
+            <option value="editar" {{ request('accion') == 'editar' ? 'selected' : '' }}>Editar</option>
+            <option value="cambiar_estado" {{ request('accion') == 'cambiar_estado' ? 'selected' : '' }}>Cambiar Estado</option>
+            <option value="eliminar" {{ request('accion') == 'eliminar' ? 'selected' : '' }}>Eliminar</option>
+            <option value="asignar" {{ request('accion') == 'asignar' ? 'selected' : '' }}>Asignar</option>
+            <option value="desasignar" {{ request('accion') == 'desasignar' ? 'selected' : '' }}>Desasignar</option>
+            <option value="postularse" {{ request('accion') == 'postularse' ? 'selected' : '' }}>Postular</option>
+            <option value="publicar" {{ request('accion') == 'publicar' ? 'selected' : '' }}>Publicar</option>
+            <option value="login" {{ request('accion') == 'login' ? 'selected' : '' }}>Login</option>
+            <option value="exportar" {{ request('accion') == 'exportar' ? 'selected' : '' }}>Exportar</option>
+        </select>
+    </div>
+    <div class="filter-bar-group">
+        <span class="filter-bar-label">Módulo</span>
+        <select name="modulo" class="filter-bar-select">
+            <option value="">Todos</option>
+            <option value="proyectos" {{ request('modulo') == 'proyectos' ? 'selected' : '' }}>Proyectos</option>
+            <option value="usuarios" {{ request('modulo') == 'usuarios' ? 'selected' : '' }}>Usuarios</option>
+            <option value="aprendices" {{ request('modulo') == 'aprendices' ? 'selected' : '' }}>Aprendices</option>
+            <option value="instructores" {{ request('modulo') == 'instructores' ? 'selected' : '' }}>Instructores</option>
+            <option value="empresas" {{ request('modulo') == 'empresas' ? 'selected' : '' }}>Empresas</option>
+            <option value="postulaciones" {{ request('modulo') == 'postulaciones' ? 'selected' : '' }}>Postulaciones</option>
+            <option value="sistema" {{ request('modulo') == 'sistema' ? 'selected' : '' }}>Sistema</option>
+        </select>
+    </div>
+    <div class="filter-bar-group">
         <span class="filter-bar-label">Desde</span>
         <input type="date" name="fecha_inicio" value="{{ request('fecha_inicio') }}" class="filter-bar-input">
     </div>
@@ -94,7 +123,7 @@
         <i class="fas fa-search"></i>
     </div>
     <div class="filter-bar-actions">
-        @if(request()->anyFilled(['entidad', 'fecha_inicio', 'fecha_fin', 'busqueda']))
+        @if(request()->anyFilled(['entidad', 'accion', 'modulo', 'fecha_inicio', 'fecha_fin', 'busqueda']))
             <a href="{{ route('admin.historial') }}" class="filter-bar-btn danger">
                 <i class="fas fa-times"></i> Limpiar
             </a>

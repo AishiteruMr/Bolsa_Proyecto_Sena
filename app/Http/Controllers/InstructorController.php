@@ -20,6 +20,7 @@ use App\Notifications\AppNotification;
 use App\Services\PerfilService;
 use App\Jobs\SendEmailJob;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -113,13 +114,44 @@ class InstructorController extends Controller
             )
             ->get();
 
+        $evidenciasUrgentes = Evidencia::whereIn('proyecto_id', $proyectoIds)
+            ->where('estado', 'pendiente')
+            ->where('fecha_envio', '>=', now()->subHours(48))
+            ->count();
+
+        $totalProyectos = (clone $todosProyectos)->count();
+        $progresoCompletado = $totalProyectos > 0 ? round(($proyectosCompletados / $totalProyectos) * 100) : 0;
+
+        $usr = User::find($usrId);
+        $notificacionesNoLeidas = $usr ? $usr->unreadNotifications()->count() : 0;
+
+        $evidenciasPendientesLista = Evidencia::whereIn('evidencias.proyecto_id', $proyectoIds)
+            ->where('evidencias.estado', 'pendiente')
+            ->join('aprendices', 'evidencias.aprendiz_id', '=', 'aprendices.id')
+            ->join('proyectos', 'evidencias.proyecto_id', '=', 'proyectos.id')
+            ->orderByDesc('evidencias.fecha_envio')
+            ->limit(5)
+            ->select(
+                'evidencias.id',
+                'evidencias.proyecto_id',
+                'evidencias.etapa_id',
+                'evidencias.fecha_envio',
+                'aprendices.nombres as aprendiz_nombres',
+                'aprendices.apellidos as aprendiz_apellidos',
+                'proyectos.titulo as proyecto_titulo'
+            )
+            ->get();
+
         return view('instructor.dashboard', compact(
             'instructor', 'proyectosAsignados',
             'proyectos', 'totalAprendices', 'evidenciasPendientes',
             'nuevasPostulaciones', 'proximoCierre',
             'proyectosCompletados', 'proyectosPorEstado',
             'totalPostulaciones', 'postulacionesAceptadas',
-            'tasaAprobacionGlobal', 'actividadReciente'
+            'tasaAprobacionGlobal', 'actividadReciente',
+            'evidenciasUrgentes', 'progresoCompletado',
+            'notificacionesNoLeidas', 'evidenciasPendientesLista',
+            'totalProyectos'
         ));
     }
 
@@ -221,35 +253,94 @@ class InstructorController extends Controller
     {
         $usrId = session('usr_id');
 
-        // El historial muestra proyectos asignados, sin importar si están activos o inactivos
-        $proyectos = Proyecto::where('instructor_usuario_id', $usrId)
-            ->with(['empresa', 'postulaciones'])
-            ->orderByDesc('fecha_publicacion')
-            ->paginate($this->getPerPage($request, 10, 5, 30))
+        $query = Proyecto::where('instructor_usuario_id', $usrId)
+            ->with(['empresa', 'postulaciones', 'etapas.evidencias', 'evidencias']);
+
+        // ── Filtros ──
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('categoria')) {
+            $query->where('categoria', $request->categoria);
+        }
+        if ($request->filled('busqueda')) {
+            $busqueda = $request->busqueda;
+            $query->where(function ($q) use ($busqueda) {
+                $q->where('titulo', 'like', "%{$busqueda}%")
+                  ->orWhereHas('empresa', fn($q2) => $q2->where('nombre', 'like', "%{$busqueda}%"));
+            });
+        }
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('fecha_publicacion', '>=', $request->fecha_desde);
+        }
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('fecha_publicacion', '<=', $request->fecha_hasta);
+        }
+        if ($request->filled('oferta')) {
+            $query->where('oferta', $request->oferta);
+        }
+
+        // ── Ordenamiento ──
+        $sort = $request->get('sort', 'reciente');
+        match ($sort) {
+            'antiguo' => $query->orderBy('fecha_publicacion'),
+            'titulo' => $query->orderBy('titulo'),
+            'estado' => $query->orderBy('estado')->orderByDesc('fecha_publicacion'),
+            default => $query->orderByDesc('fecha_publicacion'),
+        };
+
+        // ── Estadísticas ──
+        $stats = (object) [
+            'total' => Proyecto::where('instructor_usuario_id', $usrId)->count(),
+            'activos' => Proyecto::where('instructor_usuario_id', $usrId)->whereIn('estado', ['aprobado', 'en_progreso'])->count(),
+            'completados' => Proyecto::where('instructor_usuario_id', $usrId)->where('estado', 'completado')->count(),
+            'cerrados' => Proyecto::where('instructor_usuario_id', $usrId)->where('estado', 'cerrado')->count(),
+            'pendientes' => Proyecto::where('instructor_usuario_id', $usrId)->where('estado', 'pendiente')->count(),
+        ];
+
+        $categorias = Proyecto::where('instructor_usuario_id', $usrId)
+            ->select('categoria')->distinct()->pluck('categoria');
+
+        $proyectos = $query->paginate($this->getPerPage($request, 10, 5, 30))
             ->through(function ($proyecto) {
                 $totalAprendices = $proyecto->postulaciones->count();
                 $aprendicesAprobados = $proyecto->postulaciones
                     ->where('estado', 'aceptada')
                     ->count();
 
+                $totalEtapas = $proyecto->etapas->count();
+                $etapasCompletadas = $proyecto->etapas->filter(fn($e) => $e->evidencias->count() > 0)->count();
+                $progreso = $totalEtapas > 0 ? round(($etapasCompletadas / $totalEtapas) * 100) : 0;
+
+                $fechaFin = $proyecto->fecha_publicacion
+                    ? Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias)
+                    : null;
+
+                $ultimaActividad = $proyecto->evidencias->sortByDesc('created_at')->first()?->created_at
+                    ?? $proyecto->updated_at;
+
                 return (object) [
                     'id' => $proyecto->id,
                     'titulo' => $proyecto->titulo,
+                    'descripcion' => $proyecto->descripcion,
                     'categoria' => $proyecto->categoria,
                     'estado' => $proyecto->estado,
                     'fecha_publicacion' => $proyecto->fecha_publicacion,
-                    'pro_fecha_finalizacion' => $proyecto->fecha_publicacion
-                        ? Carbon::parse($proyecto->fecha_publicacion)->addDays($proyecto->duracion_estimada_dias)
-                        : null,
+                    'pro_fecha_finalizacion' => $fechaFin,
+                    'duracion_dias' => $proyecto->duracion_estimada_dias,
                     'nombre' => $proyecto->empresa->nombre ?? 'No designada',
                     'total_aprendices' => $totalAprendices,
                     'aprendices_aprobados' => $aprendicesAprobados,
                     'oferta' => $proyecto->oferta,
                     'oferta_otro' => $proyecto->oferta_otro,
+                    'total_etapas' => $totalEtapas,
+                    'etapas_completadas' => $etapasCompletadas,
+                    'progreso' => $progreso,
+                    'ultima_actividad' => $ultimaActividad,
                 ];
             });
 
-        return view('instructor.historial', compact('proyectos'));
+        return view('instructor.historial', compact('proyectos', 'stats', 'categorias'));
     }
 
     // ── REPORTE DE SEGUIMIENTO POR PROYECTO ──
@@ -316,11 +407,17 @@ class InstructorController extends Controller
             ->with(['aprendiz.usuario'])
             ->get();
 
-        return view('instructor.detalle_proyecto', compact('proyecto', 'etapas', 'postulaciones', 'integrantes'));
+        // Obtener historial de cambios del proyecto
+        $historialCambios = AuditLog::where('tabla_afectada', 'proyectos')
+            ->where('registro_id', $id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('instructor.detalle_proyecto', compact('proyecto', 'etapas', 'postulaciones', 'integrantes', 'historialCambios'));
     }
 
     // ✅ MÉTODO PARA CAMBIAR ESTADO DE POSTULACIÓN (SOLO EL INSTRUCTOR)
-    public function cambiarEstadoPostulacion(GestionarPostulacionRequest $request, int $id): RedirectResponse
+    public function cambiarEstadoPostulacion(GestionarPostulacionRequest $request, int $id): RedirectResponse|JsonResponse
     {
         $usrId = session('usr_id');
 
@@ -382,11 +479,20 @@ class InstructorController extends Controller
             }
         }
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado de postulación actualizado.',
+                'estado' => $estadoInput,
+                'postulacionId' => $id,
+            ]);
+        }
+
         return back()->with('success', 'Estado de postulación actualizado.');
     }
 
     // ✅ MÉTODO PARA CREAR ETAPA
-    public function crearEtapa(GestionarEtapaRequest $request, int $proId): RedirectResponse
+    public function crearEtapa(GestionarEtapaRequest $request, int $proId): RedirectResponse|JsonResponse
     {
         $usrId = session('usr_id');
 
@@ -401,7 +507,6 @@ class InstructorController extends Controller
             'descripcion' => $request->descripcion,
         ]);
 
-        // Notificar a los aprendices aceptados (async via queue)
         $postulaciones = Postulacion::where('proyecto_id', $proId)
             ->where('estado', 'aceptada')
             ->with('aprendiz.usuario')
@@ -421,11 +526,24 @@ class InstructorController extends Controller
             }
         }
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Etapa creada.',
+                'etapa' => [
+                    'id' => $etapa->id,
+                    'orden' => $etapa->orden,
+                    'nombre' => $etapa->nombre,
+                    'descripcion' => $etapa->descripcion,
+                ]
+            ]);
+        }
+
         return back()->with('success', 'Etapa creada.');
     }
 
     // ✅ MÉTODO PARA EDITAR ETAPA
-    public function editarEtapa(GestionarEtapaRequest $request, int $etaId): RedirectResponse
+    public function editarEtapa(GestionarEtapaRequest $request, int $etaId): RedirectResponse|JsonResponse
     {
         $usrId = session('usr_id');
 
@@ -440,21 +558,41 @@ class InstructorController extends Controller
             'descripcion' => $request->descripcion,
         ]);
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Etapa actualizada.',
+                'etapa' => [
+                    'id' => $etapa->id,
+                    'orden' => $etapa->orden,
+                    'nombre' => $etapa->nombre,
+                    'descripcion' => $etapa->descripcion,
+                ]
+            ]);
+        }
+
         return back()->with('success', 'Etapa actualizada.');
     }
 
     // ✅ MÉTODO PARA ELIMINAR ETAPA
-    public function eliminarEtapa(int $etaId): RedirectResponse
+    public function eliminarEtapa(Request $request, int $etaId): RedirectResponse|JsonResponse
     {
         $usrId = session('usr_id');
 
-        // Verificar que la etapa pertenece a un proyecto del instructor
         $etapa = Etapa::where('id', $etaId)
             ->whereHas('proyecto', function ($query) use ($usrId) {
                 $query->where('instructor_usuario_id', $usrId);
             })->firstOrFail();
 
         $etapa->delete();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Etapa eliminada.',
+                'etapaId' => $etaId,
+            ]);
+        }
 
         return back()->with('success', 'Etapa eliminada.');
     }
@@ -630,7 +768,7 @@ class InstructorController extends Controller
     }
 
     // ✅ MÉTODO PARA CALIFICAR EVIDENCIA
-    public function calificarEvidencia(CalificarEvidenciaRequest $request, int $evidId): RedirectResponse
+    public function calificarEvidencia(CalificarEvidenciaRequest $request, int $evidId): RedirectResponse|JsonResponse
     {
         $usrId = session('usr_id');
 
@@ -640,17 +778,17 @@ class InstructorController extends Controller
             })->firstOrFail();
 
         $estadoInput = strtolower($request->estado);
+        $comentario = $request->comentario;
 
         $evidencia->update([
             'estado' => $estadoInput,
-            'comentario_instructor' => $request->comentario,
+            'comentario_instructor' => $comentario,
         ]);
 
         try {
             $evidencia->load(['aprendiz.usuario', 'proyecto']);
             $aprendizUsr = $evidencia->aprendiz->usuario ?? null;
             if ($aprendizUsr) {
-                // Mapear estado a iconos/colores
                 $stateColor = match ($estadoInput) {
                     'aceptada' => 'fa-check-circle',
                     'rechazada' => 'fa-times-circle',
@@ -665,6 +803,41 @@ class InstructorController extends Controller
             }
         } catch (\Exception $e) {
             Log::error('Error al notificar calificación de evidencia: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $statusStyles = match($estadoInput) {
+                'aceptada' => ['bg' => '#f0fdf4', 'border' => '#10b981', 'color' => '#059669'],
+                'pendiente' => ['bg' => '#fffbeb', 'border' => '#f59e0b', 'color' => '#d97706'],
+                'rechazada' => ['bg' => '#fef2f2', 'border' => '#ef4444', 'color' => '#dc2626'],
+                default => ['bg' => '#f8fafc', 'border' => '#e2e8f0', 'color' => '#94a3b8'],
+            };
+
+            $estadosHtml = '';
+            $estados = [
+                'aceptada' => ['icon' => 'fa-check-double', 'label' => 'Aprobado'],
+                'pendiente' => ['icon' => 'fa-history', 'label' => 'Corregir'],
+                'rechazada' => ['icon' => 'fa-times-circle', 'label' => 'Reprobado'],
+            ];
+            foreach ($estados as $est => $cfg) {
+                $active = $est === $estadoInput;
+                $bg = $active ? $statusStyles['bg'] : '#f8fafc';
+                $bdr = $active ? $statusStyles['border'] : '#e2e8f0';
+                $clr = $active ? $statusStyles['color'] : '#94a3b8';
+                $estadosHtml .= '<div style="flex:1;padding:1.25rem;border-radius:12px;text-align:center;background:'.$bg.';border:2px solid '.$bdr.';color:'.$clr.';">
+                    <i class="fas '.$cfg['icon'].'" style="font-size:1.5rem;display:block;margin-bottom:6px;"></i>
+                    <span style="font-weight:800;font-size:0.85rem;">'.$cfg['label'].'</span>
+                </div>';
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Evidencia calificada.',
+                'estado' => $estadoInput,
+                'comentario' => $comentario,
+                'estadosHtml' => $estadosHtml,
+                'evidenciaId' => $evidId,
+            ]);
         }
 
         return back()->with('success', 'Evidencia calificada.');

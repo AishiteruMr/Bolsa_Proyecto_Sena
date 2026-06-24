@@ -256,7 +256,45 @@
                     </div>
                 </div>
 
-                <!-- Step 5: Oferta -->
+                <!-- Step 5: Documentos de la Empresa -->
+                <div>
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(62,180,137,0.1);">
+                        <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(62,180,137,0.1); color: #3eb489; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px;">5</span>
+                        <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Documentos de la Empresa</h3>
+                    </div>
+
+                    <div style="background:#f8fafc; border:2px dashed rgba(62,180,137,0.2); border-radius:20px; padding:24px;">
+                        <h4 style="font-size:15px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+                            <i class="fas fa-file-alt" style="color:#3eb489;"></i> Metodología de Trabajo
+                        </h4>
+                        <p style="font-size:12px; color:#94a3b8; margin-bottom:16px; font-weight:500;">
+                            Sube un documento PDF o Word describiendo la metodología de trabajo de tu empresa (máx. 5MB).
+                        </p>
+
+                        @if($empresa && $empresa->metodologia_url)
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:rgba(62,180,137,0.1); border-radius:12px; margin-bottom:16px;">
+                                <i class="fas fa-file-pdf" style="color:#3eb489; font-size:20px;"></i>
+                                <div style="flex:1;">
+                                    <span style="font-size:13px; font-weight:700; color:var(--text);">Documento actual:</span>
+                                    <a href="{{ route('file.empresa-metodologia', $empresa->id) }}" target="_blank" style="font-size:12px; font-weight:600; color:#3eb489; margin-left:8px; text-decoration:underline;">
+                                        <i class="fas fa-download"></i> Ver archivo
+                                    </a>
+                                </div>
+                                <label style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#ef4444; cursor:pointer;">
+                                    <input type="checkbox" name="eliminar_metodologia" value="1" style="accent-color:#ef4444;">
+                                    Eliminar
+                                </label>
+                            </div>
+                        @endif
+
+                        <div style="position:relative;">
+                            <input type="file" name="metodologia" accept=".pdf,.doc,.docx" style="width:100%; padding:14px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:14px; font-weight:500; background:white; outline:none;">
+                            <p style="font-size:11px; color:#94a3b8; margin-top:6px; font-weight:500;">Se reemplazará el documento actual si seleccionas uno nuevo.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Oferta (read-only) -->
                 <div>
                     <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(139,92,246,0.1);">
                         <span style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; box-shadow: 0 4px 10px rgba(139,92,246,0.3);">
@@ -265,50 +303,29 @@
                         <h3 style="font-size: 18px; font-weight: 800; color: var(--text);">Beneficio y Oferta del Proyecto</h3>
                     </div>
 
-                    <div class="oferta-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
-                        <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'pasantias' ? 'selected' : '' }}">
-                            <input type="radio" name="oferta" value="pasantias" {{ old('oferta', $proyecto->oferta) === 'pasantias' ? 'checked' : '' }} required>
-                            <span class="oferta-check"><i class="fas fa-check"></i></span>
-                            <span class="oferta-icon"><i class="fas fa-briefcase"></i></span>
-                            <span class="oferta-title">Pasantías</span>
-                            <span class="oferta-desc">Experiencia laboral formativa en tu empresa</span>
-                        </label>
-                        <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'contrato_aprendizaje' ? 'selected' : '' }}">
-                            <input type="radio" name="oferta" value="contrato_aprendizaje" {{ old('oferta', $proyecto->oferta) === 'contrato_aprendizaje' ? 'checked' : '' }} required>
-                            <span class="oferta-check"><i class="fas fa-check"></i></span>
-                            <span class="oferta-icon"><i class="fas fa-file-contract"></i></span>
-                            <span class="oferta-title">Contrato de aprendizaje</span>
-                            <span class="oferta-desc">Vinculación formal con contrato de aprendizaje</span>
-                        </label>
-                        <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'auxilio_transporte' ? 'selected' : '' }}">
-                            <input type="radio" name="oferta" value="auxilio_transporte" {{ old('oferta', $proyecto->oferta) === 'auxilio_transporte' ? 'checked' : '' }} required>
-                            <span class="oferta-check"><i class="fas fa-check"></i></span>
-                            <span class="oferta-icon"><i class="fas fa-bus"></i></span>
-                            <span class="oferta-title">Auxilio de transporte</span>
-                            <span class="oferta-desc">Apoyo económico para movilidad</span>
-                        </label>
-                        <label class="oferta-card {{ old('oferta', $proyecto->oferta) === 'otro' ? 'selected' : '' }}">
-                            <input type="radio" name="oferta" value="otro" {{ old('oferta', $proyecto->oferta) === 'otro' ? 'checked' : '' }} required>
-                            <span class="oferta-check"><i class="fas fa-check"></i></span>
-                            <span class="oferta-icon"><i class="fas fa-gift"></i></span>
-                            <span class="oferta-title">Otro</span>
-                            <span class="oferta-desc">Otro tipo de beneficio u oferta</span>
-                        </label>
-                    </div>
-
-                    <div id="otro-oferta-container" style="display: {{ old('oferta', $proyecto->oferta) === 'otro' ? 'block' : 'none' }}; margin-bottom: 20px;">
-                        <label style="display: block; font-size: 12px; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">¿Cuál oferta? *</label>
-                        <div style="position: relative;">
-                            <i class="fas fa-pen" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b5cf6;"></i>
-                            <input type="text" name="oferta_otro" id="oferta_otro" value="{{ old('oferta_otro', $proyecto->oferta_otro) }}" style="width: 100%; padding: 14px 16px 14px 48px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none;" placeholder="Ej: Bolsa de estudio, Bonificación...">
+                    @php
+                        $ofertaInfo = [
+                            'pasantias' => ['icon' => 'fa-briefcase', 'titulo' => 'Pasantías', 'desc' => 'Experiencia laboral formativa en tu empresa'],
+                            'contrato_aprendizaje' => ['icon' => 'fa-file-contract', 'titulo' => 'Contrato de aprendizaje', 'desc' => 'Vinculación formal con contrato de aprendizaje'],
+                            'auxilio_transporte' => ['icon' => 'fa-bus', 'titulo' => 'Auxilio de transporte', 'desc' => 'Apoyo económico para movilidad'],
+                            'otro' => ['icon' => 'fa-gift', 'titulo' => 'Otro', 'desc' => $proyecto->oferta_otro ?? 'Otro tipo de beneficio'],
+                        ];
+                        $sel = $proyecto->oferta;
+                    @endphp
+                    <div style="max-width: 400px;">
+                        <div class="oferta-card selected" style="cursor:default; border-color: #8b5cf6; background: linear-gradient(135deg, #faf5ff, #f3e8ff);">
+                            <span class="oferta-check" style="background:#8b5cf6; border-color:#8b5cf6; box-shadow:0 2px 8px rgba(139,92,246,0.3);"><i class="fas fa-check"></i></span>
+                            <span class="oferta-icon" style="background:linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow:0 4px 15px rgba(139,92,246,0.3);"><i class="fas {{ $ofertaInfo[$sel]['icon'] }}"></i></span>
+                            <span class="oferta-title" style="color:#6d28d9;">{{ $ofertaInfo[$sel]['titulo'] }}</span>
+                            <span class="oferta-desc" style="color:#7c3aed;">{{ $ofertaInfo[$sel]['desc'] }}</span>
                         </div>
                     </div>
 
                     <div style="padding: 16px 20px; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(124,58,237,0.04)); border: 1.5px solid rgba(139,92,246,0.15); border-radius: 12px; font-size: 13px; color: #6d28d9; font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(139,92,246,0.06);">
                         <div style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <i class="fas fa-star" style="font-size: 11px;"></i>
+                            <i class="fas fa-lock" style="font-size: 11px;"></i>
                         </div>
-                        <span>La oferta seleccionada se otorgará únicamente al aprendiz que logre el mejor desempeño en el proyecto.</span>
+                        <span>Oferta bloqueada — no se puede modificar después de creada.</span>
                     </div>
                 </div>
 

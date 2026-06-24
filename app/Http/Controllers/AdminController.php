@@ -21,6 +21,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use App\Notifications\AppNotification;
 use App\Jobs\SendEmailJob;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -96,97 +97,80 @@ class AdminController extends Controller
         ));
     }
 
-    public function cambiarEstadoUsuario(CambiarEstadoUsuarioRequest $request, int $id): RedirectResponse
+    public function cambiarEstadoUsuario(CambiarEstadoUsuarioRequest $request, int $id): RedirectResponse|JsonResponse
     {
         $usrId = session('usr_id');
+        $nuevoEstado = $request->estado;
+        $tipoUsuario = $request->tipo;
 
-        if ($request->tipo === 'aprendiz') {
+        if ($tipoUsuario === 'aprendiz') {
             $aprendiz = Aprendiz::with('usuario')->findOrFail($id);
             $anterior = ['activo' => $aprendiz->activo];
             $nombreTarget = $aprendiz->getFullNameAttribute();
-            $aprendiz->update(['activo' => $request->estado]);
+            $aprendiz->update(['activo' => $nuevoEstado]);
             Cache::forget('admin_stats');
             $usrToNotify = $aprendiz->usuario;
 
-            // Audit log detallado
-            AuditLog::registrarCambio(
-                $usrId,
-                'cambiar_estado',
-                'usuarios',
-                'aprendices',
-                $id,
+            AuditLog::registrarCambio($usrId, 'cambiar_estado', 'usuarios', 'aprendices', $id,
                 array_merge($anterior, ['nombre_objetivo' => $nombreTarget, 'tipo' => 'aprendiz']),
-                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'aprendiz']
-            );
+                ['activo' => $nuevoEstado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'aprendiz']);
 
-            // Enviar correo de bienvenida al activar cuenta
-            if ($request->estado == 1 && $usrToNotify) {
-                $nombre = $aprendiz->nombres ?? '';
-                $apellido = $aprendiz->apellidos ?? '';
-                $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
+            if ($nuevoEstado == 1 && $usrToNotify) {
+                $this->enviarCorreoBienvenida($usrToNotify->correo, $aprendiz->nombres ?? '', $aprendiz->apellidos ?? '');
             }
-        } elseif ($request->tipo === 'instructor') {
+        } elseif ($tipoUsuario === 'instructor') {
             $instructor = Instructor::with('usuario')->findOrFail($id);
             $anterior = ['activo' => $instructor->activo];
             $nombreTarget = $instructor->nombres . ' ' . $instructor->apellidos;
-            $instructor->update(['activo' => $request->estado]);
+            $instructor->update(['activo' => $nuevoEstado]);
             Cache::forget('admin_stats');
             $usrToNotify = $instructor->usuario;
 
-            // Audit log detallado
-            AuditLog::registrarCambio(
-                $usrId,
-                'cambiar_estado',
-                'usuarios',
-                'instructores',
-                $id,
+            AuditLog::registrarCambio($usrId, 'cambiar_estado', 'usuarios', 'instructores', $id,
                 array_merge($anterior, ['nombre_objetivo' => $nombreTarget, 'tipo' => 'instructor']),
-                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'instructor']
-            );
+                ['activo' => $nuevoEstado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'instructor']);
 
-            // Enviar correo de bienvenida al activar cuenta
-            if ($request->estado == 1 && $usrToNotify) {
-                $nombre = $instructor->nombres ?? '';
-                $apellido = $instructor->apellidos ?? '';
-                $this->enviarCorreoBienvenida($usrToNotify->correo, $nombre, $apellido);
+            if ($nuevoEstado == 1 && $usrToNotify) {
+                $this->enviarCorreoBienvenida($usrToNotify->correo, $instructor->nombres ?? '', $instructor->apellidos ?? '');
             }
         } else {
-            // Para empresas
             $empresa = Empresa::with('usuario')->findOrFail($id);
             $anterior = ['activo' => $empresa->activo];
             $nombreTarget = $empresa->nombre;
-            $empresa->update(['activo' => $request->estado]);
+            $empresa->update(['activo' => $nuevoEstado]);
             Cache::forget('admin_stats');
             $usrToNotify = $empresa->usuario;
 
-            // Audit log detallado
-            AuditLog::registrarCambio(
-                $usrId,
-                'cambiar_estado',
-                'usuarios',
-                'empresas',
-                $id,
+            AuditLog::registrarCambio($usrId, 'cambiar_estado', 'empresas', 'empresas', $id,
                 array_merge($anterior, ['nombre_objetivo' => $nombreTarget, 'tipo' => 'empresa']),
-                ['activo' => $request->estado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'empresa']
-            );
+                ['activo' => $nuevoEstado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'empresa']);
 
-            // Enviar correo de bienvenida al activar cuenta
-            if ($request->estado == 1 && $usrToNotify) {
+            if ($nuevoEstado == 1 && $usrToNotify) {
                 $this->enviarCorreoBienvenida($usrToNotify->correo, $empresa->nombre, 'Empresa');
             }
         }
 
         try {
             if (isset($usrToNotify)) {
-                $estadoTexto = $request->estado == 1 ? 'activada' : 'desactivada';
+                $estadoTexto = $nuevoEstado == 1 ? 'activada' : 'desactivada';
                 $usrToNotify->notify(new AppNotification(
                     'Cuenta '.$estadoTexto,
                     'Tu cuenta ha sido '.$estadoTexto.' por un administrador.',
-                    $request->estado == 1 ? 'fa-user-check' : 'fa-user-lock'
+                    $nuevoEstado == 1 ? 'fa-user-check' : 'fa-user-lock'
                 ));
             }
         } catch (\Exception $e) {
             Log::error('Error al notificar estado de usuario: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado del usuario actualizado.',
+                'activo' => (int) $nuevoEstado,
+                'tipo' => $tipoUsuario,
+                'id' => $id,
+            ]);
         }
 
         return back()->with('success', 'Estado del usuario actualizado.');
@@ -213,7 +197,7 @@ class AdminController extends Controller
         ));
     }
 
-    public function cambiarEstadoEmpresa(Request $request, int $id): RedirectResponse
+    public function cambiarEstadoEmpresa(Request $request, int $id): RedirectResponse|JsonResponse
     {
         $request->validate(['estado' => 'required|in:0,1']);
 
@@ -224,7 +208,6 @@ class AdminController extends Controller
         $empresa->update(['activo' => $request->estado]);
         Cache::forget('admin_stats');
 
-        // Audit log detallado
         AuditLog::registrarCambio(
             $usrId,
             'cambiar_estado',
@@ -246,6 +229,15 @@ class AdminController extends Controller
             }
         } catch (\Exception $e) {
             Log::error('Error al notificar estado de empresa: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado de empresa actualizado.',
+                'activo' => (int) $request->estado,
+                'empresaId' => $id,
+            ]);
         }
 
         return back()->with('success', 'Estado de empresa actualizado.');
@@ -339,7 +331,7 @@ class AdminController extends Controller
         ));
     }
 
-    public function cambiarEstadoProyecto(Request $request, int $id): RedirectResponse
+    public function cambiarEstadoProyecto(Request $request, int $id): RedirectResponse|JsonResponse
     {
         $request->validate([
             'estado' => 'required|in:aprobado,rechazado,pendiente,cerrado,en_progreso,completado',
@@ -449,6 +441,15 @@ class AdminController extends Controller
                     Log::error('Error al enviar correos de oferta a aprendices: ' . $e->getMessage());
                 }
             }
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado del proyecto actualizado.',
+                'estado' => $request->estado,
+                'proyectoId' => $id,
+            ]);
         }
 
         return back()->with('success', 'Estado del proyecto actualizado.');

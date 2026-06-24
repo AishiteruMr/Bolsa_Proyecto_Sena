@@ -12,6 +12,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\InfiniteScrollController;
 use App\Http\Controllers\StatsController;
 use Illuminate\Support\Facades\Route;
@@ -94,6 +95,22 @@ Route::middleware(['auth.custom'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| Rutas de Chat — Empresa (rol 3) e Instructor (rol 2)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth.custom', 'rol:2,3'])->prefix('chat')->name('chat.')->group(function () {
+    Route::get('/', [ChatController::class, 'index'])->name('index');
+    Route::get('/{conversation}', [ChatController::class, 'show'])->name('show');
+    Route::post('/', [ChatController::class, 'store'])->name('store');
+    Route::post('/{conversation}/messages', [ChatController::class, 'send'])->name('send');
+    Route::post('/{conversation}/read', [ChatController::class, 'markRead'])->name('read');
+    Route::get('/{conversation}/poll', [ChatController::class, 'poll'])->name('poll');
+    Route::get('/unread/count', [ChatController::class, 'unreadCount'])->name('unread');
+});
+
+/*
+|--------------------------------------------------------------------------
 | Rutas protegidas — Aprendiz (rol 1)
 |--------------------------------------------------------------------------
 */
@@ -101,6 +118,7 @@ Route::middleware(['auth.custom'])->group(function () {
 Route::middleware(['auth.custom', 'rol:1'])->prefix('aprendiz')->name('aprendiz.')->group(function () {
     Route::get('/dashboard', [AprendizController::class, 'dashboard'])->name('dashboard');
     Route::get('/proyectos', [AprendizController::class, 'proyectos'])->name('proyectos');
+    Route::get('/proyectos/ajax', [AprendizController::class, 'proyectosAjax'])->name('proyectos.ajax');
     // SEGURIDAD: Rate limiting en postulación (máx 10/minuto)
     Route::post('/proyectos/{id}/postular', [AprendizController::class, 'postular'])->name('postular')->middleware('throttle:10,1');
     Route::get('/mis-postulaciones', [AprendizController::class, 'misPostulaciones'])->name('postulaciones');

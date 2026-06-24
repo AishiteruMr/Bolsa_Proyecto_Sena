@@ -58,6 +58,15 @@ class PostulacionService
             return [false, 'Ya te postulaste a este proyecto.'];
         }
 
+        $tieneAprobada = DB::table('postulaciones')
+            ->where('aprendiz_id', $aprendizId)
+            ->where('estado', 'aceptada')
+            ->exists();
+
+        if ($tieneAprobada) {
+            return [false, 'Ya has sido aceptado en un proyecto. No puedes postularte a más proyectos.'];
+        }
+
         $totalPostulaciones = DB::table('postulaciones')
             ->where('aprendiz_id', $aprendizId)
             ->whereIn('estado', ['pendiente', 'en_revision'])

@@ -43,3 +43,13 @@ Broadcast::channel('role.empresa', function ($user) {
         ? ['id' => $user->id, 'nombre' => $user->nombre, 'rol' => 'empresa']
         : false;
 });
+
+// ── Chat channels ─────────────────────────────────────────
+Broadcast::channel('conversation.{id}', function ($user, $id) {
+    $conversation = App\Models\Conversation::find($id);
+    if (! $conversation) return false;
+
+    return $conversation->users()->where('user_id', $user->id)->exists()
+        ? ['id' => $user->id, 'nombre' => $user->nombre]
+        : false;
+});

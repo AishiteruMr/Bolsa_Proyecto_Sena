@@ -10,23 +10,34 @@ Plataforma integral premium para la conexión entre empresas, instructores y apr
 * Dashboard personalizado por perfil
 * Gestión de proyectos y postulaciones
 * Sistema de evidencias por etapas
-* Notificaciones en tiempo real
-* Seguridad avanzada con CSP y protección IDOR
+* Notificaciones en tiempo real (Pusher + Laravel Echo)
+* Seguridad avanzada con CSP, protección IDOR, y middleware de ownership
 * Diseño Premium Glassmorphism
 * API REST para proyectos
-* Estadísticas y métricas en tiempo real
+* Estadísticas y métricas en tiempo real (Chart.js)
 * Scroll infinito para listados grandes
-* Exportación de datos (Excel/CSV)
+* Exportación de datos (CSV)
 * Logging de auditoría completo
-* Procesamiento de archivos seguros
+* Procesamiento de archivos seguros (validación MIME, magic bytes, malware scan)
 * Validación de contraseñas robusta
 * Middleware de seguridad personalizados
-* Notificaciones por email
-* Emails transaccionales
-* Middleware de ownership
-* Timeout de sesión
-* Validación de firma
+* Notificaciones por email (SMTP + queue)
+* Emails transaccionales (bienvenida, OTP, recuperación, postulación, etapas)
+* Verificación de email con OTP
+* Sistema de soporte con tickets y respuestas
+* Backup de base de datos (manual y automático)
+* Auditoría de seguridad automatizada (audit probe)
+* Monitoreo y recuperación de colas (queue:auto-recover)
+* Programador de tareas (scheduler) con scripts PowerShell
+* Generación de tests automáticos desde rutas
+* Timeout de sesión (configurable por rol)
+* Validación de firma en URLs
 * Cifrado de cookies
+* Gestión de consentimiento de datos
+* Carga de metodología y documentos por empresa
+* Asignación de instructores a proyectos
+* Calificación de evidencias por instructores
+* Reportes de seguimiento por proyecto
 
 ---
 
@@ -35,6 +46,7 @@ Plataforma integral premium para la conexión entre empresas, instructores y apr
 * PHP 8.4+
 * Laravel 11.x
 * Laravel Sanctum (autenticación API)
+* Laravel Reverb (WebSocket server)
 * Vite 8.x
 * Blade Templates
 * MySQL / MariaDB
@@ -44,8 +56,8 @@ Plataforma integral premium para la conexión entre empresas, instructores y apr
 * Chart.js 4.x
 * Axios
 * Intervention Image 3.x
+* Resend (email API)
 * PHPUnit 11.x
-
 
 ---
 
@@ -76,17 +88,29 @@ php artisan storage:link
 # Ejecutar migrate y seed
 php artisan migrate --seed
 
+# Compilar assets
+npm run build
+
 # Ejecutar en desarrollo
 php artisan serve
+php artisan reverb:start
+php artisan queue:work
 npm run dev
 
-# Limpiar cache,configuraciones,views y rutas
+# Limpiar cache, configuraciones, views y rutas
 php artisan optimize:clear
+```
 
+---
+
+## Comandos disponibles
+
+### Backups
+```bash
 # Crear backup manual
 php artisan backup:manual
 
-# Ejecutar backup automático
+# Ejecutar backup automático (programado cada 10 días)
 php artisan backup:automatico
 
 # Importar backup
@@ -97,16 +121,94 @@ php artisan backup:list
 
 # Eliminar backup
 php artisan backup:delete nombre_del_archivo.sql
-
-# procesen en segundo plano (asíncrono)
-php artisan queue:work
 ```
+
+### Colas (Queue)
+```bash
+# Procesar cola en segundo plano
+php artisan queue:work
+
+# Verificar estado de la cola
+php artisan queue:check
+
+# Monitorear salud de la cola
+php artisan queue:monitor
+
+# Reintentar trabajos fallidos
+php artisan queue:retry-failed
+
+# Auto-recuperación de colas fallidas
+php artisan queue:auto-recover
+```
+
+### Auditoría y seguridad
+```bash
+# Escanear rutas y middleware
+php artisan audit:middleware-scan
+
+# Listar todas las rutas con sus middleware
+php artisan audit:routes
+
+# Generar tests automáticos desde rutas
+php artisan audit:generate-tests
+
+# Ejecutar probe de seguridad
+php artisan guard:probe
+
+# Escanear policies y gates
+php artisan audit:auth-scan
+
+# Actualizar contraseña admin
+php artisan app:update-admin-password
+```
+
+### Mantenimiento
+```bash
+# Limpiar datos expirados (tokens, sesiones, logs)
+php artisan app:cleanup-expired
+
+# Optimizar tablas de base de datos
+php artisan app:optimize-database
+
+# Pruebas de correo
+php artisan mail:test-send
+php artisan mail:test-complete
+```
+
+---
+
+## Scripts de administración (PowerShell)
+
+```powershell
+# Iniciar worker de colas con reinicio automático
+.\scripts\start-worker.ps1
+
+# Verificar estado de colas
+.\scripts\queue-status.ps1
+
+# Iniciar scheduler
+.\scripts\start-scheduler.ps1
+```
+
+---
+
+## Tareas programadas
+
+| Tarea | Frecuencia |
+|-------|-----------|
+| `backup:automatico` | Cada 10 días a las 2:00 AM |
+| `guard:probe` | Lunes a las 8:00 AM |
+| `app:cleanup-expired` | Diario a las 3:00 AM |
+| `app:optimize-database` | Domingos a las 4:00 AM |
+| `queue:auto-recover` | Cada 30 minutos |
+| `queue:monitor` | Cada hora |
+
 ---
 
 ## Uso
 
 1. Accede a `http://localhost:8000` después de ejecutar `php artisan serve`
-2. Inicia sesión con las credenciales de prueba
+2. Inicia sesión con las credenciales de prueba (`admin@gmail.com` / `adminSena2026`)
 
 ---
 
@@ -116,8 +218,20 @@ php artisan queue:work
 # Ejecutar pruebas unitarias y funcionales
 php artisan test
 
+# Ejecutar con output detallado
 vendor\bin\phpunit --testdox 2>&1
 ```
+
+---
+
+## Roles del sistema
+
+| Rol | ID | Descripción |
+|-----|----|-------------|
+| Aprendiz | 1 | Visualiza proyectos, se postula, envía evidencias |
+| Instructor | 2 | Gestiona proyectos asignados, crea etapas, califica evidencias |
+| Empresa | 3 | Publica proyectos, gestiona postulaciones, ve reportes |
+| Administrador | 4 | Gestiona usuarios, empresas, proyectos, soporte, backups |
 
 ---
 
@@ -125,46 +239,111 @@ vendor\bin\phpunit --testdox 2>&1
 
 ```bash
 app/
+├── Console/Commands/          # Comandos Artisan personalizados
+│   ├── BackupAutomatico.php
+│   ├── CleanupExpiredData.php
+│   ├── OptimizeDatabase.php
+│   ├── UpdateAdminPassword.php
+│   ├── SendTestEmail.php / SendCompleteTestEmail.php
+│   ├── CheckQueue.php / QueueMonitorCommand.php
+│   ├── QueueRetryFailedCommand.php / QueueAutoRecover.php
+│   ├── MiddlewareScannerCommand.php
+│   ├── AuditRoutesCommand.php
+│   ├── AuditTestGeneratorCommand.php
+│   ├── AuditProbeCommand.php
+│   └── AuditAuthScannerCommand.php
+├── Events/                    # Eventos con broadcast en tiempo real
+│   ├── NotificacionEnviada.php
+│   ├── PostulacionEvent.php / ProyectoEvent.php
+│   ├── EvidenciaEvent.php / EtapaEvent.php
+│   ├── SoporteEvent.php / NuevoUsuarioEvent.php
+│   └── AuditLogEvent.php
+├── Exceptions/
+│   └── Handler.php
 ├── Http/
 │   ├── Controllers/
 │   │   ├── Api/
-│   │   ├── AprendizController.php
-│   │   ├── EmpresaController.php
-│   │   ├── InstructorController.php
+│   │   │   └── ProyectoApiController.php
 │   │   ├── AdminController.php
-│   │   ├── StatsController.php
+│   │   ├── AprendizController.php
+│   │   ├── AuditLogController.php
+│   │   ├── AuthController.php
+│   │   ├── BackupController.php
+│   │   ├── DashboardController.php
+│   │   ├── EmpresaController.php
 │   │   ├── ExportController.php
-│   │   └── AuditLogController.php
+│   │   ├── FileController.php
+│   │   ├── HomeController.php
+│   │   ├── InfiniteScrollController.php
+│   │   ├── InstructorController.php
+│   │   ├── NotificacionController.php
+│   │   ├── SoporteController.php
+│   │   └── StatsController.php
 │   ├── Middleware/
+│   │   ├── AuthMiddleware.php          # auth.custom
+│   │   ├── RolMiddleware.php           # rol
+│   │   ├── OwnershipMiddleware.php     # ownership (protección IDOR)
 │   │   ├── SecurityHeadersMiddleware.php
-│   │   ├── OwnershipMiddleware.php
 │   │   ├── SessionTimeout.php
 │   │   └── ValidateFileUpload.php
-│   └── Requests/
-├── Models/
-├── Services/
+│   └── Requests/               # 11 Form Requests de validación
+├── Helpers/
+│   └── helpers.php             # Funciones globales de sesión
+├── Http/
+├── Jobs/                       # Trabajos encolados
+│   ├── SendNotificationJob.php
+│   ├── SendEmailJob.php
+│   ├── ProcessPostulacionJob.php
+│   ├── ProcessBackupJob.php
+│   ├── OptimizeDatabaseJob.php
+│   ├── CleanupExpiredDataJob.php
+│   └── GenerateReportJob.php
+├── Mail/                       # 12 Mailable classes
+├── Models/                     # 14 Modelos
+├── Notifications/              # 4 Notificaciones
+├── Providers/                  # 5 Proveedores
+├── Services/                   # 7 Servicios
 │   ├── ProyectoService.php
 │   ├── EvidenciaService.php
 │   ├── PostulacionService.php
 │   ├── FileProcessingService.php
-│   └── AprendizService.php
-├── Notifications/
-├── Mail/
-├── Traits/
-├── Helpers/
-├── Providers/
-└── Console/Commands/
+│   ├── AprendizService.php
+│   ├── PerfilService.php
+│   └── PasswordValidationService.php
+└── Traits/
+    ├── ValidacionMensajes.php
+    └── PaginacionTrait.php
 database/
-├── migrations/
-└── seeders/
+├── migrations/                 # 27 migraciones
+├── seeders/                    # 5 seeders
+└── factories/
 resources/
-├── views/
-└── js/
+├── views/                      # 60+ vistas Blade
+│   ├── layouts/
+│   ├── auth/
+│   ├── admin/
+│   ├── aprendiz/
+│   ├── empresa/
+│   ├── instructor/
+│   ├── emails/                 # 15 plantillas de email
+│   ├── partials/
+│   ├── shared/
+│   └── errors/
+├── css/                        # 14 archivos CSS
+└── js/                         # 9 archivos JS
 routes/
-public/
+├── web.php                     # ~100 rutas web
+├── api.php                     # Ruta API con Sanctum
+├── channels.php                # 5 canales de broadcast
+└── console.php
 tests/
+├── Unit/
+├── Feature/                    # 10 archivos de test
+└── TestCase.php
+scripts/                        # Scripts PowerShell
+config/                         # 18 archivos de configuración
+public/
 ```
-
 
 ---
 

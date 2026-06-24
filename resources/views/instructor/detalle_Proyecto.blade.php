@@ -235,7 +235,7 @@
             </div>
 
             <div id="stageForm" class="instructor-collapsible" style="display: none; margin-bottom: 2rem;">
-                <form action="{{ route('instructor.etapas.crear', $proyecto->id) }}" method="POST">
+                <form class="form-crear-etapa-ajax" action="{{ route('instructor.etapas.crear', $proyecto->id) }}" method="POST">
                     @csrf
                     <div style="display: grid; grid-template-columns: 80px 1fr; gap: 1rem; margin-bottom: 1rem;">
                         <input type="number" name="orden" placeholder="N°" required class="aprendiz-input-control">
@@ -277,19 +277,15 @@
                                 <button type="button" onclick="toggleEditStage({{ $etapa->id }})" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(62,180,137,0.1); color: #3eb489; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Editar etapa">
                                     <i class="fas fa-pen"></i>
                                 </button>
-                                <form action="{{ route('instructor.etapas.eliminar', $etapa->id) }}" method="POST" id="eliminar-etapa-{{ $etapa->id }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" onclick="openConfirm('¿Eliminar etapa?', 'La etapa &quot;{{ Str::limit($etapa->nombre, 25) }}&quot; será eliminada permanentemente.', () => document.getElementById('eliminar-etapa-{{ $etapa->id }}').submit())" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Eliminar etapa">
+                                <button type="button" class="btn-eliminar-etapa-ajax" data-id="{{ $etapa->id }}" data-nombre="{{ $etapa->nombre }}" style="width: 40px; height: 40px; border-radius: 12px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Eliminar etapa">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
-                                </form>
                             </div>
                         </div>
 
                         {{-- Formulario inline de edición (oculto por defecto) --}}
                         <div id="stage-edit-{{ $etapa->id }}" style="display: none; width: 100%;">
-                            <form action="{{ route('instructor.etapas.editar', $etapa->id) }}" method="POST">
+                            <form class="form-editar-etapa-ajax" action="{{ route('instructor.etapas.editar', $etapa->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div style="display: grid; grid-template-columns: 100px 1fr; gap: 1rem; margin-bottom: 1rem;">
@@ -371,10 +367,83 @@
             </div>
         </div>
 
+        <!-- Documentos de la Empresa -->
+        @if($proyecto->empresa && $proyecto->empresa->metodologia_url)
+        <div class="instructor-sidebar-card">
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 1.25rem;">
+                <i class="fas fa-building" style="color: #3eb489; margin-right: 8px;"></i>
+                Documentos de la Empresa
+            </h4>
+            <div style="padding: 14px 16px; background: rgba(62,180,137,0.08); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                <i class="fas fa-file-alt" style="color: #3eb489; font-size: 1.2rem;"></i>
+                <div style="flex: 1; min-width: 0;">
+                    <p style="font-size: 0.8rem; font-weight: 700; color: var(--text);">Metodología de Trabajo</p>
+                    <a href="{{ route('file.empresa-metodologia', $proyecto->empresa->id) }}" target="_blank" style="font-size: 0.75rem; font-weight: 600; color: #3eb489; text-decoration: underline; word-break: break-all;">
+                        <i class="fas fa-download"></i> Ver documento
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Historial de Cambios -->
+        @if($historialCambios->isNotEmpty())
+        <div class="instructor-sidebar-card">
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 1.25rem;">
+                <i class="fas fa-history" style="color: #f59e0b; margin-right: 8px;"></i>
+                Historial de Cambios
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                @foreach($historialCambios as $log)
+                @php
+                    $iconMap = ['editar' => 'fa-pen', 'publicar' => 'fa-upload', 'cambiar_estado' => 'fa-toggle-on', 'asignar' => 'fa-user-plus', 'desasignar' => 'fa-user-minus', 'iniciar' => 'fa-play', 'aprobar' => 'fa-check', 'rechazar' => 'fa-ban'];
+                    $colorMap = ['editar' => '#d97706', 'publicar' => '#10b981', 'cambiar_estado' => '#3b82f6', 'asignar' => '#8b5cf6', 'desasignar' => '#ef4444', 'iniciar' => '#3b82f6', 'aprobar' => '#059669', 'rechazar' => '#dc2626'];
+                    $labelMap = ['editar' => 'Actualización', 'publicar' => 'Publicación', 'cambiar_estado' => 'Estado', 'asignar' => 'Asignación', 'desasignar' => 'Destitución', 'iniciar' => 'Inicio', 'aprobar' => 'Aprobación', 'rechazar' => 'Rechazo'];
+                    $icon = $iconMap[$log->accion] ?? 'fa-circle';
+                    $color = $colorMap[$log->accion] ?? '#64748b';
+                    $label = $labelMap[$log->accion] ?? ucfirst($log->accion);
+                @endphp
+                <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $color }}15; color: {{ $color }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas {{ $icon }}" style="font-size: 10px;"></i>
+                        </div>
+                        @if(!$loop->last)
+                        <div style="width: 1px; flex: 1; background: #e2e8f0;"></div>
+                        @endif
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                            <span style="font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: {{ $color }}; background: {{ $color }}10; padding: 1px 8px; border-radius: 4px;">{{ $label }}</span>
+                            <span style="font-size: 0.65rem; color: var(--text-light);">{{ $log->created_at->format('d/m/Y H:i') }}</span>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text); font-weight: 500; margin-top: 2px; line-height: 1.4;">{{ $log->descripcion }}</p>
+                        @if($log->usuario)
+                        <p style="font-size: 0.65rem; color: var(--text-light); font-weight: 600;">
+                            <i class="fas fa-user" style="font-size: 8px; margin-right: 4px;"></i>
+                            {{ $log->usuario->name ?? $log->usuario->correo ?? 'Sistema' }}
+                        </p>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <!-- Suite de Seguimiento -->
         <div class="instructor-sidebar-card">
             <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 1.25rem;">Suite de Seguimiento</h4>
             <div style="display: flex; flex-direction: column; gap: 12px;">
+                @if($proyecto->empresa)
+                <form action="{{ route('chat.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="proyecto_id" value="{{ $proyecto->id }}">
+                    <button type="submit" class="btn-premium" style="width:100%;justify-content:center;background:#8b5cf6;color:#fff;border:none;">
+                        <i class="fas fa-comment-dots"></i> Chat con Empresa
+                    </button>
+                </form>
+                @endif
                 <a href="{{ route('instructor.reporte', $proyecto->id) }}" class="btn-premium" style="justify-content: center;">
                     <i class="fas fa-chart-bar"></i> Dashboard de Métricas
                 </a>
@@ -382,20 +451,14 @@
                     <i class="fas fa-tasks"></i> Calificar Entregas
                 </a>
                 @if($proyecto->estado == 'aprobado')
-                <form action="{{ route('instructor.proyectos.iniciar', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Iniciar el proyecto? Los aprendices podrán ver las etapas y entregar evidencias.');">
-                    @csrf
-                    <button type="submit" class="btn-premium" style="width: 100%; justify-content: center; background: #3b82f6; color: #fff; border: none;">
-                        <i class="fas fa-play"></i> Iniciar Proyecto
-                    </button>
-                </form>
+                <button type="button" class="btn-premium btn-proyecto-accion" data-url="{{ route('instructor.proyectos.iniciar', $proyecto->id) }}" data-confirm="¿Iniciar el proyecto? Los aprendices podrán ver las etapas y entregar evidencias." style="width: 100%; justify-content: center; background: #3b82f6; color: #fff; border: none;">
+                    <i class="fas fa-play"></i> Iniciar Proyecto
+                </button>
                 @endif
                 @if($proyecto->estado == 'en_progreso')
-                <form action="{{ route('instructor.proyectos.completar', $proyecto->id) }}" method="POST" onsubmit="return confirm('¿Confirmas que el proyecto ha sido completado exitosamente?');">
-                    @csrf
-                    <button type="submit" class="btn-premium" style="width: 100%; justify-content: center; background: #065f46; color: #fff; border: none;">
-                        <i class="fas fa-check-double"></i> Marcar como Completado
-                    </button>
-                </form>
+                <button type="button" class="btn-premium btn-proyecto-accion" data-url="{{ route('instructor.proyectos.completar', $proyecto->id) }}" data-confirm="¿Confirmas que el proyecto ha sido completado exitosamente?" style="width: 100%; justify-content: center; background: #065f46; color: #fff; border: none;">
+                    <i class="fas fa-check-double"></i> Marcar como Completado
+                </button>
                 @endif
             </div>
         </div>
@@ -416,16 +479,8 @@
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                            <form action="{{ route('instructor.postulaciones.estado', $p->id) }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="estado" value="aceptada">
-                                <button type="submit" style="width: 100%; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border: none; padding: 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; cursor: pointer;">Aceptar</button>
-                            </form>
-                            <form action="{{ route('instructor.postulaciones.estado', $p->id) }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="estado" value="rechazada">
-                                <button type="submit" style="width: 100%; background: rgba(62,180,137,0.08); color: #3eb489; border: 1px solid rgba(62,180,137,0.2); padding: 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; cursor: pointer;">Omitir</button>
-                            </form>
+                            <button type="button" class="btn-postulacion-instructor" data-id="{{ $p->id }}" data-estado="aceptada" style="width: 100%; background: linear-gradient(135deg, #3eb489, #2d9d74); color: white; border: none; padding: 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; cursor: pointer;">Aceptar</button>
+                            <button type="button" class="btn-postulacion-instructor" data-id="{{ $p->id }}" data-estado="rechazada" style="width: 100%; background: rgba(62,180,137,0.08); color: #3eb489; border: 1px solid rgba(62,180,137,0.2); padding: 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 800; cursor: pointer;">Omitir</button>
                         </div>
                     </div>
                 @empty
@@ -482,4 +537,132 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endif
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Create stage
+    document.querySelectorAll('.form-crear-etapa-ajax').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            ajax.disableButton(btn, 'Creando...');
+            ajax.post(this.action, new FormData(this)).then(res => {
+                ajax.showToast('success', res.data.message);
+                this.querySelector('input[name="orden"]').value = '';
+                this.querySelector('input[name="nombre"]').value = '';
+                this.querySelector('textarea[name="descripcion"]').value = '';
+                ajax.enableButton(btn);
+                location.reload();
+            }).catch(err => {
+                ajax.enableButton(btn);
+                ajax.showToast('error', err.response?.data?.message || 'Error al crear etapa.');
+            });
+        });
+    });
+
+    // Edit stage
+    document.querySelectorAll('.form-editar-etapa-ajax').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            ajax.disableButton(btn, 'Guardando...');
+            const formData = new FormData(this);
+            formData.append('_method', 'PUT');
+            ajax.post(this.action, formData).then(res => {
+                ajax.showToast('success', res.data.message);
+                const etapa = res.data.etapa;
+                const id = etapa.id;
+                const card = document.getElementById('stage-card-' + id);
+                if (card) {
+                    const view = card.querySelector('.instructor-stage-view');
+                    if (view) {
+                        view.querySelector('h4').textContent = etapa.nombre;
+                        const desc = view.querySelector('p');
+                        if (desc) desc.textContent = etapa.descripcion;
+                        const num = view.querySelector('.instructor-stage-number');
+                        if (num) num.textContent = etapa.orden;
+                    }
+                    // Hide edit, show view
+                    document.getElementById('stage-view-' + id).style.display = 'flex';
+                    document.getElementById('stage-edit-' + id).style.display = 'none';
+                }
+                ajax.enableButton(btn);
+            }).catch(err => {
+                ajax.enableButton(btn);
+                ajax.showToast('error', err.response?.data?.message || 'Error al editar etapa.');
+            });
+        });
+    });
+
+    // Delete stage
+    document.querySelectorAll('.btn-eliminar-etapa-ajax').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nombre = this.dataset.nombre;
+            ajax.confirm('¿Eliminar la etapa "' + nombre + '"? Esta acción no se puede deshacer.').then(ok => {
+                if (!ok) return;
+                const url = '{{ route('instructor.etapas.eliminar', ['id' => '__ID__']) }}'.replace('__ID__', id);
+                ajax.disableButton(this, 'Eliminando...');
+                ajax.post(url, { _method: 'DELETE' }).then(res => {
+                    ajax.showToast('success', res.data.message);
+                    document.getElementById('stage-card-' + id).remove();
+                }).catch(err => {
+                    ajax.enableButton(this);
+                    ajax.showToast('error', err.response?.data?.message || 'Error al eliminar etapa.');
+                });
+            });
+        });
+    });
+
+    // Postulation accept/reject
+    document.querySelectorAll('.btn-postulacion-instructor').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const estado = this.dataset.estado;
+            const label = estado === 'aceptada' ? 'Aceptar' : 'Rechazar';
+            ajax.confirm('¿' + label + ' esta postulación?').then(ok => {
+                if (!ok) return;
+                ajax.disableButton(this, label + '...');
+                const url = '{{ route('instructor.postulaciones.estado', ['id' => '__ID__']) }}'.replace('__ID__', id);
+                ajax.post(url, { estado: estado }).then(res => {
+                    ajax.showToast('success', res.data.message);
+                    // Remove the postulation item
+                    const item = this.closest('.instructor-postulant-item');
+                    if (item) item.remove();
+                    // Update pending count
+                    const countEl = document.querySelector('.instructor-sidebar-card h4');
+                    if (countEl && countEl.textContent.includes('Solicitudes')) {
+                        const match = countEl.textContent.match(/(\d+)/);
+                        if (match) {
+                            const count = parseInt(match[1]);
+                            countEl.textContent = countEl.textContent.replace(count, Math.max(0, count - 1));
+                        }
+                    }
+                }).catch(err => {
+                    ajax.enableButton(this);
+                    ajax.showToast('error', err.response?.data?.message || 'Error al actualizar.');
+                });
+            });
+        });
+    });
+
+    // Iniciar/Completar proyecto
+    document.querySelectorAll('.btn-proyecto-accion').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const url = this.dataset.url;
+            const confirmText = this.dataset.confirm;
+            ajax.confirm(confirmText).then(ok => {
+                if (!ok) return;
+                ajax.disableButton(this, 'Procesando...');
+                ajax.post(url).then(res => {
+                    ajax.showToast('success', res.data.message);
+                    location.reload();
+                }).catch(err => {
+                    ajax.enableButton(this);
+                    ajax.showToast('error', err.response?.data?.message || 'Error.');
+                });
+            });
+        });
+    });
+});
+</script>
 @endsection

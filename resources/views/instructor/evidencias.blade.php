@@ -53,7 +53,7 @@
 
     <div style="display: grid; gap: 2.5rem;">
         @forelse($evidencias as $evidencia)
-            <div class="glass-card" style="padding: 0; overflow: hidden; border-radius: 20px;">
+            <div class="glass-card" data-evidencia-id="{{ $evidencia->id }}" style="padding: 0; overflow: hidden; border-radius: 20px;">
                 <!-- Header of the evidence card -->
                 <div style="padding: 1.5rem 2rem; background: #f8fafc; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
                     <div style="display: flex; align-items: center; gap: 15px;">
@@ -81,7 +81,7 @@
                         
                         <!-- Left: Grading Form -->
                         @if($evidencia->estado === 'pendiente')
-                            <form action="{{ route('instructor.evidencias.calificar', $evidencia->id) }}" method="POST">
+                            <form class="form-calificar-ajax" action="{{ route('instructor.evidencias.calificar', $evidencia->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 
@@ -122,10 +122,10 @@
                                 </button>
                             </form>
                         @else
-                            <div>
+                            <div id="eval-result-{{ $evidencia->id }}">
                                 <div style="margin-bottom: 1.5rem;">
                                     <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 1.25rem; letter-spacing: 0.5px;">Resolución de la Entrega</label>
-                                    <div style="display: flex; gap: 1rem;">
+                                    <div class="estados-display" style="display: flex; gap: 1rem;">
                                         <div style="flex: 1; padding: 1.25rem; border-radius: 12px; text-align: center; {{ $evidencia->estado === 'aceptada' ? 'background: #f0fdf4; border: 2px solid #10b981; color: #059669;' : 'background: #f8fafc; border: 2px solid #e2e8f0; color: #94a3b8;' }}">
                                             <i class="fas fa-check-double" style="font-size: 1.5rem; display: block; margin-bottom: 6px;"></i>
                                             <span style="font-weight: 800; font-size: 0.85rem;">Aprobado</span>
@@ -143,7 +143,7 @@
 
                                 <div style="margin-bottom: 2rem;">
                                     <label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Retroalimentación Técnica</label>
-                                    <div class="instructor-input-control" style="min-height: 120px; padding: 1.25rem; background: #f8fafc; border-color: #e2e8f0; color: var(--text-light);">
+                                    <div class="comentario-display instructor-input-control" style="min-height: 120px; padding: 1.25rem; background: #f8fafc; border-color: #e2e8f0; color: var(--text-light);">
                                         {{ $evidencia->comentario_instructor ?: 'Sin comentarios.' }}
                                     </div>
                                 </div>
@@ -210,4 +210,65 @@
         </div>
     @endif
 </div>
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.form-calificar-ajax').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const evidId = this.action.split('/').pop();
+
+            ajax.disableButton(btn, 'Calificando...');
+            const formData = new FormData(this);
+            formData.append('_method', 'PUT');
+
+            ajax.post(this.action, formData).then(res => {
+                ajax.showToast('success', res.data.message);
+
+                const estadosHtml = res.data.estadosHtml;
+                const comentario = res.data.comentario;
+                const estado = res.data.estado;
+
+                const evalCol = document.querySelector('.glass-card[data-evidencia-id="' + evidId + '"] .form-calificar-ajax');
+                if (evalCol) {
+                    const parentGrid = evalCol.closest('[style*="display: grid"]');
+                    if (parentGrid) {
+                        evalCol.outerHTML = '<div id="eval-result-' + evidId + '">' +
+                            '<div style="margin-bottom: 1.5rem;">' +
+                                '<label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 1.25rem; letter-spacing: 0.5px;">Resolución de la Entrega</label>' +
+                                '<div class="estados-display" style="display: flex; gap: 1rem;">' + estadosHtml + '</div>' +
+                            '</div>' +
+                            '<div style="margin-bottom: 2rem;">' +
+                                '<label style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-lighter); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Retroalimentación Técnica</label>' +
+                                '<div class="comentario-display instructor-input-control" style="min-height: 120px; padding: 1.25rem; background: #f8fafc; border-color: #e2e8f0; color: var(--text-light);">' + (comentario || 'Sin comentarios.') + '</div>' +
+                            '</div>' +
+                            '<div style="padding: 1rem; background: #f8fafc; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0;">' +
+                                '<i class="fas fa-lock" style="color: #94a3b8; margin-right: 8px;"></i>' +
+                                '<span style="font-weight: 700; color: #94a3b8; font-size: 0.9rem;">Evaluación cerrada — Evidencia ya calificada</span>' +
+                            '</div>' +
+                        '</div>';
+                    }
+                }
+
+                // Update the header count
+                const badge = document.querySelector('.aprendiz-badge-portal');
+                if (badge) {
+                    const match = badge.textContent.match(/(\d+)/);
+                    if (match) {
+                        const count = parseInt(match[1]);
+                        if (count > 0) {
+                            badge.textContent = badge.textContent.replace(count, count - 1);
+                        }
+                    }
+                }
+            }).catch(err => {
+                ajax.enableButton(btn);
+                ajax.showToast('error', err.response?.data?.message || 'Error al calificar evidencia.');
+            });
+        });
+    });
+});
+</script>
 @endsection
