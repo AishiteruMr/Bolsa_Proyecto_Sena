@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\EvidenciaEvent;
+use App\Events\PostulacionEvent;
 use App\Http\Requests\ActualizarPerfilRequest;
 use App\Http\Requests\EnviarEvidenciaRequest;
 use App\Models\Aprendiz;
@@ -211,6 +213,23 @@ class AprendizController extends Controller
             }
 
             [$exito, $mensaje] = $this->postulacionService->crear($aprendiz->id, $id);
+
+            if ($exito) {
+                $proyecto = Proyecto::find($id);
+                $usuario = User::find($usrId);
+                if ($usuario && $proyecto) {
+                    event(new PostulacionEvent(
+                        $usuario,
+                        'nueva',
+                        [
+                            'message' => "Nueva postulación: {$proyecto->titulo}",
+                            'proyecto' => $proyecto->titulo,
+                            'usuario' => $aprendiz->nombres.' '.$aprendiz->apellidos,
+                            'url' => route('admin.proyectos'),
+                        ]
+                    ));
+                }
+            }
 
             return response()->json([
                 'success' => $exito,
@@ -493,6 +512,21 @@ class AprendizController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        $usuario = User::find($usrId);
+        $proyecto = Proyecto::find($proId);
+        if ($usuario && $proyecto) {
+            event(new EvidenciaEvent(
+                $usuario,
+                'subida',
+                [
+                    'message' => "Nueva evidencia enviada: {$etapa->nombre}",
+                    'proyecto' => $proyecto->titulo,
+                    'etapa' => $etapa->nombre,
+                    'url' => route('instructor.evidencias.ver', $proId),
+                ]
+            ));
+        }
 
         return back()->with('success', 'Evidencia enviada.');
     }

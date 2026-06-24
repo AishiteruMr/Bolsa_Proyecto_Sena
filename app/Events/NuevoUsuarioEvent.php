@@ -42,6 +42,7 @@ class NuevoUsuarioEvent implements ShouldBroadcast
             'message' => $this->data['message'] ?? '',
             'usuario' => $this->data['usuario'] ?? '',
             'rol' => $this->data['rol'] ?? '',
+            'estado' => $this->data['estado'] ?? null,
             'url' => $this->data['url'] ?? null,
             'timestamp' => now()->toIso8601String(),
         ];

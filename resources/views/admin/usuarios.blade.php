@@ -267,6 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const url = '{{ route('admin.usuarios.estado', ['id' => '__ID__']) }}'.replace('__ID__', id);
 
                 ajax.post(url, { tipo: tipo, estado: nuevoEstado }).then(res => {
+                    ajax.enableButton(this);
                     ajax.showToast('success', res.data.message);
 
                     const tr = this.closest('tr');

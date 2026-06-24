@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NuevoUsuarioEvent;
+use App\Events\ProyectoEvent;
 use App\Http\Requests\CambiarEstadoUsuarioRequest;
 use App\Http\Requests\GestionarPostulacionRequest;
 use App\Http\Requests\GestionarProyectoRequest;
@@ -116,7 +118,11 @@ class AdminController extends Controller
                 ['activo' => $nuevoEstado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'aprendiz']);
 
             if ($nuevoEstado == 1 && $usrToNotify) {
-                $this->enviarCorreoBienvenida($usrToNotify->correo, $aprendiz->nombres ?? '', $aprendiz->apellidos ?? '');
+                try {
+                    $this->enviarCorreoBienvenida($usrToNotify->correo, $aprendiz->nombres ?? '', $aprendiz->apellidos ?? '');
+                } catch (\Exception $e) {
+                    Log::error('Error al enviar correo de bienvenida: '.$e->getMessage());
+                }
             }
         } elseif ($tipoUsuario === 'instructor') {
             $instructor = Instructor::with('usuario')->findOrFail($id);
@@ -131,7 +137,11 @@ class AdminController extends Controller
                 ['activo' => $nuevoEstado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'instructor']);
 
             if ($nuevoEstado == 1 && $usrToNotify) {
-                $this->enviarCorreoBienvenida($usrToNotify->correo, $instructor->nombres ?? '', $instructor->apellidos ?? '');
+                try {
+                    $this->enviarCorreoBienvenida($usrToNotify->correo, $instructor->nombres ?? '', $instructor->apellidos ?? '');
+                } catch (\Exception $e) {
+                    Log::error('Error al enviar correo de bienvenida: '.$e->getMessage());
+                }
             }
         } else {
             $empresa = Empresa::with('usuario')->findOrFail($id);
@@ -146,7 +156,11 @@ class AdminController extends Controller
                 ['activo' => $nuevoEstado, 'nombre_objetivo' => $nombreTarget, 'tipo' => 'empresa']);
 
             if ($nuevoEstado == 1 && $usrToNotify) {
-                $this->enviarCorreoBienvenida($usrToNotify->correo, $empresa->nombre, 'Empresa');
+                try {
+                    $this->enviarCorreoBienvenida($usrToNotify->correo, $empresa->nombre, 'Empresa');
+                } catch (\Exception $e) {
+                    Log::error('Error al enviar correo de bienvenida: '.$e->getMessage());
+                }
             }
         }
 
@@ -162,6 +176,15 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             Log::error('Error al notificar estado de usuario: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
         }
+
+        $accion = $nuevoEstado == 1 ? 'activado' : 'desactivado';
+        event(new NuevoUsuarioEvent($accion, [
+            'message' => "Usuario {$accion}: {$nombreTarget} ({$tipoUsuario})",
+            'usuario' => $nombreTarget,
+            'rol' => $tipoUsuario,
+            'estado' => $nuevoEstado,
+            'url' => route('admin.usuarios'),
+        ]));
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
@@ -396,6 +419,13 @@ class AdminController extends Controller
                     Log::error('Error al actualizar estado de usuario: '.$e->getCode());
                 }
             }
+
+            event(new ProyectoEvent($request->estado, [
+                'message' => "Proyecto {$request->estado}: {$proyectoActual->titulo}",
+                'proyecto' => $proyectoActual->titulo,
+                'empresa' => $proyectoActual->empresa->nombre ?? '',
+                'url' => route('admin.proyectos'),
+            ]));
         } else {
             $proyecto->update([
                 'estado' => $request->estado,
@@ -441,6 +471,13 @@ class AdminController extends Controller
                     Log::error('Error al enviar correos de oferta a aprendices: ' . $e->getMessage());
                 }
             }
+
+            event(new ProyectoEvent($request->estado, [
+                'message' => "Proyecto {$request->estado}: {$proyectoActual->titulo}",
+                'proyecto' => $proyectoActual->titulo,
+                'empresa' => $proyectoActual->empresa->nombre ?? '',
+                'url' => route('admin.proyectos'),
+            ]));
         }
 
         if ($request->ajax() || $request->wantsJson()) {
@@ -508,6 +545,16 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             Log::error('Error al enviar correo de asignación de instructor: '.$e->getMessage());
         }
+
+        $proyecto->load('empresa.usuario');
+        $instructorNombre = optional($proyecto->instructor)->nombres ?? 'Instructor';
+        event(new ProyectoEvent('asignado', [
+            'message' => "Instructor {$instructorNombre} asignado al proyecto: {$proyecto->titulo}",
+            'proyecto' => $proyecto->titulo,
+            'empresa' => optional($proyecto->empresa)->nombre ?? 'Empresa',
+            'instructor' => $instructorNombre,
+            'url' => route('proyectos.show', $proyecto->id),
+        ]));
 
         return back()->with('success', 'Instructor asignado.');
     }

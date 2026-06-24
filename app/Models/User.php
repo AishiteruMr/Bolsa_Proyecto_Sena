@@ -108,6 +108,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Empresa::class, 'usuario_id', 'id');
     }
 
+    public function receivesBroadcastNotificationsOn(): string
+    {
+        return 'user.'.$this->id;
+    }
+
     public function isActivo(): bool
     {
         return match ($this->rol_id) {

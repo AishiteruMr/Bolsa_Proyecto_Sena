@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\AuditLogEvent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -42,7 +43,7 @@ class AuditLog extends Model
         ?array $nuevos = null,
         ?string $descripcion = null
     ): self {
-        return self::create([
+        $record = self::create([
             'user_id' => $userId,
             'accion' => $accion,
             'modulo' => $modulo,
@@ -54,6 +55,18 @@ class AuditLog extends Model
             'user_agent' => request()->userAgent(),
             'descripcion' => $descripcion,
         ]);
+
+        try {
+            event(new AuditLogEvent($accion, [
+                'message' => $descripcion ?? "{$accion} en {$modulo}",
+                'usuario' => (string) $userId,
+                'tipo' => $modulo,
+            ]));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error al transmitir AuditLogEvent: '.$e->getMessage());
+        }
+
+        return $record;
     }
 
     public static function registrarCambio($userId, $accion, $modulo, $tabla, $registroId, $anteriores, $nuevos, $descripcion = null)
