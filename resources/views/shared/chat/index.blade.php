@@ -5,6 +5,39 @@
 
 @section('sidebar-nav')
     @switch(session('rol'))
+        @case(1)
+            <span class="nav-label">Principal</span>
+            <a href="{{ route('aprendiz.dashboard') }}" class="nav-item {{ request()->routeIs('aprendiz.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-home"></i> <span>Principal</span>
+            </a>
+            <a href="{{ route('aprendiz.proyectos') }}" class="nav-item {{ request()->routeIs('aprendiz.proyectos') ? 'active' : '' }}">
+                <i class="fas fa-briefcase"></i> <span>Explorar Proyectos</span>
+            </a>
+            <a href="{{ route('aprendiz.postulaciones') }}" class="nav-item {{ request()->routeIs('aprendiz.postulaciones') ? 'active' : '' }}">
+                <i class="fas fa-paper-plane"></i> <span>Mis Postulaciones</span>
+            </a>
+            <a href="{{ route('aprendiz.historial') }}" class="nav-item {{ request()->routeIs('aprendiz.historial') ? 'active' : '' }}">
+                <i class="fas fa-history"></i> <span>Historial</span>
+            </a>
+            <a href="{{ route('aprendiz.entregas') }}" class="nav-item {{ request()->routeIs('aprendiz.entregas') ? 'active' : '' }}">
+                <i class="fas fa-tasks"></i> <span>Mis Entregas</span>
+            </a>
+            <span class="nav-label">Comunicación</span>
+            <a href="{{ route('chat.index') }}" class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }}">
+                <i class="fas fa-comment-dots"></i> Mensajes
+                @php
+                    $chatUnread = \App\Models\Conversation::whereHas('users', fn($q) => $q->where('user_id', session('usr_id')))
+                        ->get()->sum(fn($c) => $c->unreadMessagesCount(session('usr_id')));
+                @endphp
+                @if($chatUnread > 0)
+                    <span class="nav-badge">{{ $chatUnread > 99 ? '99+' : $chatUnread }}</span>
+                @endif
+            </a>
+            <span class="nav-label">Cuenta</span>
+            <a href="{{ route('aprendiz.perfil') }}" class="nav-item {{ request()->routeIs('aprendiz.perfil') ? 'active' : '' }}">
+                <i class="fas fa-user"></i> <span>Mi Perfil</span>
+            </a>
+            @break
         @case(2)
             <span class="nav-label">Principal</span>
             <a href="{{ route('instructor.dashboard') }}" class="nav-item {{ request()->routeIs('instructor.dashboard') ? 'active' : '' }}">
@@ -317,8 +350,8 @@
                 @forelse($conversations as $conv)
                     @php
                         $otherUser = $conv->users->firstWhere('id', '!=', session('usr_id'));
-                        $otherName = $otherUser?->nombre ?? 'Usuario';
                         $otherRole = $otherUser?->nombre_rol ?? '';
+                        $otherName = $otherUser?->nombre ?: ($otherRole ?: 'Usuario');
                         $lastMsg = $conv->lastMessage;
                         $unread = $unreadCounts[$conv->id] ?? 0;
                         $isActive = isset($conversation) && $conversation->id === $conv->id;
@@ -367,8 +400,8 @@
         @if(isset($conversation))
             @php
                 $otherUser = $conversation->users->firstWhere('id', '!=', session('usr_id'));
-                $otherName = $otherUser?->nombre ?? 'Usuario';
                 $otherRole = $otherUser?->nombre_rol ?? '';
+                $otherName = $otherUser?->nombre ?: ($otherRole ?: 'Usuario');
                 $proyectoTitle = $conversation->proyecto?->titulo ?? 'Proyecto';
             @endphp
             <div class="chat-main">

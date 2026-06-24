@@ -99,7 +99,7 @@ Route::middleware(['auth.custom'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth.custom', 'rol:2,3'])->prefix('chat')->name('chat.')->group(function () {
+Route::middleware(['auth.custom', 'rol:1,2,3'])->prefix('chat')->name('chat.')->group(function () {
     Route::get('/', [ChatController::class, 'index'])->name('index');
     Route::get('/{conversation}', [ChatController::class, 'show'])->name('show');
     Route::post('/', [ChatController::class, 'store'])->name('store');

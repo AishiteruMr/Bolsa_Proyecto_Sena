@@ -74,7 +74,7 @@ class EmpresaTest extends TestCase
     {
         $projectData = [
             'titulo'      => 'Nuevo Proyecto de Prueba Web',
-            'categoria'   => 'Desarrollo Web',
+            'categoria'   => 'Sistemas y Desarrollo de Software',
             'descripcion' => 'Esta es una descripción detallada del proyecto de prueba que debe tener al menos ochenta caracteres para cumplir la validación del formulario.',
             'requisitos'  => 'Conocimientos en PHP y Laravel, manejo de bases de datos MySQL',
             'habilidades' => 'Trabajo en equipo, proactividad, comunicación',
@@ -111,7 +111,7 @@ class EmpresaTest extends TestCase
 
         $updateData = [
             'titulo'      => 'Proyecto Actualizado con Nuevos',
-            'categoria'   => 'Nueva Categoría',
+            'categoria'   => 'Sistemas y Desarrollo de Software',
             'descripcion' => 'Nueva descripción del proyecto actualizado que debe tener al menos ochenta caracteres para pasar la validación correctamente.',
             'requisitos'  => 'Nuevos requisitos actualizados para el proyecto',
             'habilidades' => 'Nuevas habilidades requeridas para el proyecto',

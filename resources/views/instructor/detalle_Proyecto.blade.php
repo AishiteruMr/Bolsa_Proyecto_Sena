@@ -444,6 +444,15 @@
                     </button>
                 </form>
                 @endif
+                @if($proyecto->postulaciones()->where('estado', 'aceptada')->count() > 0)
+                <form action="{{ route('chat.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="proyecto_id" value="{{ $proyecto->id }}">
+                    <button type="submit" class="btn-premium" style="width:100%;justify-content:center;background:#3b82f6;color:#fff;border:none;">
+                        <i class="fas fa-users"></i> Chat con Aprendices
+                    </button>
+                </form>
+                @endif
                 <a href="{{ route('instructor.reporte', $proyecto->id) }}" class="btn-premium" style="justify-content: center;">
                     <i class="fas fa-chart-bar"></i> Dashboard de Métricas
                 </a>
