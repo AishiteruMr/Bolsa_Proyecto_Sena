@@ -203,6 +203,46 @@
 
 @section('scripts')
 <script>
+// ── REAL-TIME: usuario ───────────────────────────────────────────
+(function () {
+    if (!document.getElementById('tabla-aprendices')) return;
+
+    window.addEventListener('realtime:usuario', function (e) {
+        const d = e.detail || {};
+        const userId  = d.usuario_id || d.id;
+        const nuevoActivo = d.activo !== undefined ? parseInt(d.activo) : null;
+        if (!userId || nuevoActivo === null) return;
+
+        // Find the toggle button across both tables
+        const btn = document.querySelector('.btn-estado-usuario-ajax[data-id="' + userId + '"]');
+        if (!btn) return;
+
+        const esActivo = nuevoActivo === 1;
+        btn.dataset.activo = nuevoActivo;
+        btn.innerHTML  = esActivo
+            ? '<i class="fas fa-user-minus"></i> Desactivar'
+            : '<i class="fas fa-user-check"></i> Activar';
+        btn.style.border     = esActivo ? '2px solid #2e7d46' : 'none';
+        btn.style.background = esActivo ? 'transparent' : '#2e7d46';
+        btn.style.color      = esActivo ? '#2e7d46' : 'white';
+
+        const tr = btn.closest('tr');
+        if (tr) {
+            const badge = tr.querySelector('.estado-badge');
+            if (badge) {
+                badge.style.background = esActivo ? '#e8f5e9' : '#ffebee';
+                badge.style.color      = esActivo ? '#1a5c30' : '#c62828';
+                badge.style.border     = esActivo ? '1px solid #a5d6a7' : '1px solid #ef9a9a';
+                const dot = badge.querySelector('.estado-dot');
+                if (dot) dot.style.background = esActivo ? '#2e7d46' : '#e53935';
+                badge.childNodes.forEach(n => {
+                    if (n.nodeType === 3) n.textContent = esActivo ? ' aprobado' : ' cerrado';
+                });
+            }
+        }
+    });
+})();
+
 function mostrarTabla(tab) {
     const tablaA = document.getElementById('tabla-aprendices');
     const tablaI = document.getElementById('tabla-instructores');

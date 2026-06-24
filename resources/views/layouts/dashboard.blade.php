@@ -73,6 +73,12 @@
             </button>
             <span class="topbar-title">@yield('page-title', 'Principal')</span>
             <div class="topbar-right" style="display: flex; align-items: center; gap: 24px;">
+
+                {{-- LIVE indicator --}}
+                <div id="rt-live-indicator" title="Datos en tiempo real activos" style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#10b981;opacity:0.6;transition:opacity 0.3s;">
+                    <span id="rt-live-dot" style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;box-shadow:0 0 0 0 rgba(16,185,129,0.4);animation:rtPulse 2.5s ease-in-out infinite;"></span>
+                    LIVE
+                </div>
                 @php
                     $unreadCount = 0;
                     $currentRole = session('rol');
@@ -131,6 +137,16 @@
     @keyframes slideInToast {
         from { opacity:0; transform:translateX(60px) scale(0.9); }
         to   { opacity:1; transform:translateX(0) scale(1); }
+    }
+    @keyframes rtPulse {
+        0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+        70%  { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+        100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+    @keyframes rtFlash {
+        0%   { opacity:0.6; }
+        50%  { opacity:1; transform:scale(1.05); }
+        100% { opacity:0.6; }
     }
     </style>
 
@@ -248,6 +264,27 @@
     </script>
 
     @vite(['resources/js/bootstrap.js', 'resources/js/dashboard.js', 'resources/js/realtime.js'])
+    <script>
+    // ── LIVE INDICATOR: flash on any realtime event ───────────────
+    (function () {
+        const indicator = document.getElementById('rt-live-indicator');
+        if (!indicator) return;
+        const events = ['realtime:proyecto','realtime:postulacion','realtime:evidencia',
+                        'realtime:etapa','realtime:usuario','realtime:audit',
+                        'realtime:soporte','realtime:notificacion'];
+        let flashTimeout;
+        function flash() {
+            clearTimeout(flashTimeout);
+            indicator.style.opacity = '1';
+            indicator.style.animation = 'rtFlash 0.6s ease';
+            flashTimeout = setTimeout(() => {
+                indicator.style.animation = '';
+                indicator.style.opacity = '0.6';
+            }, 1200);
+        }
+        events.forEach(ev => window.addEventListener(ev, flash));
+    })();
+    </script>
     @yield('scripts')
 </body>
 </html>

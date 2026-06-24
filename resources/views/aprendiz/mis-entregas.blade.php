@@ -86,7 +86,7 @@
             </div>
         </div>
 
-        <div style="display: grid; gap: 32px;">
+        <div id="entregas-grid" style="display: grid; gap: 32px;">
             @foreach($proyectos as $proyecto)
                 @php
                     $evidencias_proyecto = $evidencias->where('proyecto_id', $proyecto->id);
@@ -123,7 +123,7 @@
                                         default     => ['bg' => '#f1f5f9', 'border' => '#cbd5e1', 'text' => '#475569', 'icon' => 'fa-info-circle'],
                                     };
                                 @endphp
-                                <div style="background: {{ $stateColor['bg'] }}; border: 1.5px solid {{ $stateColor['border'] }}; border-radius: 16px; padding: 20px 24px; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(8px)'" onmouseout="this.style.transform='translateX(0)'">
+                                <div data-evidencia-id="{{ $evidencia->id }}" data-evidencia-estado="{{ $evidencia->estado }}" style="background: {{ $stateColor['bg'] }}; border: 1.5px solid {{ $stateColor['border'] }}; border-radius: 16px; padding: 20px 24px; transition: transform 0.3s;" onmouseover="this.style.transform='translateX(8px)'" onmouseout="this.style.transform='translateX(0)'">
                                     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
                                         <div style="flex: 1; min-width: 280px;">
                                             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
@@ -172,7 +172,7 @@
         </div>
 
         @if($proyectos->hasPages())
-            <div style="margin-top: 40px; display: flex; justify-content: center;">
+            <div id="entregas-pagination" style="margin-top: 40px; display: flex; justify-content: center;">
                 {{ $proyectos->withQueryString()->links() }}
             </div>
         @endif
@@ -191,4 +191,82 @@
         </div>
     @endif
 </div>
+@endsection
+
+@section('scripts')
+<script>
+(function () {
+    if (!document.getElementById('entregas-grid')) return;
+
+    const ESTADO_COLORS = {
+        'aceptada':   { bg: '#d1fae5', border: '#86efac', text: '#065f46', icon: 'fa-check' },
+        'rechazada':  { bg: '#fee2e2', border: '#fca5a5', text: '#991b1b', icon: 'fa-ban' },
+        'pendiente':  { bg: '#fef3c7', border: '#fcd34d', text: '#92400e', icon: 'fa-clock' },
+        'en_progreso':{ bg: '#dbeafe', border: '#93c5fd', text: '#1e40af', icon: 'fa-spinner' },
+    };
+
+    let rtFallbackDebounce = null;
+
+    function fallbackRefreshEntregas() {
+        fetch(window.location.href)
+            .then(r => r.text())
+            .then(html => {
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const newGrid = doc.getElementById('entregas-grid');
+                const newPag  = doc.getElementById('entregas-pagination');
+                const curGrid = document.getElementById('entregas-grid');
+                const curPag  = document.getElementById('entregas-pagination');
+                if (newGrid && curGrid) curGrid.innerHTML = newGrid.innerHTML;
+                if (newPag && curPag) curPag.innerHTML = newPag.innerHTML;
+                if (!newPag && curPag) curPag.innerHTML = '';
+            })
+            .catch(() => {});
+    }
+
+    window.addEventListener('realtime:evidencia', function (e) {
+        const d = e.detail || {};
+        const evidenciaId = d.evidencia_id || d.id;
+        const newEstado   = d.estado || d.nuevo_estado;
+
+        const row = evidenciaId
+            ? document.querySelector('[data-evidencia-id="' + evidenciaId + '"]')
+            : null;
+
+        if (row && newEstado && ESTADO_COLORS[newEstado]) {
+            const cfg = ESTADO_COLORS[newEstado];
+            row.dataset.evidenciaEstado = newEstado;
+            row.style.background   = cfg.bg;
+            row.style.borderColor  = cfg.border;
+
+            // Update estado badge (last span with white-space:nowrap)
+            const badge = row.querySelector('span[style*="white-space: nowrap"]');
+            if (badge) {
+                badge.style.background  = cfg.bg;
+                badge.style.color       = cfg.text;
+                badge.style.borderColor = cfg.border;
+                badge.innerHTML = `<i class="fas ${cfg.icon}"></i> ${newEstado.charAt(0).toUpperCase() + newEstado.slice(1).replace('_', ' ')}`;
+            }
+
+            // Refresh the stat counters at top
+            const allRows = document.querySelectorAll('[data-evidencia-estado]');
+            let total = 0, aceptada = 0, pendiente = 0, rechazada = 0;
+            allRows.forEach(r => {
+                total++;
+                const st = r.dataset.evidenciaEstado;
+                if (st === 'aceptada') aceptada++;
+                else if (st === 'pendiente') pendiente++;
+                else if (st === 'rechazada') rechazada++;
+            });
+            const statNums = document.querySelectorAll('.instructor-stat-grid .glass-card > div:last-child > div:first-child');
+            if (statNums[0]) statNums[0].textContent = total;
+            if (statNums[1]) statNums[1].textContent = aceptada;
+            if (statNums[2]) statNums[2].textContent = pendiente;
+            if (statNums[3]) statNums[3].textContent = rechazada;
+        } else {
+            clearTimeout(rtFallbackDebounce);
+            rtFallbackDebounce = setTimeout(fallbackRefreshEntregas, 800);
+        }
+    });
+})();
+</script>
 @endsection

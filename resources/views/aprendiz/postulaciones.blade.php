@@ -91,7 +91,7 @@
         </div>
     @endif
 
-    <div style="display: flex; flex-direction: column; gap: 20px;">
+    <div id="postulaciones-list" style="display: flex; flex-direction: column; gap: 20px;">
         @forelse($postulaciones as $post)
             @php
                 $estadoColor = match($post->estado) {
@@ -101,7 +101,7 @@
                     default     => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-info-circle'],
                 };
             @endphp
-            <div class="glass-card" style="padding: 0; overflow: hidden; display: flex; align-items: center; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 32px rgba(62,180,137,0.12)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
+            <div class="glass-card" data-post-id="{{ $post->id }}" data-post-estado="{{ $post->estado }}" style="padding: 0; overflow: hidden; display: flex; align-items: center; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 32px rgba(62,180,137,0.12)'" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 24px rgba(62,180,137,0.06)'">
                 <div style="width: 140px; height: 120px; flex-shrink: 0;">
                     @if($post->proyecto && $post->proyecto->imagen_url)
                         <img src="{{ $post->proyecto->imagen_url }}" loading="lazy" alt="" style="width: 100%; height: 100%; object-fit: cover;">
@@ -171,9 +171,104 @@
     </div>
 
     @if($postulaciones->hasPages())
-        <div style="margin-top: 40px; display: flex; justify-content: center;">
+        <div id="postulaciones-pagination" style="margin-top: 40px; display: flex; justify-content: center;">
             {{ $postulaciones->links() }}
         </div>
     @endif
 </div>
+@endsection
+
+@section('scripts')
+<script>
+(function () {
+    if (!document.getElementById('postulaciones-list')) return;
+
+    // Estado config for inline badge mutation
+    const ESTADO_MAP = {
+        'aceptada':  { bg: '#10b981', border: '#bbf7d0', text: '#ffffff', icon: 'fa-check',        label: 'Aceptada' },
+        'rechazada': { bg: '#ef4444', border: '#fecaca', text: '#ffffff', icon: 'fa-ban',          label: 'Rechazada' },
+        'pendiente': { bg: '#f59e0b', border: '#fde68a', text: '#ffffff', icon: 'fa-clock',        label: 'Pendiente' },
+    };
+
+    function recalcCounters() {
+        const cards = document.querySelectorAll('#postulaciones-list [data-post-estado]');
+        let total = 0, pendiente = 0, aceptada = 0, rechazada = 0;
+        cards.forEach(c => {
+            total++;
+            const e = c.dataset.postEstado;
+            if (e === 'pendiente') pendiente++;
+            else if (e === 'aceptada') aceptada++;
+            else if (e === 'rechazada') rechazada++;
+        });
+        // stat counters are the big number divs inside .instructor-stat-grid
+        const nums = document.querySelectorAll('.instructor-stat-grid .glass-card > div:last-child > div:first-child');
+        if (nums[0]) nums[0].textContent = total;
+        if (nums[1]) nums[1].textContent = pendiente;
+        if (nums[2]) nums[2].textContent = aceptada;
+        if (nums[3]) nums[3].textContent = rechazada;
+    }
+
+    let rtFallbackDebounce = null;
+
+    function fallbackRefreshList() {
+        fetch(window.location.href)
+            .then(r => r.text())
+            .then(html => {
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const newList = doc.getElementById('postulaciones-list');
+                const newPag  = doc.getElementById('postulaciones-pagination');
+                const curList = document.getElementById('postulaciones-list');
+                const curPag  = document.getElementById('postulaciones-pagination');
+                if (newList && curList) curList.innerHTML = newList.innerHTML;
+                if (newPag && curPag) curPag.innerHTML = newPag.innerHTML;
+                if (!newPag && curPag) curPag.innerHTML = '';
+                recalcCounters();
+            })
+            .catch(() => {});
+    }
+
+    window.addEventListener('realtime:postulacion', function (e) {
+        const d = e.detail || {};
+        const postId   = d.postulacion_id || d.id;
+        const newEstado = d.estado || d.nuevo_estado;
+
+        // Try to mutate the specific card
+        const card = postId
+            ? document.querySelector('#postulaciones-list [data-post-id="' + postId + '"]')
+            : null;
+
+        if (card && newEstado && ESTADO_MAP[newEstado]) {
+            const cfg = ESTADO_MAP[newEstado];
+            card.dataset.postEstado = newEstado;
+
+            // Update the estado badge
+            const badge = card.querySelector('[data-rt-badge]') ||
+                          card.querySelector('span[style*="border-radius: 20px"]');
+            if (badge) {
+                badge.style.background = cfg.bg;
+                badge.style.borderColor = cfg.border;
+                badge.style.color = cfg.text;
+                badge.innerHTML = `<i class="fas ${cfg.icon}"></i> ${cfg.label}`;
+            }
+
+            // Inject "Gestionar" link if newly accepted
+            if (newEstado === 'aceptada') {
+                const actionsDiv = card.querySelector('[data-rt-actions]');
+                if (actionsDiv && !actionsDiv.querySelector('.btn-premium')) {
+                    const proyId = d.proyecto_id || card.dataset.proyectoId;
+                    if (proyId) {
+                        actionsDiv.insertAdjacentHTML('beforeend',
+                            `<a href="/aprendiz/proyectos/${proyId}/detalle" class="btn-premium" style="padding:12px 20px;">Gestionar <i class="fas fa-chevron-right" style="font-size:10px;"></i></a>`);
+                    }
+                }
+            }
+            recalcCounters();
+        } else {
+            // Fallback: full list reload with debounce
+            clearTimeout(rtFallbackDebounce);
+            rtFallbackDebounce = setTimeout(fallbackRefreshList, 800);
+        }
+    });
+})();
+</script>
 @endsection

@@ -40,7 +40,7 @@
     </div>
 </div>
 
-<div class="instructor-project-catalog-grid animate-fade-in">
+<div id="instructor-projects-grid" class="instructor-project-catalog-grid animate-fade-in">
     @forelse($proyectos as $p)
     <div class="instructor-catalog-card" style="background: rgba(255,255,255,0.9); border-radius: 20px; overflow: hidden; border: 1px solid rgba(62,180,137,0.1); transition: all 0.3s;">
         <div style="height: 180px; position: relative;">
@@ -111,8 +111,43 @@
 </div>
 
 @if($proyectos->hasPages())
-    <div style="margin-top: 40px; display: flex; justify-content: center;">
+    <div id="instructor-projects-pagination" style="margin-top: 40px; display: flex; justify-content: center;">
         {{ $proyectos->withQueryString()->links() }}
     </div>
 @endif
+
+@section('scripts')
+<script>
+(function () {
+    if (!document.getElementById('instructor-projects-grid')) return;
+
+    let rtDebounce = null;
+
+    function refreshInstructorProjects() {
+        fetch(window.location.href)
+            .then(r => r.text())
+            .then(html => {
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const newGrid = doc.getElementById('instructor-projects-grid');
+                const newPag  = doc.getElementById('instructor-projects-pagination');
+                const curGrid = document.getElementById('instructor-projects-grid');
+                const curPag  = document.getElementById('instructor-projects-pagination');
+                if (newGrid && curGrid) {
+                    curGrid.innerHTML = newGrid.innerHTML;
+                    curGrid.style.animation = 'none';
+                    requestAnimationFrame(() => { curGrid.style.animation = ''; });
+                }
+                if (newPag && curPag) curPag.innerHTML = newPag.innerHTML;
+                if (!newPag && curPag) curPag.innerHTML = '';
+            })
+            .catch(() => {});
+    }
+
+    window.addEventListener('realtime:proyecto', function (e) {
+        clearTimeout(rtDebounce);
+        rtDebounce = setTimeout(refreshInstructorProjects, 800);
+    });
+})();
+</script>
+@endsection
 @endsection

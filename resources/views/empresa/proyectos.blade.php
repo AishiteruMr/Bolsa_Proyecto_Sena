@@ -83,6 +83,7 @@
 
     {{-- Projects --}}
     @if($proyectos->isNotEmpty())
+        <div id="empresa-projects-list">
         @foreach($proyectos as $proyecto)
             @php
                 $badge = match($proyecto->estado) {
@@ -97,7 +98,7 @@
                 $isActive = in_array($proyecto->estado, ['aprobado', 'en_progreso', 'completado']);
             @endphp
 
-            <div class="project-card">
+            <div class="project-card" data-proyecto-id="{{ $proyecto->id }}" data-proyecto-estado="{{ $proyecto->estado }}">
                 {{-- Header --}}
                 <div class="project-header">
                     <div class="project-title-group">
@@ -204,10 +205,11 @@
         @endforeach
 
         @if($proyectos->hasPages())
-            <div style="margin-top: 32px; display: flex; justify-content: center;">
+            <div id="empresa-projects-pagination" style="margin-top: 32px; display: flex; justify-content: center;">
                 {{ $proyectos->withQueryString()->links() }}
             </div>
         @endif
+        </div>{{-- /empresa-projects-list --}}
     @else
         <div class="empty-state">
             <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
@@ -219,6 +221,39 @@
         </div>
     @endif
 </div>
+@endsection
+
+@section('scripts')
+<script>
+(function () {
+    if (!document.getElementById('empresa-projects-list')) return;
+
+    let rtDebounce = null;
+
+    function refreshEmpresaProjects() {
+        fetch(window.location.href)
+            .then(r => r.text())
+            .then(html => {
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const newList = doc.getElementById('empresa-projects-list');
+                const newPag  = doc.getElementById('empresa-projects-pagination');
+                const curList = document.getElementById('empresa-projects-list');
+                const curPag  = document.getElementById('empresa-projects-pagination');
+                if (newList && curList) {
+                    curList.innerHTML = newList.innerHTML;
+                }
+                if (newPag && curPag) curPag.innerHTML = newPag.innerHTML;
+                if (!newPag && curPag) curPag.innerHTML = '';
+            })
+            .catch(() => {});
+    }
+
+    window.addEventListener('realtime:proyecto', function (e) {
+        clearTimeout(rtDebounce);
+        rtDebounce = setTimeout(refreshEmpresaProjects, 800);
+    });
+})();
+</script>
 @endsection
 
 
