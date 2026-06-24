@@ -93,6 +93,8 @@ npm run build
 
 # Ejecutar en desarrollo
 php artisan serve
+php artisan reverb:start
+php artisan queue:work
 npm run dev
 
 # Limpiar cache, configuraciones, views y rutas

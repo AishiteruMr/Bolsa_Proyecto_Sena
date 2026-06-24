@@ -170,7 +170,7 @@
                 <i class="fas fa-users"></i>
             </div>
             <div>
-                <div style="font-size: 22px; font-weight: 800; line-height: 1.2;">{{ $counts['total'] }}</div>
+                <div id="count-total" style="font-size: 22px; font-weight: 800; line-height: 1.2;">{{ $counts['total'] }}</div>
                 <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.3px;">Total</div>
             </div>
         </div>
@@ -179,7 +179,7 @@
                 <i class="fas fa-clock"></i>
             </div>
             <div>
-                <div style="font-size: 22px; font-weight: 800; line-height: 1.2;">{{ $counts['pendiente'] }}</div>
+                <div id="count-pendiente" style="font-size: 22px; font-weight: 800; line-height: 1.2;">{{ $counts['pendiente'] }}</div>
                 <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.3px;">Por Revisar</div>
             </div>
         </div>
@@ -188,7 +188,7 @@
                 <i class="fas fa-check-circle"></i>
             </div>
             <div>
-                <div style="font-size: 22px; font-weight: 800; line-height: 1.2;">{{ $counts['aceptada'] }}</div>
+                <div id="count-aceptada" style="font-size: 22px; font-weight: 800; line-height: 1.2;">{{ $counts['aceptada'] }}</div>
                 <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.3px;">Aprobados</div>
             </div>
         </div>
@@ -197,7 +197,7 @@
                 <i class="fas fa-times-circle"></i>
             </div>
             <div>
-                <div style="font-size: 22px; font-weight: 800; line-height: 1.2;">{{ $counts['rechazada'] }}</div>
+                <div id="count-rechazada" style="font-size: 22px; font-weight: 800; line-height: 1.2;">{{ $counts['rechazada'] }}</div>
                 <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.3px;">Rechazados</div>
             </div>
         </div>
@@ -205,22 +205,22 @@
 
     <!-- Filter Tabs -->
     <div class="filter-tabs">
-        <a href="{{ route('empresa.proyectos.postulantes', $proyecto->id) }}" class="filter-tab {{ !$currentFilter ? 'filter-tab-active' : 'filter-tab-inactive' }}">
+        <a href="{{ route('empresa.proyectos.postulantes', $proyecto->id) }}" class="filter-tab filter-tab-ajax {{ !$currentFilter ? 'filter-tab-active' : 'filter-tab-inactive' }}" data-estado="">
             <i class="fas fa-list"></i> Todos
         </a>
-        <a href="{{ route('empresa.proyectos.postulantes', ['id' => $proyecto->id, 'estado' => 'pendiente']) }}" class="filter-tab {{ $currentFilter === 'pendiente' ? 'filter-tab-active' : 'filter-tab-inactive' }}">
+        <a href="{{ route('empresa.proyectos.postulantes', ['id' => $proyecto->id, 'estado' => 'pendiente']) }}" class="filter-tab filter-tab-ajax {{ $currentFilter === 'pendiente' ? 'filter-tab-active' : 'filter-tab-inactive' }}" data-estado="pendiente">
             <i class="fas fa-clock"></i> Pendientes
         </a>
-        <a href="{{ route('empresa.proyectos.postulantes', ['id' => $proyecto->id, 'estado' => 'aceptada']) }}" class="filter-tab {{ $currentFilter === 'aceptada' ? 'filter-tab-active' : 'filter-tab-inactive' }}">
+        <a href="{{ route('empresa.proyectos.postulantes', ['id' => $proyecto->id, 'estado' => 'aceptada']) }}" class="filter-tab filter-tab-ajax {{ $currentFilter === 'aceptada' ? 'filter-tab-active' : 'filter-tab-inactive' }}" data-estado="aceptada">
             <i class="fas fa-check-circle"></i> Aprobados
         </a>
-        <a href="{{ route('empresa.proyectos.postulantes', ['id' => $proyecto->id, 'estado' => 'rechazada']) }}" class="filter-tab {{ $currentFilter === 'rechazada' ? 'filter-tab-active' : 'filter-tab-inactive' }}">
+        <a href="{{ route('empresa.proyectos.postulantes', ['id' => $proyecto->id, 'estado' => 'rechazada']) }}" class="filter-tab filter-tab-ajax {{ $currentFilter === 'rechazada' ? 'filter-tab-active' : 'filter-tab-inactive' }}" data-estado="rechazada">
             <i class="fas fa-times-circle"></i> Rechazados
         </a>
     </div>
 
     <!-- Candidates Grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 24px;">
+    <div id="postulantes-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 24px;">
         @forelse($postulantes as $p)
             @php
                 $statusConfig = match($p->pos_estado) {
@@ -231,9 +231,9 @@
                     default => ['bg' => '#64748b', 'border' => '#e2e8f0', 'text' => '#ffffff', 'icon' => 'fa-info-circle', 'label' => $p->pos_estado]
                 };
             @endphp
-            <div class="glass-card" style="padding: 28px; position: relative;">
+            <div class="glass-card" data-pos-id="{{ $p->pos_id }}" data-pos-estado="{{ $p->pos_estado }}" style="padding: 28px; position: relative;">
                 <!-- Status Ribbon -->
-                <div style="position: absolute; top: 16px; right: 16px; background: {{ $statusConfig['bg'] }}; border: 1px solid {{ $statusConfig['border'] }}; color: {{ $statusConfig['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <div class="status-ribbon" style="position: absolute; top: 16px; right: 16px; background: {{ $statusConfig['bg'] }}; border: 1px solid {{ $statusConfig['border'] }}; color: {{ $statusConfig['text'] }}; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
                     <i class="fas {{ $statusConfig['icon'] }}"></i> {{ Str::title(str_replace('_', ' ', $statusConfig['label'])) }}
                 </div>
 
@@ -271,23 +271,13 @@
                     </button>
 
                     @if($p->pos_estado == 'pendiente')
-                        <div style="display: flex; gap: 8px;">
-                            <form action="{{ route('empresa.postulaciones.estado', $p->pos_id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                <input type="hidden" name="estado" value="aceptada">
-                                <button type="button" class="card-action-btn" style="background: #10b981; box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25);" title="Aprobar"
-                                    onclick="confirmAction(event, 'Aprobar Postulante', '¿Estás seguro de aprobar a {{ $p->apr_nombre }} {{ $p->apr_apellido }}?', this)">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            </form>
-                            <form action="{{ route('empresa.postulaciones.estado', $p->pos_id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                <input type="hidden" name="estado" value="rechazada">
-                                <button type="button" class="card-action-btn" style="background: #ef4444; box-shadow: 0 8px 16px rgba(239, 68, 68, 0.25);" title="Rechazar"
-                                    onclick="confirmAction(event, 'Rechazar Postulante', '¿Estás seguro de rechazar a {{ $p->apr_nombre }} {{ $p->apr_apellido }}?', this)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </form>
+                        <div class="acciones-ajax" style="display: flex; gap: 8px;">
+                            <button type="button" class="card-action-btn btn-accion-ajax" data-pos-id="{{ $p->pos_id }}" data-estado="aceptada" style="background: #10b981; box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25);" title="Aprobar">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button type="button" class="card-action-btn btn-accion-ajax" data-pos-id="{{ $p->pos_id }}" data-estado="rechazada" style="background: #ef4444; box-shadow: 0 8px 16px rgba(239, 68, 68, 0.25);" title="Rechazar">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     @endif
                 </div>
@@ -312,7 +302,7 @@
     </div>
 
     @if($postulantes->hasPages())
-        <div style="margin-top: 40px; display: flex; justify-content: center;">
+        <div id="postulantes-pagination" style="margin-top: 40px; display: flex; justify-content: center;">
             {{ $postulantes->withQueryString()->links() }}
         </div>
     @endif
@@ -347,13 +337,105 @@
 <script>
     const profileModal = document.getElementById('profileModal');
     const profileData = @json($postulantes->items());
-    const estadoRoute = '{{ route('empresa.postulaciones.estado', ['id' => '__ID__']) }}';
-    const csrfToken = '{{ csrf_token() }}';
+    const proyectoId = {{ $proyecto->id }};
+    let currentFilter = '{{ $currentFilter ?? '' }}';
 
-    function confirmAction(event, title, msg, btn) {
-        event.preventDefault();
-        const form = btn.closest('form');
-        openConfirm(title, msg, () => { form.submit(); });
+    const estadoMap = { pendiente: 'Pendiente', aceptada: 'Aprobado', rechazada: 'Rechazado', en_progreso: 'En Progreso' };
+    const colorMap = { pendiente: '#f59e0b', aceptada: '#10b981', rechazada: '#ef4444', en_progreso: '#3b82f6' };
+    const bgMap = { pendiente: '#f59e0b', aceptada: '#10b981', rechazada: '#ef4444', en_progreso: '#3b82f6' };
+    const iconMap = { pendiente: 'fa-clock', aceptada: 'fa-check', rechazada: 'fa-times', en_progreso: 'fa-spinner' };
+
+    async function cambiarEstadoPostulacion(posId, estado, label) {
+        const confirmed = await ajax.confirm('¿Estás seguro de ' + label.toLowerCase() + ' esta postulación?');
+        if (!confirmed) return;
+
+        const url = '{{ route('empresa.postulaciones.estado', ['id' => '__ID__']) }}'.replace('__ID__', posId);
+        ajax.post(url, { estado: estado }).then(res => {
+            const data = res.data;
+            ajax.showToast('success', data.message);
+
+            const card = document.querySelector('.glass-card[data-pos-id="' + posId + '"]');
+            if (card) {
+                card.dataset.posEstado = estado;
+                const ribbon = card.querySelector('.status-ribbon');
+                if (ribbon) {
+                    const sc = data.statusConfig || bgMap;
+                    ribbon.style.background = sc.bg || bgMap[estado];
+                    ribbon.innerHTML = '<i class="fas ' + (sc.icon || iconMap[estado]) + '"></i> ' + (sc.label || estadoMap[estado] || estado);
+                }
+                const acciones = card.querySelector('.acciones-ajax');
+                if (acciones) acciones.remove();
+            }
+
+            if (data.estado === 'aceptada' || data.estado === 'rechazada') {
+                const oldCountEl = document.getElementById('count-' + (data.estado === 'aceptada' ? 'aceptada' : 'rechazada'));
+                if (oldCountEl) oldCountEl.textContent = parseInt(oldCountEl.textContent) + 1;
+                const pendCountEl = document.getElementById('count-pendiente');
+                if (pendCountEl && parseInt(pendCountEl.textContent) > 0) pendCountEl.textContent = parseInt(pendCountEl.textContent) - 1;
+            }
+
+            closeProfileModal();
+        }).catch(err => {
+            ajax.showToast('error', err.response?.data?.message || 'Error al cambiar estado.');
+        });
+    }
+
+    async function cargarPostulantes(url) {
+        const grid = document.getElementById('postulantes-grid');
+        const pagination = document.getElementById('postulantes-pagination');
+        const content = grid.innerHTML;
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;"><i class="fas fa-spinner fa-spin" style="font-size:32px;color:#3eb489;"></i></div>';
+
+        try {
+            const res = await axios.get(url);
+            const html = res.data;
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const newGrid = doc.querySelector('#postulantes-grid');
+            if (newGrid) grid.innerHTML = newGrid.innerHTML;
+            const newPag = doc.querySelector('#postulantes-pagination');
+            if (newPag) pagination.innerHTML = newPag.innerHTML;
+
+            bindEventos();
+        } catch (e) {
+            grid.innerHTML = content;
+            ajax.showToast('error', 'Error al cargar postulantes.');
+        }
+    }
+
+    function bindEventos() {
+        document.querySelectorAll('.btn-accion-ajax').forEach(btn => {
+            btn.onclick = function() {
+                const posId = this.dataset.posId;
+                const estado = this.dataset.estado;
+                const label = estado === 'aceptada' ? 'Aprobar' : 'Rechazar';
+                cambiarEstadoPostulacion(posId, estado, label);
+            };
+        });
+
+        document.querySelectorAll('.filter-tab-ajax').forEach(tab => {
+            tab.onclick = function(e) {
+                if (!this.dataset.estado) return;
+                e.preventDefault();
+                document.querySelectorAll('.filter-tab-ajax').forEach(t => {
+                    t.classList.remove('filter-tab-active');
+                    t.classList.add('filter-tab-inactive');
+                });
+                this.classList.add('filter-tab-active');
+                this.classList.remove('filter-tab-inactive');
+                currentFilter = this.dataset.estado;
+                const url = '{{ route('empresa.proyectos.postulantes', ['id' => $proyecto->id]) }}' + (currentFilter ? '?estado=' + currentFilter : '');
+                cargarPostulantes(url);
+            };
+        });
+
+        document.querySelectorAll('#postulantes-pagination a').forEach(a => {
+            a.onclick = function(e) {
+                e.preventDefault();
+                cargarPostulantes(this.href);
+            };
+        });
     }
 
     function openProfileModal(id) {
@@ -366,46 +448,27 @@
         document.getElementById('pmEmail').innerHTML = '<i class="fas fa-envelope" style="margin-right: 6px;"></i>' + (p.usr_correo || '');
         document.getElementById('pmFecha').textContent = new Date(p.pos_fecha).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
 
-        const estadoMap = { pendiente: 'Pendiente', aceptada: 'Aprobado', rechazada: 'Rechazado', en_progreso: 'En Progreso' };
-        const colorMap = { pendiente: '#f59e0b', aceptada: '#10b981', rechazada: '#ef4444', en_progreso: '#3b82f6' };
         document.getElementById('pmEstado').innerHTML = '<span style="color:' + (colorMap[p.pos_estado] || '#64748b') + ';">' + (estadoMap[p.pos_estado] || p.pos_estado) + '</span>';
 
         const actions = document.getElementById('pmActions');
         actions.innerHTML = '';
         if (p.pos_estado === 'pendiente') {
-            actions.appendChild(createEstadoForm(p, 'aceptada', 'Aprobar', '#10b981'));
-            actions.appendChild(createEstadoForm(p, 'rechazada', 'Rechazar', '#ef4444'));
+            const aprobarBtn = document.createElement('button');
+            aprobarBtn.className = 'btn-premium';
+            aprobarBtn.style.cssText = 'background: #10b981; box-shadow: 0 8px 16px rgba(16,185,129,0.25);';
+            aprobarBtn.innerHTML = '<i class="fas fa-check"></i> Aprobar';
+            aprobarBtn.onclick = () => cambiarEstadoPostulacion(p.pos_id, 'aceptada', 'Aprobar');
+            actions.appendChild(aprobarBtn);
+
+            const rechazarBtn = document.createElement('button');
+            rechazarBtn.className = 'btn-premium';
+            rechazarBtn.style.cssText = 'background: #ef4444; box-shadow: 0 8px 16px rgba(239,68,68,0.25);';
+            rechazarBtn.innerHTML = '<i class="fas fa-times"></i> Rechazar';
+            rechazarBtn.onclick = () => cambiarEstadoPostulacion(p.pos_id, 'rechazada', 'Rechazar');
+            actions.appendChild(rechazarBtn);
         }
 
         profileModal.classList.add('open');
-    }
-
-    function createEstadoForm(p, estado, label, color) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = estadoRoute.replace('__ID__', p.pos_id);
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_token';
-        csrfInput.value = csrfToken;
-        form.appendChild(csrfInput);
-        const estadoInput = document.createElement('input');
-        estadoInput.type = 'hidden';
-        estadoInput.name = 'estado';
-        estadoInput.value = estado;
-        form.appendChild(estadoInput);
-
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'btn-premium';
-        btn.style.cssText = 'background: ' + color + '; box-shadow: 0 8px 16px rgba(' + (estado === 'aceptada' ? '16,185,129' : '239,68,68') + ',0.25);';
-        btn.innerHTML = '<i class="fas fa-' + (estado === 'aceptada' ? 'check' : 'times') + '"></i> ' + label;
-        btn.onclick = function(e) {
-            e.preventDefault();
-            openConfirm(label + ' Postulante', '¿Estás seguro de ' + label.toLowerCase() + ' a ' + p.apr_nombre + ' ' + p.apr_apellido + '?', function() { form.submit(); });
-        };
-        form.appendChild(btn);
-        return form;
     }
 
     function closeProfileModal() {
@@ -415,5 +478,7 @@
     profileModal.addEventListener('click', function(e) {
         if (e.target === this) closeProfileModal();
     });
+
+    bindEventos();
 </script>
 @endsection

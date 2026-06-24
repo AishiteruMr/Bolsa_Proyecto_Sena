@@ -10,66 +10,140 @@ class ProjectSeeder extends Seeder
 {
     public function run(): void
     {
-        $projects = [
-            // ── Empresa: Cristian Padilla ─────────────────
-            ['titulo' => 'Sistema de Gestión de Inventarios Inteligente', 'descripcion' => 'Desarrollo de una plataforma web para el control de stock en tiempo real utilizando Laravel y Vue.js. El sistema debe incluir alertas de bajo inventario y reportes predictivos con análisis de datos históricos para optimización de compras.', 'categoria' => 'tecnologia', 'estado' => 'en_progreso', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 90, 'requisitos_especificos' => 'Conocimientos en PHP, Laravel, Vue.js y bases de datos relacionales. Experiencia con APIs REST.', 'habilidades_requeridas' => 'Programación Web, SQL, Trabajo en equipo, Comunicación', 'imagen_url' => 'https://images.unsplash.com/photo-1586769852044-692d6e3703f0?q=80&w=800', 'oferta' => 'contrato_aprendizaje', 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => 'sherelynrocha939@gmail.com'],
-            ['titulo' => 'Rediseño de Identidad Visual Corporativa', 'descripcion' => 'Creación de un manual de identidad corporativa completo, incluyendo logo, paleta de colores, tipografía y aplicaciones en papelería institucional y digital.', 'categoria' => 'diseño', 'estado' => 'completado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 45, 'requisitos_especificos' => 'Manejo avanzado de Adobe Illustrator, Photoshop e InDesign.', 'habilidades_requeridas' => 'Diseño Gráfico, Branding, Creatividad, Pensamiento Visual', 'imagen_url' => 'https://images.unsplash.com/photo-1572044162444-ad60f128b7fa?q=80&w=800', 'oferta' => 'pasantias', 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => 'andrea.patino@sena.edu.co'],
-            ['titulo' => 'Campaña de Marketing Digital SENA 2026', 'descripcion' => 'Diseño y ejecución de una estrategia integral de redes sociales para aumentar el engagement en Instagram, LinkedIn y TikTok, incluyendo content marketing y analytics.', 'categoria' => 'marketing', 'estado' => 'en_progreso', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 60, 'requisitos_especificos' => 'Certificación en Google Ads o Meta Blueprint. Experiencia con herramientas de scheduling.', 'habilidades_requeridas' => 'Copywriting, Analytics, Estrategia Digital, Creación de Contenido', 'imagen_url' => 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800', 'oferta' => 'auxilio_transporte', 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => 'sherelynrocha939@gmail.com'],
-            ['titulo' => 'App Móvil para Control de Asistencia', 'descripcion' => 'Creación de una aplicación móvil híbrida para registro de entrada y salida mediante geolocalización. Incluye módulo de reportes y notificaciones push.', 'categoria' => 'tecnologia', 'estado' => 'aprobado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 120, 'requisitos_especificos' => 'Experiencia previa con frameworks móviles como Ionic o Flutter.', 'habilidades_requeridas' => 'Mobile Development, APIs REST, Firebase, Geolocalización', 'imagen_url' => 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=800', 'oferta' => 'contrato_aprendizaje', 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => 'sherelynrocha939@gmail.com'],
-            ['titulo' => 'Documental Institucional "Talento de Oro"', 'descripcion' => 'Producción audiovisual de 15 minutos capturando historias de éxito de los aprendices SENA. Incluye entrevistas, grabaciones en locación y postproducción.', 'categoria' => 'comunicacion', 'estado' => 'cerrado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 75, 'requisitos_especificos' => 'Conocimientos en edición de video (Premiere/DaVinci Resolve) y dirección audiovisual.', 'habilidades_requeridas' => 'Edición de Video, Fotografía, Narrativa Audiovisual, Dirección', 'imagen_url' => 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=800', 'oferta' => 'pasantias', 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => 'andrea.patino@sena.edu.co'],
-            ['titulo' => 'Plataforma E-commerce para Artesanos', 'descripcion' => 'Tienda en línea para artesanos locales con implementación de pasarelas de pago nacionales. Incluye panel de administración y gestión de inventario.', 'categoria' => 'tecnologia', 'estado' => 'aprobado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 100, 'requisitos_especificos' => 'Entendimiento de flujos de pago y seguridad web. Conocimiento en Laravel o similar.', 'habilidades_requeridas' => 'Web Development, UX/UI, Pasarelas de Pago, MySQL', 'imagen_url' => 'https://images.unsplash.com/photo-1557821552-17105176677c?q=80&w=800', 'oferta' => 'otro', 'oferta_otro' => 'Bonificación por desempeño', 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => 'sherelynrocha939@gmail.com'],
-            ['titulo' => 'Automatización de Procesos con Python', 'descripcion' => 'Scripts para automatizar la extracción de datos de reportes Excel y su carga en CRM corporativo. Incluye dashboard de métricas.', 'categoria' => 'tecnologia', 'estado' => 'aprobado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 30, 'requisitos_especificos' => 'Dominio de Python con librerías Pandas y Openpyxl.', 'habilidades_requeridas' => 'Python, Automatización, Ciencia de Datos, Excel Avanzado', 'imagen_url' => 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800', 'oferta' => 'auxilio_transporte', 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => 'sherelynrocha939@gmail.com'],
-            ['titulo' => 'Modelado 3D para Planta Industrial', 'descripcion' => 'Modelado tridimensional de una nueva ala de producción para simulaciones de seguridad y logística interna. Incluye renderizados y walkthrough virtual.', 'categoria' => 'ingenieria', 'estado' => 'pendiente', 'calidad_aprobada' => false, 'duracion_estimada_dias' => 80, 'requisitos_especificos' => 'Conocimiento en AutoCAD 3D o Blender avanzado.', 'habilidades_requeridas' => 'Modelado 3D, Planimetría, Renderizado, Visualización', 'imagen_url' => 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800', 'oferta' => null, 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => null],
-            ['titulo' => 'Sistema de Gestión de Pedidos Restaurant', 'descripcion' => 'App web para toma de pedidos en restaurantes con cocina digital y tracking de delivery.', 'categoria' => 'tecnologia', 'estado' => 'pendiente', 'calidad_aprobada' => false, 'duracion_estimada_dias' => 60, 'requisitos_especificos' => 'Conocimientos en Laravel y SQLite.', 'habilidades_requeridas' => 'Desarrollo Web, UI/UX', 'oferta' => null, 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => null],
-            ['titulo' => 'SEO y Posicionamiento Web', 'descripcion' => 'Optimización SEO del sitio actual con auditoría técnica y contenido.', 'categoria' => 'marketing', 'estado' => 'rechazado', 'calidad_aprobada' => false, 'duracion_estimada_dias' => 30, 'requisitos_especificos' => 'Experiencia comprobable en SEO.', 'habilidades_requeridas' => 'SEO, Google Analytics', 'oferta' => null, 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => null],
-            ['titulo' => 'Portal de Cursos Online', 'descripcion' => 'Plataforma de formación virtual con videos y evaluaciones.', 'categoria' => 'tecnologia', 'estado' => 'pendiente', 'calidad_aprobada' => false, 'duracion_estimada_dias' => 90, 'oferta' => null, 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => null],
+        $companies = DB::table('empresas')->pluck('correo_contacto', 'nit')->toArray();
+        $instructors = DB::table('usuarios')
+            ->join('instructores', 'usuarios.id', '=', 'instructores.usuario_id')
+            ->pluck('correo', 'usuarios.id')
+            ->toArray();
+        $instructorEmails = array_values($instructors);
 
-            // ── Empresa: TechSolutions Colombia SAS ──────
-            ['titulo' => 'Desarrollo de API Gateway para Pagos', 'descripcion' => 'Construcción de una API RESTful unificada que centralice múltiples pasarelas de pago (PSE, PayPal, Stripe) con manejo de transacciones, webhooks y dashboards de conciliación.', 'categoria' => 'tecnologia', 'estado' => 'aprobado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 75, 'requisitos_especificos' => 'Experiencia en desarrollo de APIs con Laravel y documentación OpenAPI.', 'habilidades_requeridas' => 'APIs REST, Laravel, Pasarelas de Pago, Seguridad Web', 'imagen_url' => 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800', 'oferta' => 'contrato_aprendizaje', 'oferta_otro' => null, 'empresa_email' => 'contacto@techsolutions.co', 'instructor_email' => 'sherelynrocha939@gmail.com'],
-            ['titulo' => 'Sistema de Análisis Predictivo con Machine Learning', 'descripcion' => 'Desarrollo de un motor de análisis predictivo para datos de ventas usando Python, scikit-learn y TensorFlow. Incluye pipeline de datos, entrenamiento de modelos y visualización de resultados.', 'categoria' => 'tecnologia', 'estado' => 'en_progreso', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 120, 'requisitos_especificos' => 'Conocimientos sólidos en Python, Pandas, scikit-learn y visualización de datos.', 'habilidades_requeridas' => 'Python, Machine Learning, Ciencia de Datos, SQL', 'imagen_url' => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800', 'oferta' => 'contrato_aprendizaje', 'oferta_otro' => null, 'empresa_email' => 'contacto@techsolutions.co', 'instructor_email' => 'sherelynrocha939@gmail.com'],
-            ['titulo' => 'Migración a Infraestructura Cloud', 'descripcion' => 'Planificación y ejecución de migración de infraestructura on-premise a AWS/Google Cloud. Incluye contenedorización con Docker, orquestación Kubernetes y automatización con Terraform.', 'categoria' => 'tecnologia', 'estado' => 'aprobado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 90, 'requisitos_especificos' => 'Certificación AWS Cloud Practitioner o equivalente. Conocimiento de Docker y Kubernetes.', 'habilidades_requeridas' => 'Cloud Computing, Docker, Kubernetes, Linux, DevOps', 'imagen_url' => 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?q=80&w=800', 'oferta' => 'pasantias', 'oferta_otro' => null, 'empresa_email' => 'contacto@techsolutions.co', 'instructor_email' => 'carlos.mendoza@sena.edu.co'],
-            ['titulo' => 'Aplicación Web de Gestión Documental', 'descripcion' => 'Sistema de gestión documental con flujos de aprobación, OCR para digitalización, versionado de documentos y búsqueda semántica con Elasticsearch.', 'categoria' => 'tecnologia', 'estado' => 'pendiente', 'calidad_aprobada' => false, 'duracion_estimada_dias' => 100, 'requisitos_especificos' => 'Experiencia con Laravel, Elasticsearch y procesamiento de documentos.', 'habilidades_requeridas' => 'Laravel, Elasticsearch, UI/UX, Bases de Datos', 'imagen_url' => 'https://images.unsplash.com/photo-1568992687947-868a62a9f521?q=80&w=800', 'oferta' => null, 'oferta_otro' => null, 'empresa_email' => 'contacto@techsolutions.co', 'instructor_email' => null],
-
-            // ── Telecomunicaciones y Redes ──
-            ['titulo' => 'Campaña de Marketing Digital SENA 2026', 'descripcion' => 'Diseño y ejecución de una estrategia integral de redes sociales para aumentar el engagement en Instagram, LinkedIn y TikTok, incluyendo content marketing y analytics.', 'categoria' => 'Telecomunicaciones y Redes', 'estado' => 'en_progreso', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 60, 'requisitos_especificos' => 'Certificación en Google Ads o Meta Blueprint. Experiencia con herramientas de scheduling.', 'habilidades_requeridas' => 'Copywriting, Analytics, Estrategia Digital, Creación de Contenido', 'imagen_url' => 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800', 'oferta' => 'auxilio_transporte', 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => 'sherelynrocha939@gmail.com'],
-            ['titulo' => 'SEO y Posicionamiento Web', 'descripcion' => 'Optimización SEO del sitio actual con auditoría técnica y contenido.', 'categoria' => 'Telecomunicaciones y Redes', 'estado' => 'rechazado', 'calidad_aprobada' => false, 'duracion_estimada_dias' => 30, 'requisitos_especificos' => 'Experiencia comprobable en SEO.', 'habilidades_requeridas' => 'SEO, Google Analytics', 'oferta' => null, 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => null],
-
-            // ── Diseño y comunicación visual ──
-            ['titulo' => 'Rediseño de Identidad Visual Corporativa', 'descripcion' => 'Creación de un manual de identidad corporativa completo, incluyendo logo, paleta de colores, tipografía y aplicaciones en papelería institucional y digital.', 'categoria' => 'Sistemas y Desarrollo de Software', 'estado' => 'completado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 45, 'requisitos_especificos' => 'Manejo avanzado de Adobe Illustrator, Photoshop e InDesign.', 'habilidades_requeridas' => 'Diseño Gráfico, Branding, Creatividad, Pensamiento Visual', 'imagen_url' => 'https://images.unsplash.com/photo-1572044162444-ad60f128b7fa?q=80&w=800', 'oferta' => 'pasantias', 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => 'andrea.patino@sena.edu.co'],
-            ['titulo' => 'Documental Institucional "Talento de Oro"', 'descripcion' => 'Producción audiovisual de 15 minutos capturando historias de éxito de los aprendices SENA. Incluye entrevistas, grabaciones en locación y postproducción.', 'categoria' => 'Telecomunicaciones y Redes', 'estado' => 'cerrado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 75, 'requisitos_especificos' => 'Conocimientos en edición de video (Premiere/DaVinci Resolve) y dirección audiovisual.', 'habilidades_requeridas' => 'Edición de Video, Fotografía, Narrativa Audiovisual, Dirección', 'imagen_url' => 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=800', 'oferta' => 'pasantias', 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => 'andrea.patino@sena.edu.co'],
-            ['titulo' => 'Rebranding Corporativo para Fintech', 'descripcion' => 'Desarrollo de identidad visual completa para una startup fintech: logotipo, paleta cromática, tipografía, aplicaciones digitales, mockups de app y manual de marca.', 'categoria' => 'Sistemas y Desarrollo de Software', 'estado' => 'aprobado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 60, 'requisitos_especificos' => 'Portafolio demostrable en branding y diseño de identidad corporativa.', 'habilidades_requeridas' => 'Branding, Illustrator, Photoshop, Figma, Creatividad', 'imagen_url' => 'https://images.unsplash.com/photo-1558655146-9f40138edfeb?q=80&w=800', 'oferta' => 'pasantias', 'oferta_otro' => null, 'empresa_email' => 'info@disenastudio.co', 'instructor_email' => 'andrea.patino@sena.edu.co'],
-            ['titulo' => 'Diseño UI/UX para App de Fitness', 'descripcion' => 'Diseño de interfaz y experiencia de usuario para una aplicación móvil de entrenamiento personal. Incluye wireframes, prototipado interactivo en Figma y guía de componentes.', 'categoria' => 'Sistemas y Desarrollo de Software', 'estado' => 'en_progreso', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 45, 'requisitos_especificos' => 'Manejo avanzado de Figma, principios de UX research y diseño de interacción.', 'habilidades_requeridas' => 'UI/UX, Figma, Prototipado, Investigación de Usuarios', 'imagen_url' => 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?q=80&w=800', 'oferta' => 'auxilio_transporte', 'oferta_otro' => null, 'empresa_email' => 'info@disenastudio.co', 'instructor_email' => 'andrea.patino@sena.edu.co'],
-            ['titulo' => 'Animación 2D para Video Promocional', 'descripcion' => 'Creación de video animado 2D de 60 segundos para campaña de lanzamiento de producto. Incluye storyboard, ilustración de personajes, animación y postproducción de audio.', 'categoria' => 'Telecomunicaciones y Redes', 'estado' => 'pendiente', 'calidad_aprobada' => false, 'duracion_estimada_dias' => 40, 'requisitos_especificos' => 'Conocimiento en After Effects, animación de personajes y diseño sonoro.', 'habilidades_requeridas' => 'After Effects, Animación 2D, Ilustración, Edición de Audio', 'imagen_url' => 'https://images.unsplash.com/photo-1536240478700-b869070f9279?q=80&w=800', 'oferta' => null, 'oferta_otro' => null, 'empresa_email' => 'info@disenastudio.co', 'instructor_email' => null],
-
-            // ── Electricidad y Energías / Automatización ──
-            ['titulo' => 'Diseño de Instalaciones Eléctricas Residenciales', 'descripcion' => 'Elaboración de planos y memorias de cálculo para instalaciones eléctricas de un conjunto residencial de 20 unidades. Incluye diseño de iluminación, fuerza y sistemas de puesta a tierra.', 'categoria' => 'Electricidad y Energías', 'estado' => 'aprobado', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 50, 'requisitos_especificos' => 'Conocimiento en RETIE, NTC 2050 y manejo de AutoCAD eléctrico.', 'habilidades_requeridas' => 'AutoCAD, Instalaciones Eléctricas, RETIE, Cálculos Eléctricos', 'imagen_url' => 'https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?q=80&w=800', 'oferta' => 'auxilio_transporte', 'oferta_otro' => null, 'empresa_email' => 'proyectos@ingepro.co', 'instructor_email' => 'roberto.vega@sena.edu.co'],
-            ['titulo' => 'Automatización PLC para Línea de Producción', 'descripcion' => 'Programación e implementación de controlador lógico programable (PLC) para automatizar línea de ensamble. Incluye diseño de HMI, sensores y actuadores, y pruebas de integración.', 'categoria' => 'Automatización e Industria 4.0', 'estado' => 'en_progreso', 'calidad_aprobada' => true, 'duracion_estimada_dias' => 90, 'requisitos_especificos' => 'Experiencia en programación de PLC (Siemens o Allen-Bradley) y diseño de tableros de control.', 'habilidades_requeridas' => 'PLC, Automatización, HMI, Electricidad Industrial, Instrumentación', 'imagen_url' => 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800', 'oferta' => 'contrato_aprendizaje', 'oferta_otro' => null, 'empresa_email' => 'proyectos@ingepro.co', 'instructor_email' => 'roberto.vega@sena.edu.co'],
-            ['titulo' => 'Estudio de Iluminación para Edificio Corporativo', 'descripcion' => 'Estudio técnico y diseño de sistema de iluminación LED para edificio de 10 pisos. Incluye cálculos luminotécnicos, selección de luminarias, planos y simulación en DIALux.', 'categoria' => 'Electricidad y Energías', 'estado' => 'pendiente', 'calidad_aprobada' => false, 'duracion_estimada_dias' => 35, 'requisitos_especificos' => 'Manejo de DIALux o software similar de simulación lumínica.', 'habilidades_requeridas' => 'DIALux, Iluminación, AutoCAD, Eficiencia Energética', 'imagen_url' => 'https://images.unsplash.com/photo-1581092795607-f96c2242a3b5?q=80&w=800', 'oferta' => null, 'oferta_otro' => null, 'empresa_email' => 'proyectos@ingepro.co', 'instructor_email' => null],
-
-            // ── Metalmecánica ──
-            ['titulo' => 'Modelado 3D para Planta Industrial', 'descripcion' => 'Modelado tridimensional de una nueva ala de producción para simulaciones de seguridad y logística interna. Incluye renderizados y walkthrough virtual.', 'categoria' => 'Metalmecánica y Producción', 'estado' => 'pendiente', 'calidad_aprobada' => false, 'duracion_estimada_dias' => 80, 'requisitos_especificos' => 'Conocimiento en AutoCAD 3D o Blender avanzado.', 'habilidades_requeridas' => 'Modelado 3D, Planimetría, Renderizado, Visualización', 'imagen_url' => 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800', 'oferta' => null, 'oferta_otro' => null, 'empresa_email' => 'camilopineda182@gmail.com', 'instructor_email' => null],
+        $projectTemplates = [
+            'tecnologia' => [
+                ['Sistema de Gestión Empresarial ERP', 'Implementación de un sistema ERP modular con módulos de facturación, inventario, compras y reporting usando Laravel y Livewire.', 'PHP, Laravel, SQL, UI/UX, Trabajo en equipo'],
+                ['Plataforma de E-learning con IA', 'Plataforma educativa adaptativa que recomienda contenido según el progreso del aprendiz usando machine learning.', 'Python, Machine Learning, APIs, JavaScript, MongoDB'],
+                ['App Móvil de Delivery Local', 'Aplicación híbrida para pedidos de restaurantes locales con geolocalización en tiempo real y pasarela de pagos.', 'Flutter, Firebase, APIs REST, UX/UI, Geolocalización'],
+                ['Sistema de Facturación Electrónica', 'Plataforma web para generación y envío de facturas electrónicas con firma digital y validación DIAN.', 'PHP, Laravel, XML, APIs SOAP, Seguridad'],
+                ['CRM de Ventas Personalizado', 'Sistema de gestión de relaciones con clientes con pipeline de ventas, reportes y automatización de correos.', 'Laravel, Vue.js, MySQL, APIs REST, Email Marketing'],
+                ['Dashboard de Analítica Web', 'Tablero de visualización de datos con gráficos interactivos para métricas de tráfico web y conversiones.', 'Python, Django, Chart.js, SQL, Data Analytics'],
+                ['Chatbot de Atención al Cliente', 'Bot conversacional con NLP para resolver dudas frecuentes y escalar casos complejos a agentes humanos.', 'Python, TensorFlow, NLP, APIs, Dialogflow'],
+                ['Sistema de Reservas Online', 'Motor de reservas para hoteles y restaurantes con disponibilidad en tiempo real y notificaciones.', 'Vue.js, Laravel, MySQL, WebSockets, UI/UX'],
+                ['Marketplace de Servicios Freelance', 'Plataforma que conecta freelancers con clientes, incluye perfiles, contratos y pagos seguros.', 'Laravel, Vue.js, Stripe, SQL, UX/UI'],
+                ['Sistema de Control de Versiones Web', 'Herramienta web simplificada para gestión de versiones de documentos colaborativos.', 'JavaScript, Node.js, MongoDB, Git, WebSockets'],
+            ],
+            'diseño' => [
+                ['Identidad Visual para Marca de Café', 'Creación de branding completo para cafetería de especialidad: logo, etiquetas, menú y empaques.', 'Illustrator, Photoshop, Branding, Packaging, Creatividad'],
+                ['Diseño de Interfaz para App Financiera', 'UI/UX design para app de finanzas personales con modo oscuro, gráficos y onboarding.', 'Figma, UX Research, Prototyping, Design Systems'],
+                ['Catálogo Digital de Productos', 'Diseño y maquetación de catálogo interactivo para tienda de muebles con realidad aumentada.', 'InDesign, Photoshop, AR, Fotografía, Maquetación'],
+                ['Manual de Marca Corporativo', 'Creación de guideline completo con aplicaciones en papelería, digital y señalética.', 'Illustrator, Branding, Tipografía, Comunicación Visual'],
+            ],
+            'marketing' => [
+                ['Estrategia de Contenido para Redes Sociales', 'Plan de contenido orgánico y pautado para Instagram, TikTok y LinkedIn con calendario editorial.', 'Copywriting, Analytics, Meta Ads, Creatividad, Video'],
+                ['Campaña de Email Marketing Automatizado', 'Setup de secuencias de correos con HubSpot para nurturing de leads y automatización.', 'HubSpot, Copywriting, Analytics, HTML Email, Segmentación'],
+                ['SEO Técnico y de Contenido', 'Auditoría SEO completa con recomendaciones técnicas y de contenido para mejorar posicionamiento.', 'SEO, Google Analytics, SEMrush, HTML, Content Strategy'],
+                ['Lanzamiento de Producto Digital', 'Estrategia go-to-market para app nueva incluyendo PR, influencers y ads.', 'PR, Community Management, Analytics, Ads, Copywriting'],
+            ],
+            'comunicacion' => [
+                ['Video Corporativo Institucional', 'Producción de video de 8 minutos con entrevistas, tomas corporativas y animación de datos.', 'Edición de Video, Guionismo, Fotografía, Postproducción'],
+                ['Podcast Empresarial Serie 8 Episodios', 'Producción completa de podcast con entrevistas a líderes de la industria.', 'Edición de Audio, Guionismo, Entrevistas, Comunicación'],
+                ['Newsletter Semanal Corporativa', 'Diseño y redacción de newsletter con curaduría de contenido y métricas de apertura.', 'Copywriting, Email Marketing, Diseño Editorial, Curación'],
+            ],
+            'ingenieria' => [
+                ['Diseño Estructural de Bodega Industrial', 'Planos estructurales y memorias de cálculo para bodega de 2000m2.', 'AutoCAD, Cálculo Estructural, Normas NSR-10, Planimetría'],
+                ['Levantamiento Topográfico con Dron', 'Mapeo aéreo de terreno de 5 hectáreas con procesamiento de ortofotos y curvas de nivel.', 'Drones, Fotogrametría, AutoCAD, GIS, Procesamiento'],
+                ['Diseño de Red Hidrosanitaria', 'Planos de redes de agua potable y alcantarillado para conjunto residencial.', 'AutoCAD, Hidráulica, Normatividad, PVC, Cálculos'],
+            ],
+            'electricidad' => [
+                ['Diagnóstico Energético Industrial', 'Estudio de eficiencia energética con recomendaciones de ahorro para planta de producción.', 'Eficiencia Energética, Electricidad, Instrumentación, Reportes'],
+                ['Diseño de Sistema Fotovoltaico', 'Dimensionamiento e instalación de paneles solares para edificio corporativo de 5 pisos.', 'Energía Solar, Electricidad, Cálculos, Normatividad RETIE'],
+                ['Mantenimiento de Subestación Eléctrica', 'Plan de mantenimiento preventivo para subestación de 115kV con protocolos de seguridad.', 'Alta Tensión, Mantenimiento, Seguridad Eléctrica, Normas'],
+            ],
+            'automatizacion' => [
+                ['Control de Temperatura con PLC', 'Sistema automatizado para control de temperatura en horno industrial con PID.', 'PLC, Automatización, PID, HMI, Instrumentación'],
+                ['Línea de Ensamble Automatizada', 'Diseño e implementación de línea robótica para ensamble de componentes electrónicos.', 'Robótica, PLC, Neumática, Sensores, Programación'],
+                ['SCADA para Planta de Tratamiento', 'Sistema de supervisión y adquisición de datos para PTAR con alarmas y reportes.', 'SCADA, PLC, HMI, Redes Industriales, Base de Datos'],
+            ],
+            'logistica' => [
+                ['Sistema de Gestión de Inventarios WMS', 'Software de warehouse management con códigos de barras y picking optimizado.', 'Logística, Bases de Datos, UI/UX, Códigos de Barras'],
+                ['Optimización de Rutas de Delivery', 'Algoritmo genético para optimización de rutas de reparto urbano con restricciones de tiempo.', 'Python, Algoritmos, Logística, Maps API, Data Science'],
+                ['Dashboard de Cadena de Suministro', 'Visualización en tiempo real de KPIs de supply chain con alertas predictivas.', 'Power BI, SQL, Logística, DataViz, Python'],
+            ],
+            'financiero' => [
+                ['Sistema de Presupuestos y Proyecciones', 'Herramienta web para elaboración de presupuestos anuales con proyecciones financieras.', 'PHP, Laravel, Finanzas, Excel, SQL'],
+                ['Módulo de Conciliación Bancaria', 'Automatización de conciliación bancaria con carga de extractos y detección de diferencias.', 'Python, Pandas, SQL, Finanzas, Automatización'],
+                ['Plataforma de Crowdfunding', 'Plataforma de financiación colectiva con perfiles de proyectos y pasarela de pagos.', 'Laravel, Vue.js, Pasarelas de Pago, Seguridad, UX/UI'],
+            ],
+            'salud' => [
+                ['Historia Clínica Electrónica', 'Sistema de historias clínicas digitales con módulo de citas y recetas médicas.', 'PHP, Laravel, SQL, Seguridad, UI/UX'],
+                ['App de Telemedicina', 'Aplicación para consultas médicas virtuales con videollamada y recetario digital.', 'Flutter, WebRTC, Firebase, UX/UI, Seguridad'],
+            ],
+            'educacion' => [
+                ['Plataforma de Cursos Virtuales', 'LMS con reproducción de video, evaluaciones, foros y certificados automáticos.', 'Laravel, Vue.js, Video Streaming, SQL, UX/UI'],
+                ['Sistema de Gestión Académica', 'Gestión de notas, horarios, asistencias y reportes para instituciones educativas.', 'PHP, Laravel, SQL, Reportes, UI/UX'],
+            ],
         ];
 
-        foreach ($projects as $data) {
-            $companyNit = DB::table('empresas')->where('correo_contacto', $data['empresa_email'])->value('nit');
-            $instructorId = $data['instructor_email']
-                ? DB::table('usuarios')->where('correo', $data['instructor_email'])->value('id')
-                : null;
-            $estado = $data['estado'];
-            $asignarInstructor = in_array($estado, ['aprobado', 'en_progreso', 'completado', 'cerrado']);
+        $projectCategories = [
+            'tecnologia', 'diseño', 'marketing', 'comunicacion', 'ingenieria',
+            'electricidad', 'automatizacion', 'logistica', 'financiero', 'salud', 'educacion',
+        ];
 
-            unset($data['empresa_email'], $data['instructor_email']);
+        $estados = ['pendiente', 'aprobado', 'rechazado', 'en_progreso', 'completado', 'cerrado'];
+        $ofertas = ['contrato_aprendizaje', 'pasantias', 'auxilio_transporte', 'otro', null];
 
-            DB::table('proyectos')->insertOrIgnore(array_merge($data, [
-                'empresa_nit'           => $companyNit,
-                'instructor_usuario_id' => $asignarInstructor ? $instructorId : null,
-                'fecha_publicacion'     => Carbon::now()->toDateString(),
-                'numero_postulantes'    => 0,
-                'created_at'            => now(),
-                'updated_at'            => now(),
-            ]));
+        // Reference date: the app started in early 2024
+        $appStartDate = Carbon::create(2024, 2, 1);
+        $now = Carbon::now();
+
+        $count = 0;
+
+        foreach ($companies as $nit => $email) {
+            $numProjects = rand(3, 7);
+
+            for ($p = 0; $p < $numProjects; $p++) {
+                $cat = $projectCategories[array_rand($projectCategories)];
+                $template = $projectTemplates[$cat][array_rand($projectTemplates[$cat])];
+
+                $estado = $estados[array_rand($estados)];
+                $calidadAprobada = in_array($estado, ['aprobado', 'en_progreso', 'completado', 'cerrado']);
+                $asignarInstructor = in_array($estado, ['aprobado', 'en_progreso', 'completado', 'cerrado']);
+
+                $instructorId = null;
+                if ($asignarInstructor && count($instructorEmails) > 0) {
+                    $instructorEmail = $instructorEmails[array_rand($instructorEmails)];
+                    $instructorId = DB::table('usuarios')->where('correo', $instructorEmail)->value('id');
+                }
+
+                $oferta = $ofertas[array_rand($ofertas)];
+
+                // Pick a random date between app start and now
+                $daysSinceStart = $appStartDate->diffInDays($now);
+                $randomDays = rand(0, $daysSinceStart);
+                $pubDate = (clone $appStartDate)->addDays($randomDays);
+                $createdAt = (clone $pubDate)->subDays(rand(0, 5));
+
+                DB::table('proyectos')->insertOrIgnore([
+                    'titulo'                => $template[0],
+                    'descripcion'           => $template[1],
+                    'categoria'             => $cat,
+                    'estado'                => $estado,
+                    'calidad_aprobada'      => $calidadAprobada,
+                    'duracion_estimada_dias'=> rand(20, 150),
+                    'requisitos_especificos'=> 'Conocimientos en ' . explode(',', $template[2])[0] . '. Responsabilidad y trabajo en equipo.',
+                    'habilidades_requeridas'=> $template[2],
+                    'imagen_url'            => null,
+                    'oferta'                => $oferta === 'otro' ? null : $oferta,
+                    'oferta_otro'           => $oferta === 'otro' ? 'Bonificación por desempeño' : null,
+                    'empresa_nit'           => $nit,
+                    'instructor_usuario_id' => $instructorId,
+                    'fecha_publicacion'     => $pubDate->toDateString(),
+                    'numero_postulantes'    => 0,
+                    'created_at'            => $createdAt,
+                    'updated_at'            => (clone $createdAt)->addDays(rand(0, 30)),
+                ]);
+                $count++;
+            }
         }
 
-        $this->command->info(count($projects).' Proyectos de ejemplo insertados correctamente.');
+        $this->command->info($count.' Proyectos de ejemplo insertados correctamente.');
     }
 }

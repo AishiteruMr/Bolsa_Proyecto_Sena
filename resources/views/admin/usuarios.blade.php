@@ -120,21 +120,16 @@
                                 </td>
                                 <td style="padding:18px 20px;color:#1a5c30;font-size:13px;border-bottom:1px solid #e8f5e9;">{{ $a->usuario->correo ?? '-' }}</td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
-                                    <span style="display:inline-flex;align-items:center;gap:6px;background:{{ $a->activo == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $a->activo == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $a->activo == 1 ? '#a5d6a7' : '#ef9a9a' }};">
-                                        <span style="width:6px;height:6px;border-radius:50%;background:{{ $a->activo == 1 ? '#2e7d46' : '#e53935' }};"></span>
+                                    <span class="estado-badge" style="display:inline-flex;align-items:center;gap:6px;background:{{ $a->activo == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $a->activo == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $a->activo == 1 ? '#a5d6a7' : '#ef9a9a' }};">
+                                        <span class="estado-dot" style="width:6px;height:6px;border-radius:50%;background:{{ $a->activo == 1 ? '#2e7d46' : '#e53935' }};"></span>
                                         {{ $a->activo == 1 ? 'aprobado' : 'cerrado' }}
                                     </span>
                                 </td>
-                                <td style="padding:18px 20px;text-align:right;border-bottom:1px solid #e8f5e9;">
-                                    <form action="{{ route('admin.usuarios.estado', $a->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <input type="hidden" name="tipo" value="aprendiz">
-                                        <input type="hidden" name="estado" value="{{ $a->activo == 1 ? 0 : 1 }}">
-                                        <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:{{ $a->activo == 1 ? '2px solid #2e7d46' : 'none' }};background:{{ $a->activo == 1 ? 'transparent' : '#2e7d46' }};color:{{ $a->activo == 1 ? '#2e7d46' : 'white' }};border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">
-                                            <i class="fas {{ $a->activo == 1 ? 'fa-user-minus' : 'fa-user-check' }}"></i>
-                                            {{ $a->activo == 1 ? 'Desactivar' : 'Activar' }}
-                                        </button>
-                                    </form>
+                                <td class="acciones-cell" style="padding:18px 20px;text-align:right;border-bottom:1px solid #e8f5e9;">
+                                    <button type="button" class="btn-estado-usuario-ajax" data-id="{{ $a->id }}" data-tipo="aprendiz" data-activo="{{ $a->activo }}" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:{{ $a->activo == 1 ? '2px solid #2e7d46' : 'none' }};background:{{ $a->activo == 1 ? 'transparent' : '#2e7d46' }};color:{{ $a->activo == 1 ? '#2e7d46' : 'white' }};border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">
+                                        <i class="fas {{ $a->activo == 1 ? 'fa-user-minus' : 'fa-user-check' }}"></i>
+                                        {{ $a->activo == 1 ? 'Desactivar' : 'Activar' }}
+                                    </button>
                                 </td>
                             </tr>
                             @empty
@@ -183,21 +178,16 @@
                                 </td>
                                 <td style="padding:18px 20px;color:#1a5c30;font-size:13px;border-bottom:1px solid #e8f5e9;">{{ $i->usuario->correo ?? '-' }}</td>
                                 <td style="padding:18px 20px;border-bottom:1px solid #e8f5e9;">
-                                    <span style="display:inline-flex;align-items:center;gap:6px;background:{{ $i->activo == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $i->activo == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $i->activo == 1 ? '#a5d6a7' : '#ef9a9a' }};">
-                                        <span style="width:6px;height:6px;border-radius:50%;background:{{ $i->activo == 1 ? '#2e7d46' : '#e53935' }};"></span>
+                                    <span class="estado-badge" style="display:inline-flex;align-items:center;gap:6px;background:{{ $i->activo == 1 ? '#e8f5e9' : '#ffebee' }};color:{{ $i->activo == 1 ? '#1a5c30' : '#c62828' }};padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid {{ $i->activo == 1 ? '#a5d6a7' : '#ef9a9a' }};">
+                                        <span class="estado-dot" style="width:6px;height:6px;border-radius:50%;background:{{ $i->activo == 1 ? '#2e7d46' : '#e53935' }};"></span>
                                         {{ $i->activo == 1 ? 'aprobado' : 'cerrado' }}
                                     </span>
                                 </td>
-                                <td style="padding:18px 20px;text-align:right;border-bottom:1px solid #e8f5e9;">
-                                    <form action="{{ route('admin.usuarios.estado', $i->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <input type="hidden" name="tipo" value="instructor">
-                                        <input type="hidden" name="estado" value="{{ $i->activo == 1 ? 0 : 1 }}">
-                                        <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:{{ $i->activo == 1 ? '2px solid #2e7d46' : 'none' }};background:{{ $i->activo == 1 ? 'transparent' : '#2e7d46' }};color:{{ $i->activo == 1 ? '#2e7d46' : 'white' }};border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">
-                                            <i class="fas {{ $i->activo == 1 ? 'fa-user-minus' : 'fa-user-check' }}"></i>
-                                            {{ $i->activo == 1 ? 'Desactivar' : 'Activar' }}
-                                        </button>
-                                    </form>
+                                <td class="acciones-cell" style="padding:18px 20px;text-align:right;border-bottom:1px solid #e8f5e9;">
+                                    <button type="button" class="btn-estado-usuario-ajax" data-id="{{ $i->id }}" data-tipo="instructor" data-activo="{{ $i->activo }}" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:{{ $i->activo == 1 ? '2px solid #2e7d46' : 'none' }};background:{{ $i->activo == 1 ? 'transparent' : '#2e7d46' }};color:{{ $i->activo == 1 ? '#2e7d46' : 'white' }};border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;">
+                                        <i class="fas {{ $i->activo == 1 ? 'fa-user-minus' : 'fa-user-check' }}"></i>
+                                        {{ $i->activo == 1 ? 'Desactivar' : 'Activar' }}
+                                    </button>
                                 </td>
                             </tr>
                             @empty
@@ -260,5 +250,57 @@ function mostrarTabla(tab) {
         }
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-estado-usuario-ajax').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const tipo = this.dataset.tipo;
+            const activo = parseInt(this.dataset.activo);
+            const nuevoEstado = activo === 1 ? 0 : 1;
+            const label = activo === 1 ? 'Desactivar' : 'Activar';
+
+            ajax.confirm('¿Estás seguro de ' + label.toLowerCase() + ' este usuario?').then(confirmed => {
+                if (!confirmed) return;
+
+                ajax.disableButton(this, label + '...');
+                const url = '{{ route('admin.usuarios.estado', ['id' => '__ID__']) }}'.replace('__ID__', id);
+
+                ajax.post(url, { tipo: tipo, estado: nuevoEstado }).then(res => {
+                    ajax.showToast('success', res.data.message);
+
+                    const tr = this.closest('tr');
+                    if (tr) {
+                        const badge = tr.querySelector('.estado-badge');
+                        if (badge) {
+                            const esActivo = res.data.activo == 1;
+                            badge.style.background = esActivo ? '#e8f5e9' : '#ffebee';
+                            badge.style.color = esActivo ? '#1a5c30' : '#c62828';
+                            badge.style.border = esActivo ? '1px solid #a5d6a7' : '1px solid #ef9a9a';
+                            const dot = badge.querySelector('.estado-dot');
+                            if (dot) {
+                                dot.style.background = esActivo ? '#2e7d46' : '#e53935';
+                            }
+                            badge.childNodes.forEach(n => {
+                                if (n.nodeType === 3) n.textContent = esActivo ? 'aprobado' : 'cerrado';
+                            });
+                        }
+                    }
+
+                    this.dataset.activo = res.data.activo;
+                    this.innerHTML = res.data.activo == 1
+                        ? '<i class="fas fa-user-minus"></i> Desactivar'
+                        : '<i class="fas fa-user-check"></i> Activar';
+                    this.style.border = res.data.activo == 1 ? '2px solid #2e7d46' : 'none';
+                    this.style.background = res.data.activo == 1 ? 'transparent' : '#2e7d46';
+                    this.style.color = res.data.activo == 1 ? '#2e7d46' : 'white';
+                }).catch(err => {
+                    ajax.enableButton(this);
+                    ajax.showToast('error', err.response?.data?.message || 'Error al cambiar estado.');
+                });
+            });
+        });
+    });
+});
 </script>
 @endsection

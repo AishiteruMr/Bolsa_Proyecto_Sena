@@ -153,12 +153,45 @@ class ChatController extends Controller
                 'message' => $message->message,
                 'created_at' => $message->created_at->format('H:i'),
                 'created_at_iso' => $message->created_at->toISOString(),
-                'sender' => ['id' => $user->id, 'name' => $user->nombre],
+                'sender' => ['id' => $user->id, 'name' => $user->nombre, 'rol' => $user->nombre_rol],
                 'conversation_id' => $conversation->id,
             ]);
         }
 
         return redirect()->back();
+    }
+
+    public function poll(Request $request, Conversation $conversation)
+    {
+        $usrId = session('usr_id');
+
+        if (! $conversation->users()->where('user_id', $usrId)->exists()) {
+            abort(403);
+        }
+
+        $afterId = (int) $request->input('after_id', 0);
+
+        $messages = $conversation->messages()
+            ->with('sender')
+            ->where('id', '>', $afterId)
+            ->orderBy('created_at')
+            ->get();
+
+        return response()->json($messages->map(function ($msg) {
+            return [
+                'id' => $msg->id,
+                'message' => $msg->message,
+                'sender_id' => $msg->sender_id,
+                'sender' => [
+                    'id' => $msg->sender->id,
+                    'name' => $msg->sender->nombre,
+                    'rol' => $msg->sender->nombre_rol,
+                ],
+                'created_at' => $msg->created_at->format('H:i'),
+                'created_at_iso' => $msg->created_at->toISOString(),
+                'conversation_id' => $msg->conversation_id,
+            ];
+        }));
     }
 
     public function markRead(Conversation $conversation)

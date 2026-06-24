@@ -105,6 +105,7 @@ Route::middleware(['auth.custom', 'rol:2,3'])->prefix('chat')->name('chat.')->gr
     Route::post('/', [ChatController::class, 'store'])->name('store');
     Route::post('/{conversation}/messages', [ChatController::class, 'send'])->name('send');
     Route::post('/{conversation}/read', [ChatController::class, 'markRead'])->name('read');
+    Route::get('/{conversation}/poll', [ChatController::class, 'poll'])->name('poll');
     Route::get('/unread/count', [ChatController::class, 'unreadCount'])->name('unread');
 });
 
@@ -117,6 +118,7 @@ Route::middleware(['auth.custom', 'rol:2,3'])->prefix('chat')->name('chat.')->gr
 Route::middleware(['auth.custom', 'rol:1'])->prefix('aprendiz')->name('aprendiz.')->group(function () {
     Route::get('/dashboard', [AprendizController::class, 'dashboard'])->name('dashboard');
     Route::get('/proyectos', [AprendizController::class, 'proyectos'])->name('proyectos');
+    Route::get('/proyectos/ajax', [AprendizController::class, 'proyectosAjax'])->name('proyectos.ajax');
     // SEGURIDAD: Rate limiting en postulación (máx 10/minuto)
     Route::post('/proyectos/{id}/postular', [AprendizController::class, 'postular'])->name('postular')->middleware('throttle:10,1');
     Route::get('/mis-postulaciones', [AprendizController::class, 'misPostulaciones'])->name('postulaciones');

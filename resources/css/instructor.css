@@ -627,6 +627,77 @@
     .instructor-metrics-row { grid-template-columns: 1fr; gap: 10px; }
 }
 
+/* ── PROGRESS BAR IN HERO ── */
+.instructor-hero-progress {
+    position: relative;
+    z-index: 1;
+    margin-top: 24px;
+    max-width: 320px;
+    background: rgba(255,255,255,0.06);
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+.progress-bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3eb489, #22d78b);
+    border-radius: 3px;
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── EVIDENCE ALERT BANNER ── */
+.instructor-evidence-alert {
+    background: rgba(255,255,255,0.95);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-left: 4px solid #f59e0b;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 16px rgba(245,158,11,0.08);
+    transition: all 0.3s;
+}
+.instructor-evidence-alert:hover {
+    box-shadow: 0 8px 24px rgba(245,158,11,0.12);
+    border-color: rgba(245,158,11,0.35);
+}
+
+/* ── SUCCESS STAT CARD ── */
+.instructor-stat-success {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: var(--radius);
+    padding: 24px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(62,180,137,0.1);
+    transition: all 0.3s;
+}
+.instructor-stat-success:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(62,180,137,0.12);
+}
+
+/* ── COUNTER ANIMATION ── */
+.instructor-counter {
+    display: inline-block;
+}
+
+/* ── DISTRIBUTION BAR MINI ── */
+.instructor-distrib-bar {
+    display: flex;
+    gap: 4px;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
 /* Small shared utilities scoped to instructor pages */
 .glass-card {
     background: rgba(255,255,255,0.85);

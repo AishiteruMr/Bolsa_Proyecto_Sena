@@ -19,6 +19,7 @@ use App\Jobs\SendEmailJob;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -475,11 +476,11 @@ class EmpresaController extends Controller
         ));
     }
 
-    public function cambiarEstadoPostulacion(GestionarPostulacionRequest $request, int $id): RedirectResponse
+    public function cambiarEstadoPostulacion(GestionarPostulacionRequest $request, int $id): RedirectResponse|JsonResponse
     {
         $nit = session('nit');
 
-        $postulacion = Postulacion::with('proyecto')
+        $postulacion = Postulacion::with('proyecto', 'aprendiz.usuario')
             ->where('id', $id)
             ->whereHas('proyecto', function ($query) use ($nit) {
                 $query->where('empresa_nit', $nit);
@@ -518,7 +519,7 @@ class EmpresaController extends Controller
         // Send email notification to aprendiz
         try {
             $aprendiz = $postulacion->aprendiz;
-            $usuarioCorreo = optional($aprendiz->usuario)->correo;
+            $usuarioCorreo = optional($aprendiz?->usuario)->correo;
             if ($usuarioCorreo) {
                 SendEmailJob::dispatch($usuarioCorreo, new PostulacionEstadoCambiado(
                     $aprendiz->nombres ?? 'Aprendiz',
@@ -529,6 +530,25 @@ class EmpresaController extends Controller
             }
         } catch (\Exception $e) {
             Log::error('Error enviando email de estado postulación: '.$e->getMessage());
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $statusConfig = match($estadoInput) {
+                'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock', 'label' => 'Por Revisar'],
+                'aceptada' => ['bg' => '#10b981', 'icon' => 'fa-check', 'label' => 'Aprobado'],
+                'rechazada' => ['bg' => '#ef4444', 'icon' => 'fa-times', 'label' => 'Rechazado'],
+                'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner', 'label' => 'En Progreso'],
+                default => ['bg' => '#64748b', 'icon' => 'fa-info-circle', 'label' => $estadoInput]
+            };
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado de postulación actualizado.',
+                'estado' => $estadoInput,
+                'statusConfig' => $statusConfig,
+                'postulacionId' => $postulacion->id,
+                'totalInvalidadas' => $totalInvalidadas,
+            ]);
         }
 
         return back()->with('success', 'Estado de postulación actualizado.');
