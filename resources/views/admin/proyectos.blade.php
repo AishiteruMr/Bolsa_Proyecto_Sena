@@ -28,6 +28,33 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// ── REAL-TIME: proyectos ─────────────────────────────────────────
+(function () {
+    if (!document.getElementById('admin-projects-grid')) return;
+
+    let rtDebounce = null;
+
+    function refreshAdminProjects() {
+        fetch(window.location.href)
+            .then(r => r.text())
+            .then(html => {
+                const doc    = new DOMParser().parseFromString(html, 'text/html');
+                const newGrid = doc.getElementById('admin-projects-grid');
+                const newKpi  = doc.getElementById('admin-kpi-cards');
+                const curGrid = document.getElementById('admin-projects-grid');
+                const curKpi  = document.getElementById('admin-kpi-cards');
+                if (newGrid && curGrid) curGrid.innerHTML = newGrid.innerHTML;
+                if (newKpi  && curKpi)  curKpi.innerHTML  = newKpi.innerHTML;
+            })
+            .catch(() => {});
+    }
+
+    window.addEventListener('realtime:proyecto', function () {
+        clearTimeout(rtDebounce);
+        rtDebounce = setTimeout(refreshAdminProjects, 800);
+    });
+})();
 </script>
 @endsection
 @section('sidebar-nav')
@@ -52,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
 
         {{-- KPI STAT CARDS --}}
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; margin-bottom: 24px;">
+        <div id="admin-kpi-cards" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; margin-bottom: 24px;">
             <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid #f59e0b;">
                 <div style="font-size: 24px; font-weight: 800; color: #f59e0b;">{{ $proyectosPendientes }}</div>
                 <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Pendientes</div>
@@ -189,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </form>
         </div>
 
-        <div class="admin-project-grid">
+        <div id="admin-projects-grid" class="admin-project-grid">
             @forelse($proyectos as $p)
             @php
                 $hasCalidad = !empty($p->calidad_aprobada);

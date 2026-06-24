@@ -15,6 +15,42 @@
 
 @section('scripts')
     @vite(['resources/js/admin-audit.js'])
+    <script>
+    // ── REAL-TIME: audit ─────────────────────────────────────────
+    (function () {
+        if (!document.getElementById('audit-entities-list')) return;
+
+        let rtDebounce = null;
+
+        function refreshAuditList() {
+            fetch(window.location.href)
+                .then(r => r.text())
+                .then(html => {
+                    const doc     = new DOMParser().parseFromString(html, 'text/html');
+                    const newList = doc.getElementById('audit-entities-list');
+                    const newPag  = doc.getElementById('audit-pagination');
+                    const curList = document.getElementById('audit-entities-list');
+                    const curPag  = document.getElementById('audit-pagination');
+                    if (newList && curList) curList.innerHTML = newList.innerHTML;
+                    if (newPag  && curPag)  curPag.innerHTML  = newPag.innerHTML;
+                    if (!newPag && curPag)  curPag.innerHTML  = '';
+
+                    // Increment total-events counter badge
+                    const totalEl = document.getElementById('audit-total-events');
+                    if (totalEl) {
+                        const cur = parseInt(totalEl.textContent) || 0;
+                        totalEl.textContent = cur + 1;
+                    }
+                })
+                .catch(() => {});
+        }
+
+        window.addEventListener('realtime:audit', function () {
+            clearTimeout(rtDebounce);
+            rtDebounce = setTimeout(refreshAuditList, 800);
+        });
+    })();
+    </script>
 @endsection
 
 @section('content')
@@ -35,9 +71,9 @@
 </div>
 
 {{-- ACTIVITY SUMMARY --}}
-<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 20px 0;">
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 20px 0;">
     <div class="glass-card" style="padding: 16px; text-align: center; border-top: 3px solid var(--primary);">
-        <div style="font-size: 24px; font-weight: 800; color: var(--primary);">{{ $totalLogs }}</div>
+        <div id="audit-total-events" style="font-size: 24px; font-weight: 800; color: var(--primary);">{{ $totalLogs }}</div>
         <div style="font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase;">Total Eventos</div>
     </div>
     @foreach($accionesCount->take(3) as $acc)
@@ -163,6 +199,7 @@
     $tieneGrupos = collect($ordenEntidades)->first(fn($k) => !empty($grouped[$k]));
 @endphp
 
+<div id="audit-entities-list">
 @foreach($ordenEntidades as $key)
     @if(!empty($grouped[$key]))
         @php
@@ -224,6 +261,7 @@
         </div>
     @endif
 @endforeach
+</div>{{-- /audit-entities-list --}}
 
 @if(!$tieneGrupos)
     <div class="glass-card" style="border-radius: 32px; border: 1px solid rgba(0,0,0,0.05); background: white; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.05); padding: 80px 32px; text-align: center;">
@@ -236,7 +274,7 @@
 @endif
 
 @if($logs->hasPages())
-    <div style="padding: 20px 28px; display: flex; justify-content: center;">
+    <div id="audit-pagination" style="padding: 20px 28px; display: flex; justify-content: center;">
         {{ $logs->withQueryString()->links() }}
     </div>
 @endif
