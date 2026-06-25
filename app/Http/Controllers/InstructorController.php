@@ -861,13 +861,6 @@ class InstructorController extends Controller
         }
 
         if ($request->ajax() || $request->wantsJson()) {
-            $statusStyles = match($estadoInput) {
-                'aceptada' => ['bg' => '#f0fdf4', 'border' => '#10b981', 'color' => '#059669'],
-                'pendiente' => ['bg' => '#fffbeb', 'border' => '#f59e0b', 'color' => '#d97706'],
-                'rechazada' => ['bg' => '#fef2f2', 'border' => '#ef4444', 'color' => '#dc2626'],
-                default => ['bg' => '#f8fafc', 'border' => '#e2e8f0', 'color' => '#94a3b8'],
-            };
-
             $estadosHtml = '';
             $estados = [
                 'aceptada' => ['icon' => 'fa-check-double', 'label' => 'Aprobado'],
@@ -876,12 +869,10 @@ class InstructorController extends Controller
             ];
             foreach ($estados as $est => $cfg) {
                 $active = $est === $estadoInput;
-                $bg = $active ? $statusStyles['bg'] : '#f8fafc';
-                $bdr = $active ? $statusStyles['border'] : '#e2e8f0';
-                $clr = $active ? $statusStyles['color'] : '#94a3b8';
-                $estadosHtml .= '<div style="flex:1;padding:1.25rem;border-radius:12px;text-align:center;background:'.$bg.';border:2px solid '.$bdr.';color:'.$clr.';">
-                    <i class="fas '.$cfg['icon'].'" style="font-size:1.5rem;display:block;margin-bottom:6px;"></i>
-                    <span style="font-weight:800;font-size:0.85rem;">'.$cfg['label'].'</span>
+                $activeClass = $active ? 'ev-status-' . $est : '';
+                $estadosHtml .= '<div class="ev-status-item ' . $activeClass . '">
+                    <i class="fas ' . $cfg['icon'] . '"></i>
+                    <span>' . $cfg['label'] . '</span>
                 </div>';
             }
 
