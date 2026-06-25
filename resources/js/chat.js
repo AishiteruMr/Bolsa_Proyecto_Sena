@@ -1,17 +1,12 @@
-/**
- * Chat real-time functionality
- * AJAX sending, Echo listeners, unread badges, typing indicator, toast notifications
- */
-
 const CHAT_STORAGE_KEY = 'chat_active_conv';
 
 document.addEventListener('DOMContentLoaded', () => {
     const usrId = window.Laravel?.user?.id;
+    const userName = window.Laravel?.user?.nombre || '';
     if (!usrId) return;
 
     const echoAvailable = typeof window.Echo !== 'undefined';
 
-    // ── ACTIVE CHAT: AJAX send + Echo listener ──────────────
     const chatForm = document.getElementById('chatForm');
     const msgContainer = document.getElementById('chatMessages');
     const msgInput = document.getElementById('messageInput');
@@ -23,10 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let loadingMore = false;
         let nextPageUrl = loadMoreBtn?.dataset?.nextUrl || null;
 
-        // Scroll to bottom
         msgContainer.scrollTop = msgContainer.scrollHeight;
 
-        // Load more messages
         if (loadMoreBtn) {
             loadMoreBtn.addEventListener('click', async () => {
                 if (loadingMore || !nextPageUrl) return;
@@ -68,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // AJAX send
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const msg = msgInput.value.trim();
@@ -97,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 msgInput.style.height = 'auto';
                 msgContainer.scrollTop = msgContainer.scrollHeight;
 
-                // Update sidebar preview in real-time
                 updateSidebarConv(convId, data.message, data.created_at);
             } catch (err) {
                 console.warn('Error sending message', err);
@@ -108,21 +99,22 @@ document.addEventListener('DOMContentLoaded', () => {
             sendBtn.innerHTML = submitBtnHtml;
         });
 
-        // Enter to send, Shift+Enter for newline
         msgInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                chatForm.requestSubmit();
+                if (typeof chatForm.requestSubmit === 'function') {
+                    chatForm.requestSubmit();
+                } else {
+                    chatForm.dispatchEvent(new Event('submit'));
+                }
             }
         });
 
-        // Auto-resize
         msgInput.addEventListener('input', () => {
             msgInput.style.height = 'auto';
             msgInput.style.height = msgInput.scrollHeight + 'px';
         });
 
-        // Real-time received messages
         if (echoAvailable) {
             window.Echo.private('conversation.' + convId)
                 .listen('.message.sent', (data) => {
@@ -132,34 +124,39 @@ document.addEventListener('DOMContentLoaded', () => {
                         markConversationRead(convId);
                         updateSidebarConv(convId, data.message, data.created_at);
                         updateGlobalBadge();
+                        updateSentMessageReadStatus(data.conversation_id, data.id);
                     }
                 })
                 .listen('.typing', (data) => {
                     const indicator = document.getElementById('typingIndicator');
+                    const typingName = document.getElementById('typingName');
                     if (data.sender && data.sender.id !== usrId) {
                         if (indicator) indicator.style.display = 'flex';
+                        if (typingName && data.sender.name) {
+                            typingName.textContent = data.sender.name + ' ';
+                        }
                         clearTimeout(window._typingTimeout);
                         window._typingTimeout = setTimeout(() => {
                             if (indicator) indicator.style.display = 'none';
-                        }, 2000);
+                        }, 2500);
                     }
                 });
 
-            // Typing indicator broadcast
-            let typingTimer;
+            let typingLastSent = 0;
+            const TYPING_INTERVAL = 2000;
             msgInput.addEventListener('input', () => {
-                clearTimeout(typingTimer);
-                window.Echo.private('conversation.' + convId)
-                    .whisper('typing', { sender: { id: usrId } });
-                typingTimer = setTimeout(() => {}, 1000);
+                const now = Date.now();
+                if (now - typingLastSent > TYPING_INTERVAL) {
+                    typingLastSent = now;
+                    window.Echo.private('conversation.' + convId)
+                        .whisper('typing', { sender: { id: usrId, name: userName } });
+                }
             });
         }
 
-        // Remove empty state
         const emptyState = msgContainer.querySelector('.chat-empty-state');
         if (emptyState) emptyState.remove();
 
-        // ── POLLING: fetch new messages every 5s as fallback ──────
         let lastMessageId = 0;
         const existingMsgs = msgContainer.querySelectorAll('.chat-msg');
         if (existingMsgs.length > 0) {
@@ -181,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (document.querySelector(`.chat-msg[data-id="${data.id}"]`)) return;
                     if (data.sender.id === usrId) {
                         appendOwnMessage(data, usrId);
+                        updateSentMessageReadStatus(data.conversation_id, data.id);
                     } else {
                         appendReceivedMessage(data);
                         markConversationRead(convId);
@@ -198,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 5000);
     }
 
-    // ── SIDEBAR BADGE & GLOBAL ECHO LISTENER ────────────────
     function updateGlobalBadge() {
         fetch('/chat/unread/count')
             .then(r => r.json())
@@ -219,21 +216,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (badge) badge.remove();
                     }
                 });
-
-                // Update sidebar chat conversation badges
-                document.querySelectorAll('.chat-conv-item').forEach(item => {
-                    const convId = item.dataset.convId;
-                    const badge = item.querySelector('.chat-conv-badge');
-                    // Keep existing badge logic, server-side handles counts
-                });
             })
             .catch(() => {});
     }
 
-    // Poll global badge every 15s
     setInterval(updateGlobalBadge, 15000);
 
-    // If no active chat, subscribe to all user conversations for toast notifications
     if (!chatForm && echoAvailable && usrId) {
         fetch('/chat/unread/count')
             .then(r => r.json())
@@ -243,18 +231,16 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => {});
     }
 
-    // ── HELPER FUNCTIONS ────────────────────────────────────
-
     function appendOwnMessage(data, usrId) {
         const div = document.createElement('div');
         div.className = 'chat-msg sent';
         div.dataset.id = data.id;
         div.dataset.convId = data.conversation_id;
         div.innerHTML = `
-            <div>${escapeHtml(data.message)}</div>
+            <div>${escapeHtml(data.message).replace(/\n/g, '<br>')}</div>
             <span class="chat-msg-time">
                 ${data.created_at}
-                <i class="fas fa-check" style="margin-left:4px;font-size:10px;"></i>
+                <i class="fas fa-check read-status" style="margin-left:4px;font-size:10px;"></i>
             </span>
         `;
         msgContainer.appendChild(div);
@@ -283,12 +269,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }).catch(() => {});
     }
 
+    function updateSentMessageReadStatus(convId, msgId) {
+        const msgEl = document.querySelector(`.chat-msg[data-id="${msgId}"] .read-status`);
+        if (msgEl) {
+            msgEl.className = 'fas fa-check-double read-status';
+            msgEl.style.marginLeft = '4px';
+            msgEl.style.fontSize = '10px';
+        }
+    }
+
     function updateSidebarConv(convId, message, time) {
         const sidebarItem = document.querySelector(`.chat-conv-item[data-conv-id="${convId}"]`);
-        if (!sidebarItem) {
-            // Conversation might not exist in sidebar yet; refresh page if needed
-            return;
-        }
+        if (!sidebarItem) return;
+
         const preview = sidebarItem.querySelector('.chat-conv-preview');
         const timeEl = sidebarItem.querySelector('.chat-conv-time');
         const badge = sidebarItem.querySelector('.chat-conv-badge');
@@ -296,7 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (timeEl) timeEl.textContent = time;
         if (badge) badge.remove();
 
-        // Move to top
         const parent = sidebarItem.parentElement;
         if (parent) {
             parent.insertBefore(sidebarItem, parent.firstChild);

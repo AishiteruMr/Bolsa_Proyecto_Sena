@@ -51,7 +51,8 @@ class MessageSent implements ShouldBroadcast
                 'name' => $this->sender->nombre,
                 'rol' => $this->sender->nombre_rol,
             ],
-            'created_at' => $this->message->created_at->toISOString(),
+            'created_at' => $this->message->created_at->format('H:i'),
+            'created_at_iso' => $this->message->created_at->toISOString(),
         ];
     }
 }

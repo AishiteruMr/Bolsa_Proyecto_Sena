@@ -18,25 +18,8 @@ class ChatController extends Controller
         $usrId = session('usr_id');
         $user = User::find($usrId);
 
-        $conversations = Conversation::whereHas('users', function ($q) use ($usrId) {
-            $q->where('user_id', $usrId);
-        })
-            ->with(['proyecto', 'users', 'lastMessage'])
-            ->orderByDesc(function ($q) {
-                $q->select('created_at')->from('messages')
-                    ->whereColumn('conversation_id', 'conversations.id')
-                    ->latest()
-                    ->limit(1);
-            })
-            ->get();
-
-        $unreadCounts = [];
-        foreach ($conversations as $conv) {
-            $count = $conv->unreadMessagesCount($usrId);
-            if ($count > 0) {
-                $unreadCounts[$conv->id] = $count;
-            }
-        }
+        $conversations = $this->getUserConversations($usrId);
+        $unreadCounts = $this->buildUnreadCounts($conversations);
 
         return view('shared.chat.index', compact('conversations', 'unreadCounts', 'user'));
     }
@@ -61,25 +44,8 @@ class ChatController extends Controller
 
         $user = User::find($usrId);
 
-        $conversations = Conversation::whereHas('users', function ($q) use ($usrId) {
-            $q->where('user_id', $usrId);
-        })
-            ->with(['proyecto', 'users', 'lastMessage'])
-            ->orderByDesc(function ($q) {
-                $q->select('created_at')->from('messages')
-                    ->whereColumn('conversation_id', 'conversations.id')
-                    ->latest()
-                    ->limit(1);
-            })
-            ->get();
-
-        $unreadCounts = [];
-        foreach ($conversations as $conv) {
-            $count = $conv->unreadMessagesCount($usrId);
-            if ($count > 0) {
-                $unreadCounts[$conv->id] = $count;
-            }
-        }
+        $conversations = $this->getUserConversations($usrId);
+        $unreadCounts = $this->buildUnreadCounts($conversations);
 
         return view('shared.chat.index', compact('conversations', 'messages', 'conversation', 'unreadCounts', 'user'));
     }
@@ -176,6 +142,8 @@ class ChatController extends Controller
             'message' => $validated['message'],
         ]);
 
+        $conversation->touch();
+
         broadcast(new MessageSent($conversation, $message, $user))->toOthers();
 
         if ($request->ajax() || $request->wantsJson()) {
@@ -247,10 +215,39 @@ class ChatController extends Controller
 
         $total = Conversation::whereHas('users', function ($q) use ($usrId) {
             $q->where('user_id', $usrId);
-        })->get()->sum(function ($conv) use ($usrId) {
-            return $conv->unreadMessagesCount($usrId);
-        });
+        })->withCount(['messages as unread_count' => function ($q) use ($usrId) {
+            $q->where('sender_id', '!=', $usrId)->whereNull('read_at');
+        }])->get()->sum('unread_count');
 
         return response()->json(['unread' => $total]);
+    }
+
+    private function getUserConversations(int $usrId)
+    {
+        return Conversation::whereHas('users', function ($q) use ($usrId) {
+            $q->where('user_id', $usrId);
+        })
+            ->with(['proyecto', 'users', 'lastMessage'])
+            ->withCount(['messages as unread_count' => function ($q) use ($usrId) {
+                $q->where('sender_id', '!=', $usrId)->whereNull('read_at');
+            }])
+            ->orderByDesc(function ($q) {
+                $q->select('created_at')->from('messages')
+                    ->whereColumn('conversation_id', 'conversations.id')
+                    ->latest()
+                    ->limit(1);
+            })
+            ->get();
+    }
+
+    private function buildUnreadCounts($conversations): array
+    {
+        $unreadCounts = [];
+        foreach ($conversations as $conv) {
+            if ($conv->unread_count > 0) {
+                $unreadCounts[$conv->id] = $conv->unread_count;
+            }
+        }
+        return $unreadCounts;
     }
 }
