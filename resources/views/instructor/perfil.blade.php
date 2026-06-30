@@ -23,7 +23,7 @@
 @endsection
 
 @section('styles')
-    @vite(['resources/css/instructor.css'])
+    @vite(['resources/css/instructor.css', 'resources/css/instructor-perfil.css'])
 @endsection
 
 @php $breadcrumbs = [['label' => 'Inicio', 'url' => route('instructor.dashboard')], ['label' => 'Perfil']]; @endphp
@@ -37,68 +37,68 @@
     $progresoPerfil = ($camposCompletos / 4) * 100;
 @endphp
 
-<div class="animate-fade-in" style="max-width: 1100px; margin: 0 auto; padding-bottom: 40px;">
+<div class="perfil-container">
 
     {{-- ── HERO ──────────────────────────────────────────────────── --}}
-    <div class="instructor-hero" style="padding: 48px;">
+    <div class="instructor-hero perfil-hero">
         <div class="instructor-hero-bg-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-        <div style="display: flex; align-items: center; gap: 32px; position: relative; z-index: 1;">
-            <div style="position: relative; flex-shrink: 0;">
-                <div style="width: 96px; height: 96px; border-radius: 50%; background: rgba(255,255,255,0.18); border: 3px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 900; color: white;">
+        <div class="perfil-hero-inner">
+            <div class="perfil-avatar-wrap">
+                <div class="perfil-avatar-circle">
                     {{ strtoupper(substr($instructor->nombres ?? 'I', 0, 1)) }}
                 </div>
-                <div style="position: absolute; bottom: -4px; right: -4px; width: 28px; height: 28px; border-radius: 50%; background: #3eb489; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white;">
+                <div class="perfil-avatar-badge">
                     <i class="fas fa-check"></i>
                 </div>
             </div>
 
-            <div style="flex: 1;">
-                <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <div class="perfil-hero-info">
+                <div class="perfil-hero-meta">
                     <span class="instructor-tag">Instructor SENA</span>
-                    <span style="color:rgba(255,255,255,0.5); font-size:13px; font-weight:600;"><i class="fas fa-envelope" style="margin-right:4px;"></i>{{ $usuario->correo }}</span>
+                    <span class="perfil-hero-email"><i class="fas fa-envelope"></i>{{ $usuario->correo }}</span>
                 </div>
-                <h1 class="instructor-title">{{ $instructor->nombres }} {{ $instructor->apellidos }}</h1>
-                <div style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:14px; padding:14px 18px; margin-top:16px; max-width:380px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span style="font-size:11px; font-weight:700; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.5px;">Integridad del Perfil</span>
-                        <span style="font-size:13px; font-weight:900; color:#fde68a;">{{ round($progresoPerfil) }}%</span>
+                <h1 class="instructor-title perfil-hero-name">{{ $instructor->nombres }} {{ $instructor->apellidos }}</h1>
+                <div class="perfil-progress-card">
+                    <div class="perfil-progress-header">
+                        <span class="perfil-progress-label">Integridad del Perfil</span>
+                        <span class="perfil-progress-pct">{{ round($progresoPerfil) }}%</span>
                     </div>
-                    <div style="height:6px; background:rgba(255,255,255,0.15); border-radius:3px; overflow:hidden;">
-                        <div style="width:{{ $progresoPerfil }}%; height:100%; background:linear-gradient(90deg,#fde68a,#fbbf24); border-radius:3px; transition:width 1.2s ease;"></div>
+                    <div class="perfil-progress-track">
+                        <div class="perfil-progress-fill" style="width:{{ $progresoPerfil }}%;"></div>
                     </div>
                 </div>
             </div>
 
             {{-- Stats --}}
-            <div style="display:grid; gap:12px; flex-shrink:0;">
-                <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:16px 24px; text-align:center; backdrop-filter:blur(10px);">
-                    <div style="font-size:32px; font-weight:900; color:white; line-height:1;">{{ $proyectosCount }}</div>
-                    <div style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-top:4px;">Proyectos</div>
+            <div class="perfil-hero-stats">
+                <div class="perfil-hero-stat perfil-hero-stat-default">
+                    <div class="perfil-hero-stat-num">{{ $proyectosCount }}</div>
+                    <div class="perfil-hero-stat-label">Proyectos</div>
                 </div>
-                <div style="background:rgba(62,180,137,0.15); border:1px solid rgba(62,180,137,0.25); border-radius:16px; padding:14px 24px; text-align:center;">
-                    <div style="font-size:28px; font-weight:900; color:#86efac; line-height:1;">{{ $aprendicesCount }}</div>
-                    <div style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-top:4px;">Aprendices</div>
+                <div class="perfil-hero-stat perfil-hero-stat-green">
+                    <div class="perfil-hero-stat-num perfil-hero-stat-num-sm perfil-hero-stat-num-green">{{ $aprendicesCount }}</div>
+                    <div class="perfil-hero-stat-label">Aprendices</div>
                 </div>
-                <div style="background:rgba(251,191,36,0.15); border:1px solid rgba(251,191,36,0.2); border-radius:16px; padding:14px 24px; text-align:center;">
-                    <div style="font-size:28px; font-weight:900; color:#fde68a; line-height:1;">{{ $evidenciasPendientesCount }}</div>
-                    <div style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-top:4px;">Pendientes</div>
+                <div class="perfil-hero-stat perfil-hero-stat-amber">
+                    <div class="perfil-hero-stat-num perfil-hero-stat-num-sm perfil-hero-stat-num-amber">{{ $evidenciasPendientesCount }}</div>
+                    <div class="perfil-hero-stat-label">Pendientes</div>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- ── GRID ────────────────────────────────────────────────── --}}
-    <div style="display:grid; grid-template-columns:2fr 1fr; gap:28px; align-items:start;">
+    <div class="perfil-main-grid">
 
         {{-- FORM --}}
-        <div class="glass-card" style="padding:32px;">
-            <div style="display:flex; align-items:center; gap:16px; margin-bottom:28px; padding-bottom:24px; border-bottom:1.5px solid rgba(62,180,137,0.1);">
-                <div style="width:48px; height:48px; border-radius:14px; background:rgba(62,180,137,0.1); color:#3eb489; display:flex; align-items:center; justify-content:center; font-size:20px;">
+        <div class="glass-card perfil-form-section">
+            <div class="perfil-form-header">
+                <div class="perfil-form-header-icon">
                     <i class="fas fa-id-badge"></i>
                 </div>
-                <div>
-                    <h3 style="font-size:20px; font-weight:800; color:var(--text);">Perfil <span style="color:var(--primary);">Profesional</span></h3>
-                    <p style="font-size:13px; color:var(--text-light); font-weight:500; margin-top:2px;">Tu información visible para aprendices y empresas.</p>
+                <div class="perfil-form-header-text">
+                    <h3>Perfil <span>Profesional</span></h3>
+                    <p>Tu información visible para aprendices y empresas.</p>
                 </div>
             </div>
 
@@ -106,54 +106,54 @@
                 @csrf
                 @method('PUT')
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:20px;">
-                    <div class="instructor-form-group">
-                        <label class="ins-form-label">Nombres</label>
-                        <div class="instructor-input-wrapper">
-                            <i class="fas fa-user-tag instructor-input-icon"></i>
-                            <input type="text" name="nombre" value="{{ old('nombre', $instructor->nombres) }}" required class="instructor-input-control">
+                <div class="perfil-form-grid">
+                    <div class="perfil-form-group">
+                        <label class="perfil-form-label">Nombres</label>
+                        <div class="perfil-input-wrapper">
+                            <i class="fas fa-user-tag perfil-input-icon"></i>
+                            <input type="text" name="nombre" value="{{ old('nombre', $instructor->nombres) }}" required class="perfil-input-control">
                         </div>
                     </div>
-                    <div class="instructor-form-group">
-                        <label class="ins-form-label">Apellidos</label>
-                        <div class="instructor-input-wrapper">
-                            <i class="fas fa-user-tag instructor-input-icon"></i>
-                            <input type="text" name="apellido" value="{{ old('apellido', $instructor->apellidos) }}" required class="instructor-input-control">
+                    <div class="perfil-form-group">
+                        <label class="perfil-form-label">Apellidos</label>
+                        <div class="perfil-input-wrapper">
+                            <i class="fas fa-user-tag perfil-input-icon"></i>
+                            <input type="text" name="apellido" value="{{ old('apellido', $instructor->apellidos) }}" required class="perfil-input-control">
                         </div>
                     </div>
                 </div>
 
-                <div class="instructor-form-group" style="margin-bottom:20px;">
-                    <label class="ins-form-label">Especialidad / Área de Influencia</label>
-                    <div class="instructor-input-wrapper">
-                        <i class="fas fa-graduation-cap instructor-input-icon"></i>
-                        <input type="text" name="especialidad" value="{{ old('especialidad', $instructor->especialidad) }}" required class="instructor-input-control">
+                <div class="perfil-form-group">
+                    <label class="perfil-form-label">Especialidad / Área de Influencia</label>
+                    <div class="perfil-input-wrapper">
+                        <i class="fas fa-graduation-cap perfil-input-icon"></i>
+                        <input type="text" name="especialidad" value="{{ old('especialidad', $instructor->especialidad) }}" required class="perfil-input-control">
                     </div>
                 </div>
 
-                <div class="instructor-form-group" style="margin-bottom:28px;">
-                    <label class="ins-form-label" style="color:#94a3b8;">Correo Electrónico (Solo Lectura)</label>
-                    <div class="instructor-input-wrapper">
-                        <i class="fas fa-envelope-open instructor-input-icon"></i>
-                        <input type="email" value="{{ $usuario->correo }}" disabled class="instructor-input-control" style="background:#f8fafc; color:#94a3b8; cursor:not-allowed; border-style:dashed;">
+                <div class="perfil-form-group">
+                    <label class="perfil-form-label">Correo Electrónico (Solo Lectura)</label>
+                    <div class="perfil-input-wrapper">
+                        <i class="fas fa-envelope-open perfil-input-icon"></i>
+                        <input type="email" value="{{ $usuario->correo }}" disabled class="perfil-input-control">
                     </div>
                 </div>
 
                 {{-- Security --}}
-                <div style="background:#f8fafc; border:2px dashed rgba(62,180,137,0.2); border-radius:20px; padding:24px; margin-bottom:28px;">
-                    <h4 style="font-size:15px; font-weight:800; color:var(--text); display:flex; align-items:center; gap:10px; margin-bottom:20px;">
-                        <i class="fas fa-shield-alt" style="color:#3eb489;"></i> Seguridad
+                <div class="perfil-security-box">
+                    <h4 class="perfil-security-title">
+                        <i class="fas fa-shield-alt"></i> Seguridad
                     </h4>
-                    <div class="instructor-form-group" style="margin-bottom:0;">
-                        <div class="instructor-input-wrapper">
-                            <i class="fas fa-lock instructor-input-icon"></i>
-                            <input type="password" name="password" placeholder="Nueva contraseña (vacío = sin cambio)" class="instructor-input-control">
+                    <div class="perfil-form-group" style="margin-bottom:0;">
+                        <div class="perfil-input-wrapper">
+                            <i class="fas fa-lock perfil-input-icon"></i>
+                            <input type="password" name="password" placeholder="Nueva contraseña (vacío = sin cambio)" class="perfil-input-control">
                         </div>
                     </div>
                 </div>
 
-                <div style="display:flex; justify-content:flex-end;">
-                    <button type="submit" class="btn-premium" style="padding:16px 40px; font-size:15px; border: none; cursor: pointer;">
+                <div class="perfil-btn-row">
+                    <button type="submit" class="btn-premium perfil-btn-update">
                         <i class="fas fa-sync-alt"></i> Actualizar Mi Perfil
                     </button>
                 </div>
@@ -161,75 +161,74 @@
         </div>
 
         {{-- SIDEBAR --}}
-        <div style="display:grid; gap:20px; align-content:start;">
+        <div class="perfil-sidebar">
 
             {{-- Contacto --}}
-            <div class="glass-card" style="padding:24px;">
-                <h4 style="font-size:12px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:20px;">Datos de Contacto</h4>
-                <div style="display:grid; gap:12px;">
-                    <div style="display:flex; align-items:center; gap:14px; padding:14px 16px; background:#eff6ff; border-radius:14px; border:1px solid rgba(0,0,0,0.05);">
-                        <div style="width:36px; height:36px; border-radius:10px; background:rgba(59,130,246,0.1); color:#3b82f6; display:flex; align-items:center; justify-content:center; font-size:14px;">
+            <div class="glass-card perfil-contact-card">
+                <h4 class="perfil-contact-title">Datos de Contacto</h4>
+                <div class="perfil-contact-list">
+                    <div class="perfil-contact-item perfil-contact-item-email">
+                        <div class="perfil-contact-icon perfil-contact-icon-blue">
                             <i class="fas fa-envelope"></i>
                         </div>
                         <div style="min-width:0;">
-                            <span style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; display:block;">Correo</span>
-                            <span style="font-size:13px; font-weight:700; color:var(--text); word-break:break-all;">{{ $usuario->correo }}</span>
+                            <span class="perfil-contact-label">Correo</span>
+                            <span class="perfil-contact-value">{{ $usuario->correo }}</span>
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:14px; padding:14px 16px; background:rgba(62,180,137,0.1); border-radius:14px; border:1px solid rgba(62,180,137,0.1);">
-                        <div style="width:36px; height:36px; border-radius:10px; background:rgba(62,180,137,0.1); color:#3eb489; display:flex; align-items:center; justify-content:center; font-size:14px;">
+                    <div class="perfil-contact-item perfil-contact-item-specialty">
+                        <div class="perfil-contact-icon perfil-contact-icon-green">
                             <i class="fas fa-medal"></i>
                         </div>
                         <div>
-                            <span style="font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; display:block;">Especialidad</span>
-                            <span style="font-size:14px; font-weight:700; color:var(--text);">{{ $instructor->especialidad }}</span>
+                            <span class="perfil-contact-label">Especialidad</span>
+                            <span class="perfil-contact-value perfil-contact-value-lg">{{ $instructor->especialidad }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             {{-- Rol card --}}
-            <div style="padding:28px; background:linear-gradient(135deg, #0f172a, #1e293b); border:none; color:white; position:relative; overflow:hidden; border-radius:var(--radius); box-shadow:var(--shadow); box-sizing:border-box;">
-                <div style="position:absolute; right:-15px; bottom:-15px; font-size:90px; color:rgba(255,255,255,0.04);"><i class="fas fa-award"></i></div>
-                <div style="width:48px; height:48px; background:rgba(62,180,137,0.2); border:1px solid rgba(62,180,137,0.3); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; color:#86efac; margin-bottom:16px;">
+            <div class="perfil-verified-card">
+                <div class="perfil-verified-icon">
                     <i class="fas fa-medal"></i>
                 </div>
-                <h4 style="font-size:17px; font-weight:900; margin-bottom:8px; color:white;">Instructor Verificado</h4>
-                <p style="font-size:13px; color:rgba(255,255,255,0.5); line-height:1.6; font-weight:500; margin-bottom:20px;">Gestión de Proyectos & Supervisión de Aprendices SENA.</p>
-                <div style="background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px 16px; text-align:center; font-size:12px; font-weight:700; color:rgba(255,255,255,0.4);">
-                    <i class="fas fa-check-circle" style="color:#86efac; margin-right:6px;"></i> Cuenta Verificada
+                <h4 class="perfil-verified-title">Instructor Verificado</h4>
+                <p class="perfil-verified-desc">Gestión de Proyectos & Supervisión de Aprendices SENA.</p>
+                <div class="perfil-verified-badge">
+                    <i class="fas fa-check-circle"></i> Cuenta Verificada
                 </div>
             </div>
 
             {{-- Consentimiento de Datos --}}
-            <div class="glass-card" style="padding:24px;">
-                <h4 style="font-size:12px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">
-                    <i class="fas fa-shield-alt" style="color:#3eb489;"></i> Privacidad y Datos
+            <div class="glass-card perfil-privacy-card">
+                <h4 class="perfil-privacy-title">
+                    <i class="fas fa-shield-alt"></i> Privacidad y Datos
                 </h4>
-                <div style="display:flex; align-items:center; gap:10px; padding:12px 14px; background:{{ $usuario->consentimiento_datos ? 'rgba(62,180,137,0.1)' : '#fef2f2' }}; border-radius:12px; border:1px solid {{ $usuario->consentimiento_datos ? 'rgba(62,180,137,0.2)' : '#fecaca' }}; margin-bottom:12px;">
-                    <i class="fas {{ $usuario->consentimiento_datos ? 'fa-check-circle' : 'fa-times-circle' }}" style="color:{{ $usuario->consentimiento_datos ? '#22c55e' : '#ef4444' }}; font-size:18px;"></i>
+                <div class="perfil-privacy-status {{ $usuario->consentimiento_datos ? 'perfil-privacy-status-ok' : 'perfil-privacy-status-warn' }}">
+                    <i class="fas {{ $usuario->consentimiento_datos ? 'fa-check-circle' : 'fa-times-circle' }} perfil-privacy-status-icon {{ $usuario->consentimiento_datos ? 'perfil-privacy-status-icon-ok' : 'perfil-privacy-status-icon-warn' }}"></i>
                     <div>
-                        <span style="font-size:13px; font-weight:700; color:{{ $usuario->consentimiento_datos ? '#166534' : '#991b1b' }};">
+                        <span class="perfil-privacy-status-text {{ $usuario->consentimiento_datos ? 'perfil-privacy-status-text-ok' : 'perfil-privacy-status-text-warn' }}">
                             {{ $usuario->consentimiento_datos ? 'Consentimiento otorgado' : 'Consentimiento retirado' }}
                         </span>
                         @if($usuario->fecha_consentimiento)
-                            <span style="font-size:11px; color:#64748b; display:block; margin-top:2px;">
+                            <span class="perfil-privacy-date">
                                 {{ $usuario->consentimiento_datos ? 'Otorgado' : 'Actualizado' }}: {{ \Carbon\Carbon::parse($usuario->fecha_consentimiento)->format('d/m/Y H:i') }}
                             </span>
                         @endif
                     </div>
                 </div>
-                <p style="font-size:11px; color:#94a3b8; line-height:1.5; margin-bottom:12px;">
+                <p class="perfil-privacy-note">
                     Tus datos personales son tratados conforme a la Ley 1581 de 2012.
                 </p>
-                <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <a href="{{ route('politica.datos') }}" target="_blank" style="font-size:12px; font-weight:700; color:#3eb489; text-decoration:underline;">
+                <div class="perfil-privacy-actions">
+                    <a href="{{ route('politica.datos') }}" target="_blank" class="perfil-privacy-link">
                         <i class="fas fa-external-link-alt"></i> Ver política
                     </a>
                     @if($usuario->consentimiento_datos)
                         <form action="{{ route('consentimiento.retirar') }}" method="POST" onsubmit="return confirm('¿Estás seguro de retirar tu consentimiento? Esto puede limitar algunas funcionalidades de la plataforma.')" style="display:inline;">
                             @csrf
-                            <button type="submit" style="font-size:12px; font-weight:700; color:#ef4444; background:none; border:none; cursor:pointer; text-decoration:underline; padding:0;">
+                            <button type="submit" class="perfil-privacy-revoke">
                                 <i class="fas fa-user-slash"></i> Retirar consentimiento
                             </button>
                         </form>

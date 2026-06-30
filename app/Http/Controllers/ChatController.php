@@ -57,11 +57,13 @@ class ChatController extends Controller
 
         $validated = $request->validate([
             'proyecto_id' => 'required|exists:proyectos,id',
+            'type' => 'nullable|in:general,empresa_instructor,instructor_aprendices',
         ]);
+
+        $type = $validated['type'] ?? 'general';
 
         $proyecto = Proyecto::findOrFail($validated['proyecto_id']);
 
-        // Security: verify user is authorized for this project
         if ($user->rol_id === User::ROL_APRENDIZ) {
             $aprendiz = \App\Models\Aprendiz::where('usuario_id', $usrId)->first();
             $accepted = $aprendiz && Postulacion::where('aprendiz_id', $aprendiz->id)
@@ -81,7 +83,9 @@ class ChatController extends Controller
             }
         }
 
-        $existing = Conversation::where('proyecto_id', $proyecto->id)->first();
+        $existing = Conversation::where('proyecto_id', $proyecto->id)
+            ->where('type', $type)
+            ->first();
 
         if ($existing) {
             if (!$existing->users()->where('user_id', $usrId)->exists()) {
@@ -90,24 +94,53 @@ class ChatController extends Controller
             return redirect()->route('chat.show', $existing->id);
         }
 
-        $conversation = Conversation::create(['proyecto_id' => $proyecto->id]);
+        $conversation = Conversation::create([
+            'proyecto_id' => $proyecto->id,
+            'type' => $type,
+        ]);
 
         $participantIds = [];
 
-        $instructorUser = $proyecto->instructor?->usuario;
-
-        if ($instructorUser) {
-            $participantIds[] = $instructorUser->id;
-        }
-
-        $acceptedApprentices = Postulacion::where('proyecto_id', $proyecto->id)
-            ->where('estado', 'aceptada')
-            ->with('aprendiz.usuario')
-            ->get();
-
-        foreach ($acceptedApprentices as $postulacion) {
-            if ($postulacion->aprendiz?->usuario) {
-                $participantIds[] = $postulacion->aprendiz->usuario->id;
+        if ($type === 'empresa_instructor') {
+            $instructorUser = $proyecto->instructor?->usuario;
+            if ($instructorUser) {
+                $participantIds[] = $instructorUser->id;
+            }
+            $empresaUser = $proyecto->empresa?->usuario;
+            if ($empresaUser) {
+                $participantIds[] = $empresaUser->id;
+            }
+        } elseif ($type === 'instructor_aprendices') {
+            $instructorUser = $proyecto->instructor?->usuario;
+            if ($instructorUser) {
+                $participantIds[] = $instructorUser->id;
+            }
+            $acceptedApprentices = Postulacion::where('proyecto_id', $proyecto->id)
+                ->where('estado', 'aceptada')
+                ->with('aprendiz.usuario')
+                ->get();
+            foreach ($acceptedApprentices as $postulacion) {
+                if ($postulacion->aprendiz?->usuario) {
+                    $participantIds[] = $postulacion->aprendiz->usuario->id;
+                }
+            }
+        } else {
+            $instructorUser = $proyecto->instructor?->usuario;
+            if ($instructorUser) {
+                $participantIds[] = $instructorUser->id;
+            }
+            $acceptedApprentices = Postulacion::where('proyecto_id', $proyecto->id)
+                ->where('estado', 'aceptada')
+                ->with('aprendiz.usuario')
+                ->get();
+            foreach ($acceptedApprentices as $postulacion) {
+                if ($postulacion->aprendiz?->usuario) {
+                    $participantIds[] = $postulacion->aprendiz->usuario->id;
+                }
+            }
+            $empresaUser = $proyecto->empresa?->usuario;
+            if ($empresaUser) {
+                $participantIds[] = $empresaUser->id;
             }
         }
 

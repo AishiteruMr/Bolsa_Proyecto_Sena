@@ -270,16 +270,7 @@
                         <i class="fas fa-user"></i> Ver Perfil
                     </button>
 
-                    @if($p->pos_estado == 'pendiente')
-                        <div class="acciones-ajax" style="display: flex; gap: 8px;">
-                            <button type="button" class="card-action-btn btn-accion-ajax" data-pos-id="{{ $p->pos_id }}" data-estado="aceptada" style="background: #10b981; box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25);" title="Aprobar">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button type="button" class="card-action-btn btn-accion-ajax" data-pos-id="{{ $p->pos_id }}" data-estado="rechazada" style="background: #ef4444; box-shadow: 0 8px 16px rgba(239, 68, 68, 0.25);" title="Rechazar">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    @endif
+
                 </div>
             </div>
         @empty
@@ -345,41 +336,6 @@
     const bgMap = { pendiente: '#f59e0b', aceptada: '#10b981', rechazada: '#ef4444', en_progreso: '#3b82f6' };
     const iconMap = { pendiente: 'fa-clock', aceptada: 'fa-check', rechazada: 'fa-times', en_progreso: 'fa-spinner' };
 
-    async function cambiarEstadoPostulacion(posId, estado, label) {
-        const confirmed = await ajax.confirm('¿Estás seguro de ' + label.toLowerCase() + ' esta postulación?');
-        if (!confirmed) return;
-
-        const url = '{{ route('empresa.postulaciones.estado', ['id' => '__ID__']) }}'.replace('__ID__', posId);
-        ajax.post(url, { estado: estado }).then(res => {
-            const data = res.data;
-            ajax.showToast('success', data.message);
-
-            const card = document.querySelector('.glass-card[data-pos-id="' + posId + '"]');
-            if (card) {
-                card.dataset.posEstado = estado;
-                const ribbon = card.querySelector('.status-ribbon');
-                if (ribbon) {
-                    const sc = data.statusConfig || bgMap;
-                    ribbon.style.background = sc.bg || bgMap[estado];
-                    ribbon.innerHTML = '<i class="fas ' + (sc.icon || iconMap[estado]) + '"></i> ' + (sc.label || estadoMap[estado] || estado);
-                }
-                const acciones = card.querySelector('.acciones-ajax');
-                if (acciones) acciones.remove();
-            }
-
-            if (data.estado === 'aceptada' || data.estado === 'rechazada') {
-                const oldCountEl = document.getElementById('count-' + (data.estado === 'aceptada' ? 'aceptada' : 'rechazada'));
-                if (oldCountEl) oldCountEl.textContent = parseInt(oldCountEl.textContent) + 1;
-                const pendCountEl = document.getElementById('count-pendiente');
-                if (pendCountEl && parseInt(pendCountEl.textContent) > 0) pendCountEl.textContent = parseInt(pendCountEl.textContent) - 1;
-            }
-
-            closeProfileModal();
-        }).catch(err => {
-            ajax.showToast('error', err.response?.data?.message || 'Error al cambiar estado.');
-        });
-    }
-
     async function cargarPostulantes(url) {
         const grid = document.getElementById('postulantes-grid');
         const pagination = document.getElementById('postulantes-pagination');
@@ -405,15 +361,6 @@
     }
 
     function bindEventos() {
-        document.querySelectorAll('.btn-accion-ajax').forEach(btn => {
-            btn.onclick = function() {
-                const posId = this.dataset.posId;
-                const estado = this.dataset.estado;
-                const label = estado === 'aceptada' ? 'Aprobar' : 'Rechazar';
-                cambiarEstadoPostulacion(posId, estado, label);
-            };
-        });
-
         document.querySelectorAll('.filter-tab-ajax').forEach(tab => {
             tab.onclick = function(e) {
                 if (!this.dataset.estado) return;
@@ -452,21 +399,6 @@
 
         const actions = document.getElementById('pmActions');
         actions.innerHTML = '';
-        if (p.pos_estado === 'pendiente') {
-            const aprobarBtn = document.createElement('button');
-            aprobarBtn.className = 'btn-premium';
-            aprobarBtn.style.cssText = 'background: #10b981; box-shadow: 0 8px 16px rgba(16,185,129,0.25);';
-            aprobarBtn.innerHTML = '<i class="fas fa-check"></i> Aprobar';
-            aprobarBtn.onclick = () => cambiarEstadoPostulacion(p.pos_id, 'aceptada', 'Aprobar');
-            actions.appendChild(aprobarBtn);
-
-            const rechazarBtn = document.createElement('button');
-            rechazarBtn.className = 'btn-premium';
-            rechazarBtn.style.cssText = 'background: #ef4444; box-shadow: 0 8px 16px rgba(239,68,68,0.25);';
-            rechazarBtn.innerHTML = '<i class="fas fa-times"></i> Rechazar';
-            rechazarBtn.onclick = () => cambiarEstadoPostulacion(p.pos_id, 'rechazada', 'Rechazar');
-            actions.appendChild(rechazarBtn);
-        }
 
         profileModal.classList.add('open');
     }

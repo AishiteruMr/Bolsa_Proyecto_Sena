@@ -11,7 +11,7 @@ class Conversation extends Model
 {
     protected $table = 'conversations';
 
-    protected $fillable = ['proyecto_id'];
+    protected $fillable = ['proyecto_id', 'type'];
 
     public function proyecto(): BelongsTo
     {

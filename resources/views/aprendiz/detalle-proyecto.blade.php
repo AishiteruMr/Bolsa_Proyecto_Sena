@@ -381,6 +381,7 @@
                 <form action="{{ route('chat.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="proyecto_id" value="{{ $proyecto->id }}">
+                    <input type="hidden" name="type" value="instructor_aprendices">
                     <button type="submit" class="btn-premium" style="width:100%;justify-content:center;background:#8b5cf6;color:#fff;border:none;">
                         <i class="fas fa-comment-dots"></i> Chat con Instructor
                     </button>
