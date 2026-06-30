@@ -160,7 +160,9 @@ body {
     flex: 1; min-height: 100vh;
     display: flex; flex-direction: column;
     transition: all 0.4s ease;
-    min-width: 0; /* Previene el desbordamiento horizontal causado por hijos anchos */
+    min-width: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .topbar {

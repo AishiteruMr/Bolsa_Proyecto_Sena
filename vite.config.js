@@ -27,6 +27,7 @@ export default defineConfig({
                 'resources/css/empresa.css',
                 'resources/css/index.css',
                 'resources/css/instructor.css',
+                'resources/css/instructor-perfil.css',
                 'resources/css/login.css',
                 'resources/css/nosotros.css',
                 'resources/css/register.css',

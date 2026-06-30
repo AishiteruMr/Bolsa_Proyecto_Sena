@@ -4,6 +4,12 @@
 @section('page-title', 'Bandeja de Mensajes')
 
 @section('sidebar-nav')
+    @php
+        $chatUnread = \App\Models\Conversation::whereHas('users', fn($q) => $q->where('user_id', session('usr_id')))
+            ->withCount(['messages as unread_count' => function ($q) {
+                $q->where('sender_id', '!=', session('usr_id'))->whereNull('read_at');
+            }])->get()->sum('unread_count');
+    @endphp
     @switch(session('rol'))
         @case(1)
             <span class="nav-label">Principal</span>
@@ -25,10 +31,6 @@
             <span class="nav-label">Comunicación</span>
             <a href="{{ route('chat.index') }}" class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }}">
                 <i class="fas fa-comment-dots"></i> Mensajes
-                @php
-                    $chatUnread = \App\Models\Conversation::whereHas('users', fn($q) => $q->where('user_id', session('usr_id')))
-                        ->get()->sum(fn($c) => $c->unreadMessagesCount(session('usr_id')));
-                @endphp
                 @if($chatUnread > 0)
                     <span class="nav-badge">{{ $chatUnread > 99 ? '99+' : $chatUnread }}</span>
                 @endif
@@ -55,10 +57,6 @@
             <span class="nav-label">Comunicación</span>
             <a href="{{ route('chat.index') }}" class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }}">
                 <i class="fas fa-comment-dots"></i> Mensajes
-                @php
-                    $chatUnread = \App\Models\Conversation::whereHas('users', fn($q) => $q->where('user_id', session('usr_id')))
-                        ->get()->sum(fn($c) => $c->unreadMessagesCount(session('usr_id')));
-                @endphp
                 @if($chatUnread > 0)
                     <span class="nav-badge">{{ $chatUnread > 99 ? '99+' : $chatUnread }}</span>
                 @endif
@@ -82,10 +80,6 @@
             <span class="nav-label">Comunicación</span>
             <a href="{{ route('chat.index') }}" class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }}">
                 <i class="fas fa-comment-dots"></i> Mensajes
-                @php
-                    $chatUnread = \App\Models\Conversation::whereHas('users', fn($q) => $q->where('user_id', session('usr_id')))
-                        ->get()->sum(fn($c) => $c->unreadMessagesCount(session('usr_id')));
-                @endphp
                 @if($chatUnread > 0)
                     <span class="nav-badge">{{ $chatUnread > 99 ? '99+' : $chatUnread }}</span>
                 @endif
@@ -100,240 +94,6 @@
 
 @section('styles')
     @vite(['resources/css/chat.css'])
-    <style>
-        :root { --chat-radius: 16px; --chat-msg-radius: 16px; }
-
-        .chat-page {
-            display: flex;
-            height: calc(100vh - 200px);
-            min-height: 480px;
-            background: white;
-            border-radius: var(--chat-radius);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-        }
-        .chat-sidebar {
-            width: 340px;
-            flex-shrink: 0;
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            background: #fafbfc;
-        }
-        .chat-sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
-            background: white;
-        }
-        .chat-sidebar-header h3 {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--text);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .chat-conversations {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px;
-        }
-        .chat-conv-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            color: var(--text);
-            margin-bottom: 2px;
-        }
-        .chat-conv-item:hover { background: rgba(62,180,137,0.08); }
-        .chat-conv-item.active {
-            background: rgba(62,180,137,0.12);
-            border: 1px solid rgba(62,180,137,0.2);
-        }
-        .chat-conv-avatar {
-            width: 44px; height: 44px;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 15px;
-            flex-shrink: 0; color: white;
-        }
-        .chat-conv-info { flex: 1; min-width: 0; }
-        .chat-conv-name {
-            font-size: 13px; font-weight: 700;
-            color: var(--text);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .chat-conv-preview {
-            font-size: 11px; color: var(--text-light);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            margin-top: 2px;
-        }
-        .chat-conv-meta { text-align: right; flex-shrink: 0; }
-        .chat-conv-time {
-            font-size: 10px; color: var(--text-lighter); font-weight: 600;
-        }
-        .chat-conv-badge {
-            display: inline-flex; align-items: center; justify-content: center;
-            min-width: 20px; height: 20px; padding: 0 6px;
-            border-radius: 10px; background: #3eb489; color: white;
-            font-size: 10px; font-weight: 800; margin-top: 4px;
-        }
-        .chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-        .chat-main-header {
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; gap: 14px;
-            background: white;
-        }
-        .chat-main-header h4 {
-            font-size: 15px; font-weight: 800; margin: 0; color: var(--text);
-        }
-        .chat-main-header span { font-size: 11px; color: var(--text-light); font-weight: 600; }
-        .chat-messages {
-            flex: 1; overflow-y: auto;
-            padding: 20px 24px;
-            display: flex; flex-direction: column; gap: 6px;
-            background: #f8fafc;
-        }
-        .chat-msg {
-            max-width: 75%;
-            padding: 12px 18px;
-            border-radius: var(--chat-msg-radius);
-            font-size: 14px; line-height: 1.5;
-            position: relative; word-wrap: break-word;
-            animation: msgSlideIn 0.2s ease;
-        }
-        @keyframes msgSlideIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .chat-msg.sent {
-            align-self: flex-end;
-            background: linear-gradient(135deg, #3eb489, #2d9d74);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-        .chat-msg.received {
-            align-self: flex-start;
-            background: white;
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-bottom-left-radius: 4px;
-        }
-        .chat-msg-time {
-            font-size: 10px; opacity: 0.7;
-            margin-top: 4px; display: block;
-            text-align: right; font-weight: 600;
-        }
-        .chat-msg.sent .chat-msg-time { color: rgba(255,255,255,0.8); }
-        .chat-msg.received .chat-msg-time { color: var(--text-lighter); }
-        .chat-msg-date-separator {
-            text-align: center; font-size: 11px; font-weight: 700;
-            color: var(--text-lighter); padding: 8px 0;
-            position: relative;
-        }
-        .chat-msg-date-separator::before,
-        .chat-msg-date-separator::after {
-            content: ''; position: absolute; top: 50%;
-            width: 30%; height: 1px; background: var(--border);
-        }
-        .chat-msg-date-separator::before { left: 0; }
-        .chat-msg-date-separator::after { right: 0; }
-
-        .chat-empty {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            flex-direction: column; gap: 12px;
-            color: var(--text-lighter); background: #f8fafc;
-        }
-        .chat-empty i { font-size: 48px; opacity: 0.4; }
-        .chat-empty p { font-size: 14px; font-weight: 600; }
-
-        .chat-input-area {
-            padding: 16px 24px;
-            border-top: 1px solid var(--border);
-            background: white;
-        }
-        .chat-input-form { display: flex; gap: 12px; align-items: flex-end; }
-        .chat-input-form textarea {
-            flex: 1;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-size: 14px; font-family: inherit;
-            resize: none; outline: none;
-            transition: border 0.2s, box-shadow 0.2s;
-            min-height: 48px; max-height: 120px;
-        }
-        .chat-input-form textarea:focus {
-            border-color: #3eb489;
-            box-shadow: 0 0 0 3px rgba(62,180,137,0.1);
-        }
-        .chat-input-form button {
-            align-self: flex-end;
-            width: 48px; height: 48px;
-            border-radius: 12px;
-            border: none;
-            background: linear-gradient(135deg, #3eb489, #2d9d74);
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.2s;
-            flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .chat-input-form button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 16px rgba(62,180,137,0.3);
-        }
-        .chat-input-form button:disabled {
-            opacity: 0.5; cursor: not-allowed; transform: none;
-        }
-
-        .typing-indicator {
-            display: none; align-items: center; gap: 8px;
-            padding: 6px 24px 2px;
-            font-size: 11px; color: var(--text-light); font-weight: 600;
-        }
-        .typing-dots { display: flex; gap: 3px; }
-        .typing-dots span {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: var(--text-lighter);
-            animation: typingBounce 1.4s infinite;
-        }
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typingBounce {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-4px); }
-        }
-
-        .load-more-btn {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 8px 16px; margin-bottom: 8px;
-            background: white; border: 1px solid var(--border);
-            border-radius: 20px; font-size: 11px; font-weight: 700;
-            color: var(--text-light); cursor: pointer;
-            transition: all 0.2s; align-self: center;
-        }
-        .load-more-btn:hover {
-            border-color: #3eb489; color: #3eb489;
-            box-shadow: 0 2px 8px rgba(62,180,137,0.1);
-        }
-        .load-more-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        @media (max-width: 768px) {
-            .chat-page { flex-direction: column; height: auto; min-height: auto; }
-            .chat-sidebar { width: 100%; max-height: 240px; }
-            .chat-messages { max-height: 400px; }
-        }
-    </style>
 @endsection
 
 @php $breadcrumbs = [['label' => 'Mensajes']]; @endphp
@@ -451,7 +211,6 @@
                     @endforelse
                 </div>
 
-                {{-- Typing indicator --}}
                 <div class="typing-indicator" id="typingIndicator">
                     <span id="typingName"></span>
                     <span>escribiendo</span>

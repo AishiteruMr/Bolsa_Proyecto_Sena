@@ -19,6 +19,12 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
+Broadcast::channel('user.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id
+        ? ['id' => $user->id, 'nombre' => $user->nombre]
+        : false;
+});
+
 // ── Role-based channels ───────────────────────────────────────
 Broadcast::channel('role.admin', function ($user) {
     return $user->rol_id === User::ROL_ADMIN

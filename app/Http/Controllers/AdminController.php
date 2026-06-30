@@ -553,7 +553,7 @@ class AdminController extends Controller
             'proyecto' => $proyecto->titulo,
             'empresa' => optional($proyecto->empresa)->nombre ?? 'Empresa',
             'instructor' => $instructorNombre,
-            'url' => route('proyectos.show', $proyecto->id),
+            'url' => route('admin.proyectos.revisar', $proyecto->id),
         ]));
 
         return back()->with('success', 'Instructor asignado.');

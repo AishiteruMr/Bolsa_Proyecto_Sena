@@ -8,10 +8,11 @@ use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent implements ShouldBroadcast
+class MessageSent implements ShouldBroadcast, ShouldQueue
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -51,7 +52,8 @@ class MessageSent implements ShouldBroadcast
                 'name' => $this->sender->nombre,
                 'rol' => $this->sender->nombre_rol,
             ],
-            'created_at' => $this->message->created_at->toISOString(),
+            'created_at' => $this->message->created_at->format('H:i'),
+            'created_at_iso' => $this->message->created_at->toISOString(),
         ];
     }
 }

@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\PostulacionEvent;
 use App\Events\ProyectoEvent;
 use App\Http\Requests\ActualizarPerfilRequest;
-use App\Http\Requests\GestionarPostulacionRequest;
 use App\Http\Requests\GestionarProyectoRequest;
-use App\Mail\PostulacionEstadoCambiado;
 use App\Models\Aprendiz;
 use App\Models\AuditLog;
 use App\Models\Empresa;
@@ -17,15 +14,12 @@ use App\Models\Postulacion;
 use App\Models\Proyecto;
 use App\Models\User;
 use App\Services\PerfilService;
-use App\Jobs\SendEmailJob;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\Rule;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -355,7 +349,7 @@ class EmpresaController extends Controller
             'message' => "Proyecto actualizado: {$proyecto->titulo}",
             'proyecto' => $proyecto->titulo,
             'empresa' => $empresa?->nombre ?? 'Empresa',
-            'url' => route('proyectos.show', $proyecto->id),
+            'url' => route('empresa.proyectos.detalle', $proyecto->id),
         ]));
 
         return redirect()->route('empresa.proyectos')->with('success', 'Proyecto actualizado.');
@@ -490,97 +484,6 @@ class EmpresaController extends Controller
         return view('empresa.reporte-proyecto', compact(
             'proyecto', 'etapas', 'aprendices', 'evidencias', 'entregas'
         ));
-    }
-
-    public function cambiarEstadoPostulacion(GestionarPostulacionRequest $request, int $id): RedirectResponse|JsonResponse
-    {
-        $nit = session('nit');
-
-        $postulacion = Postulacion::with('proyecto', 'aprendiz.usuario')
-            ->where('id', $id)
-            ->whereHas('proyecto', function ($query) use ($nit) {
-                $query->where('empresa_nit', $nit);
-            })
-            ->firstOrFail();
-
-        $estadoInput = strtolower($request->estado);
-
-        $postulacion->update(['estado' => $estadoInput]);
-
-        // Invalidar otras postulaciones pendientes cuando es aceptado
-        $totalInvalidadas = 0;
-        if ($estadoInput === 'aceptada') {
-            $otrasPendientes = Postulacion::where('aprendiz_id', $postulacion->aprendiz_id)
-                ->where('id', '!=', $postulacion->id)
-                ->whereIn('estado', ['pendiente', 'en_revision'])
-                ->get();
-
-            foreach ($otrasPendientes as $otra) {
-                $otra->update(['estado' => 'rechazada']);
-                AuditLog::registrar(
-                    session('usr_id'),
-                    'invalidar_postulacion',
-                    'postulaciones',
-                    'postulaciones',
-                    $otra->id,
-                    null,
-                    ['proyecto_id' => $otra->proyecto_id, 'motivo' => 'Aceptado en otro proyecto'],
-                    "Postulación #{$otra->id} invalidada automáticamente porque el aprendiz fue aceptado en otro proyecto."
-                );
-            }
-
-            $totalInvalidadas = $otrasPendientes->count();
-        }
-
-        // Send email notification to aprendiz
-        try {
-            $aprendiz = $postulacion->aprendiz;
-            $usuarioCorreo = optional($aprendiz?->usuario)->correo;
-            if ($usuarioCorreo) {
-                SendEmailJob::dispatch($usuarioCorreo, new PostulacionEstadoCambiado(
-                    $aprendiz->nombres ?? 'Aprendiz',
-                    $postulacion->proyecto,
-                    ucfirst($estadoInput),
-                    $totalInvalidadas
-                ));
-            }
-        } catch (\Exception $e) {
-            Log::error('Error enviando email de estado postulación: '.$e->getMessage());
-        }
-
-        if ($aprendiz?->usuario) {
-            event(new PostulacionEvent(
-                $aprendiz->usuario,
-                $estadoInput,
-                [
-                    'message' => "Postulación {$estadoInput}: {$postulacion->proyecto->titulo}",
-                    'proyecto' => $postulacion->proyecto->titulo,
-                    'usuario' => trim(($aprendiz->nombres ?? '').' '.($aprendiz->apellidos ?? '')),
-                    'url' => route('empresa.proyectos.postulantes', $postulacion->proyecto_id),
-                ]
-            ));
-        }
-
-        if ($request->ajax() || $request->wantsJson()) {
-            $statusConfig = match($estadoInput) {
-                'pendiente' => ['bg' => '#f59e0b', 'icon' => 'fa-clock', 'label' => 'Por Revisar'],
-                'aceptada' => ['bg' => '#10b981', 'icon' => 'fa-check', 'label' => 'Aprobado'],
-                'rechazada' => ['bg' => '#ef4444', 'icon' => 'fa-times', 'label' => 'Rechazado'],
-                'en_progreso' => ['bg' => '#3b82f6', 'icon' => 'fa-spinner', 'label' => 'En Progreso'],
-                default => ['bg' => '#64748b', 'icon' => 'fa-info-circle', 'label' => $estadoInput]
-            };
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Estado de postulación actualizado.',
-                'estado' => $estadoInput,
-                'statusConfig' => $statusConfig,
-                'postulacionId' => $postulacion->id,
-                'totalInvalidadas' => $totalInvalidadas,
-            ]);
-        }
-
-        return back()->with('success', 'Estado de postulación actualizado.');
     }
 
     public function perfil(): View

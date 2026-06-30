@@ -18,25 +18,8 @@ class ChatController extends Controller
         $usrId = session('usr_id');
         $user = User::find($usrId);
 
-        $conversations = Conversation::whereHas('users', function ($q) use ($usrId) {
-            $q->where('user_id', $usrId);
-        })
-            ->with(['proyecto', 'users', 'lastMessage'])
-            ->orderByDesc(function ($q) {
-                $q->select('created_at')->from('messages')
-                    ->whereColumn('conversation_id', 'conversations.id')
-                    ->latest()
-                    ->limit(1);
-            })
-            ->get();
-
-        $unreadCounts = [];
-        foreach ($conversations as $conv) {
-            $count = $conv->unreadMessagesCount($usrId);
-            if ($count > 0) {
-                $unreadCounts[$conv->id] = $count;
-            }
-        }
+        $conversations = $this->getUserConversations($usrId);
+        $unreadCounts = $this->buildUnreadCounts($conversations);
 
         return view('shared.chat.index', compact('conversations', 'unreadCounts', 'user'));
     }
@@ -61,25 +44,8 @@ class ChatController extends Controller
 
         $user = User::find($usrId);
 
-        $conversations = Conversation::whereHas('users', function ($q) use ($usrId) {
-            $q->where('user_id', $usrId);
-        })
-            ->with(['proyecto', 'users', 'lastMessage'])
-            ->orderByDesc(function ($q) {
-                $q->select('created_at')->from('messages')
-                    ->whereColumn('conversation_id', 'conversations.id')
-                    ->latest()
-                    ->limit(1);
-            })
-            ->get();
-
-        $unreadCounts = [];
-        foreach ($conversations as $conv) {
-            $count = $conv->unreadMessagesCount($usrId);
-            if ($count > 0) {
-                $unreadCounts[$conv->id] = $count;
-            }
-        }
+        $conversations = $this->getUserConversations($usrId);
+        $unreadCounts = $this->buildUnreadCounts($conversations);
 
         return view('shared.chat.index', compact('conversations', 'messages', 'conversation', 'unreadCounts', 'user'));
     }
@@ -91,11 +57,13 @@ class ChatController extends Controller
 
         $validated = $request->validate([
             'proyecto_id' => 'required|exists:proyectos,id',
+            'type' => 'nullable|in:general,empresa_instructor,instructor_aprendices',
         ]);
+
+        $type = $validated['type'] ?? 'general';
 
         $proyecto = Proyecto::findOrFail($validated['proyecto_id']);
 
-        // Security: verify user is authorized for this project
         if ($user->rol_id === User::ROL_APRENDIZ) {
             $aprendiz = \App\Models\Aprendiz::where('usuario_id', $usrId)->first();
             $accepted = $aprendiz && Postulacion::where('aprendiz_id', $aprendiz->id)
@@ -115,7 +83,9 @@ class ChatController extends Controller
             }
         }
 
-        $existing = Conversation::where('proyecto_id', $proyecto->id)->first();
+        $existing = Conversation::where('proyecto_id', $proyecto->id)
+            ->where('type', $type)
+            ->first();
 
         if ($existing) {
             if (!$existing->users()->where('user_id', $usrId)->exists()) {
@@ -124,24 +94,53 @@ class ChatController extends Controller
             return redirect()->route('chat.show', $existing->id);
         }
 
-        $conversation = Conversation::create(['proyecto_id' => $proyecto->id]);
+        $conversation = Conversation::create([
+            'proyecto_id' => $proyecto->id,
+            'type' => $type,
+        ]);
 
         $participantIds = [];
 
-        $instructorUser = $proyecto->instructor?->usuario;
-
-        if ($instructorUser) {
-            $participantIds[] = $instructorUser->id;
-        }
-
-        $acceptedApprentices = Postulacion::where('proyecto_id', $proyecto->id)
-            ->where('estado', 'aceptada')
-            ->with('aprendiz.usuario')
-            ->get();
-
-        foreach ($acceptedApprentices as $postulacion) {
-            if ($postulacion->aprendiz?->usuario) {
-                $participantIds[] = $postulacion->aprendiz->usuario->id;
+        if ($type === 'empresa_instructor') {
+            $instructorUser = $proyecto->instructor?->usuario;
+            if ($instructorUser) {
+                $participantIds[] = $instructorUser->id;
+            }
+            $empresaUser = $proyecto->empresa?->usuario;
+            if ($empresaUser) {
+                $participantIds[] = $empresaUser->id;
+            }
+        } elseif ($type === 'instructor_aprendices') {
+            $instructorUser = $proyecto->instructor?->usuario;
+            if ($instructorUser) {
+                $participantIds[] = $instructorUser->id;
+            }
+            $acceptedApprentices = Postulacion::where('proyecto_id', $proyecto->id)
+                ->where('estado', 'aceptada')
+                ->with('aprendiz.usuario')
+                ->get();
+            foreach ($acceptedApprentices as $postulacion) {
+                if ($postulacion->aprendiz?->usuario) {
+                    $participantIds[] = $postulacion->aprendiz->usuario->id;
+                }
+            }
+        } else {
+            $instructorUser = $proyecto->instructor?->usuario;
+            if ($instructorUser) {
+                $participantIds[] = $instructorUser->id;
+            }
+            $acceptedApprentices = Postulacion::where('proyecto_id', $proyecto->id)
+                ->where('estado', 'aceptada')
+                ->with('aprendiz.usuario')
+                ->get();
+            foreach ($acceptedApprentices as $postulacion) {
+                if ($postulacion->aprendiz?->usuario) {
+                    $participantIds[] = $postulacion->aprendiz->usuario->id;
+                }
+            }
+            $empresaUser = $proyecto->empresa?->usuario;
+            if ($empresaUser) {
+                $participantIds[] = $empresaUser->id;
             }
         }
 
@@ -175,6 +174,8 @@ class ChatController extends Controller
             'sender_id' => $usrId,
             'message' => $validated['message'],
         ]);
+
+        $conversation->touch();
 
         broadcast(new MessageSent($conversation, $message, $user))->toOthers();
 
@@ -247,10 +248,39 @@ class ChatController extends Controller
 
         $total = Conversation::whereHas('users', function ($q) use ($usrId) {
             $q->where('user_id', $usrId);
-        })->get()->sum(function ($conv) use ($usrId) {
-            return $conv->unreadMessagesCount($usrId);
-        });
+        })->withCount(['messages as unread_count' => function ($q) use ($usrId) {
+            $q->where('sender_id', '!=', $usrId)->whereNull('read_at');
+        }])->get()->sum('unread_count');
 
         return response()->json(['unread' => $total]);
+    }
+
+    private function getUserConversations(int $usrId)
+    {
+        return Conversation::whereHas('users', function ($q) use ($usrId) {
+            $q->where('user_id', $usrId);
+        })
+            ->with(['proyecto', 'users', 'lastMessage'])
+            ->withCount(['messages as unread_count' => function ($q) use ($usrId) {
+                $q->where('sender_id', '!=', $usrId)->whereNull('read_at');
+            }])
+            ->orderByDesc(function ($q) {
+                $q->select('created_at')->from('messages')
+                    ->whereColumn('conversation_id', 'conversations.id')
+                    ->latest()
+                    ->limit(1);
+            })
+            ->get();
+    }
+
+    private function buildUnreadCounts($conversations): array
+    {
+        $unreadCounts = [];
+        foreach ($conversations as $conv) {
+            if ($conv->unread_count > 0) {
+                $unreadCounts[$conv->id] = $conv->unread_count;
+            }
+        }
+        return $unreadCounts;
     }
 }

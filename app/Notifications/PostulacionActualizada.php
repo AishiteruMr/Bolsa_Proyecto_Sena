@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -27,7 +28,7 @@ class PostulacionActualizada extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'broadcast'];
     }
 
     public function toArray(object $notifiable): array
@@ -38,5 +39,15 @@ class PostulacionActualizada extends Notification
             'proyecto'  => $this->proyectoTitulo,
             'fecha'     => now()->toDateTimeString(),
         ];
+    }
+
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'titulo'   => 'Postulación Actualizada',
+            'mensaje'  => "Tu postulación para el proyecto '{$this->proyectoTitulo}' ha sido cambiada a '{$this->estado}'.",
+            'icono'    => 'fa-file-signature',
+            'url'      => null,
+        ]);
     }
 }

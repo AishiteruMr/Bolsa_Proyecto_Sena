@@ -21,22 +21,27 @@ import Pusher from 'pusher-js';
 window.Pusher = Pusher;
 
 const key = import.meta.env.VITE_PUSHER_APP_KEY;
-const host = import.meta.env.VITE_PUSHER_HOST || 'localhost';
-const port = import.meta.env.VITE_PUSHER_PORT || '8080';
-const scheme = import.meta.env.VITE_PUSHER_SCHEME || 'http';
-const cluster = import.meta.env.VITE_PUSHER_APP_CLUSTER || 'mt1';
+const host = import.meta.env.VITE_PUSHER_HOST;
+const port = import.meta.env.VITE_PUSHER_PORT || 443;
+const scheme = import.meta.env.VITE_PUSHER_SCHEME || 'https';
+const cluster = import.meta.env.VITE_PUSHER_APP_CLUSTER || 'us2';
 
-window.Echo = new Echo({
+const echoConfig = {
     broadcaster: 'pusher',
     key: key,
     cluster: cluster,
-    wsHost: host,
-    wsPort: port,
-    wssPort: port,
     forceTLS: scheme === 'https',
     disableStats: true,
     enabledTransports: ['ws', 'wss'],
-});
+};
+
+if (host) {
+    echoConfig.wsHost = host;
+    echoConfig.wsPort = port;
+    echoConfig.wssPort = port;
+}
+
+window.Echo = new Echo(echoConfig);
 
 window.addNotificationToast = function(data) {
     const container = document.getElementById('toast-container') || createToastContainer();
